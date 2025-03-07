@@ -1,0 +1,104 @@
+{
+    "BG3.Hotbar": {
+        "Errors": {
+            "InvalidDrop": "Invalid drop data: not valid JSON.",
+            "InvalidItem": "Invalid item data. Only items with a valid UUID can be placed on the hotbar.",
+            "ItemNotFound": "Could not retrieve item from UUID. Not placing on hotbar.",
+            "WrongToken": "You cannot drop items from a different token onto this hotbar.",
+            "UnableToRetrieve": "Unable to retrieve item data."
+        },
+        "ContextMenu": {
+            "EditItem": "Edit Item",
+            "ConfigureActivities": "Configure Activities",
+            "Remove": "Remove"
+        },
+        "UI": {
+            "AddRow": "Add Row",
+            "RemoveRow": "Remove Row"
+        },
+        "SettingsMenu": {
+            "ResetLayout": "Reset Layout",
+            "ClearAllItems": "Clear All Items",
+            "ImportLayout": "Import Layout",
+            "ExportLayout": "Export Layout"
+        }
+    },
+    "BG3.Settings": {
+        "CollapseFoundryMacrobar": {
+            "Name": "Start Foundry Macrobar Collapsed",
+            "Hint": "Automatically collapse the default Foundry macrobar when loading"
+        },
+        "ShowPassiveFeaturesContainer": {
+            "Name": "Show Passive Features Container",
+            "Hint": "Display the container of passive features above the portrait"
+        },
+        "TooltipDelay": {
+            "Name": "Tooltip Delay",
+            "Hint": "How long to wait before showing tooltips (in milliseconds)"
+        },
+        "FadeOutDelay": {
+            "Name": "Fade Out Delay",
+            "Hint": "Seconds to wait before fading out the hotbar"
+        },
+        "NormalOpacity": {
+            "Name": "Normal Opacity",
+            "Hint": "Opacity of the hotbar when mouse is over it (0.1 to 1.0)"
+        },
+        "FadedOpacity": {
+            "Name": "Faded Opacity",
+            "Hint": "Opacity of the hotbar when mouse is not over it (0.0 to 1.0). Set to 1 to disable fading completely."
+        },
+        "AutoPopulateUnlinkedTokens": {
+            "Name": "Auto-Populate Unlinked Tokens",
+            "Hint": "Automatically populate the hotbar for newly created unlinked tokens based on the settings below"
+        },
+        "Container1AutoPopulate": {
+            "Name": "Container 1 Auto-Populate",
+            "Hint": "What item types to automatically populate in the first container (index 0)"
+        },
+        "Container2AutoPopulate": {
+            "Name": "Container 2 Auto-Populate",
+            "Hint": "What item types to automatically populate in the second container (index 1)"
+        },
+        "Container3AutoPopulate": {
+            "Name": "Container 3 Auto-Populate",
+            "Hint": "What item types to automatically populate in the third container (index 2)"
+        },
+        "AutoPopulateOverflow": {
+            "Name": "When Container is Full",
+            "Hint": "Choose how to handle items when the container runs out of space.",
+            "Expand": "Continue adding rows",
+            "NextContainer": "Overflow to next container"
+        },
+        "AutoPopulateFillDirection": {
+            "Name": "Auto-Populate Fill Direction",
+            "Hint": "Whether to fill rows first (left to right, then down) or columns first (top to bottom, then right)",
+            "RowFirst": "Rows First (Left to Right, Then Down)",
+            "ColumnFirst": "Columns First (Top to Bottom, Then Right)"
+        },
+        "ContainerAutoPopulate": {
+            "DialogTitle": "Auto-Populate Container",
+            "DefaultsTitle": "Configure Container Auto-Populate Defaults",
+            "Name": "Select Item Types",
+            "Hint": "Choose which types of items to automatically add to this container.",
+            "Weapons": "Weapons",
+            "Features": "Features",
+            "Spells": "Spells",
+            "Consumables": "Consumables",
+            "Equipment": "Equipment",
+            "Tools": "Tools",
+            "Loot": "Loot",
+            "Populate": "Populate",
+            "Cancel": "Cancel",
+            "Save": "Save Changes",
+            "SaveSuccess": "Container auto-populate settings saved successfully",
+            "Configure": "Configure Container Auto-Populate"
+        },
+        "HighlightStyle": {
+            "Name": "Highlight Style",
+            "Hint": "Choose how items are highlighted when filtered",
+            "Bottom": "Bottom Border",
+            "Border": "Full Border"
+        }
+    }
+} 

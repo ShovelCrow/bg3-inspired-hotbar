@@ -1,0 +1,104 @@
+.filter-container {
+    position: absolute;
+    bottom: calc(100% - 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg3-background);
+    border: 1px solid var(--bg3-border);
+    border-radius: 4px;
+    z-index: var(--bg3-z-filter-container);
+    padding: 1px;
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    min-width: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 1px;
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.filter-content {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    transition: all 0.2s ease;
+}
+
+.action-type-button,
+.feature-button,
+.spell-level-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    box-sizing: border-box;
+    background: transparent;
+}
+
+.action-type-button:hover,
+.feature-button:hover,
+.spell-level-button:hover {
+    background: var(--bg3-background-highlight);
+}
+
+.spell-level-wrapper {
+    position: relative;
+    width: 32px;
+    height: 32px;
+}
+
+.spell-level-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+}
+
+.spell-level-label {
+    position: absolute;
+    top: -13px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    background: transparent;
+    z-index: 1;
+}
+
+.spell-slot-row {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    width: 100%;
+}
+
+.spell-slot-box {
+    border-radius: 2px;
+    border-width: 1px;
+    border-style: solid;
+    box-sizing: border-box;
+}
+
+.spell-container {
+    display: flex;
+    gap: 1px;
+    align-items: center;
+    margin-left: 2px;
+}
+
+.action-container {
+    display: flex;
+    gap: 1px;
+    align-items: center;
+} 
