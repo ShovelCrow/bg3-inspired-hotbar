@@ -1,4 +1,9 @@
 ## [1.5.6] - 2025-03-11
+### Changed
+- Changed versioning to remove the "v" prefix
+  - Removed all previous manifests versions from foundry releases page to start fresh with new versioning
+  - The old versions can still be found on the github releases page
+
 ### Fixed
 #### Auto-Population Spell Preparation
 - Fixed the wording of spell preparation settings to be less confusing. Please check your settings to make sure they are correct
@@ -9,6 +14,9 @@
 #### Ability Card
 - Fixed the positioning of the ability card popup panels sometimes not appearing in the correct location
 - Fixed red border appearing on ability score hover due to menu item styles bleeding into ability card styles
+
+#### Spell Tooltips
+- Creatureobject now has whitespace
 
 ### Updated
 #### Context Menu
