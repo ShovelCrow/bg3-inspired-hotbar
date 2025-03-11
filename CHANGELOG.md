@@ -1,3 +1,9 @@
+## [1.5.7] - 2025-03-12
+### Fixed
+#### Portrait Card
+- Background container to be transparent and have no box shadow
+- Centered the portrait card again
+
 ## [1.5.6] - 2025-03-11
 ### Changed
 - Changed versioning to remove the "v" prefix
