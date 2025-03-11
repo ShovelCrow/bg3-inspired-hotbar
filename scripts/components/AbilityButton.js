@@ -57,8 +57,17 @@ class AbilityCard {
             this.element.setAttribute("data-container-index", this.gridContainer.index);
         }
         
-        // Add the card to the container
+        // Create a wrapper for the ability rows
+        const abilityRowsWrapper = document.createElement("div");
+        abilityRowsWrapper.classList.add("ability-rows-wrapper");
+        this.element.appendChild(abilityRowsWrapper);
+
+        // Create a separate container for popups as a sibling to the ability card
+        const popupsWrapper = document.createElement("div");
+        popupsWrapper.classList.add("popups-wrapper");
+
         container.appendChild(this.element);
+        container.appendChild(popupsWrapper);
         
         this.render();
         return container;
@@ -70,6 +79,7 @@ class AbilityCard {
         // Try to get the actor from lastKnownActorId
         if (this.portraitContainer?.lastKnownActorId) {
             actor = game.actors.get(this.portraitContainer.lastKnownActorId);
+            console.log("Got actor from lastKnownActorId:", actor?.name);
         }
 
         // If not, then get it from the current token
@@ -78,14 +88,34 @@ class AbilityCard {
             if (token?.actor) {
                 actor = game.actors.get(token.actor.id);
                 this.portraitContainer.lastKnownActorId = actor.id;
+                console.log("Got actor from current token:", actor?.name);
             }
         }
             
-        if (!actor) return;
+        if (!actor) {
+            console.warn("No actor found for ability scores");
+            return;
+        }
+
+        // Get the ability rows wrapper and popups wrapper
+        const abilityRowsWrapper = this.element.querySelector('.ability-rows-wrapper');
+        const popupsWrapper = this.element.parentNode.querySelector('.popups-wrapper');
+        if (!abilityRowsWrapper || !popupsWrapper) {
+            console.warn("Missing wrappers");
+            return;
+        }
+
+        // Clear existing popups
+        while (popupsWrapper.firstChild) {
+            popupsWrapper.removeChild(popupsWrapper.firstChild);
+        }
+
+        console.log("Creating ability scores for actor:", actor.name);
 
         Object.entries(AbilityCard.ABILITY_CONFIG).forEach(([key, data]) => {
             const abilityRow = document.createElement("div");
             abilityRow.classList.add("menu-item", "ability-row");
+            abilityRow.setAttribute('data-ability', key);
 
             const abilityScore = actor.system.abilities?.[key] || { value: 10, proficient: false };
             const mod = Math.floor((abilityScore.value - 10) / 2);
@@ -116,9 +146,10 @@ class AbilityCard {
             scoreDisplay.appendChild(modSpan);
             abilityRow.appendChild(scoreDisplay);
             
-            // Create popups container
+            // Create popups container in the popups wrapper
             const popupsContainer = document.createElement("div");
             popupsContainer.classList.add("popup-container");
+            popupsContainer.setAttribute('data-ability', key);
 
             // Create skills popup if ability has associated skills
             if (data.skills.length > 0) {
@@ -132,7 +163,7 @@ class AbilityCard {
             savePopup.classList.add("saves");
             popupsContainer.appendChild(savePopup);
 
-            abilityRow.appendChild(popupsContainer);
+            popupsWrapper.appendChild(popupsContainer);
 
             // Toggle popups on click
             abilityRow.addEventListener("click", (e) => {
@@ -140,36 +171,49 @@ class AbilityCard {
 
                 // If clicking the same ability that's already expanded, just close it
                 if (this.expandedAbility === key) {
-                    popupsContainer.classList.remove("visible");
-                    popupsContainer.querySelectorAll('.popup-panel').forEach(panel => {
-                        panel.classList.remove("visible");
-                    });
+                    const currentPopups = popupsWrapper.querySelector(`.popup-container[data-ability="${key}"]`);
+                    if (currentPopups) {
+                        currentPopups.classList.remove("visible");
+                        currentPopups.querySelectorAll('.popup-panel').forEach(panel => {
+                            panel.classList.remove("visible");
+                        });
+                    }
                     abilityRow.classList.remove("expanded");
                     this.expandedAbility = null;
                     return;
                 }
 
                 // Close all popups and reset all ability rows
-                this.element.querySelectorAll(".popup-container").forEach(popup => {
+                popupsWrapper.querySelectorAll(".popup-container").forEach(popup => {
                     popup.classList.remove("visible");
                     popup.querySelectorAll('.popup-panel').forEach(panel => {
                         panel.classList.remove("visible");
                     });
                 });
-                this.element.querySelectorAll(".ability-row").forEach(row => {
+                abilityRowsWrapper.querySelectorAll(".ability-row").forEach(row => {
                     row.classList.remove("expanded");
                 });
 
-                // Open the clicked ability's popup
-                popupsContainer.classList.add("visible");
-                popupsContainer.querySelectorAll('.popup-panel').forEach(panel => {
-                    panel.classList.add("visible");
-                });
+                // Get the clicked row's position relative to the popups wrapper
+                const rowRect = abilityRow.getBoundingClientRect();
+                const wrapperRect = popupsWrapper.getBoundingClientRect();
+                
+                // Position and show the popup
+                const targetPopups = popupsWrapper.querySelector(`.popup-container[data-ability="${key}"]`);
+                if (targetPopups) {
+                    // Position the popup container at the same height as the ability row
+                    targetPopups.style.top = `${rowRect.top - wrapperRect.top}px`;
+                    targetPopups.classList.add("visible");
+                    targetPopups.querySelectorAll('.popup-panel').forEach(panel => {
+                        panel.classList.add("visible");
+                    });
+                }
+                
                 abilityRow.classList.add("expanded");
                 this.expandedAbility = key;
             });
 
-            this.element.appendChild(abilityRow);
+            abilityRowsWrapper.appendChild(abilityRow);
         });
     }
 
@@ -355,10 +399,17 @@ class AbilityCard {
         this.element.classList.remove("visible");
         this.expandedAbility = null;
         
-        // Close any open popups
-        this.element.querySelectorAll(".popup-container").forEach(popup => {
-            popup.classList.remove("visible");
-        });
+        // Get the popups wrapper
+        const popupsWrapper = this.element.parentNode.querySelector('.popups-wrapper');
+        if (popupsWrapper) {
+            // Close any open popups
+            popupsWrapper.querySelectorAll(".popup-container").forEach(popup => {
+                popup.classList.remove("visible");
+                popup.querySelectorAll('.popup-panel').forEach(panel => {
+                    panel.classList.remove("visible");
+                });
+            });
+        }
         
         // Reset any highlighted ability rows
         this.element.querySelectorAll(".ability-row").forEach(row => {
@@ -377,10 +428,19 @@ class AbilityCard {
     }
 
     render() {
-        while (this.element.firstChild) {
-            this.element.removeChild(this.element.firstChild);
+        // Get the ability rows wrapper
+        const abilityRowsWrapper = this.element.querySelector('.ability-rows-wrapper');
+        if (!abilityRowsWrapper) return;
+
+        // Clear existing content
+        while (abilityRowsWrapper.firstChild) {
+            abilityRowsWrapper.removeChild(abilityRowsWrapper.firstChild);
         }
+
+        // Create ability scores in the wrapper
         this._createAbilityScores();
+        
+        // Update visibility
         this.element.classList.toggle("visible", this.isVisible);
     }
 
@@ -410,6 +470,7 @@ export class AbilityButton {
     }
 
     _createButton() {
+        console.log("Creating ability button");
         // Create the button element with bg3-hud class
         this.element = document.createElement("div");
         this.element.classList.add("bg3-hud", "ability-button");
@@ -421,14 +482,17 @@ export class AbilityButton {
         this.element.addEventListener("click", () => this._toggleAbilityCard());
 
         // Create the ability card and get its container
+        console.log("Creating ability card");
         this.abilityCard = new AbilityCard(this.portraitContainer);
         const cardContainer = this.abilityCard._createCard();
+        console.log("Card container created:", cardContainer);
         
         // Add the card to the button
         this.element.appendChild(cardContainer);
         
         // Add button to the portrait card
         this.portraitContainer.element.appendChild(this.element);
+        console.log("Button added to portrait card");
     }
 
     updateButtonState(isActive) {
@@ -437,26 +501,27 @@ export class AbilityButton {
 
     _toggleAbilityCard() {
         if (!this.abilityCard) {
-            console.log("No ability card found");
+            console.warn("No ability card found");
             return;
         }
 
-        console.log("Toggling ability card");
+        console.log("Toggling ability card, current visibility:", !this.abilityCard.isVisible);
+        // Toggle the ability card
         this.abilityCard.toggle();
         
-        // Update button state and ensure card display matches visibility state
-        if (this.abilityCard.isVisible) {
-            console.log("Ability card is now visible");
-            this.updateButtonState(true);
-            this.abilityCard.element.classList.add("visible");
-        } else {
-            console.log("Ability card is now hidden");
-            this.updateButtonState(false);
-            this.abilityCard.element.classList.remove("visible");
-            
+        // Update button state
+        this.updateButtonState(this.abilityCard.isVisible);
+
+        // If we're hiding the card, ensure all popups are properly closed
+        if (!this.abilityCard.isVisible) {
+            console.log("Hiding ability card and cleaning up");
             // Close any open popups
             this.abilityCard.element.querySelectorAll(".popup-container").forEach(popup => {
                 popup.classList.remove("visible");
+                // Also ensure the popup panels themselves are hidden
+                popup.querySelectorAll(".popup-panel").forEach(panel => {
+                    panel.classList.remove("visible");
+                });
             });
             
             // Reset any expanded abilities

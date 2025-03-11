@@ -42,43 +42,31 @@ export class ContextMenu {
         this.element.id = "hotbar-context-menu";
         this.element.classList.add("bg3-hud", "menu-container");
         
-        // Add the menu to the BG3 HUD container instead of document.body
+        // Add the menu to the HUD container
         this.ui.element.appendChild(this.element);
 
         // Create menu items
         const menuItems = await this._createMenuItems();
         menuItems.forEach(item => this.element.appendChild(item));
 
-        // Get the position relative to the BG3 HUD container
-        const containerRect = this.ui.element.getBoundingClientRect();
-        const x = e.clientX - containerRect.left + 20;
-        const y = e.clientY - containerRect.top - 40;
+        // Get the clicked cell's position
+        const cell = container.element.querySelector(`[data-slot="${slot}"]`);
+        if (!cell) return;
         
+        // Get the cell and HUD container positions
+        const cellRect = cell.getBoundingClientRect();
+        const containerRect = this.ui.element.getBoundingClientRect();
+
         // Make menu visible to get its dimensions
         this.element.classList.add("visible");
+        const menuRect = this.element.getBoundingClientRect();
         
-        // Position menu, ensuring it stays within the container bounds
-        const rect = this.element.getBoundingClientRect();
-        const containerWidth = containerRect.width;
-        const containerHeight = containerRect.height;
-        
-        let left = x;
-        let top = y;
-        
-        // If menu would go off right edge, position to left of cursor
-        if (left + rect.width > containerWidth) {
-            left = e.clientX - containerRect.left - rect.width - 20; // Position 20px to the left of cursor
-        }
-        
-        // If menu would go off bottom edge, position above cursor
-        if (top + rect.height > containerHeight) {
-            top = e.clientY - containerRect.top - rect.height + 20; // Position 20px below cursor
-        }
-        
-        // Ensure menu doesn't go off the left or top edges
-        left = Math.max(0, left);
-        top = Math.max(0, top);
-        
+        // Calculate position relative to the HUD container
+        // Position menu so its bottom-left corner aligns with the cell's top-right corner
+        let left = (cellRect.right - containerRect.left);
+        let top = (cellRect.top - containerRect.top) - menuRect.height;
+
+        // Apply position
         this.element.style.position = 'absolute';
         this.element.style.left = `${left}px`;
         this.element.style.top = `${top}px`;
@@ -92,7 +80,7 @@ export class ContextMenu {
         const menuItems = [];
         const storedItem = this.currentContainer.data.items[this.currentSlot];
 
-        // Edit Item option
+        // Item-specific options
         if (storedItem) {
             const editOption = this._createMenuItem(
                 '<i class="fas fa-edit"></i>',
@@ -137,14 +125,41 @@ export class ContextMenu {
                 }
             );
             menuItems.push(configureOption);
+
+            // Remove option
+            const removeOption = this._createMenuItem(
+                '<i class="fas fa-trash"></i>',
+                game.i18n.localize("BG3.Hotbar.ContextMenu.Remove"),
+                async () => {
+                    // Remove the item
+                    delete this.currentContainer.data.items[this.currentSlot];
+                    this.currentContainer.render();
+                    
+                    // Ensure we have UI and manager references before persisting
+                    if (this.ui?.manager) {
+                        await this.ui.manager.persist();
+                    } else if (this.currentContainer.ui?.manager) {
+                        await this.currentContainer.ui.manager.persist();
+                    }
+                    
+                    this.hide();
+                },
+                true
+            );
+            menuItems.push(removeOption);
+
+            // Add divider between item-specific and container-wide options
+            const divider = document.createElement("div");
+            divider.classList.add("menu-divider");
+            menuItems.push(divider);
         }
 
-        // Auto-populate option
+        // Container-wide options
         const token = canvas.tokens.get(this.ui?.manager?.currentTokenId);
         if (token?.actor) {
             const autoPopulateOption = this._createMenuItem(
                 '<i class="fas fa-magic"></i>',
-                "Auto-Populate with Activities",
+                "Auto-Populate This Container",
                 () => {
                     const targetContainer = this.currentContainer;
                     // Ensure container and UI references exist
@@ -163,7 +178,7 @@ export class ContextMenu {
             // Sort Items option
             const sortOption = this._createMenuItem(
                 '<i class="fas fa-sort"></i>',
-                "Sort Items",
+                "Sort Items In This Container",
                 async () => {
                     const targetContainer = this.currentContainer;
                     // Ensure container and UI references exist
@@ -177,42 +192,35 @@ export class ContextMenu {
                 }
             );
             menuItems.push(sortOption);
-        }
 
-        // Add divider if we have items above
-        if (menuItems.length > 0) {
-            const divider = document.createElement("div");
-            divider.classList.add("menu-divider");
-            menuItems.push(divider);
-        }
-
-        // Remove option
-        const removeOption = this._createMenuItem(
-            '<i class="fas fa-trash"></i>',
-            game.i18n.localize("BG3.Hotbar.ContextMenu.Remove"),
-            async () => {
-                // Ensure we have valid references
-                if (!this.currentContainer || !this.currentSlot) {
+            // Clear Container option
+            const clearOption = this._createMenuItem(
+                '<i class="fas fa-trash-alt"></i>',
+                "Clear Container",
+                async () => {
+                    const targetContainer = this.currentContainer;
+                    // Ensure container and UI references exist
+                    if (!this.ui) {
+                        ui.notifications.error(game.i18n.localize("BG3.Hotbar.Errors.NoUIReference"));
+                        return;
+                    }
+                    
+                    // Clear all items
+                    targetContainer.data.items = {};
+                    targetContainer.render();
+                    
+                    // Persist changes
+                    if (this.ui?.manager) {
+                        await this.ui.manager.persist();
+                    }
+                    
+                    ui.notifications.info("Container cleared successfully.");
                     this.hide();
-                    return;
-                }
-
-                // Remove the item
-                delete this.currentContainer.data.items[this.currentSlot];
-                this.currentContainer.render();
-                
-                // Ensure we have UI and manager references before persisting
-                if (this.ui?.manager) {
-                    await this.ui.manager.persist();
-                } else if (this.currentContainer.ui?.manager) {
-                    await this.currentContainer.ui.manager.persist();
-                }
-                
-                this.hide();
-            },
-            true
-        );
-        menuItems.push(removeOption);
+                },
+                true // Mark as dangerous action
+            );
+            menuItems.push(clearOption);
+        }
 
         return menuItems;
     }

@@ -1,7 +1,7 @@
 // Auto Populate Create Token Feature
 // Handles populating hotbar when creating unlinked tokens
 
-import { CONFIG } from '../utils/config.js';
+import { CONFIG, isTokenLinked, shouldEnforceSpellPreparation } from '../utils/config.js';
 import { HotbarManager } from '../managers/HotbarManager.js';
 import { HotbarUI } from '../components/HotbarUI.js';
 import { AutoPopulateContainer } from './AutoPopulateContainer.js';
@@ -145,18 +145,14 @@ export class AutoPopulateCreateToken {
                 
                 // For spells, check preparation state unless bypassed by setting
                 if (item.type === "spell") {
-                    // Get the token from the actor's token data
-                    const isLinked = actor.isToken ? false : true;
-                    const bypassSetting = isLinked ? 
-                        game.settings.get(CONFIG.MODULE_NAME, 'bypassSpellPreparationCheckLinked') :
-                        game.settings.get(CONFIG.MODULE_NAME, 'bypassSpellPreparationCheckUnlinked');
+                    const enforcePreparation = shouldEnforceSpellPreparation(actor, manager.currentTokenId);
                         
-                    if (!bypassSetting) {
+                    if (enforcePreparation) {
                         const prep = item.system?.preparation;
                         // Skip if it's an unprepared "prepared" spell
                         if (!prep?.prepared && prep?.mode === "prepared") continue;
                         // Include if it's prepared or has a valid casting mode
-                        if (!prep?.prepared && !["pact", "atwill", "innate"].includes(prep?.mode)) continue;
+                        if (!prep?.prepared && !["pact", "atwill", "innate", "ritual", "always"].includes(prep?.mode)) continue;
                     }
                 }
                 

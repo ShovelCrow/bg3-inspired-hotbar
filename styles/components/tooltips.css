@@ -69,8 +69,8 @@
   margin: 0 auto;
   border-radius: 50%;
   object-fit: cover;
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
   border: 1px solid #444;
 }
 
@@ -186,6 +186,13 @@
   text-align: center;
 }
 
+.bg3-hud .tooltip-spell-components {
+  margin-top: 2px;
+  font-size: 14px;
+  text-align: center;
+  color: #aaa;
+}
+
 .bg3-hud .tooltip-spell-tags {
   margin-top: 4px;
   font-size: 14px;
@@ -249,7 +256,7 @@
   cursor: pointer;
 }
 
-/* Override Foundry VTT’s dark theme adjustments */
+/* Override Foundry VTT's dark theme adjustments */
 .bg3-hud .tooltip-enriched-content [style*="background"],
 .bg3-hud .tooltip-enriched-content [style*="background-color"] {
   background: none !important;
@@ -278,5 +285,17 @@
 .bg3-hud .tooltip-description-container::-webkit-scrollbar-thumb {
   background: #444;
   border-radius: 3px;
+}
+
+.bg3-hud .tooltip-preparation-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #aaa;
+  font-style: italic;
 }
   

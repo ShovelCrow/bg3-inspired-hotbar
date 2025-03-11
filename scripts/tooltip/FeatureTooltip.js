@@ -45,7 +45,14 @@ export class FeatureTooltip extends BaseTooltip {
         if (details.activity.damage?.parts?.length > 0) {
           const damagePart = details.activity.damage.parts[0];
           if (damagePart.number && damagePart.denomination) {
-            let damageText = `${damagePart.number}d${damagePart.denomination}`;
+            let damageText;
+            if (game.settings.get('bg3-inspired-hotbar', 'showDamageRanges')) {
+              const min = parseInt(damagePart.number);
+              const max = parseInt(damagePart.number) * parseInt(damagePart.denomination);
+              damageText = `${min}-${max}`;
+            } else {
+              damageText = `${damagePart.number}d${damagePart.denomination}`;
+            }
             if (damagePart.bonus) damageText += ` + ${damagePart.bonus}`;
             if (damagePart.types?.length > 0) {
               damageText += ` (${damagePart.types.join(", ")})`;
@@ -58,7 +65,14 @@ export class FeatureTooltip extends BaseTooltip {
         if (details.activity.healing) {
           const healing = details.activity.healing;
           if (healing.number && healing.denomination) {
-            let healText = `${healing.number}d${healing.denomination}`;
+            let healText;
+            if (game.settings.get('bg3-inspired-hotbar', 'showDamageRanges')) {
+              const min = parseInt(healing.number);
+              const max = parseInt(healing.number) * parseInt(healing.denomination);
+              healText = `${min}-${max}`;
+            } else {
+              healText = `${healing.number}d${healing.denomination}`;
+            }
             if (healing.bonus) healText += ` + ${healing.bonus}`;
             if (healing.types?.length > 0) {
               healText += ` (${healing.types.join(", ")})`;

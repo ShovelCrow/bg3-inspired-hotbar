@@ -57,7 +57,7 @@ export class BG3Hotbar {
     }
 
     static _registerSettings() {
-        // Add enable UI setting at the top
+        // Core UI Settings
         game.settings.register(CONFIG.MODULE_NAME, 'enableUI', {
             name: 'BG3.Settings.EnableUI.Name',
             hint: 'BG3.Settings.EnableUI.Hint',
@@ -88,26 +88,6 @@ export class BG3Hotbar {
             }
         });
 
-        // Add portrait display defaults setting
-        game.settings.register(CONFIG.MODULE_NAME, 'defaultPortraitPreferences', {
-            name: 'BG3.Settings.DefaultPortraitPreferences.Name',
-            hint: 'BG3.Settings.DefaultPortraitPreferences.Hint',
-            scope: 'client',
-            config: true,
-            type: String,
-            choices: {
-                'token': 'BG3.Settings.DefaultPortraitPreferences.Token',
-                'portrait': 'BG3.Settings.DefaultPortraitPreferences.Portrait'
-            },
-            default: 'token',
-            onChange: () => {
-                // Refresh UI if it exists
-                if (this.manager?.ui?.portraitCard) {
-                    this.manager.ui.portraitCard.loadImagePreference();
-                }
-            }
-        });
-
         game.settings.register(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
             name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
             hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
@@ -126,7 +106,7 @@ export class BG3Hotbar {
             }
         });
 
-        // Add show item names setting
+        // Visual Settings - Appearance
         game.settings.register(CONFIG.MODULE_NAME, 'showItemNames', {
             name: 'Show Item Names',
             hint: 'Display item names below each hotbar item',
@@ -141,7 +121,6 @@ export class BG3Hotbar {
             }
         });
 
-        // Add show item uses setting
         game.settings.register(CONFIG.MODULE_NAME, 'showItemUses', {
             name: 'Show Item Uses',
             hint: 'Display remaining uses in the top-right corner of items',
@@ -156,129 +135,6 @@ export class BG3Hotbar {
             }
         });
 
-        // Add bypass spell preparation check settings
-        game.settings.register(CONFIG.MODULE_NAME, 'bypassSpellPreparationCheckLinked', {
-            name: 'BG3.Settings.BypassSpellPreparationCheckLinked.Name',
-            hint: 'BG3.Settings.BypassSpellPreparationCheckLinked.Hint',
-            scope: 'client',
-            config: true,
-            type: Boolean,
-            default: false,
-            onChange: () => {
-                if (this.manager?.ui) {
-                    this.manager.ui.render();
-                }
-            }
-        });
-
-        game.settings.register(CONFIG.MODULE_NAME, 'bypassSpellPreparationCheckUnlinked', {
-            name: 'BG3.Settings.BypassSpellPreparationCheckUnlinked.Name',
-            hint: 'BG3.Settings.BypassSpellPreparationCheckUnlinked.Hint',
-            scope: 'client',
-            config: true,
-            type: Boolean,
-            default: true,
-            onChange: () => {
-                if (this.manager?.ui) {
-                    this.manager.ui.render();
-                }
-            }
-        });
-        
-        // Add lock settings
-        game.settings.register(CONFIG.MODULE_NAME, 'lockSettings', {
-            name: 'BG3.Settings.LockSettings.Name',
-            hint: 'BG3.Settings.LockSettings.Hint',
-            scope: 'client',
-            config: false,
-            type: Object,
-            default: {
-                deselect: false,
-                opacity: false,
-                dragDrop: false
-            }
-        });
-        
-        // Add master lock state setting
-        game.settings.register(CONFIG.MODULE_NAME, 'masterLockEnabled', {
-            name: 'Master Lock State',
-            hint: 'Whether the master lock is enabled',
-            scope: 'client',
-            config: false,
-            type: Boolean,
-            default: false
-        });
-        
-        // Add tooltip delay setting
-        game.settings.register(CONFIG.MODULE_NAME, 'tooltipDelay', {
-            name: 'BG3.Settings.TooltipDelay.Name',
-            hint: 'BG3.Settings.TooltipDelay.Hint',
-            scope: 'client',
-            config: true,
-            type: Number,
-            range: {
-                min: 0,
-                max: 2000,
-                step: 100
-            },
-            default: 500,
-            onChange: value => {
-                // Update the tooltip delay in the config
-                CONFIG.TOOLTIP_DELAY = value;
-                // Tooltip delay changed
-            }
-        });
-
-        // Auto-populate settings for unlinked tokens
-        game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
-            name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
-            hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
-            scope: 'world',
-            config: true,
-            type: Boolean,
-            default: true
-        });
-
-        // Container 1 auto-populate settings
-        game.settings.register(CONFIG.MODULE_NAME, 'container1AutoPopulate', {
-            name: 'BG3.Settings.Container1AutoPopulate.Name',
-            hint: 'BG3.Settings.Container1AutoPopulate.Hint',
-            scope: 'world',
-            config: false, // Hide from regular settings menu
-            type: Array,
-            default: ["weapon", "feat"],
-        });
-
-        // Container 2 auto-populate settings
-        game.settings.register(CONFIG.MODULE_NAME, 'container2AutoPopulate', {
-            name: 'BG3.Settings.Container2AutoPopulate.Name',
-            hint: 'BG3.Settings.Container2AutoPopulate.Hint',
-            scope: 'world',
-            config: false, // Hide from regular settings menu
-            type: Array,
-            default: ["spell"],
-        });
-
-        // Container 3 auto-populate settings
-        game.settings.register(CONFIG.MODULE_NAME, 'container3AutoPopulate', {
-            name: 'BG3.Settings.Container3AutoPopulate.Name',
-            hint: 'BG3.Settings.Container3AutoPopulate.Hint',
-            scope: 'world',
-            config: false, // Hide from regular settings menu
-            type: Array,
-            default: ["consumable"],
-        });
-
-        // Register the chip selector menu item
-        game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
-            name: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Name'),
-            label: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Configure'),
-            icon: 'fas fa-tags',
-            type: AutoPopulateDefaults,
-            restricted: true
-        });
-
-        // Add highlight style setting
         game.settings.register('bg3-inspired-hotbar', 'highlightStyle', {
             name: game.i18n.localize('BG3.Settings.HighlightStyle.Name'),
             hint: game.i18n.localize('BG3.Settings.HighlightStyle.Hint'),
@@ -292,7 +148,7 @@ export class BG3Hotbar {
             default: 'border'
         });
 
-        // Add fade-out settings
+        // Visual Settings - Opacity and Fading
         game.settings.register(CONFIG.MODULE_NAME, 'normalOpacity', {
             name: 'BG3.Settings.NormalOpacity.Name',
             hint: 'BG3.Settings.NormalOpacity.Hint',
@@ -351,7 +207,174 @@ export class BG3Hotbar {
             }
         });
 
-        // Register setting for storing selected passive features per actor
+        // Portrait Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'defaultPortraitPreferences', {
+            name: 'BG3.Settings.DefaultPortraitPreferences.Name',
+            hint: 'BG3.Settings.DefaultPortraitPreferences.Hint',
+            scope: 'client',
+            config: true,
+            type: String,
+            choices: {
+                'token': 'BG3.Settings.DefaultPortraitPreferences.Token',
+                'portrait': 'BG3.Settings.DefaultPortraitPreferences.Portrait'
+            },
+            default: 'token',
+            onChange: () => {
+                // Refresh UI if it exists
+                if (this.manager?.ui?.portraitCard) {
+                    this.manager.ui.portraitCard.loadImagePreference();
+                }
+            }
+        });
+
+        // Tooltip Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'tooltipDelay', {
+            name: 'BG3.Settings.TooltipDelay.Name',
+            hint: 'BG3.Settings.TooltipDelay.Hint',
+            scope: 'client',
+            config: true,
+            type: Number,
+            range: {
+                min: 0,
+                max: 2000,
+                step: 100
+            },
+            default: 500,
+            onChange: value => {
+                // Update the tooltip delay in the config
+                CONFIG.TOOLTIP_DELAY = value;
+                // Tooltip delay changed
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showMaterialDescription', {
+            name: 'BG3.Settings.ShowMaterialDescription.Name',
+            hint: 'BG3.Settings.ShowMaterialDescription.Hint',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: false,
+            onChange: () => {
+                // Force refresh of any open tooltips
+                if (this.manager?.ui) {
+                    this.manager.ui.render();
+                }
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showDamageRanges', {
+            name: 'BG3.Settings.ShowDamageRanges.Name',
+            hint: 'BG3.Settings.ShowDamageRanges.Hint',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: false,
+            onChange: () => {
+                if (this.manager?.ui) {
+                    this.manager.ui.render();
+                }
+            }
+        });
+
+        // Spell Preparation Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {
+            name: 'BG3.Settings.EnforceSpellPreparationPC.Name',
+            hint: 'BG3.Settings.EnforceSpellPreparationPC.Hint',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: () => {
+                if (this.manager?.ui) {
+                    this.manager.ui.render();
+                }
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC', {
+            name: 'BG3.Settings.EnforceSpellPreparationNPC.Name',
+            hint: 'BG3.Settings.EnforceSpellPreparationNPC.Hint',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: false,
+            onChange: () => {
+                if (this.manager?.ui) {
+                    this.manager.ui.render();
+                }
+            }
+        });
+
+        // Auto-Population Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
+            name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
+            hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
+            scope: 'world',
+            config: true,
+            type: Boolean,
+            default: true
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'container1AutoPopulate', {
+            name: 'BG3.Settings.Container1AutoPopulate.Name',
+            hint: 'BG3.Settings.Container1AutoPopulate.Hint',
+            scope: 'world',
+            config: false,
+            type: Array,
+            default: ["weapon", "feat"],
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'container2AutoPopulate', {
+            name: 'BG3.Settings.Container2AutoPopulate.Name',
+            hint: 'BG3.Settings.Container2AutoPopulate.Hint',
+            scope: 'world',
+            config: false,
+            type: Array,
+            default: ["spell"],
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'container3AutoPopulate', {
+            name: 'BG3.Settings.Container3AutoPopulate.Name',
+            hint: 'BG3.Settings.Container3AutoPopulate.Hint',
+            scope: 'world',
+            config: false,
+            type: Array,
+            default: ["consumable"],
+        });
+
+        // Register the chip selector menu item
+        game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
+            name: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Name'),
+            label: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Configure'),
+            icon: 'fas fa-tags',
+            type: AutoPopulateDefaults,
+            restricted: true
+        });
+
+        // Lock System Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'lockSettings', {
+            name: 'BG3.Settings.LockSettings.Name',
+            hint: 'BG3.Settings.LockSettings.Hint',
+            scope: 'client',
+            config: false,
+            type: Object,
+            default: {
+                deselect: false,
+                opacity: false,
+                dragDrop: false
+            }
+        });
+        
+        game.settings.register(CONFIG.MODULE_NAME, 'masterLockEnabled', {
+            name: 'Master Lock State',
+            hint: 'Whether the master lock is enabled',
+            scope: 'client',
+            config: false,
+            type: Boolean,
+            default: false
+        });
+
+        // Storage Settings
         game.settings.register(CONFIG.MODULE_NAME, 'selectedPassivesByActor', {
             scope: 'client',
             config: false,

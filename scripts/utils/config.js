@@ -70,66 +70,51 @@ export const CONFIG = {
             subclass: "#9370db",   // Medium Purple
             default: "#808080"     // Gray for unknown types
         }
-    },
-    SETTINGS: {
-        normalOpacity: {
-            name: 'Normal Opacity',
-            hint: 'Opacity when mouse is over the hotbar',
-            scope: 'client',
-            config: true,
-            type: Number,
-            default: 1.0,
-            range: {
-                min: 0,
-                max: 1,
-                step: 0.1
-            }
-        },
-        fadedOpacity: {
-            name: 'Faded Opacity',
-            hint: 'Opacity when mouse is away from the hotbar',
-            scope: 'client',
-            config: true,
-            type: Number,
-            default: 0.5,
-            range: {
-                min: 0,
-                max: 1,
-                step: 0.1
-            }
-        },
-        fadeOutDelay: {
-            name: 'Fade Out Delay',
-            hint: 'Delay in seconds before the hotbar fades',
-            scope: 'client',
-            config: true,
-            type: Number,
-            default: 3,
-            range: {
-                min: 0,
-                max: 10,
-                step: 0.5
-            }
-        },
-        lockSettings: {
-            name: 'Lock Settings',
-            hint: 'Hotbar lock settings',
-            scope: 'client',
-            config: false,
-            type: Object,
-            default: {
-                deselect: false,
-                opacity: false,
-                dragDrop: false
-            }
-        }
     }
 };
 
-// Register module settings
-export function registerSettings() {
-    // Register all settings
-    Object.entries(CONFIG.SETTINGS).forEach(([key, setting]) => {
-        game.settings.register(CONFIG.MODULE_NAME, key, setting);
+/**
+ * Helper function to determine token linkage status
+ * @param {Actor} actor - The actor to check
+ * @param {string} tokenId - The token ID to check
+ * @returns {boolean} - Whether the token is considered linked
+ */
+export function isTokenLinked(actor, tokenId) {
+    // Get the token from the canvas
+    const token = canvas.tokens.get(tokenId);
+    
+    // If we have a token, check its document's actorLink property
+    if (token) {
+        return token.document.actorLink;
+    }
+    
+    // If no token found, assume it's linked if it's not a synthetic token actor
+    return !actor.isToken;
+}
+
+/**
+ * Helper function to determine if spell preparation should be enforced
+ * @param {Actor} actor - The actor to check
+ * @param {string} tokenId - The token ID to check
+ * @returns {boolean} - Whether spell preparation should be enforced
+ */
+export function shouldEnforceSpellPreparation(actor, tokenId) {
+    const isLinked = isTokenLinked(actor, tokenId);
+    
+    // Debug log to help track issues
+    console.debug("BG3 Inspired Hotbar | Spell preparation check:", {
+        actorId: actor.id,
+        actorName: actor.name,
+        tokenId: tokenId,
+        isLinked: isLinked,
+        setting: isLinked ? 'PC' : 'NPC'
     });
-} 
+
+    // If linked token (including PCs) - use PC setting
+    if (isLinked) {
+        return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationPC');
+    }
+    
+    // If unlinked token - use NPC setting
+    return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC');
+}

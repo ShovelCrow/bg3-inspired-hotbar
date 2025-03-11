@@ -39,7 +39,13 @@ export class WeaponTooltip extends BaseTooltip {
     const damageData = this.item.system?.damage;
     let damageText = "N/A";
     if (damageData?.base && damageData.base.number && damageData.base.denomination) {
-      damageText = `${damageData.base.number}d${damageData.base.denomination}`;
+      if (game.settings.get('bg3-inspired-hotbar', 'showDamageRanges')) {
+        const min = parseInt(damageData.base.number);
+        const max = parseInt(damageData.base.number) * parseInt(damageData.base.denomination);
+        damageText = `${min}-${max}`;
+      } else {
+        damageText = `${damageData.base.number}d${damageData.base.denomination}`;
+      }
       if (damageData.base.types && damageData.base.types.length > 0) {
         damageText += ` (${damageData.base.types.join(", ")})`;
       }
@@ -47,7 +53,13 @@ export class WeaponTooltip extends BaseTooltip {
     // Versatile damage: if available, add a secondary line
     let versatileText = "";
     if (damageData?.versatile && damageData.versatile.number && damageData.versatile.denomination) {
-      versatileText = `Versatile: ${damageData.versatile.number}d${damageData.versatile.denomination}`;
+      if (game.settings.get('bg3-inspired-hotbar', 'showDamageRanges')) {
+        const min = parseInt(damageData.versatile.number);
+        const max = parseInt(damageData.versatile.number) * parseInt(damageData.versatile.denomination);
+        versatileText = `Versatile: ${min}-${max}`;
+      } else {
+        versatileText = `Versatile: ${damageData.versatile.number}d${damageData.versatile.denomination}`;
+      }
     }
 
     detailsEl.innerHTML = `

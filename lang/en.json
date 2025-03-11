@@ -31,17 +31,25 @@
             "Name": "Enable BG3 Hotbar UI",
             "Hint": "Enable or disable the BG3-style hotbar interface. Disable this if you prefer to use a different hotbar module or the default Foundry hotbar."
         },
+        "ShowDamageRanges": {
+            "Name": "Show Damage as Ranges",
+            "Hint": "Display spell damage as min-max ranges instead of dice notation (e.g., '1-8 fire' instead of '1d8 fire')"
+        },
+        "ShowMaterialDescription": {
+            "Name": "Show Material Components Description",
+            "Hint": "Display the full description of material components in spell tooltips (e.g. 'diamonds worth 300gp, which the spell consumes')"
+        },
         "BypassSpellPreparationCheck": {
             "Name": "Include Unprepared Spells",
             "Hint": "When enabled, all spells will be included in the hotbar regardless of their preparation state"
         },
-        "BypassSpellPreparationCheckLinked": {
-            "Name": "Spell Preparation Check (Player Characters +Linked NPCs)",
-            "Hint": "When enabled, unprepared spells will be included in the hotbar for player characters and linked tokens. By default, only prepared spells are shown."
+        "EnforceSpellPreparationPC": {
+            "Name": "Enforce Spell Preparation (Linked Tokens)",
+            "Hint": "When enabled, linked tokens (including player characters) will only show prepared spells and special spells (innate, at-will, pact, ritual, always). When disabled, all spells will appear."
         },
-        "BypassSpellPreparationCheckUnlinked": {
-            "Name": "Spell Preparation Check (Unlinked NPCs)",
-            "Hint": "When enabled, unprepared spells will be included in the hotbar for unlinked tokens (NPCs). By default, all spells are shown for NPCs."
+        "EnforceSpellPreparationNPC": {
+            "Name": "Enforce Spell Preparation (Unlinked Tokens)",
+            "Hint": "When enabled, unlinked tokens will only show prepared spells and special spells (innate, at-will, pact, ritual, always). When disabled, all spells will appear."
         },
         "CollapseFoundryMacrobar": {
             "Name": "Start Foundry Macrobar Collapsed",

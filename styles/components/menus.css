@@ -15,9 +15,8 @@
   z-index: 110;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   color: #dddddd;
-  /* Position from bottom left of menu to top right of button */
-  bottom: 24px;  /* Height of the button */
-  left: 32px;  /* Width of the button */
+  bottom: 24px;
+  left: 32px;
   transform-origin: bottom left;
 }
 
@@ -52,6 +51,9 @@
 .bg3-hud .settings-menu-item-label {
   color: #dddddd;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bg3-hud .settings-menu-divider {
@@ -81,6 +83,10 @@
   bottom: 24px;  /* Height of the button */
   left: 32px;  /* Width of the button */
   transform-origin: bottom left;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .bg3-hud .lock-context-menu.visible {
@@ -170,6 +176,8 @@ body.dragging-active .effect-tooltip {
 .bg3-hud .menu-container {
   position: fixed;
   min-width: 180px;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
   background: #2a2a2a;
   border: 1px solid #444;
   border-radius: 4px;
@@ -180,6 +188,29 @@ body.dragging-active .effect-tooltip {
   z-index: 110;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   color: #dddddd;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Add positioning logic */
+.bg3-hud .menu-container {
+  /* Remove fixed positioning as it will be handled by JavaScript */
+  position: absolute;
+  /* Ensure the menu doesn't go off the bottom of the screen */
+  bottom: auto;
+  right: auto;
+}
+
+/* When menu would go off bottom of screen, flip it up */
+.bg3-hud .menu-container.flip-up {
+  bottom: 100%;
+  margin-bottom: 5px; /* Add some spacing when flipped up */
+}
+
+/* When menu would go off right of screen, flip it left */
+.bg3-hud .menu-container.flip-left {
+  right: 0;
+  left: auto;
 }
 
 .bg3-hud .menu-container.visible {
@@ -198,7 +229,10 @@ body.dragging-active .effect-tooltip {
   transition: all 0.2s ease;
 }
 
-.bg3-hud .menu-container .menu-item:hover {
+/* Make hover styles specific to context menu items */
+.bg3-hud .menu-container > .menu-item:hover,
+.bg3-hud .settings-menu > .settings-menu-item:hover,
+.bg3-hud .lock-context-menu > .menu-item:hover {
   background: #333;
   border-color: #cc3333;
 }
@@ -222,10 +256,22 @@ body.dragging-active .effect-tooltip {
 .bg3-hud .menu-container .menu-item-label {
   color: #dddddd;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bg3-hud .menu-container .menu-divider {
   height: 1px;
   background: #444;
   margin: 4px 0;
+}
+
+/* Apply the same viewport constraints to other menu types */
+.bg3-hud .settings-menu,
+.bg3-hud .lock-context-menu {
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }

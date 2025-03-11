@@ -60,10 +60,19 @@ export function formatSpellTarget(target, itemType) {
   
   // Creature or object targeting
   if (target.affects?.type) {
-    const type = target.affects.type.charAt(0).toUpperCase() + target.affects.type.slice(1);
-    const count = target.affects.count ? ` (${target.affects.count})` : "";
+    // Add spaces between concatenated words (e.g., "CreatureObject" -> "Creature Object")
+    let type = target.affects.type
+      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+      .replace(/^\s+/, '') // Remove leading space
+      .trim(); // Remove any trailing space
+    
+    // Ensure first letter is capitalized
+    type = type.charAt(0).toUpperCase() + type.slice(1);
+    
+    // Move count to the front if it exists
+    const count = target.affects.count ? `${target.affects.count} ` : "";
     const special = target.affects.special ? ` ${target.affects.special}` : "";
-    return `${type}${count}${special}`.trim();
+    return `${count}${type}${special}`.trim();
   }
   
   return "N/A";
@@ -114,6 +123,23 @@ export function formatSpellProperty(prop, itemType) {
 }
 
 /**
+ * Gets the preparation mode string for spells
+ */
+export function getSpellPreparationMode(preparation) {
+  if (!preparation) return "";
+  
+  const modes = {
+    "prepared": "Prepared",
+    "pact": "Pact Magic",
+    "innate": "Innate",
+    "always": "Always Prepared",
+    "atwill": "At Will"
+  };
+  
+  return modes[preparation.mode] || "";
+}
+
+/**
  * Extracts common details for an item (spell, weapon, feature, etc.) by looking
  * through its activities first (as per dnd5e 4.0) and then falling back to legacy system data.
  */
@@ -123,8 +149,12 @@ export function getItemDetails(itemData) {
     castingTime: "N/A",
     range: "N/A",
     target: "N/A",
-    duration: "N/A"
+    duration: "N/A",
+    preparation: ""
   };
+
+  // Get preparation mode for spells
+  const preparation = itemData.type === "spell" ? getSpellPreparationMode(itemData.system?.preparation) : "";
 
   // Get the activities object directly, preserving _ids
   const activities = itemData.system?.activities || {};
@@ -212,6 +242,7 @@ export function getItemDetails(itemData) {
     target: formatSpellTarget(target, itemData.type),
     duration: formatSpellProperty(duration, itemData.type),
     activityId: actionActivity?._id, // Include the main activity ID in the return
-    activity: actionActivity // Include the full activity data
+    activity: actionActivity,
+    preparation // Add preparation to returned object
   };
 }

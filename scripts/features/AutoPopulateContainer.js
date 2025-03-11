@@ -1,7 +1,7 @@
 // Auto Populate Container Feature
 // Handles populating containers via context menu dialog
 
-import { CONFIG } from '../utils/config.js';
+import { CONFIG, isTokenLinked, shouldEnforceSpellPreparation } from '../utils/config.js';
 import { AutoSort } from './AutoSort.js';
 
 export class AutoPopulateContainer {
@@ -177,17 +177,14 @@ export class AutoPopulateDialog extends Dialog {
         
         // For spells, check preparation state unless bypassed by setting
         if (item.type === "spell") {
-          const token = canvas.tokens.get(this.container.ui.manager.currentTokenId);
-          const bypassSetting = token?.actorLink ? 
-            game.settings.get(CONFIG.MODULE_NAME, 'bypassSpellPreparationCheckLinked') :
-            game.settings.get(CONFIG.MODULE_NAME, 'bypassSpellPreparationCheckUnlinked');
+          const enforcePreparation = shouldEnforceSpellPreparation(this.actor, this.container.ui.manager.currentTokenId);
             
-          if (!bypassSetting) {
+          if (enforcePreparation) {
             const prep = item.system?.preparation;
             // Skip if it's an unprepared "prepared" spell
             if (!prep?.prepared && prep?.mode === "prepared") continue;
             // Include if it's prepared or has a valid casting mode
-            if (!prep?.prepared && !["pact", "atwill", "innate"].includes(prep?.mode)) continue;
+            if (!prep?.prepared && !["pact", "atwill", "innate", "ritual", "always"].includes(prep?.mode)) continue;
           }
         }
         

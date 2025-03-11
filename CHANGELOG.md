@@ -1,3 +1,32 @@
+## [1.5.6] - 2025-03-11
+### Fixed
+#### Auto-Population Spell Preparation
+- Fixed the wording of spell preparation settings to be less confusing. Please check your settings to make sure they are correct
+- Added ritual spells and always prepared spells to the list of special casting modes (alongside innate, at-will, and pact spells) that bypass preparation requirements
+- Updated the macro logic to properly determine if a token's actor data is linked to its sheet using token.document.actorLink
+- Moved the spell preparation check to a helper function in config.js to centralise its logic
+
+#### Ability Card
+- Fixed the positioning of the ability card popup panels sometimes not appearing in the correct location
+- Fixed red border appearing on ability score hover due to menu item styles bleeding into ability card styles
+
+### Updated
+#### Context Menu
+- Improved context menu organization with clearer item-specific vs container-wide options
+- Renamed "Auto-Populate" to "Auto-Populate This Container" and "Sort Items" to "Sort Items in This Container" for clarity
+- Added "Clear Container" option to quickly remove all items from a container
+- Moved "Remove Item" option to only show when right-clicking on an item
+- Added visual divider between item-specific and container-wide options in context menus
+- Fixed context menu positioning to properly anchor to grid cells and stay within viewport bounds
+
+#### Tooltips
+- Added setting to show full material components description in spell tooltips (off by default)
+- (Beta) Added setting to display damage as ranges instead of dice notation (e.g., "1-8 fire" instead of "1d8 fire") (off by default)
+  - Initial implementation for spells, weapons, and features
+  - Needs additional work for handling more complex damage formulas, modifiers and multiple activities
+- Readded spell component display (verbal (vocal?), somatic & material) in tooltips
+- Fixed tooltip positioning to stay within viewport bounds
+
 ## [1.5.5] - 2025-03-11
 ### Fixed
 #### Spell Population Logic

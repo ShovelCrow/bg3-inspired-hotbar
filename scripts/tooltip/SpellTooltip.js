@@ -11,6 +11,17 @@ export class SpellTooltip extends BaseTooltip {
     // Set tooltip type
     this.element.dataset.type = "spell";
 
+    // Get details early for preparation info
+    const details = getItemDetails(this.item.selectedActivity?.data || this.item);
+
+    // Add preparation tag if present
+    if (details.preparation) {
+      const prepTag = document.createElement("div");
+      prepTag.classList.add("tooltip-preparation-tag");
+      prepTag.textContent = details.preparation;
+      this.element.appendChild(prepTag);
+    }
+
     // Icon
     const icon = document.createElement("img");
     icon.src = this.item.img || this.item.icon || "";
@@ -40,8 +51,65 @@ export class SpellTooltip extends BaseTooltip {
     infoEl.textContent = `${levelStr}${schoolStr ? ` - ${schoolStr}` : ''}`;
     this.element.appendChild(infoEl);
 
-    // Get details - if we have a selected activity, pass that to getItemDetails
-    const details = getItemDetails(this.item.selectedActivity?.data || this.item);
+    // Spell Components and Special Properties
+    const componentsEl = document.createElement("div");
+    componentsEl.classList.add("tooltip-spell-components");
+    
+    const components = [];
+    const specialProps = [];
+
+    // Debug: Log the raw spell data
+    console.log("Spell data for", this.item.name, {
+        system: this.item.system,
+        properties: this.item.system?.properties,
+        materials: this.item.system?.materials
+    });
+
+    // Safely get properties with validation and convert Set to Array if needed
+    const properties = this.item.system?.properties ? 
+        (this.item.system.properties instanceof Set ? 
+            Array.from(this.item.system.properties) : 
+            this.item.system.properties) : 
+        [];
+    console.log("Spell properties array for", this.item.name, properties);
+
+    // Only process properties if they exist
+    if (properties.length > 0) {
+        // Handle components
+        if (properties.includes("vocal")) components.push("V");
+        if (properties.includes("somatic")) components.push("S");
+        if (properties.includes("material")) {
+            const materials = this.item.system?.materials;
+            console.log("Material components for", this.item.name, materials);
+            if (materials?.value) {
+                const cost = materials.cost ? ` (${materials.cost}gp)` : '';
+                components.push(`M${cost}`);
+            } else {
+                components.push("M");
+            }
+        }
+
+        // Handle special properties
+        if (properties.includes("concentration")) specialProps.push("Concentration");
+        if (properties.includes("ritual")) specialProps.push("Ritual");
+    } else {
+        console.warn("No valid spell properties found for", this.item.name);
+    }
+    
+    let componentText = components.join(", ");
+    if (specialProps.length > 0) {
+        componentText += ` • ${specialProps.join(" • ")}`;
+    }
+    
+    // Debug: Log the final component text
+    console.log("Final component text for", this.item.name, componentText);
+
+    if (componentText) {
+      componentsEl.textContent = componentText;
+      this.element.appendChild(componentsEl);
+    }
+
+    // Get details for display
     const detailsEl = document.createElement("div");
     detailsEl.classList.add("tooltip-details-list");
 
@@ -50,45 +118,62 @@ export class SpellTooltip extends BaseTooltip {
       detailsEl.dataset.activityId = this.item.selectedActivity.id;
     }
 
-    // Add damage/healing if present in activities
+    // Add damage/healing if present in spell data or activities
     let effectsHtml = [];
-    if (details.activity) {
-      // Check for damage
-      if (details.activity.damage?.parts?.length > 0) {
-        const damagePart = details.activity.damage.parts[0];
-        if (damagePart.number && damagePart.denomination) {
-          let damageText = `${damagePart.number}d${damagePart.denomination}`;
-          if (damagePart.bonus) damageText += ` + ${damagePart.bonus}`;
-          if (damagePart.types?.length > 0) {
-            damageText += ` (${damagePart.types.join(", ")})`;
-          }
-          effectsHtml.push(`<div><strong>Damage:</strong> ${damageText}</div>`);
-        }
-      }
 
-      // Check for healing
-      if (details.activity.healing) {
-        const healing = details.activity.healing;
-        if (healing.number && healing.denomination) {
-          let healText = `${healing.number}d${healing.denomination}`;
-          if (healing.bonus) healText += ` + ${healing.bonus}`;
-          if (healing.types?.length > 0) {
-            healText += ` (${healing.types.join(", ")})`;
-          }
-          effectsHtml.push(`<div><strong>Healing:</strong> ${healText}</div>`);
-        } else if (healing.custom?.enabled && healing.custom.formula) {
-          effectsHtml.push(`<div><strong>Healing:</strong> ${healing.custom.formula}</div>`);
+    // Add material components description if enabled in settings and present
+    if (game.settings.get('bg3-inspired-hotbar', 'showMaterialDescription')) {
+        console.log("Material description check for", this.item.name, {
+            settingEnabled: true,
+            hasMaterialProperty: properties.includes("material"),
+            materials: this.item.system?.materials,
+            materialsValue: this.item.system?.materials?.value
+        });
+        
+        if (properties.includes("material") && this.item.system?.materials?.value) {
+            effectsHtml.push(`<div><strong>Materials:</strong> ${this.item.system.materials.value}</div>`);
         }
-      }
+    }
+    
+    // Check spell data first
+    if (this.item.system?.damage?.parts?.length > 0) {
+        const damagePart = this.item.system.damage.parts[0];
+        let damageText;
+        
+        if (game.settings.get('bg3-inspired-hotbar', 'showDamageRanges')) {
+            // Convert dice notation to range
+            const diceMatch = damagePart[0].match(/(\d+)d(\d+)/);
+            if (diceMatch) {
+                const [_, numDice, diceSize] = diceMatch;
+                const min = parseInt(numDice);
+                const max = parseInt(numDice) * parseInt(diceSize);
+                damageText = `${min}-${max}`;
+            } else {
+                // If it's not dice notation, use as is
+                damageText = damagePart[0];
+            }
+        } else {
+            damageText = damagePart[0];
+        }
+
+        // Add damage type if present
+        if (damagePart[1]) {
+            damageText += ` ${damagePart[1]}`;
+        }
+        
+        effectsHtml.push(`<div><strong>Damage:</strong> ${damageText}</div>`);
     }
 
-    detailsEl.innerHTML = `
+    // Build and set the HTML content
+    const contentHtml = `
       ${details.castingTime ? `<div><strong>Casting Time:</strong> ${details.castingTime}</div>` : ''}
       ${details.range ? `<div><strong>Range:</strong> ${details.range}</div>` : ''}
       ${details.target ? `<div><strong>Target:</strong> ${details.target}</div>` : ''}
       ${details.duration ? `<div><strong>Duration:</strong> ${details.duration}</div>` : ''}
       ${effectsHtml.join('')}
-    `;
+    `.trim();
+
+    detailsEl.innerHTML = contentHtml;
     this.element.appendChild(detailsEl);
 
     // Description header

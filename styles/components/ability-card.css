@@ -1,61 +1,53 @@
 /* Add transition for opacity changes */
 .bg3-hud {
   transition: opacity 0.2s ease;
+  position: relative;
 }
 
 /* ==========================================================================
    Ability Card
    ========================================================================== */
 
-   .bg3-hud .ability-card {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 10px);
-    transform: translateX(-50%);
-    width: 200px;
-    background: rgba(34, 34, 34, 0.95);
-    border: 1px solid #444;
-    border-radius: 4px;
-    padding: 8px;
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    z-index: 75;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  }
-  
-  .bg3-hud .ability-card.visible {
-    display: flex;
-  }
-  
-  /* Ensure all child elements inherit opacity */
-  .bg3-hud .ability-card *,
-  .bg3-hud .ability-button * {
-    opacity: inherit;
-  }
-  
-  .bg3-hud .ability-scores {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
-    text-align: center;
-  }
-  
-  .bg3-hud .ability-box {
-    padding: 8px;
-    background: #333;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .bg3-hud .ability-box:hover {
-    background: #444;
-  }
+.bg3-hud .ability-card {
+  position: absolute;
+  left: 50%;
+  top: -20px;
+  transform: translate(-50%, -100%);
+  width: 100%;
+  background: rgba(34, 34, 34, 0.95);
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 75;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+}
 
-  /* ==========================================================================
+.bg3-hud .ability-card.visible {
+  display: flex;
+}
+
+/* Ensure all child elements inherit opacity */
+.bg3-hud .ability-card *,
+.bg3-hud .ability-button * {
+  opacity: inherit;
+}
+
+/* ==========================================================================
    Ability Score Components
    ========================================================================== */
+
+.bg3-hud .menu-item.ability-row {
+  padding: 0;
+  gap: 0;
+  position: relative;
+  width: 100%;
+  height: 32px;
+  box-sizing: border-box;
+}
 
 .bg3-hud .ability-score-display {
   display: flex;
@@ -64,14 +56,20 @@
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   background: #2a2a2a;
   border: 1px solid transparent;
   box-sizing: border-box;
   width: 100%;
+  height: 32px;
 }
 
 .bg3-hud .ability-score-display:hover {
+  background: #333;
+  border-color: transparent;
+}
+
+.bg3-hud .menu-item.ability-row.expanded .ability-score-display {
   background: #333;
   border-color: #cc3333;
 }
@@ -96,30 +94,28 @@
   font-variant-numeric: tabular-nums;
 }
 
-.bg3-hud .menu-item.ability-row {
-  padding: 0;
-  gap: 0;
-  position: relative;
-  border: 1px solid transparent;
-  background: #2a2a2a;
-}
-
-.bg3-hud .menu-item.ability-row.expanded {
-  background: #333;
-  border-color: #cc3333;
-}
-
 /* ==========================================================================
    Popup Panels
    ========================================================================== */
 
-.bg3-hud .popup-container {
+.bg3-hud .popups-wrapper {
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
+  z-index: 76;
+}
+
+.bg3-hud .popup-container {
+  position: absolute;
   display: none;
+  pointer-events: none;
+  width: 184px; /* Match the width of the ability card content (200px - 16px padding) */
+  height: 32px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .bg3-hud .popup-container.visible {
@@ -128,7 +124,6 @@
 
 .bg3-hud .popup-panel {
   position: absolute;
-  top: 0;
   background: #2a2a2a;
   border: 1px solid #444;
   border-radius: 4px;
@@ -139,6 +134,7 @@
   pointer-events: auto;
   min-width: 140px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  top: 0;
 }
 
 .bg3-hud .popup-panel.visible {
@@ -147,14 +143,14 @@
 
 /* Skills popup (left side) */
 .bg3-hud .popup-panel.skills {
-  right: calc(100% + 18px);
-  margin-right: 0;
+  right: 100%;
+  margin-right: 4px;
 }
 
 /* Saves popup (right side) */
 .bg3-hud .popup-panel.saves {
-  left: calc(100% + 2px);
-  margin-left: 0;
+  left: 100%;
+  margin-left: 4px;
 }
 
 /* Skill and save row styles */
@@ -174,6 +170,7 @@
   margin-right: 8px;
   width: 16px;
   text-align: center;
+  color: #cc3333;
 }
 
 /* Container for icon and label */
@@ -203,7 +200,6 @@
 .bg3-hud .skill-row:hover,
 .bg3-hud .save-row:hover {
   background: #333;
-  border-color: #cc3333;
 }
 
 /* ==========================================================================
@@ -226,13 +222,16 @@
   justify-content: center;
   z-index: 74;
   font-size: 16px;
-  color: #ddd;
+  color: #ffffff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   transition: all 0.2s ease;
 }
 
-.bg3-hud .ability-button:hover,
+.bg3-hud .ability-button:hover {
+  background: rgba(44, 44, 44, 0.95);
+}
+
 .bg3-hud .ability-button.active {
   background: rgba(44, 44, 44, 0.95);
-  border-color: #cc3333;
+  border: 1px solid #cc3333;
 } 
