@@ -10,7 +10,7 @@ Coffee helps me stay up to 2am to write these modules.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/bragginrites)
 
-Check out my other modules:
+## Check out my other modules:
 [Inspect Statblock](https://github.com/BragginRites/inspect-statblock)
 
 ## Installation
