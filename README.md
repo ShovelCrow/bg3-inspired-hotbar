@@ -6,6 +6,13 @@ A Foundry VTT module that reimagines the hotbar interface, drawing inspiration f
 
 ![image](https://github.com/user-attachments/assets/373cfafb-377a-46dc-a619-a91e6b6f4e89)
 
+Coffee helps me stay up to 2am to write these modules.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/bragginrites)
+
+Check out my other modules:
+[Inspect Statblock](https://github.com/BragginRites/inspect-statblock)
+
 ## Installation
 
 1. Open Foundry VTT and navigate to **Add-on Modules**
