@@ -37,17 +37,15 @@ jobs:
       - name: Extract Latest Changelog Entry
         id: get_changelog
         run: |
-          # Extract the latest version entry from CHANGELOG.md
-          # This will match both ## [1.5.5] and ## [1.5.5] - DATE formats
+          # Extract the latest version entry from CHANGELOG.md, skipping the version header
           CHANGELOG=$(awk '
             /^## \[[0-9]+\.[0-9]+\.[0-9]+/ {
               if (p) { exit }
               p=1
-              print
               next
             }
             p { print }
-          ' CHANGELOG.md)
+          ' CHANGELOG.md | sed '/^[[:space:]]*$/d')
           
           # Escape newlines for GitHub Actions
           CHANGELOG="${CHANGELOG//'%'/'%25'}"

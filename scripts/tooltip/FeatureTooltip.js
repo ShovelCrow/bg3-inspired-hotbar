@@ -1,15 +1,13 @@
+// FeatureTooltip.js
 import { BaseTooltip } from "./BaseTooltip.js";
-import { getItemDetails } from "../utils/tooltipUtils.js";
+import { getItemDetails, enrichHTMLClean } from "../utils/tooltipUtils.js";
 
 export class FeatureTooltip extends BaseTooltip {
   buildContent() {
-    // Early return if no item data
     if (!this.item) return;
 
-    // Set tooltip type
     this.element.dataset.type = "feature";
 
-    // Create main content container
     const content = document.createElement("div");
     content.classList.add("tooltip-content");
 
@@ -26,27 +24,29 @@ export class FeatureTooltip extends BaseTooltip {
     nameEl.textContent = this.item.name || "";
     content.appendChild(nameEl);
 
-    // Get common details (activation, range, target, duration)
+    // Common Details
     const details = getItemDetails(this.item);
     if (Object.keys(details).length > 0) {
       const detailsEl = document.createElement("div");
       detailsEl.classList.add("tooltip-details-list");
-      
-      // Feature-specific details
-      const detailsHTML = [];
-      if (details.castingTime) detailsHTML.push(`<div><strong>Action:</strong> ${details.castingTime}</div>`);
-      if (details.range) detailsHTML.push(`<div><strong>Range:</strong> ${details.range}</div>`);
-      if (details.target) detailsHTML.push(`<div><strong>Target:</strong> ${details.target}</div>`);
-      if (details.duration) detailsHTML.push(`<div><strong>Duration:</strong> ${details.duration}</div>`);
 
-      // Add damage/healing if present in activities
+      const detailsHTML = [];
+      if (details.castingTime)
+        detailsHTML.push(`<div><strong>Action:</strong> ${details.castingTime}</div>`);
+      if (details.range)
+        detailsHTML.push(`<div><strong>Range:</strong> ${details.range}</div>`);
+      if (details.target)
+        detailsHTML.push(`<div><strong>Target:</strong> ${details.target}</div>`);
+      if (details.duration)
+        detailsHTML.push(`<div><strong>Duration:</strong> ${details.duration}</div>`);
+
+      // Activity-specific details for damage/healing
       if (details.activity) {
-        // Check for damage
         if (details.activity.damage?.parts?.length > 0) {
           const damagePart = details.activity.damage.parts[0];
           if (damagePart.number && damagePart.denomination) {
             let damageText;
-            if (game.settings.get('bg3-inspired-hotbar', 'showDamageRanges')) {
+            if (game.settings.get("bg3-inspired-hotbar", "showDamageRanges")) {
               const min = parseInt(damagePart.number);
               const max = parseInt(damagePart.number) * parseInt(damagePart.denomination);
               damageText = `${min}-${max}`;
@@ -60,13 +60,11 @@ export class FeatureTooltip extends BaseTooltip {
             detailsHTML.push(`<div><strong>Damage:</strong> ${damageText}</div>`);
           }
         }
-
-        // Check for healing
         if (details.activity.healing) {
           const healing = details.activity.healing;
           if (healing.number && healing.denomination) {
             let healText;
-            if (game.settings.get('bg3-inspired-hotbar', 'showDamageRanges')) {
+            if (game.settings.get("bg3-inspired-hotbar", "showDamageRanges")) {
               const min = parseInt(healing.number);
               const max = parseInt(healing.number) * parseInt(healing.denomination);
               healText = `${min}-${max}`;
@@ -85,18 +83,21 @@ export class FeatureTooltip extends BaseTooltip {
       }
 
       if (this.item.system?.uses) {
-        detailsHTML.push(`<div><strong>Uses:</strong> ${this.item.system.uses.value || 0}/${this.item.system.uses.max || 0}</div>`);
+        detailsHTML.push(
+          `<div><strong>Uses:</strong> ${this.item.system.uses.value || 0}/${
+            this.item.system.uses.max || 0
+          }</div>`
+        );
       }
-      
+
       if (detailsHTML.length > 0) {
-        detailsEl.innerHTML = detailsHTML.join('');
+        detailsEl.innerHTML = detailsHTML.join("");
         content.appendChild(detailsEl);
       }
     }
 
-    // Description
+    // Description Section
     if (this.item.system?.description?.value) {
-      // Description header
       const descHeader = document.createElement("div");
       descHeader.classList.add("tooltip-description-header");
       descHeader.textContent = "Description";
@@ -104,26 +105,17 @@ export class FeatureTooltip extends BaseTooltip {
 
       const descContainer = document.createElement("div");
       descContainer.classList.add("tooltip-description-container");
-      
       const descEl = document.createElement("div");
       descEl.classList.add("tooltip-description");
+      descEl.textContent = "Loading description...";
       descContainer.appendChild(descEl);
-      
-      // Asynchronously enrich the description
-      TextEditor.enrichHTML(this.item.system.description.value, {
-        rollData: this.item.getRollData ? this.item.getRollData() : {},
-        secrets: false,
-        entities: true,
-        links: true,
-        rolls: true,
-        async: true,
-        relativeTo: this.item,
-        activityId: this.item.selectedActivity?.id
-      }).then(enrichedDesc => {
-        descEl.innerHTML = enrichedDesc || "No description available.";
-      });
-      
       content.appendChild(descContainer);
+
+      const description = this.item.system.description.value;
+      const rollData = this.item.getRollData ? this.item.getRollData() : {};
+      enrichHTMLClean(description, rollData).then((cleanedHTML) => {
+        descEl.innerHTML = cleanedHTML || "No description available.";
+      });
     } else {
       const noDesc = document.createElement("div");
       noDesc.classList.add("tooltip-description");
@@ -133,4 +125,4 @@ export class FeatureTooltip extends BaseTooltip {
 
     this.element.appendChild(content);
   }
-} 
+}

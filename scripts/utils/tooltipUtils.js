@@ -123,7 +123,7 @@ export function formatSpellProperty(prop, itemType) {
 }
 
 /**
- * Gets the preparation mode string for spells
+ * Gets the preparation mode string for spells.
  */
 export function getSpellPreparationMode(preparation) {
   if (!preparation) return "";
@@ -144,7 +144,6 @@ export function getSpellPreparationMode(preparation) {
  * through its activities first (as per dnd5e 4.0) and then falling back to legacy system data.
  */
 export function getItemDetails(itemData) {
-  // Ensure we have valid data
   if (!itemData) return {
     castingTime: "N/A",
     range: "N/A",
@@ -153,37 +152,29 @@ export function getItemDetails(itemData) {
     preparation: ""
   };
 
-  // Get preparation mode for spells
   const preparation = itemData.type === "spell" ? getSpellPreparationMode(itemData.system?.preparation) : "";
-
-  // Get the activities object directly, preserving _ids
   const activities = itemData.system?.activities || {};
 
-  // Helper: find the first activity that matches a predicate
   const findActivity = (predicate) => {
     const entry = Object.entries(activities).find(([id, act]) => predicate(act));
     return entry ? { _id: entry[0], ...entry[1] } : null;
   };
 
-  // For weapons (or any item that should have an "action"), look for an attack activity
   let actionActivity = null;
   if (itemData.type === "weapon") {
     actionActivity = findActivity(act => act.type === "attack");
   }
-  // For spells or other item types, you could choose a different predicate
-  // For now, we'll just use the first activity if available
   if (!actionActivity && Object.keys(activities).length > 0) {
     const firstId = Object.keys(activities)[0];
     actionActivity = { _id: firstId, ...activities[firstId] };
   }
 
-  // Extract activation info from the activity if available; otherwise, fallback
   const activation = actionActivity && actionActivity.activation
     ? {
         type: actionActivity.activation.type || "none",
         value: actionActivity.activation.value,
         condition: actionActivity.activation.condition || "",
-        activityId: actionActivity._id // Use the exact _id
+        activityId: actionActivity._id
       }
     : {
         type: itemData.system?.activation?.type || "none",
@@ -191,7 +182,6 @@ export function getItemDetails(itemData) {
         condition: itemData.system?.activation?.condition || ""
       };
 
-  // Extract range info
   let range = {};
   if (actionActivity && actionActivity.range && !actionActivity.range.override) {
     range = {
@@ -203,7 +193,6 @@ export function getItemDetails(itemData) {
       activityId: actionActivity._id
     };
   } else {
-    // Fall back to legacy system range
     range = {
       value: itemData.system?.range?.value || "",
       units: itemData.system?.range?.units || "",
@@ -213,7 +202,6 @@ export function getItemDetails(itemData) {
     };
   }
 
-  // Extract target info
   let target = {};
   if (actionActivity && actionActivity.target && !actionActivity.target.override) {
     target = {
@@ -224,7 +212,6 @@ export function getItemDetails(itemData) {
     target = itemData.system?.target || {};
   }
 
-  // Extract duration info
   let duration = {};
   if (actionActivity && actionActivity.duration && !actionActivity.duration.override) {
     duration = {
@@ -235,14 +222,34 @@ export function getItemDetails(itemData) {
     duration = itemData.system?.duration || {};
   }
 
-  // Return the details with the activity data
   return {
     castingTime: formatCastingTime(activation, itemData.type),
     range: formatSpellProperty(range, itemData.type),
     target: formatSpellTarget(target, itemData.type),
     duration: formatSpellProperty(duration, itemData.type),
-    activityId: actionActivity?._id, // Include the main activity ID in the return
+    activityId: actionActivity?._id,
     activity: actionActivity,
-    preparation // Add preparation to returned object
+    preparation
   };
+}
+
+/**
+ * Enriches HTML using Foundry's TextEditor, then removes inline styles.
+ * This preserves interactive functionality like dice roll bindings.
+ * @param {string} text - The raw description text.
+ * @param {Object} rollData - The roll data context.
+ * @returns {Promise<string>} The cleaned enriched HTML.
+ */
+export async function enrichHTMLClean(text, rollData = {}) {
+  const rawHTML = await TextEditor.enrichHTML(text, {
+    rollData,
+    secrets: false,
+    entities: true,
+    async: true
+  });
+  const tempContainer = document.createElement("div");
+  tempContainer.innerHTML = rawHTML;
+  // Remove inline styles while preserving classes and data attributes
+  tempContainer.querySelectorAll("[style]").forEach(el => el.removeAttribute("style"));
+  return tempContainer.innerHTML;
 }

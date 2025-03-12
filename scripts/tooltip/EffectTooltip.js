@@ -1,52 +1,40 @@
 // EffectTooltip.js
-
 import { BaseTooltip } from "./BaseTooltip.js";
+import { enrichHTMLClean } from "../utils/tooltipUtils.js";
 
 export class EffectTooltip extends BaseTooltip {
   constructor(item) {
-    // Call super first to ensure cleanup happens before any initialization
     super(item);
     this.tooltipType = "effect"; // Set the tooltip type for effects
   }
 
   buildContent() {
-    // Early return if no item data
-    if (!this.item) {
-      return;
-    }
-
-    // Ensure we have an element before proceeding
-    if (!this.element) {
-      return;
-    }
-
-    // Set tooltip type
+    if (!this.item || !this.element) return;
     this.element.dataset.type = "effect";
 
-    // Create main content container
     const content = document.createElement("div");
     content.classList.add("tooltip-content");
 
-    // Header: Icon and name
+    // Header: Icon and Name
     const header = document.createElement("div");
     header.classList.add("effect-tooltip-header");
 
     const icon = document.createElement("img");
-    icon.src = this.item.img || this.item.icon;
+    icon.src = this.item.img || this.item.icon || "";
     icon.classList.add("tooltip-icon");
     header.appendChild(icon);
 
     const nameEl = document.createElement("div");
     nameEl.classList.add("tooltip-name");
-    nameEl.textContent = this.item.name || this.item.label;
+    nameEl.textContent = this.item.name || this.item.label || "";
     header.appendChild(nameEl);
     content.appendChild(header);
 
-    // Details section
+    // Details Section
     const detailsEl = document.createElement("div");
     detailsEl.classList.add("tooltip-details-list");
 
-    // Duration
+    // Duration and Status
     let durationText = "Permanent";
     const duration = this.item.duration || this.item.system?.duration;
     if (duration) {
@@ -63,19 +51,15 @@ export class EffectTooltip extends BaseTooltip {
       }
     }
 
-    // Status
     const isDisabled = this.item.disabled ?? this.item.system?.disabled ?? false;
-    
     detailsEl.innerHTML = `
       <div><strong>Duration:</strong> ${durationText}</div>
       <div><strong>Status:</strong> ${isDisabled ? "Disabled" : "Active"}</div>
     `;
     content.appendChild(detailsEl);
 
-    // Description
-    const description = this.item.description || this.item.system?.description?.value;
-    if (description) {
-      // Description header
+    // Description Section
+    if (this.item.description || this.item.system?.description?.value) {
       const descHeader = document.createElement("div");
       descHeader.classList.add("tooltip-description-header");
       descHeader.textContent = "Description";
@@ -85,21 +69,15 @@ export class EffectTooltip extends BaseTooltip {
       descContainer.classList.add("tooltip-description-container");
       const descEl = document.createElement("div");
       descEl.classList.add("tooltip-description");
+      descEl.textContent = "Loading description...";
       descContainer.appendChild(descEl);
-
-      // Asynchronously enrich the description
-      TextEditor.enrichHTML(description, {
-        rollData: this.item.getRollData ? this.item.getRollData() : {},
-        secrets: false,
-        entities: true,
-        links: true,
-        rolls: true,
-        async: true,
-        relativeTo: this.item
-      }).then(enrichedDesc => {
-        descEl.innerHTML = enrichedDesc || "No description available.";
-      });
       content.appendChild(descContainer);
+
+      const description = this.item.description || this.item.system?.description?.value || "";
+      const rollData = this.item.getRollData ? this.item.getRollData() : {};
+      enrichHTMLClean(description, rollData).then((cleanedHTML) => {
+        descEl.innerHTML = cleanedHTML || "No description available.";
+      });
     } else {
       const noDesc = document.createElement("div");
       noDesc.classList.add("tooltip-description");

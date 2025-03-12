@@ -18,7 +18,7 @@
   position: fixed;
   z-index: 100001;
   pointer-events: auto;
-  background: rgba(34, 34, 34, 0.95);
+  background: rgb(34, 34, 34);
   border: 1px solid #444;
   border-radius: 8px;
   padding: 8px;
@@ -50,7 +50,6 @@
 }
 
 .bg3-hud .custom-tooltip.pinned {
-  opacity: 0.95;
   pointer-events: auto;
 }
 
@@ -219,50 +218,6 @@
   color: #dddddd;
 }
 
-/* General reset for all enriched content */
-.tooltip-enriched-content * {
-  background: none !important;
-  background-color: transparent !important;
-  text-decoration: none;
-  color: inherit;
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* Ensure all enriched content is transparent */
-.bg3-hud .tooltip-enriched-content *,
-.bg3-hud .tooltip-enriched-content *::before,
-.bg3-hud .tooltip-enriched-content *::after {
-  background: none !important;
-  background-color: transparent !important;
-  color: inherit !important;
-  border: none !important;
-}
-
-/* Target specific Foundry enrichers */
-.bg3-hud .tooltip-enriched-content .inline-roll,
-.bg3-hud .tooltip-enriched-content .entity-link,
-.bg3-hud .tooltip-enriched-content .content-link,
-.bg3-hud .tooltip-enriched-content [data-action],
-.bg3-hud .tooltip-enriched-content [data-variantrule] {
-  background: none !important;
-  background-color: transparent !important;
-  text-decoration: underline;
-  color: #cc3333 !important;
-  border: none !important;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-}
-
-/* Override Foundry VTT's dark theme adjustments */
-.bg3-hud .tooltip-enriched-content [style*="background"],
-.bg3-hud .tooltip-enriched-content [style*="background-color"] {
-  background: none !important;
-  background-color: transparent !important;
-}
-
 /* Optional: Adjust dark theme styling to match Foundry */
 :root {
   --tooltip-text-color: #ddd;
@@ -297,5 +252,40 @@
   font-size: 12px;
   color: #aaa;
   font-style: italic;
+}
+
+/* Base tooltip content styling */
+.bg3-hud .tooltip-content a {
+  text-decoration: underline !important;
+}
+
+.bg3-hud .tooltip-content .roll-link-group a,
+.bg3-hud .tooltip-content .roll-link a,
+.bg3-hud .tooltip-content .reference-link a,
+.bg3-hud .tooltip-content .inline-roll,
+.bg3-hud .tooltip-content .entity-link,
+.bg3-hud .tooltip-content .content-link {
+  background: transparent !important;
+  border: none !important;
+  color: inherit !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Style enricher icons */
+.bg3-hud .tooltip-content .inline-roll i,
+.bg3-hud .tooltip-content .entity-link i,
+.bg3-hud .tooltip-content .content-link i,
+.bg3-hud .tooltip-content [data-action] i {
+  color: #dddada !important;
+  margin-left: 5px !important;
+}
+
+/* Style dice icons specifically */
+.bg3-hud .tooltip-content .inline-roll i.fa-dice-d20,
+.bg3-hud .tooltip-content .inline-roll i.fa-dice,
+.bg3-hud .tooltip-content .inline-roll i.fas.fa-dice-d6 {
+  color: #dddada !important;
+  margin-left: 5px !important;
 }
   

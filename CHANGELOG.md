@@ -1,3 +1,9 @@
+## [1.5.8] - 2025-03-12
+### Fixed
+#### Tooltips
+- Fixed tooltip enricher styling to be more consistent. Now I know how to do them, please post in issues if you find one that isn't changed
+- Fixed some core functionality of the tooltip system by centralising logic
+
 ## [1.5.7] - 2025-03-12
 ### Fixed
 #### Portrait Card
