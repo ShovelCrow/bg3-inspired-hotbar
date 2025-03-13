@@ -259,17 +259,35 @@
   text-decoration: underline !important;
 }
 
-.bg3-hud .tooltip-content .roll-link-group a,
-.bg3-hud .tooltip-content .roll-link a,
-.bg3-hud .tooltip-content .reference-link a,
+/* Remove backgrounds and standardize enricher styling */
+.bg3-hud .tooltip-content .roll-link-group,
+.bg3-hud .tooltip-content .roll-link,
+.bg3-hud .tooltip-content .reference-link,
 .bg3-hud .tooltip-content .inline-roll,
 .bg3-hud .tooltip-content .entity-link,
-.bg3-hud .tooltip-content .content-link {
+.bg3-hud .tooltip-content .content-link,
+.bg3-hud .tooltip-content [data-action],
+.bg3-hud .tooltip-content .activity-template,
+.bg3-hud .tooltip-content .save-dc,
+.bg3-hud .tooltip-content .damage-roll {
   background: transparent !important;
   border: none !important;
   color: inherit !important;
   padding: 0 !important;
   margin: 0 !important;
+  text-decoration: underline !important;
+  font-weight: normal !important;
+  box-shadow: none !important;
+}
+
+/* Handle nested enrichers */
+.bg3-hud .tooltip-content .roll-link-group .inline-roll,
+.bg3-hud .tooltip-content .roll-link-group .entity-link,
+.bg3-hud .tooltip-content .roll-link-group .content-link,
+.bg3-hud .tooltip-content .activity-template .inline-roll,
+.bg3-hud .tooltip-content .activity-template .entity-link {
+  display: inline !important;
+  text-decoration: underline !important;
 }
 
 /* Style enricher icons */
@@ -279,6 +297,7 @@
 .bg3-hud .tooltip-content [data-action] i {
   color: #dddada !important;
   margin-left: 5px !important;
+  background: transparent !important;
 }
 
 /* Style dice icons specifically */
@@ -287,5 +306,71 @@
 .bg3-hud .tooltip-content .inline-roll i.fas.fa-dice-d6 {
   color: #dddada !important;
   margin-left: 5px !important;
+  background: transparent !important;
+}
+
+/* Ensure no backgrounds on hover */
+.bg3-hud .tooltip-content .roll-link-group:hover,
+.bg3-hud .tooltip-content .roll-link:hover,
+.bg3-hud .tooltip-content .reference-link:hover,
+.bg3-hud .tooltip-content .inline-roll:hover,
+.bg3-hud .tooltip-content .entity-link:hover,
+.bg3-hud .tooltip-content .content-link:hover,
+.bg3-hud .tooltip-content [data-action]:hover,
+.bg3-hud .tooltip-content .activity-template:hover,
+.bg3-hud .tooltip-content .save-dc:hover,
+.bg3-hud .tooltip-content .damage-roll:hover {
+  background: transparent !important;
+  color: var(--tooltip-link-color) !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any backgrounds from nested elements */
+.bg3-hud .tooltip-content .roll-link-group *,
+.bg3-hud .tooltip-content .roll-link *,
+.bg3-hud .tooltip-content .reference-link *,
+.bg3-hud .tooltip-content .inline-roll *,
+.bg3-hud .tooltip-content .entity-link *,
+.bg3-hud .tooltip-content .content-link *,
+.bg3-hud .tooltip-content [data-action] *,
+.bg3-hud .tooltip-content .activity-template *,
+.bg3-hud .tooltip-content .save-dc *,
+.bg3-hud .tooltip-content .damage-roll * {
+  background: transparent !important;
+}
+
+/* DnD5e specific enrichers */
+.bg3-hud .tooltip-content .save-dc {
+  font-weight: bold !important;
+}
+
+.bg3-hud .tooltip-content .damage-roll {
+  color: var(--tooltip-link-color) !important;
+}
+
+/* Template and target enrichers */
+.bg3-hud .tooltip-content .activity-template {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* Lookup enrichers */
+.bg3-hud .tooltip-content [data-lookup] {
+  color: inherit !important;
+  background: transparent !important;
+  text-decoration: none !important;
+}
+
+/* Success/Failure states */
+.bg3-hud .tooltip-content .success {
+  color: #2ecc71 !important;
+  font-style: italic !important;
+}
+
+.bg3-hud .tooltip-content .failure {
+  color: #e74c3c !important;
+  font-style: italic !important;
 }
   

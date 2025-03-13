@@ -1,3 +1,9 @@
+## [1.5.9] - 2025-03-13
+### Fixed
+#### Tooltips
+- Finally understand how enrichers work and how to use them.
+- Let me know if there are some that haven't been fixed.
+
 ## [1.5.8] - 2025-03-12
 ### Fixed
 #### Tooltips
