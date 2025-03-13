@@ -3,22 +3,29 @@ import { BaseTooltip } from "./BaseTooltip.js";
 import { getItemDetails, enrichHTMLClean } from "../utils/tooltipUtils.js";
 
 export class WeaponTooltip extends BaseTooltip {
-  buildContent() {
+  async buildContent() {
     if (!this.item) return;
 
     this.element.dataset.type = "weapon";
+    
+    // Clear existing content
+    this.element.innerHTML = "";
+    
+    // Create content wrapper
+    const content = document.createElement("div");
+    content.classList.add("tooltip-content");
 
-    // Icon and Name are appended directly to the element
+    // Icon and Name
     const icon = document.createElement("img");
     icon.src = this.item.img || this.item.icon || "";
     icon.alt = this.item.name || "";
     icon.classList.add("tooltip-icon");
-    this.element.appendChild(icon);
+    content.appendChild(icon);
 
     const nameEl = document.createElement("div");
     nameEl.classList.add("tooltip-name");
     nameEl.textContent = this.item.name || "";
-    this.element.appendChild(nameEl);
+    content.appendChild(nameEl);
 
     const details = getItemDetails(this.item);
     const detailsEl = document.createElement("div");
@@ -60,12 +67,12 @@ export class WeaponTooltip extends BaseTooltip {
       ${versatileText ? `<div><strong>${versatileText}</strong></div>` : ""}
       ${this.item.system?.properties && this.item.system.properties.length ? `<div><strong>Properties:</strong> ${this.item.system.properties.join(', ')}</div>` : ""}
     `;
-    this.element.appendChild(detailsEl);
+    content.appendChild(detailsEl);
 
     const descHeader = document.createElement("div");
     descHeader.classList.add("tooltip-description-header");
     descHeader.textContent = "Description";
-    this.element.appendChild(descHeader);
+    content.appendChild(descHeader);
 
     const descContainer = document.createElement("div");
     descContainer.classList.add("tooltip-description-container");
@@ -73,12 +80,20 @@ export class WeaponTooltip extends BaseTooltip {
     descEl.classList.add("tooltip-description");
     descEl.textContent = "Loading description...";
     descContainer.appendChild(descEl);
-    this.element.appendChild(descContainer);
+    content.appendChild(descContainer);
+
+    // Add the content wrapper to the element
+    this.element.appendChild(content);
 
     const description = this.item.system?.description?.value || "";
     const rollData = this.item.getRollData ? this.item.getRollData() : {};
-    enrichHTMLClean(description, rollData).then((cleanedHTML) => {
+    
+    try {
+      const cleanedHTML = await enrichHTMLClean(description, rollData, this.item);
       descEl.innerHTML = cleanedHTML || "No description available.";
-    });
+    } catch (err) {
+      console.warn("BG3 Hotbar - Failed to enrich weapon description:", err);
+      descEl.textContent = "No description available.";
+    }
   }
 }

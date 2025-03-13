@@ -1,9 +1,10 @@
 // SpellTooltip.js
 import { BaseTooltip } from "./BaseTooltip.js";
 import { getSpellLevelString, getSpellSchool, getItemDetails, enrichHTMLClean } from "../utils/tooltipUtils.js";
+import { CONFIG } from "../utils/config.js";
 
 export class SpellTooltip extends BaseTooltip {
-  buildContent() {
+  async buildContent() {
     if (!this.item) return;
 
     this.element.dataset.type = "spell";
@@ -62,22 +63,34 @@ export class SpellTooltip extends BaseTooltip {
       if (properties.includes("somatic")) components.push("S");
       if (properties.includes("material")) {
         const materials = this.item.system?.materials;
-        if (materials?.value) {
+        const showMaterialDesc = game.settings.get('bg3-inspired-hotbar', 'showMaterialDescription');
+        if (materials?.value && showMaterialDesc) {
           const cost = materials.cost ? ` (${materials.cost}gp)` : '';
-          components.push(`M${cost}`);
+          components.push(`M: ${materials.value}${cost}`);
         } else {
-          components.push("M");
+          const cost = materials?.cost ? ` (${materials.cost}gp)` : '';
+          components.push(`M${cost}`);
         }
       }
       if (properties.includes("concentration")) specialProps.push("Concentration");
       if (properties.includes("ritual")) specialProps.push("Ritual");
     }
-    let compText = components.join(", ");
-    if (specialProps.length) {
-      compText += ` • ${specialProps.join(" • ")}`;
+    
+    // Create separate elements for components and special properties
+    if (components.length > 0) {
+      const compDiv = document.createElement("div");
+      compDiv.textContent = components.join(", ");
+      componentsEl.appendChild(compDiv);
     }
-    if (compText) {
-      componentsEl.textContent = compText;
+    
+    if (specialProps.length > 0) {
+      const specialDiv = document.createElement("div");
+      specialDiv.classList.add("tooltip-special-properties");
+      specialDiv.textContent = specialProps.join(" • ");
+      componentsEl.appendChild(specialDiv);
+    }
+    
+    if (components.length > 0 || specialProps.length > 0) {
       content.appendChild(componentsEl);
     }
 
@@ -125,9 +138,15 @@ export class SpellTooltip extends BaseTooltip {
         duration: this.item.selectedActivity.data.duration || {}
       });
     }
-    enrichHTMLClean(description, rollData).then((cleanedHTML) => {
+
+    // Use async/await and pass the item for proper embedding
+    try {
+      const cleanedHTML = await enrichHTMLClean(description, rollData, this.item);
       descEl.innerHTML = cleanedHTML || "No description available.";
-    });
+    } catch (err) {
+      console.warn("BG3 Hotbar - Failed to enrich spell description:", err);
+      descEl.textContent = "No description available.";
+    }
 
     this.element.appendChild(content);
   }

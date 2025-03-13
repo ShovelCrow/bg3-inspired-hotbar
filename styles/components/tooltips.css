@@ -259,88 +259,117 @@
   text-decoration: underline !important;
 }
 
-/* Remove backgrounds and standardize enricher styling */
-.bg3-hud .tooltip-content .roll-link-group,
-.bg3-hud .tooltip-content .roll-link,
-.bg3-hud .tooltip-content .reference-link,
+/* Remove backgrounds from all enrichers */
+.bg3-hud .tooltip-content [data-roll-formula],
+.bg3-hud .tooltip-content [data-action],
+.bg3-hud .tooltip-content [data-lookup],
+.bg3-hud .tooltip-content [data-uuid],
+.bg3-hud .tooltip-content [data-pack],
+.bg3-hud .tooltip-content [data-id],
+.bg3-hud .tooltip-content .dnd5e-enricher,
 .bg3-hud .tooltip-content .inline-roll,
+.bg3-hud .tooltip-content .inline-attack,
 .bg3-hud .tooltip-content .entity-link,
 .bg3-hud .tooltip-content .content-link,
-.bg3-hud .tooltip-content [data-action],
-.bg3-hud .tooltip-content .activity-template,
-.bg3-hud .tooltip-content .save-dc,
-.bg3-hud .tooltip-content .damage-roll {
+.bg3-hud .tooltip-content .roll-link-group a,
+.bg3-hud .tooltip-content .roll-link a,
+.bg3-hud .tooltip-content .reference-link a {
   background: transparent !important;
   border: none !important;
   color: inherit !important;
   padding: 0 !important;
   margin: 0 !important;
-  text-decoration: underline !important;
-  font-weight: normal !important;
   box-shadow: none !important;
+  text-shadow: none !important;
+  border-radius: 0 !important;
 }
 
-/* Handle nested enrichers */
-.bg3-hud .tooltip-content .roll-link-group .inline-roll,
-.bg3-hud .tooltip-content .roll-link-group .entity-link,
-.bg3-hud .tooltip-content .roll-link-group .content-link,
-.bg3-hud .tooltip-content .activity-template .inline-roll,
-.bg3-hud .tooltip-content .activity-template .entity-link {
-  display: inline !important;
+/* Remove specific border radius from roll links */
+.bg3-hud .tooltip-content .roll-link-group a:first-child,
+.bg3-hud .tooltip-content .roll-link a:first-child,
+.bg3-hud .tooltip-content .reference-link a:first-child,
+.bg3-hud .tooltip-content .roll-link-group a:last-child,
+.bg3-hud .tooltip-content .roll-link a:last-child,
+.bg3-hud .tooltip-content .reference-link a:last-child {
+  border-radius: 0 !important;
+}
+
+/* Style interactive/clickable elements as links */
+.bg3-hud .tooltip-content [data-action="roll"],
+.bg3-hud .tooltip-content [data-roll-formula],
+.bg3-hud .tooltip-content .inline-roll,
+.bg3-hud .tooltip-content .entity-link,
+.bg3-hud .tooltip-content .content-link,
+.bg3-hud .tooltip-content a,
+.bg3-hud .tooltip-content .attack-roll,
+.bg3-hud .tooltip-content .roll-link-group a,
+.bg3-hud .tooltip-content .roll-link a,
+.bg3-hud .tooltip-content .reference-link a {
   text-decoration: underline !important;
+  cursor: pointer !important;
 }
 
-/* Style enricher icons */
-.bg3-hud .tooltip-content .inline-roll i,
-.bg3-hud .tooltip-content .entity-link i,
-.bg3-hud .tooltip-content .content-link i,
-.bg3-hud .tooltip-content [data-action] i {
-  color: #dddada !important;
-  margin-left: 5px !important;
-  background: transparent !important;
+/* Attack enricher specific styling */
+.bg3-hud .tooltip-content .attack-description {
+  text-decoration: none !important;
+  cursor: default !important;
 }
 
-/* Style dice icons specifically */
-.bg3-hud .tooltip-content .inline-roll i.fa-dice-d20,
-.bg3-hud .tooltip-content .inline-roll i.fa-dice,
-.bg3-hud .tooltip-content .inline-roll i.fas.fa-dice-d6 {
-  color: #dddada !important;
-  margin-left: 5px !important;
-  background: transparent !important;
+.bg3-hud .tooltip-content .attack-roll {
+  color: inherit !important;
 }
 
-/* Ensure no backgrounds on hover */
-.bg3-hud .tooltip-content .roll-link-group:hover,
-.bg3-hud .tooltip-content .roll-link:hover,
-.bg3-hud .tooltip-content .reference-link:hover,
+/* Hover states for interactive elements */
+.bg3-hud .tooltip-content [data-action="roll"]:hover,
+.bg3-hud .tooltip-content [data-roll-formula]:hover,
 .bg3-hud .tooltip-content .inline-roll:hover,
 .bg3-hud .tooltip-content .entity-link:hover,
 .bg3-hud .tooltip-content .content-link:hover,
-.bg3-hud .tooltip-content [data-action]:hover,
-.bg3-hud .tooltip-content .activity-template:hover,
-.bg3-hud .tooltip-content .save-dc:hover,
-.bg3-hud .tooltip-content .damage-roll:hover {
-  background: transparent !important;
+.bg3-hud .tooltip-content a:hover,
+.bg3-hud .tooltip-content .attack-roll:hover,
+.bg3-hud .tooltip-content .roll-link-group a:hover,
+.bg3-hud .tooltip-content .roll-link a:hover,
+.bg3-hud .tooltip-content .reference-link a:hover {
   color: var(--tooltip-link-color) !important;
-  text-shadow: none !important;
-  box-shadow: none !important;
 }
 
-/* Remove any backgrounds from nested elements */
-.bg3-hud .tooltip-content .roll-link-group *,
-.bg3-hud .tooltip-content .roll-link *,
-.bg3-hud .tooltip-content .reference-link *,
+/* Style icons consistently (remove background, set color) */
+.bg3-hud .tooltip-content [data-roll-formula] i,
+.bg3-hud .tooltip-content [data-action] i,
+.bg3-hud .tooltip-content [data-lookup] i,
+.bg3-hud .tooltip-content [data-uuid] i,
+.bg3-hud .tooltip-content [data-pack] i,
+.bg3-hud .tooltip-content [data-id] i,
+.bg3-hud .tooltip-content .dnd5e-enricher i,
+.bg3-hud .tooltip-content .inline-roll i,
+.bg3-hud .tooltip-content .entity-link i,
+.bg3-hud .tooltip-content .content-link i,
+.bg3-hud .tooltip-content .roll-link-group a i,
+.bg3-hud .tooltip-content .roll-link a i,
+.bg3-hud .tooltip-content .reference-link a i {
+  color: #dddada !important;
+  margin-left: 5px !important;
+  background: transparent !important;
+}
+
+/* Ensure all nested elements have no background */
+.bg3-hud .tooltip-content [data-roll-formula] *,
+.bg3-hud .tooltip-content [data-action] *,
+.bg3-hud .tooltip-content [data-lookup] *,
+.bg3-hud .tooltip-content [data-uuid] *,
+.bg3-hud .tooltip-content [data-pack] *,
+.bg3-hud .tooltip-content [data-id] *,
+.bg3-hud .tooltip-content .dnd5e-enricher *,
 .bg3-hud .tooltip-content .inline-roll *,
 .bg3-hud .tooltip-content .entity-link *,
 .bg3-hud .tooltip-content .content-link *,
-.bg3-hud .tooltip-content [data-action] *,
-.bg3-hud .tooltip-content .activity-template *,
-.bg3-hud .tooltip-content .save-dc *,
-.bg3-hud .tooltip-content .damage-roll * {
+.bg3-hud .tooltip-content .roll-link-group a *,
+.bg3-hud .tooltip-content .roll-link a *,
+.bg3-hud .tooltip-content .reference-link a * {
   background: transparent !important;
 }
 
-/* DnD5e specific enrichers */
+/* Special styling for specific enrichers */
 .bg3-hud .tooltip-content .save-dc {
   font-weight: bold !important;
 }
@@ -356,13 +385,6 @@
   gap: 4px !important;
 }
 
-/* Lookup enrichers */
-.bg3-hud .tooltip-content [data-lookup] {
-  color: inherit !important;
-  background: transparent !important;
-  text-decoration: none !important;
-}
-
 /* Success/Failure states */
 .bg3-hud .tooltip-content .success {
   color: #2ecc71 !important;
@@ -373,4 +395,3 @@
   color: #e74c3c !important;
   font-style: italic !important;
 }
-  

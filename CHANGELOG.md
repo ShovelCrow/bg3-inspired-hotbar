@@ -1,3 +1,12 @@
+## [1.5.10] - 2025-03-13
+### Fixed
+#### Tooltips
+- There's a difference between Foundry enrichers and DnD5e enrichers. I fixed it.
+- Fixed material components setting not working due to incorrect module namespace reference
+- Improved spell tooltip layout:
+  - Moved Concentration and Ritual tags to a separate line for better readability
+  - Added proper spacing between components and special properties
+
 ## [1.5.9] - 2025-03-13
 ### Fixed
 #### Tooltips

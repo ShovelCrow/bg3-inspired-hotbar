@@ -363,23 +363,26 @@ class GridContainer {
       const item = this.data.items[slotKey];
       if (!item || document.body.classList.contains('dragging-active')) return;
 
-      // If tooltip is pinned, just highlight it
-      if (cell._hotbarTooltip?._pinned) {
-        cell._hotbarTooltip.highlight(true);
-        return;
-      }
-
-      // If tooltip already exists, don't create a new one
-      if (cell._hotbarTooltip) return;
-
-      // Get tooltip delay from settings
-      const tooltipDelay = game.settings.get(CONFIG.MODULE_NAME, 'tooltipDelay') || CONFIG.TOOLTIP_DELAY;
-
       // Clear any existing timeout
       if (cell._tooltipTimeout) {
         clearTimeout(cell._tooltipTimeout);
         cell._tooltipTimeout = null;
       }
+
+      // If tooltip is pinned and still exists, just highlight it
+      if (cell._hotbarTooltip?._pinned && cell._hotbarTooltip.element) {
+        cell._hotbarTooltip.highlight(true);
+        return;
+      }
+
+      // Clear any existing unpinned tooltip
+      if (cell._hotbarTooltip && !cell._hotbarTooltip._pinned) {
+        cell._hotbarTooltip.remove();
+        cell._hotbarTooltip = null;
+      }
+
+      // Get tooltip delay from settings
+      const tooltipDelay = game.settings.get(CONFIG.MODULE_NAME, 'tooltipDelay') || CONFIG.TOOLTIP_DELAY;
 
       const createTooltip = async () => {
         try {
@@ -442,9 +445,9 @@ class GridContainer {
         cell._tooltipTimeout = null;
       }
 
-      // Remove tooltip if it exists and isn't pinned
+      // Handle tooltip cleanup
       if (cell._hotbarTooltip) {
-        if (cell._hotbarTooltip._pinned) {
+        if (cell._hotbarTooltip._pinned && cell._hotbarTooltip.element) {
           cell._hotbarTooltip.highlight(false);
         } else {
           cell._hotbarTooltip.remove();

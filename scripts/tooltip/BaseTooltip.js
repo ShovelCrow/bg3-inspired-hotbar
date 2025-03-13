@@ -24,14 +24,21 @@ export class BaseTooltip {
   }
 
   static cleanup(tooltipType) {
+    // Clear any pending timers
     if (this.pendingTooltipTimers.has(tooltipType)) {
       clearTimeout(this.pendingTooltipTimers.get(tooltipType));
       this.pendingTooltipTimers.delete(tooltipType);
     }
+
+    // Clear any existing tooltip
     const existingTooltip = this.currentTooltips.get(tooltipType);
-    if (existingTooltip && !existingTooltip._pinned) {
-      existingTooltip.remove();
+    if (existingTooltip) {
+      // Always remove from currentTooltips to ensure clean state
       this.currentTooltips.delete(tooltipType);
+      // Only call remove() if not pinned to avoid duplicate cleanup
+      if (!existingTooltip._pinned) {
+        existingTooltip.remove();
+      }
     }
   }
 
@@ -128,21 +135,19 @@ export class BaseTooltip {
     if (this._contentUpdateTimeout) {
       clearTimeout(this._contentUpdateTimeout);
     }
-
-    // Debounce the content update
+    // Debounce content update to avoid rapid reflows
     this._contentUpdateTimeout = setTimeout(() => {
       this._actuallyBuildContent();
-    }, 100); // 100ms debounce
+    }, 100);
   }
 
-  _actuallyBuildContent() {
+  async _actuallyBuildContent() {
     if (!this.item || !this.element) return;
     
     // Clear existing content
-    while (this.element.firstChild) {
-      this.element.removeChild(this.element.firstChild);
-    }
+    this.element.innerHTML = "";
 
+    // Create content wrapper
     const content = document.createElement("div");
     content.classList.add("tooltip-content");
 
@@ -186,23 +191,20 @@ export class BaseTooltip {
       const descEl = document.createElement("div");
       descEl.classList.add("tooltip-description");
       descEl.textContent = "Loading description...";
-      descContainer.appendChild(descEl);
-
-      // Prepare roll data and enrich description using our helper
+      
+      // Get roll data from the item
       const rollData = this.item.getRollData ? this.item.getRollData() : {};
-      if (this.item.selectedActivity) {
-        rollData.activity = this.item.selectedActivity.id;
-        Object.assign(rollData, {
-          save: this.item.selectedActivity.data.save || {},
-          range: this.item.selectedActivity.data.range || {},
-          target: this.item.selectedActivity.data.target || {},
-          damage: this.item.selectedActivity.data.damage || {},
-          duration: this.item.selectedActivity.data.duration || {}
-        });
+
+      // Use enrichHTMLClean for consistent enrichment across all tooltips
+      try {
+        const enrichedHTML = await enrichHTMLClean(this.item.system.description.value, rollData, this.item);
+        descEl.innerHTML = enrichedHTML || "No description available.";
+      } catch (err) {
+        console.warn("BG3 Hotbar - Failed to enrich item description:", err);
+        descEl.textContent = "No description available.";
       }
-      enrichHTMLClean(this.item.system.description.value, rollData).then((cleanedHTML) => {
-        descEl.innerHTML = cleanedHTML || "No description available.";
-      });
+      
+      descContainer.appendChild(descEl);
       content.appendChild(descContainer);
     } else {
       const noDesc = document.createElement("div");
@@ -245,25 +247,19 @@ export class BaseTooltip {
       }
     });
 
-    // Throttle mousemove events
     let lastMoveTime = 0;
-    const MOVE_THROTTLE = 50; // Only update every 50ms
-    
+    const MOVE_THROTTLE = 50; // update every 50ms
     const onMouseMove = (evt) => {
       if (!this.element || this._pinned || this._isDragging) return;
-      
       const now = Date.now();
       if (now - lastMoveTime < MOVE_THROTTLE) return;
       lastMoveTime = now;
-      
       this.onCellMouseMove(evt);
     };
-    
     this._cell.addEventListener("mousemove", onMouseMove);
-    
+
     const onMouseLeave = () => {
       if (!this._pinned || this._isDragging) {
-        // Add a small delay before removing to prevent flicker
         setTimeout(() => {
           if (!this.element?.matches(':hover')) {
             this.remove();
@@ -273,7 +269,6 @@ export class BaseTooltip {
         this.highlight(false);
       }
     };
-    
     this._cell.addEventListener("mouseleave", onMouseLeave);
     this._cell.addEventListener("mousedown", (evt) => {
       if (evt.button === 1) {
@@ -283,7 +278,6 @@ export class BaseTooltip {
         else this.pin();
       }
     });
-    
     this._eventHandlers = { onMouseMove, onMouseLeave };
   }
 
@@ -330,11 +324,6 @@ export class BaseTooltip {
     this.element.style.top = `${top}px`;
   }
 
-  onCellMouseLeave() {
-    if (!this._pinned || this._isDragging) this.remove();
-    else this.highlight(false);
-  }
-
   pin() {
     if (!this.element) return;
     this._pinned = true;
@@ -347,6 +336,12 @@ export class BaseTooltip {
     this._pinned = false;
     this.element.classList.remove("pinned");
     BaseTooltip.unregisterPinnedTooltip(this.item);
+    
+    // Clear cell reference to this tooltip
+    if (this._cell && this._cell._hotbarTooltip === this) {
+      this._cell._hotbarTooltip = null;
+    }
+    
     this.remove();
   }
 
@@ -356,18 +351,41 @@ export class BaseTooltip {
       this._contentUpdateTimeout = null;
     }
     
+    // Clean up observers
     this.element?.querySelectorAll("*").forEach((el) => {
       if (el._bgObserver) {
         el._bgObserver.disconnect();
         delete el._bgObserver;
       }
     });
+    
+    // Clean up tooltip registrations
     if (BaseTooltip.currentTooltips.get(this.tooltipType) === this) {
       BaseTooltip.currentTooltips.delete(this.tooltipType);
     }
     if (this._pinned) {
       BaseTooltip.unregisterPinnedTooltip(this.item);
     }
+    
+    // Clean up cell reference
+    if (this._cell) {
+      if (this._eventHandlers) {
+        this._cell.removeEventListener("mousemove", this._eventHandlers.onMouseMove);
+        this._cell.removeEventListener("mouseleave", this._eventHandlers.onMouseLeave);
+      }
+      if (this._cell._hotbarTooltip === this) {
+        this._cell._hotbarTooltip = null;
+      }
+      if (this._cell._hotbarTooltips?.has(this.tooltipType)) {
+        this._cell._hotbarTooltips.delete(this.tooltipType);
+      }
+      if (this._cell._hotbarTooltips?.size === 0) {
+        delete this._cell._hotbarTooltips;
+      }
+      this._cell = null;
+    }
+    
+    // Remove from DOM
     if (this.element && this.element.parentNode) {
       this.element.parentNode.removeChild(this.element);
       const container = document.getElementById("bg3-tooltip-container");
@@ -375,17 +393,7 @@ export class BaseTooltip {
         container.remove();
       }
     }
-    if (this._cell) {
-      if (this._eventHandlers) {
-        this._cell.removeEventListener("mousemove", this._eventHandlers.onMouseMove);
-        this._cell.removeEventListener("mouseleave", this._eventHandlers.onMouseLeave);
-      }
-      this._cell._hotbarTooltips?.delete(this.tooltipType);
-      if (this._cell._hotbarTooltips?.size === 0) {
-        delete this._cell._hotbarTooltips;
-      }
-      this._cell = null;
-    }
+    
     this.element = null;
   }
 

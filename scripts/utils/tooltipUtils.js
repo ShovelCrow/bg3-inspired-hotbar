@@ -60,16 +60,12 @@ export function formatSpellTarget(target, itemType) {
   
   // Creature or object targeting
   if (target.affects?.type) {
-    // Add spaces between concatenated words (e.g., "CreatureObject" -> "Creature Object")
     let type = target.affects.type
-      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-      .replace(/^\s+/, '') // Remove leading space
-      .trim(); // Remove any trailing space
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^\s+/, '')
+      .trim();
     
-    // Ensure first letter is capitalized
     type = type.charAt(0).toUpperCase() + type.slice(1);
-    
-    // Move count to the front if it exists
     const count = target.affects.count ? `${target.affects.count} ` : "";
     const special = target.affects.special ? ` ${target.affects.special}` : "";
     return `${count}${type}${special}`.trim();
@@ -88,7 +84,6 @@ export function formatSpellProperty(prop, itemType) {
   if (propStr === "self") return "Self";
   if (propStr === "touch") return "Touch";
   
-  // Weapon-specific formatting
   if (itemType === "weapon") {
     if (prop.reach && prop.value) {
       return `${prop.reach} ${prop.units} • ${prop.value}/${prop.long} ${prop.units}`.trim();
@@ -101,7 +96,6 @@ export function formatSpellProperty(prop, itemType) {
     }
   }
   
-  // Generic formatting for value and units
   if (prop.value && prop.units) {
     const measurementUnits = ['ft', 'feet', 'mi', 'mile', 'miles', 'm', 'meter', 'meters', 'km', 'yards', 'yd'];
     const firstWord = String(prop.value).toLowerCase();
@@ -234,22 +228,183 @@ export function getItemDetails(itemData) {
 }
 
 /**
- * Enriches HTML using Foundry's TextEditor, then removes inline styles.
- * This preserves interactive functionality like dice roll bindings.
+ * Formats attack data into the extended DND5E style format.
+ * @param {Object} attackData - The attack data from the item.
+ * @param {string} itemType - The type of item (weapon, spell, etc.)
+ * @returns {string} Formatted attack string.
+ */
+export function formatExtendedAttack(attackData, itemType) {
+  if (!attackData) return "N/A";
+
+  const attackBonus = attackData.bonus ? `+${attackData.bonus}` : "+0";
+  const attackType = itemType === "weapon" ? 
+    (attackData.properties?.includes("ranged") ? "Ranged" : "Melee") : 
+    "Spell";
+  
+  let rangeText = "";
+  if (attackData.range) {
+    if (attackData.range.reach) {
+      rangeText = `, reach ${attackData.range.reach} ${attackData.range.units || 'ft'}`;
+    }
+    if (attackData.range.value) {
+      rangeText = `, range ${attackData.range.value}/${attackData.range.long || attackData.range.value} ${attackData.range.units || 'ft'}`;
+    }
+  }
+
+  return `${attackType} Attack Roll: [${attackBonus}]${rangeText}`;
+}
+
+/**
+ * Formats damage data into the extended DND5E style format.
+ * @param {Object} damageData - The damage data from the item.
+ * @param {boolean} average - Whether to show average damage.
+ * @returns {string} Formatted damage string.
+ */
+export function formatExtendedDamage(damageData, average = false) {
+  if (!damageData?.base) return "N/A";
+
+  const { number, denomination, types } = damageData.base;
+  if (!number || !denomination) return "N/A";
+
+  let damageText;
+  if (average) {
+    const avgDamage = Math.floor((number * (parseInt(denomination) + 1)) / 2);
+    damageText = `${avgDamage}`;
+  } else {
+    damageText = `${number}d${denomination}`;
+  }
+
+  const damageType = types?.length > 0 ? ` ${types[0]}` : "";
+  
+  return `Hit: ${damageText} (${number}d${denomination})${damageType} damage`;
+}
+
+/**
+ * Formats save data into the extended DND5E style format.
+ * @param {Object} saveData - The save data from the item.
+ * @param {string} ability - The ability to save with (str, dex, etc.).
+ * @param {number} dc - The save DC.
+ * @returns {string} Formatted save string.
+ */
+export function formatExtendedSave(saveData, ability, dc) {
+  if (!saveData || !ability) return "N/A";
+  
+  const abilityNames = {
+    str: "Strength",
+    dex: "Dexterity",
+    con: "Constitution",
+    int: "Intelligence",
+    wis: "Wisdom",
+    cha: "Charisma"
+  };
+
+  const abilityName = abilityNames[ability.toLowerCase()] || ability;
+  return dc ? `DC ${dc} ${abilityName} saving throw` : `[${abilityName}] saving throw`;
+}
+
+/**
+ * Formats check data into the extended DND5E style format.
+ * @param {Object} checkData - The check data.
+ * @param {string} ability - The ability to check (str, dex, etc.).
+ * @param {string} skill - Optional skill name.
+ * @returns {string} Formatted check string.
+ */
+export function formatExtendedCheck(checkData, ability, skill) {
+  if (!checkData || !ability) return "N/A";
+  
+  const abilityNames = {
+    str: "Strength",
+    dex: "Dexterity",
+    con: "Constitution",
+    int: "Intelligence",
+    wis: "Wisdom",
+    cha: "Charisma"
+  };
+
+  const abilityName = abilityNames[ability.toLowerCase()] || ability;
+  return skill ? `${skill} (${abilityName}) check` : `${abilityName} check`;
+}
+
+/**
+ * Formats heal data into the extended DND5E style format.
+ * @param {Object} healData - The healing data.
+ * @param {boolean} average - Whether to show average healing.
+ * @returns {string} Formatted healing string.
+ */
+export function formatExtendedHeal(healData, average = false) {
+  if (!healData?.number || !healData?.denomination) return "N/A";
+
+  const { number, denomination, bonus = 0 } = healData;
+  
+  let healText;
+  if (average) {
+    const avgHeal = Math.floor((number * (parseInt(denomination) + 1)) / 2) + parseInt(bonus || 0);
+    healText = `${avgHeal}`;
+  } else {
+    healText = `${number}d${denomination}${bonus ? ` + ${bonus}` : ''}`;
+  }
+  
+  return `Heal: ${healText} hit points`;
+}
+
+/**
+ * Formats lookup references in the DND5E style.
+ * @param {string} type - The type of reference (rule, item, etc.).
+ * @param {string} target - The target to look up.
+ * @returns {string} Formatted lookup string.
+ */
+export function formatLookup(type, target) {
+  if (!type || !target) return "N/A";
+  return `[${target}]`;
+}
+
+/**
+ * Formats reference links in the DND5E style.
+ * @param {string} type - The type of reference (spell, feat, etc.).
+ * @param {string} target - The target to reference.
+ * @returns {string} Formatted reference string.
+ */
+export function formatReference(type, target) {
+  if (!type || !target) return "N/A";
+  return `[${type}: ${target}]`;
+}
+
+/**
+ * Enriches HTML using Foundry's TextEditor and embed functionality.
  * @param {string} text - The raw description text.
  * @param {Object} rollData - The roll data context.
- * @returns {Promise<string>} The cleaned enriched HTML.
+ * @param {Item} [item] - The optional item document for embedding
+ * @returns {Promise<string>} The enriched HTML.
  */
-export async function enrichHTMLClean(text, rollData = {}) {
-  const rawHTML = await TextEditor.enrichHTML(text, {
+export async function enrichHTMLClean(text, rollData = {}, item = null) {
+  if (!text) return "";
+  
+  // Handle item embedding
+  if (item?.uuid && !text.trim().startsWith("@Embed[")) {
+    text = `@Embed[${item.uuid}]`;
+  }
+
+  // Process through Foundry's enricher
+  const enriched = await TextEditor.enrichHTML(text, {
     rollData,
     secrets: false,
-    entities: true,
+    documents: true,
+    links: true,
+    rolls: true,
     async: true
   });
-  const tempContainer = document.createElement("div");
-  tempContainer.innerHTML = rawHTML;
-  // Remove inline styles while preserving classes and data attributes
-  tempContainer.querySelectorAll("[style]").forEach(el => el.removeAttribute("style"));
-  return tempContainer.innerHTML;
+  
+  const div = document.createElement("div");
+  div.innerHTML = enriched;
+
+  // Remove figcaptions from embeds
+  div.querySelectorAll("figcaption").forEach(el => el.remove());
+  
+  // Make all interactive elements clickable
+  div.querySelectorAll('[data-roll-formula], [data-action], .inline-roll, .content-link, .entity-link').forEach(el => {
+    el.style.cursor = 'pointer';
+    el.style.pointerEvents = 'auto';
+  });
+  
+  return div.innerHTML;
 }

@@ -3,7 +3,7 @@ import { BaseTooltip } from "./BaseTooltip.js";
 import { getItemDetails, enrichHTMLClean } from "../utils/tooltipUtils.js";
 
 export class FeatureTooltip extends BaseTooltip {
-  buildContent() {
+  async buildContent() {
     if (!this.item) return;
 
     this.element.dataset.type = "feature";
@@ -113,9 +113,15 @@ export class FeatureTooltip extends BaseTooltip {
 
       const description = this.item.system.description.value;
       const rollData = this.item.getRollData ? this.item.getRollData() : {};
-      enrichHTMLClean(description, rollData).then((cleanedHTML) => {
+      
+      // Use async/await and proper error handling
+      try {
+        const cleanedHTML = await enrichHTMLClean(description, rollData, this.item);
         descEl.innerHTML = cleanedHTML || "No description available.";
-      });
+      } catch (err) {
+        console.warn("BG3 Hotbar - Failed to enrich feature description:", err);
+        descEl.textContent = "No description available.";
+      }
     } else {
       const noDesc = document.createElement("div");
       noDesc.classList.add("tooltip-description");
