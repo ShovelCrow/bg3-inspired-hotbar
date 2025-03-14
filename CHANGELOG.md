@@ -1,3 +1,8 @@
+## [1.6.2] - 2025-03-14
+### Fixed
+#### CSS Variables and Organization
+Included base.css file to include with `.bg3-hud` class to prevent style conflicts with other modules
+
 ## [1.6.1] - 2025-03-14
 ### Fixed
 #### CSS Scoping
@@ -5,6 +10,8 @@
 - Added proper `.bg3-hud` scoping to effects container CSS to prevent style conflicts with other modules
 - Added proper `.bg3-hud` scoping to filter container CSS to prevent style conflicts with other modules
 - Added proper `.bg3-hud` scoping to portrait container CSS to prevent style conflicts with other modules
+- Added proper `.bg3-hud` scoping to base hotbar CSS to prevent style conflicts with other modules
+- Replaced hardcoded z-index values with CSS variables for better stacking context management
 - Removed redundant `bg3-hud` class from individual passive feature icons since they inherit parent scoping
 - Removed redundant `bg3-hud` class from individual effect icons since they inherit parent scoping
 - Removed redundant `bg3-hud` class from filter container elements since they inherit parent scoping

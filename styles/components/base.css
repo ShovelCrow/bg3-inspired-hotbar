@@ -27,7 +27,7 @@
    Base Container Styles
    ========================================================================== */
 
-#bg3-hotbar-container {
+.bg3-hud #bg3-hotbar-container {
   position: fixed;
   bottom: 10px;
   left: 50%;
@@ -40,32 +40,32 @@
   align-items: stretch;
   gap: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  z-index: 20;
+  z-index: var(--bg3-z-grid);
   font-family: "Signika", sans-serif;
 }
 
-.hotbar-container {
+.bg3-hud .hotbar-container {
   position: fixed;
   bottom: 10px;
   left: 220px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 70;
+  z-index: var(--bg3-z-base);
 }
 
 /* Ensure cursor inheritance throughout the module */
-.hotbar-container,
-.hotbar-subcontainer,
-.hotbar-cell,
-.hotbar-item,
-.hotbar-item-name,
-.hotbar-item-uses {
+.bg3-hud .hotbar-container,
+.bg3-hud .hotbar-subcontainer,
+.bg3-hud .hotbar-cell,
+.bg3-hud .hotbar-item,
+.bg3-hud .hotbar-item-name,
+.bg3-hud .hotbar-item-uses {
   cursor: inherit !important;
 }
 
-.drag-cursor,
-.drag-cursor * {
+.bg3-hud .drag-cursor,
+.bg3-hud .drag-cursor * {
   cursor: var(--cursor-drag) !important;
 }
 
@@ -73,7 +73,7 @@
    Grid Layout
    ========================================================================== */
 
-.hotbar-subcontainer {
+.bg3-hud .hotbar-subcontainer {
   display: grid;
   grid-template-columns: repeat(var(--cols), var(--cell-size));
   grid-template-rows: repeat(var(--rows), var(--cell-size));
@@ -91,7 +91,7 @@
    Grid Cells
    ========================================================================== */
 
-.hotbar-cell {
+.bg3-hud .hotbar-cell {
     width: var(--bg3-cell-size);
     height: var(--bg3-cell-size);
     background: #333;
@@ -110,17 +110,17 @@
     user-select: none;
 }
 
-.hotbar-cell:hover {
+.bg3-hud .hotbar-cell:hover {
     border-color: #666;
     background: var(--bg3-background-highlight);
 }
 
-.hotbar-cell.dragover {
+.bg3-hud .hotbar-cell.dragover {
     background: #444;
     border-color: #888;
 }
 
-.hotbar-cell.dragging {
+.bg3-hud .hotbar-cell.dragging {
     opacity: 0.5;
 }
 
@@ -128,33 +128,33 @@
    Drag Bar
    ========================================================================== */
 
-.hotbar-drag-bar {
+.bg3-hud .hotbar-drag-bar {
   width: 4px;
   background: #cc3333;
   cursor: ew-resize;
   align-self: stretch;
   border-radius: 2px;
   transition: background-color 0.2s ease, transform 0.2s ease;
-  z-index: 25;
+  z-index: var(--bg3-z-grid);
   margin: 4px;
   right: 2px;
   position: relative;
 }
 
-.hotbar-drag-bar:hover, 
-.hotbar-drag-bar.dragging {
+.bg3-hud .hotbar-drag-bar:hover, 
+.bg3-hud .hotbar-drag-bar.dragging {
   background: #d10000;
   transform: scaleX(1.5);
 }
 
-.drag-indicator {
+.bg3-hud .drag-indicator {
   position: fixed;
   width: 4px;
   background: #ff6400;
   box-shadow: 0 0 8px rgba(255, 100, 0, 0.8);
   border-radius: 2px;
   pointer-events: none;
-  z-index: 1000;
+  z-index: var(--bg3-z-filter-container);
   display: none;
   top: 0;
   left: 0;
@@ -162,7 +162,7 @@
   transform: translateX(-50%);
 }
 
-.drag-indicator.visible {
+.bg3-hud .drag-indicator.visible {
   display: block;
 }
 
@@ -170,7 +170,7 @@
    Hotbar Items
    ========================================================================== */
 
-.hotbar-item {
+.bg3-hud .hotbar-item {
     width: calc(100% - 4px);
     height: calc(100% - 4px);
     object-fit: cover;
@@ -183,11 +183,11 @@
     pointer-events: none;
 }
 
-.hotbar-item.depleted {
+.bg3-hud .hotbar-item.depleted {
     filter: grayscale(100%) brightness(60%);
 }
 
-.hotbar-item-name {
+.bg3-hud .hotbar-item-name {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -203,7 +203,7 @@
     pointer-events: none;
 }
 
-.hotbar-item-uses {
+.bg3-hud .hotbar-item-uses {
     position: absolute;
     top: 2px;
     right: 2px;
@@ -216,6 +216,6 @@
     pointer-events: none;
 }
 
-.hotbar-item-uses.depleted {
+.bg3-hud .hotbar-item-uses.depleted {
     color: #ff4444;
 } 
