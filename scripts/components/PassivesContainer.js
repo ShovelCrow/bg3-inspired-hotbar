@@ -254,7 +254,7 @@ export class PassivesContainer {
             },
             default: "save"
         }, {
-            classes: ["configure-passives"],
+            classes: ["configure-passives", "bg3-hud-dialog"],
             resizable: false
         });
         

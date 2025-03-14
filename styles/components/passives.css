@@ -62,11 +62,11 @@
 }
 
 /* Dialog styles */
-.bg3-hud .configure-passives {
+.bg3-hud-dialog.configure-passives {
     min-width: 500px !important;
 }
 
-.bg3-hud .passives-row {
+.bg3-hud-dialog.configure-passives .passives-row {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -77,44 +77,46 @@
     transition: border-color 0.2s ease;
 }
 
-.bg3-hud .passives-row img {
-    width: 48px;
-    height: 48px;
+.bg3-hud-dialog.configure-passives .passives-row img {
+    width: 48px !important;
+    height: 48px !important;
     display: block;
+    object-fit: contain;
+    flex-shrink: 0;
 }
 
-.bg3-hud .passives-row:hover {
+.bg3-hud-dialog.configure-passives .passives-row:hover {
     border-color: #3498db;
 }
 
-.bg3-hud .configure-passives .passives-list {
+.bg3-hud-dialog.configure-passives .passives-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     max-height: 800px;
     overflow-y: auto;
-    padding-right: 8px; /* Add padding for the scrollbar */
+    padding-right: 8px;
 }
 
-.bg3-hud .configure-passives .dialog-content {
+.bg3-hud-dialog.configure-passives .dialog-content {
     padding: 8px;
 }
 
 /* Scrollbar styling */
-.bg3-hud .configure-passives .passives-list::-webkit-scrollbar {
+.bg3-hud-dialog.configure-passives .passives-list::-webkit-scrollbar {
     width: 8px;
 }
 
-.bg3-hud .configure-passives .passives-list::-webkit-scrollbar-track {
+.bg3-hud-dialog.configure-passives .passives-list::-webkit-scrollbar-track {
     background: var(--bg3-background);
     border-radius: 6px;
 }
 
-.bg3-hud .configure-passives .passives-list::-webkit-scrollbar-thumb {
+.bg3-hud-dialog.configure-passives .passives-list::-webkit-scrollbar-thumb {
     background: var(--bg3-border);
     border-radius: 4px;
 }
 
-.bg3-hud .configure-passives .passives-list::-webkit-scrollbar-thumb:hover {
+.bg3-hud-dialog.configure-passives .passives-list::-webkit-scrollbar-thumb:hover {
     background: var(--bg3-background-highlight);
 } 

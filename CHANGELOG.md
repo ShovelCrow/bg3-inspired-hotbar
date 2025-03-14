@@ -1,3 +1,8 @@
+## [1.6.3] - 2025-03-14
+### Fixed
+#### Passive Features Dialog
+- Fixed css scoping to prevent style conflicts with other modules and fixed scoping with passives dialog
+
 ## [1.6.2] - 2025-03-14
 ### Fixed
 #### CSS Variables and Organization
