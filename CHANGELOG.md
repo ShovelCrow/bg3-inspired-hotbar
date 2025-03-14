@@ -1,3 +1,15 @@
+## [1.7.1] - 2025-03-14
+### Added
+#### Activity Support
+- Added support for dragging activities directly to the hotbar (#10)
+- Activities are now recognized by their unique UUID format (Actor.id.Item.id.Activity.id)
+- Activities bypass character sheet addition and are placed directly on the hotbar
+- Improved handling of activity data to ensure proper display and functionality
+- Added proper icon handling for activities:
+  - Uses provided icon from data if available
+  - Defaults to system activity type icons (attack.svg, heal.svg, etc.)
+
+### Fixed
 ## [1.7.0] - 2025-03-14
 ### Added
 #### Drag and Drop from other sources
