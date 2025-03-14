@@ -10,6 +10,8 @@ export class FilterContainer {
         this.selectedSpellLevel = { level: null, isPact: false };
         this.featuresEnabled = false;
         this.lastKnownActorId = null;
+        this.usedActions = new Set(); // Track used actions
+        this.currentTokenId = null; // Store current token ID
         this._createContainer();
         this._setupHotbarListeners();
     }
@@ -74,19 +76,26 @@ export class FilterContainer {
         button.style.borderColor = this.selectedActionType === type ? color : "transparent";
         button.innerHTML = symbol;
 
+        // Add used state if action was previously used
+        if (this.usedActions.has(type)) {
+            button.classList.add('used');
+        }
+
         button.addEventListener("mouseenter", () => {
-            if (this.selectedActionType !== type) {
+            if (this.selectedActionType !== type && !this.usedActions.has(type)) {
                 button.style.background = CONFIG.COLORS.BACKGROUND_HIGHLIGHT;
             }
         });
 
         button.addEventListener("mouseleave", () => {
-            if (this.selectedActionType !== type) {
+            if (this.selectedActionType !== type && !this.usedActions.has(type)) {
                 button.style.background = "transparent";
             }
         });
 
         button.addEventListener("click", () => {
+            if (this.usedActions.has(type)) return; // Prevent selection if used
+            
             if (this.selectedActionType === type) {
                 this.selectedActionType = null;
                 button.style.borderColor = "transparent";
@@ -100,7 +109,46 @@ export class FilterContainer {
             this._updateActionTypeHighlights();
         });
 
+        // Add right-click handler for toggling used state
+        button.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            this._toggleActionUsed(type, button);
+        });
+
         return button;
+    }
+
+    _toggleActionUsed(type, button) {
+        if (this.usedActions.has(type)) {
+            // Re-enable the action
+            this.usedActions.delete(type);
+            button.classList.remove('used');
+            
+            // If this was the selected action type, clear it
+            if (this.selectedActionType === type) {
+                this.selectedActionType = null;
+                button.style.borderColor = "transparent";
+                this._updateActionTypeHighlights();
+            }
+        } else {
+            // Mark action as used
+            this.usedActions.add(type);
+            button.classList.add('used');
+            
+            // If this was the selected action type, clear it
+            if (this.selectedActionType === type) {
+                this.selectedActionType = null;
+                button.style.borderColor = "transparent";
+                this._updateActionTypeHighlights();
+            }
+        }
+    }
+
+    // Add method to reset used actions (e.g., for when resting)
+    resetUsedActions() {
+        this.usedActions.clear();
+        // Re-render the entire filter container to ensure visual update
+        this.render();
     }
 
     _createSpellLevelButton(level, spellLevel, isPact = false) {
@@ -380,6 +428,23 @@ export class FilterContainer {
         this._updateFeatureHighlights();
     }
 
+    // Add method to check if this is the current combatant's turn
+    isCurrentCombatant(tokenId) {
+        if (!game.combat?.current?.tokenId) return false;
+        return game.combat.current.tokenId === tokenId;
+    }
+
+    // Add method to handle combat turn updates
+    handleCombatTurnUpdate() {
+        const token = canvas.tokens.get(this.hotbarUI.manager.currentTokenId);
+        if (!token) return;
+
+        // If this is the token's turn, reset their actions
+        if (this.isCurrentCombatant(token.id)) {
+            this.resetUsedActions();
+        }
+    }
+
     render() {
         while (this.contentWrapper.firstChild) {
             this.contentWrapper.removeChild(this.contentWrapper.firstChild);
@@ -445,6 +510,12 @@ export class FilterContainer {
         }
 
         this.element.style.display = this.isVisible ? "flex" : "none";
+
+        // Store the current token ID
+        const token = canvas.tokens.get(this.hotbarUI.manager.currentTokenId);
+        if (token) {
+            this.currentTokenId = token.id;
+        }
     }
 
     toggle() {
@@ -473,5 +544,6 @@ export class FilterContainer {
         this.hotbarUI = null;
         this.element = null;
         this.lastKnownActorId = null;
+        this.usedActions.clear();
     }
 } 

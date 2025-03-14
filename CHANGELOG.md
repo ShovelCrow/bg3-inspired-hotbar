@@ -1,3 +1,34 @@
+## [1.6.0] - 2025-03-14
+### Fixed
+#### Permissions UI Notification for Auto-Population
+- Fixed issue where players would see "Unable to update actor token lack permission" warnings when DM places down actors with auto-populate enabled
+- Added proper permission checks before attempting to modify token data during auto-population
+- Added graceful handling of permission restrictions to prevent error messages
+- Added debug logging for permission-related issues to help with troubleshooting
+
+#### Macrobar Collapse Setting
+- Fixed issue where the macrobar would repeatedly collapse on every render when the collapse setting was enabled
+- Modified the collapse behavior to only trigger once on initial page load
+- Improved performance by removing redundant collapse checks
+
+### Improved
+#### Passive Feature Tooltips
+- Improved passive feature tooltips to be more streamlined and accurate to the core of what they are
+- A feature is now correctly identified as passive if it has no action type (e.g., Darkvision, Damage Resistances)
+- Passive features now only show icon, name, and description (labeled as "Passive Effect")
+- Removed action details and uses from passive feature tooltips as they are not applicable
+- Note: If a feature is not displaying in this container, verify the feature's configuration in your character sheet - a passive feature is one with no action type
+
+### Added
+#### Action Tracking in Filter Container
+- Added ability to mark action filters as used via right-click in the filter container
+- Used action filters are visually indicated with desaturation and darkening
+- Used action filters cannot be selected for filtering until re-enabled
+- Right-click again to re-enable a used action
+- Action filters automatically reset on:
+  - Combat token's turn starts
+  - Combat ends
+
 ## [1.5.10] - 2025-03-13
 ### Fixed
 #### Tooltips

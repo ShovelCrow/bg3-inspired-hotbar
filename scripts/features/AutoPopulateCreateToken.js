@@ -86,6 +86,12 @@ export class AutoPopulateCreateToken {
         if (!token?.actor || token.actorLink) return;
 
         try {
+            // Check if user has permission to modify this token
+            if (!token.actor.canUserModify(game.user, "update")) {
+                console.debug("BG3 Inspired Hotbar | User lacks permission to modify token actor");
+                return;
+            }
+
             // Get settings for each container
             const container1Setting = game.settings.get(CONFIG.MODULE_NAME, 'container1AutoPopulate');
             const container2Setting = game.settings.get(CONFIG.MODULE_NAME, 'container2AutoPopulate');
@@ -120,8 +126,10 @@ export class AutoPopulateCreateToken {
                 await this._populateContainerWithSettings(token.actor, tempManager, 2, container3Setting);
             }
 
-            // Save the changes
-            await tempManager.persist();
+            // Save the changes only if we still have permission
+            if (token.actor.canUserModify(game.user, "update")) {
+                await tempManager.persist();
+            }
 
         } catch (error) {
             console.error("BG3 Inspired Hotbar | Error auto-populating unlinked token hotbar:", error);

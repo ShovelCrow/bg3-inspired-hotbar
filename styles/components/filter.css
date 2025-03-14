@@ -40,12 +40,27 @@
     font-size: 14px;
     box-sizing: border-box;
     background: transparent;
+    filter: saturate(1);
 }
 
 .action-type-button:hover,
 .feature-button:hover,
 .spell-level-button:hover {
     background: var(--bg3-background-highlight);
+}
+
+.action-type-button.used,
+.feature-button.used,
+.spell-level-button.used {
+    filter: saturate(0.3) brightness(0.7);
+    cursor: default;
+    opacity: 0.7;
+}
+
+.action-type-button.used:hover,
+.feature-button.used:hover,
+.spell-level-button.used:hover {
+    background: transparent;
 }
 
 .spell-level-wrapper {

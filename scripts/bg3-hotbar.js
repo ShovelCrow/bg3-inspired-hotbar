@@ -50,7 +50,7 @@ export class BG3Hotbar {
         }
         
         const collapseMacrobar = game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
-        // Applying macrobar collapse setting
+        // Applying macrobar collapse setting only on initial page load
         if (collapseMacrobar) {
             ui.hotbar.collapse();
         }
@@ -530,38 +530,27 @@ export class BG3Hotbar {
             }
         });
 
-        // Rest hooks for spell slot updates
-        Hooks.on("dnd5e.preShortRest", () => {
-            // Store the current token ID for post-rest update
-            this._restingTokenId = this.manager?.currentTokenId;
-        });
-
-        Hooks.on("dnd5e.shortRest", async (actor, data) => {
-            if (!this.manager || this._restingTokenId !== this.manager.currentTokenId) return;
+        // Add combat turn update hooks
+        Hooks.on("updateCombat", (combat, changed, options, userId) => {
+            if (!this.manager?.ui?.filterContainer) return;
             
-            if (this.manager.ui?.filterContainer) {
-                this.manager.ui.filterContainer.render();
-            }
-        });
-
-        Hooks.on("dnd5e.preLongRest", () => {
-            this._restingTokenId = this.manager?.currentTokenId;
-        });
-
-        Hooks.on("dnd5e.longRest", async (actor, data) => {
-            if (!this.manager || this._restingTokenId !== this.manager.currentTokenId) return;
+            // Only process if the turn actually changed
+            if (!hasProperty(changed, "turn") && !hasProperty(changed, "round")) return;
             
-            if (this.manager.ui?.filterContainer) {
-                this.manager.ui.filterContainer.render();
-            }
+            // Handle the turn update in the filter container
+            this.manager.ui.filterContainer.handleCombatTurnUpdate();
         });
 
-        // Foundry macrobar hooks
-        Hooks.on('renderHotbar', () => {
-            const collapseMacrobar = game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
-            if (collapseMacrobar) {
-                ui.hotbar.collapse();
-            }
+        // Handle combat start
+        Hooks.on("combatStart", (combat) => {
+            if (!this.manager?.ui?.filterContainer) return;
+            this.manager.ui.filterContainer.handleCombatTurnUpdate();
+        });
+
+        // Handle when combat is actually deleted/removed
+        Hooks.on("deleteCombat", (combat) => {
+            if (!this.manager?.ui?.filterContainer) return;
+            this.manager.ui.filterContainer.resetUsedActions();
         });
 
         // Initialize the module when ready

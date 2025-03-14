@@ -79,7 +79,6 @@ class AbilityCard {
         // Try to get the actor from lastKnownActorId
         if (this.portraitContainer?.lastKnownActorId) {
             actor = game.actors.get(this.portraitContainer.lastKnownActorId);
-            console.log("Got actor from lastKnownActorId:", actor?.name);
         }
 
         // If not, then get it from the current token
@@ -93,7 +92,6 @@ class AbilityCard {
         }
             
         if (!actor) {
-            console.warn("No actor found for ability scores");
             return;
         }
 
@@ -101,7 +99,6 @@ class AbilityCard {
         const abilityRowsWrapper = this.element.querySelector('.ability-rows-wrapper');
         const popupsWrapper = this.element.parentNode.querySelector('.popups-wrapper');
         if (!abilityRowsWrapper || !popupsWrapper) {
-            console.warn("Missing wrappers");
             return;
         }
 
@@ -110,7 +107,6 @@ class AbilityCard {
             popupsWrapper.removeChild(popupsWrapper.firstChild);
         }
 
-        console.log("Creating ability scores for actor:", actor.name);
 
         Object.entries(AbilityCard.ABILITY_CONFIG).forEach(([key, data]) => {
             const abilityRow = document.createElement("div");
@@ -225,7 +221,6 @@ class AbilityCard {
             // Get the system skill key from our mapping
             const systemSkillKey = AbilityCard.SKILL_MAP[skillName];
             if (!systemSkillKey) {
-                console.warn(`BG3 Hotbar - No system key mapping found for skill: ${skillName}`);
                 return;
             }
 
@@ -271,7 +266,6 @@ class AbilityCard {
                 try {
                     actor.rollSkill(systemSkillKey);
                 } catch (error) {
-                    console.error("BG3 Hotbar - Error rolling skill:", error);
                     ui.notifications.error(`Error rolling ${skillName} skill. See console for details.`);
                 }
             });
@@ -323,7 +317,6 @@ class AbilityCard {
             try {
                 actor.rollAbilityCheck(abilityKey);
             } catch (error) {
-                console.error("BG3 Hotbar - Error rolling ability check:", error);
                 ui.notifications.error(`Error rolling ${abilityKey.toUpperCase()} check. See console for details.`);
             }
         });
@@ -363,7 +356,6 @@ class AbilityCard {
             try {
                 actor.rollAbilitySave(abilityKey);
             } catch (error) {
-                console.error("BG3 Hotbar - Error rolling ability save:", error);
                 ui.notifications.error(`Error rolling ${abilityKey.toUpperCase()} save. See console for details.`);
             }
         });
@@ -470,7 +462,6 @@ export class AbilityButton {
     }
 
     _createButton() {
-        console.log("Creating ability button");
         // Create the button element with bg3-hud class
         this.element = document.createElement("div");
         this.element.classList.add("bg3-hud", "ability-button");
@@ -482,17 +473,14 @@ export class AbilityButton {
         this.element.addEventListener("click", () => this._toggleAbilityCard());
 
         // Create the ability card and get its container
-        console.log("Creating ability card");
         this.abilityCard = new AbilityCard(this.portraitContainer);
         const cardContainer = this.abilityCard._createCard();
-        console.log("Card container created:", cardContainer);
         
         // Add the card to the button
         this.element.appendChild(cardContainer);
         
         // Add button to the portrait card
         this.portraitContainer.element.appendChild(this.element);
-        console.log("Button added to portrait card");
     }
 
     updateButtonState(isActive) {
@@ -501,11 +489,9 @@ export class AbilityButton {
 
     _toggleAbilityCard() {
         if (!this.abilityCard) {
-            console.warn("No ability card found");
             return;
         }
 
-        console.log("Toggling ability card, current visibility:", !this.abilityCard.isVisible);
         // Toggle the ability card
         this.abilityCard.toggle();
         
@@ -514,7 +500,6 @@ export class AbilityButton {
 
         // If we're hiding the card, ensure all popups are properly closed
         if (!this.abilityCard.isVisible) {
-            console.log("Hiding ability card and cleaning up");
             // Close any open popups
             this.abilityCard.element.querySelectorAll(".popup-container").forEach(popup => {
                 popup.classList.remove("visible");

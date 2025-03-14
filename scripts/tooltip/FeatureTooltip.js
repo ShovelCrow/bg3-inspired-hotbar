@@ -26,18 +26,21 @@ export class FeatureTooltip extends BaseTooltip {
 
     // Common Details
     const details = getItemDetails(this.item);
-    if (Object.keys(details).length > 0) {
+    const isPassive = !details.castingTime || details.castingTime === "N/A" || details.castingTime.toLowerCase() === "none";
+
+    // Only show action details if the feature is not passive
+    if (!isPassive && Object.keys(details).length > 0) {
       const detailsEl = document.createElement("div");
       detailsEl.classList.add("tooltip-details-list");
 
       const detailsHTML = [];
-      if (details.castingTime)
+      if (details.castingTime && details.castingTime !== "N/A")
         detailsHTML.push(`<div><strong>Action:</strong> ${details.castingTime}</div>`);
-      if (details.range)
+      if (details.range && details.range !== "N/A")
         detailsHTML.push(`<div><strong>Range:</strong> ${details.range}</div>`);
-      if (details.target)
+      if (details.target && details.target !== "N/A")
         detailsHTML.push(`<div><strong>Target:</strong> ${details.target}</div>`);
-      if (details.duration)
+      if (details.duration && details.duration !== "N/A")
         detailsHTML.push(`<div><strong>Duration:</strong> ${details.duration}</div>`);
 
       // Activity-specific details for damage/healing
@@ -82,6 +85,7 @@ export class FeatureTooltip extends BaseTooltip {
         }
       }
 
+      // Only show uses for active features
       if (this.item.system?.uses) {
         detailsHTML.push(
           `<div><strong>Uses:</strong> ${this.item.system.uses.value || 0}/${
@@ -100,7 +104,7 @@ export class FeatureTooltip extends BaseTooltip {
     if (this.item.system?.description?.value) {
       const descHeader = document.createElement("div");
       descHeader.classList.add("tooltip-description-header");
-      descHeader.textContent = "Description";
+      descHeader.textContent = isPassive ? "Passive Effect" : "Description";
       content.appendChild(descHeader);
 
       const descContainer = document.createElement("div");
@@ -114,7 +118,6 @@ export class FeatureTooltip extends BaseTooltip {
       const description = this.item.system.description.value;
       const rollData = this.item.getRollData ? this.item.getRollData() : {};
       
-      // Use async/await and proper error handling
       try {
         const cleanedHTML = await enrichHTMLClean(description, rollData, this.item);
         descEl.innerHTML = cleanedHTML || "No description available.";

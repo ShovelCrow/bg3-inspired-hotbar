@@ -34,6 +34,13 @@ export class AutoPopulateContainer {
     let addedCount = 0;
     
     try {
+      // Check if we have permission to modify the actor
+      const token = canvas.tokens.get(container.ui?.manager?.currentTokenId);
+      if (!token?.actor?.canUserModify(game.user, "update")) {
+        console.debug("BG3 Inspired Hotbar | User lacks permission to modify token actor");
+        return 0;
+      }
+
       addedCount = await this._addItemsExpandingContainer(items, container);
       
       // Ensure we're working with the correct data structure
@@ -41,11 +48,11 @@ export class AutoPopulateContainer {
         container.data = { items: container.items || {}, cols: container.cols, rows: container.rows };
       }
       
-      // Render container and persist changes
+      // Render container and persist changes if we still have permission
       if (container.render) {
         container.render();
       }
-      if (container.ui?.manager?.persist) {
+      if (container.ui?.manager?.persist && token?.actor?.canUserModify(game.user, "update")) {
         await container.ui.manager.persist();
       }
       
