@@ -27,7 +27,7 @@
    Base Container Styles
    ========================================================================== */
 
-.bg3-hud #bg3-hotbar-container {
+#bg3-hotbar-container {
   position: fixed;
   bottom: 10px;
   left: 50%;
