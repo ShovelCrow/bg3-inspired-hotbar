@@ -134,36 +134,34 @@
   cursor: ew-resize;
   align-self: stretch;
   border-radius: 2px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease;
   z-index: var(--bg3-z-grid);
   margin: 4px;
-  right: 2px;
   position: relative;
 }
 
 .bg3-hud .hotbar-drag-bar:hover, 
 .bg3-hud .hotbar-drag-bar.dragging {
   background: #d10000;
-  transform: scaleX(1.5);
 }
 
 .bg3-hud .drag-indicator {
-  position: fixed;
-  width: 4px;
-  background: #ff6400;
-  box-shadow: 0 0 8px rgba(255, 100, 0, 0.8);
-  border-radius: 2px;
-  pointer-events: none;
-  z-index: var(--bg3-z-filter-container);
-  display: none;
+  position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
   height: 100%;
-  transform: translateX(-50%);
+  background: #ff6400;
+  box-shadow: 0 0 8px rgba(255, 100, 0, 0.8);
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
 }
 
 .bg3-hud .drag-indicator.visible {
-  display: block;
+  opacity: 1;
 }
 
 /* ==========================================================================

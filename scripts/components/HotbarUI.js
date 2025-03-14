@@ -131,10 +131,35 @@ class HotbarUI {
     let totalCols = 0;
     let cellWidth = 0;
     
-    // Create a visual indicator element that follows the mouse during dragging
+    // Create indicator as child of drag bar
     const dragIndicator = document.createElement('div');
     dragIndicator.classList.add('drag-indicator');
-    document.body.appendChild(dragIndicator);
+    dragBar.appendChild(dragIndicator);
+    
+    // Mouse down event to start dragging
+    dragBar.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      
+      // Initialize drag state
+      isDragging = true;
+      startX = e.clientX;
+      startLeftCols = this.gridContainers[index].data.cols;
+      startRightCols = this.gridContainers[index + 1].data.cols;
+      totalCols = startLeftCols + startRightCols;
+      
+      // Get the cell width from the container
+      const containerRect = this.gridContainers[index].element.getBoundingClientRect();
+      cellWidth = containerRect.width / startLeftCols;
+      
+      // Add visual feedback classes
+      dragBar.classList.add('dragging');
+      dragIndicator.classList.add('visible');
+      document.body.classList.add('dragging-active');
+      this.element.classList.add('dragging-in-progress');
+      
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    });
     
     // Define event handlers
     const handleMouseMove = (e) => {
@@ -154,8 +179,9 @@ class HotbarUI {
       if (newLeftCols >= 1 && newRightCols >= 1) {
         // Update the drag indicator position
         const containerRect = this.gridContainers[index].element.getBoundingClientRect();
-        const newX = containerRect.left + (newLeftCols * cellWidth);
-        dragIndicator.style.left = `${newX}px`;
+        const containerBounds = this.element.getBoundingClientRect();
+        const newX = containerRect.left - containerBounds.left + (newLeftCols * cellWidth);
+        dragIndicator.style.transform = `translateX(${deltaX}px)`;
       }
     };
     
@@ -190,6 +216,7 @@ class HotbarUI {
       // Clean up
       isDragging = false;
       dragIndicator.classList.remove('visible');
+      dragIndicator.style.transform = '';
       dragBar.classList.remove('dragging');
       document.body.classList.remove('dragging-active');
       this.element.classList.remove('dragging-in-progress');
@@ -198,44 +225,10 @@ class HotbarUI {
       document.removeEventListener('mouseup', handleMouseUp);
     };
     
-    // Mouse down event to start dragging
-    dragBar.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      
-      // Initialize drag state
-      isDragging = true;
-      startX = e.clientX;
-      startLeftCols = this.gridContainers[index].data.cols;
-      startRightCols = this.gridContainers[index + 1].data.cols;
-      totalCols = startLeftCols + startRightCols;
-      
-      // Get the cell width from the container
-      const containerRect = this.gridContainers[index].element.getBoundingClientRect();
-      cellWidth = containerRect.width / startLeftCols;
-      
-      // Show and position the drag indicator
-      const barRect = dragBar.getBoundingClientRect();
-      dragIndicator.style.height = `${barRect.height}px`;
-      dragIndicator.style.top = `${barRect.top}px`;
-      dragIndicator.style.left = `${barRect.left + (barRect.width / 2)}px`;
-      dragIndicator.classList.add('visible');
-      
-      // Add visual feedback classes
-      dragBar.classList.add('dragging');
-      document.body.classList.add('dragging-active');
-      this.element.classList.add('dragging-in-progress');
-      
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    });
-    
     // Clean up function for when the UI is destroyed
     dragBar._cleanup = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-      if (dragIndicator.parentNode) {
-        dragIndicator.parentNode.removeChild(dragIndicator);
-      }
     };
     
     return dragBar;

@@ -1,3 +1,32 @@
+## [1.7.0] - 2025-03-14
+### Added
+#### Drag and Drop from other sources
+- Items from compendiums and/or the items tab now correctly use Foundry's native item creation system if dropped directly onto the hotbar
+- Added prevention of cross-actor item placement (can't add items from other characters)
+- Improved error handling and user feedback for item placement
+- Fixed activities not being populated when dropping items from compendiums
+
+### Changed
+#### Auto-Population Logic
+- Simplified activity checks in auto-population to only consider actual activities
+- Removed redundant item type checks from activity validation
+- Made activity checks consistent between manual and automatic population when Creating a Token
+- Items are now filtered purely by their selected type and whether they have activities
+  - if an item does not have an activity, it will not be added to the hotbar. You can still manually add it to the hotbar.
+
+#### Drag Bar
+- Refactored `drag indicator` to be a child of `drag bar` for better inheritance and positioning
+- Improved `drag indicator` transitions using opacity and transforms
+
+### Fixed
+#### Portrait Edge Artifacts
+- Fixed black edge artifacts appearing around portrait images (#48)
+- Moved inline styles to CSS for better rendering
+- Improved border radius handling for health overlays
+- Removed border artifact from portrait container by adding explicit border, outline, and box-shadow removal
+
+
+
 ## [1.6.3] - 2025-03-14
 ### Fixed
 #### Passive Features Dialog

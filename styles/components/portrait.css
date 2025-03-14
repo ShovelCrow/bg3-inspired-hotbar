@@ -15,17 +15,15 @@
   display: block;
 }
 
-.bg3-hud .portrait-card.visible {
-  display: block;
-}
-
 .bg3-hud .portrait-image-container {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: 50%;
   cursor: pointer;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .bg3-hud .portrait-image {
@@ -33,6 +31,9 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 /* ==========================================================================
@@ -45,19 +46,25 @@
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  z-index: 10;
+  border-radius: 50%;
   overflow: hidden;
+  pointer-events: none;
 }
 
-.bg3-hud .damage-overlay {
+.bg3-hud .damage-overlay,
+.bg3-hud .damage-flash,
+.bg3-hud .healing-flash {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
+  border-radius: 50% 50% 0 0;
+  transition: height 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.bg3-hud .damage-overlay {
   height: 0;
   background: rgba(255, 0, 0, 0.4);
-  transition: height 0.2s ease-out, opacity 0.2s ease-out;
   pointer-events: none;
   z-index: 11;
 }

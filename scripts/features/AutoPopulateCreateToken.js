@@ -165,10 +165,8 @@ export class AutoPopulateCreateToken {
                 }
                 
                 // Check if the item has activities or is usable
-                const hasActivities = item.system?.activation?.type || // Has activation
-                                    item.type === "consumable" || // Always include consumables
-                                    item.type === "spell" || // Always include spells
-                                    (item.type === "feat" && !item.system?.activation?.type); // Include passive feats
+                const hasActivities = item.system?.activities?.length > 0 ||
+                                    (item.system?.activation?.type && item.system?.activation?.type !== "none");
                 
                 if (hasActivities) {
                     const itemData = {
@@ -176,7 +174,7 @@ export class AutoPopulateCreateToken {
                         name: item.name,
                         icon: item.img,
                         type: item.type,
-                        activation: item.system?.activation?.type || "passive",
+                        activation: item.system?.activation?.type || "action",
                         sortData: {
                             spellLevel: item.type === "spell" ? item.system?.level ?? 99 : 99,
                             featureType: item.type === "feat" ? item.system?.type?.value ?? "" : "",

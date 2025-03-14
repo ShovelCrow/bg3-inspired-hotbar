@@ -197,9 +197,7 @@ export class AutoPopulateDialog extends Dialog {
         
         // Check if the item has activities or is usable
         const hasActivities = item.system?.activities?.length > 0 ||
-                              (item.system?.activation?.type && item.system?.activation?.type !== "none") ||
-                              item.type === "consumable" ||
-                              item.type === "spell"; // Include valid spells (now filtered above)
+                            (item.system?.activation?.type && item.system?.activation?.type !== "none");
         
         if (hasActivities) {
           itemsWithActivities.push({

@@ -470,27 +470,20 @@ export class PortraitCard {
     _createHealthOverlay(container, actor) {
         const healthOverlay = document.createElement("div");
         healthOverlay.classList.add("health-overlay");
-        Object.assign(healthOverlay.style, {
-            borderRadius: "50%",
-            overflow: "hidden"  // Ensure child elements are clipped to the circle
-        });
         
         // Create the base red damage overlay
         const damageOverlay = document.createElement("div");
         damageOverlay.classList.add("damage-overlay");
-        damageOverlay.style.borderRadius = "50% 50% 0 0";  // Round the top corners
         healthOverlay.appendChild(damageOverlay);
         
         // Create the flash overlay for damage animations
         const damageFlash = document.createElement("div");
         damageFlash.classList.add("damage-flash");
-        damageFlash.style.borderRadius = "50% 50% 0 0";  // Round the top corners
         healthOverlay.appendChild(damageFlash);
         
         // Create the flash overlay for healing animations
         const healingFlash = document.createElement("div");
         healingFlash.classList.add("healing-flash");
-        healingFlash.style.borderRadius = "50% 50% 0 0";  // Round the top corners
         healthOverlay.appendChild(healingFlash);
         
         // Set initial health state
