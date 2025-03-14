@@ -1,3 +1,17 @@
+## [1.6.1] - 2025-03-14
+### Fixed
+#### CSS Scoping
+- Added proper `.bg3-hud` scoping to passives container CSS to prevent style conflicts with other modules
+- Added proper `.bg3-hud` scoping to effects container CSS to prevent style conflicts with other modules
+- Added proper `.bg3-hud` scoping to filter container CSS to prevent style conflicts with other modules
+- Added proper `.bg3-hud` scoping to portrait container CSS to prevent style conflicts with other modules
+- Removed redundant `bg3-hud` class from individual passive feature icons since they inherit parent scoping
+- Removed redundant `bg3-hud` class from individual effect icons since they inherit parent scoping
+- Removed redundant `bg3-hud` class from filter container elements since they inherit parent scoping
+- Removed redundant `bg3-hud` class from portrait container elements since they inherit parent scoping
+- Removed unused utilities.css file to reduce bundle size and prevent potential conflicts
+- Fixed UI conflict with Monk's Active Tile Triggers module by properly scoping all CSS selectors (#24)
+
 ## [1.6.0] - 2025-03-14
 ### Fixed
 #### Permissions UI Notification for Auto-Population

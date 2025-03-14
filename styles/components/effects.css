@@ -1,4 +1,4 @@
-.effects-container {
+.bg3-hud .effects-container {
     position: absolute;
     bottom: 100%; /* Position it above the container */
     right: 0;
@@ -19,7 +19,7 @@
     margin-bottom: 0; /* Add some space between the container and the hotbar */
 }
 
-.active-effect-icon {
+.bg3-hud .active-effect-icon {
     position: relative;
     display: flex;
     align-items: center;
@@ -28,7 +28,7 @@
     border-radius: 2px;
 }
 
-.active-effect-icon img {
+.bg3-hud .active-effect-icon img {
     width: 16px;
     height: 16px;
     display: block;
@@ -36,12 +36,12 @@
     transition: all 0.2s ease-in-out;
 }
 
-.active-effect-icon.disabled img {
+.bg3-hud .active-effect-icon.disabled img {
     filter: grayscale(100%) brightness(50%);
     opacity: 0.7;
 }
 
-.active-effect-icon:not(.disabled) img {
+.bg3-hud .active-effect-icon:not(.disabled) img {
     filter: none;
     opacity: 1;
 } 

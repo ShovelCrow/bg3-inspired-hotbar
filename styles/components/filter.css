@@ -1,4 +1,4 @@
-.filter-container {
+.bg3-hud .filter-container {
     position: absolute;
     bottom: calc(100% - 10px);
     left: 50%;
@@ -18,16 +18,16 @@
     opacity: 0;
 }
 
-.filter-content {
+.bg3-hud .filter-content {
     display: flex;
     flex-direction: row;
     gap: 2px;
     transition: all 0.2s ease;
 }
 
-.action-type-button,
-.feature-button,
-.spell-level-button {
+.bg3-hud .action-type-button,
+.bg3-hud .feature-button,
+.bg3-hud .spell-level-button {
     width: 32px;
     height: 32px;
     display: flex;
@@ -43,33 +43,33 @@
     filter: saturate(1);
 }
 
-.action-type-button:hover,
-.feature-button:hover,
-.spell-level-button:hover {
+.bg3-hud .action-type-button:hover,
+.bg3-hud .feature-button:hover,
+.bg3-hud .spell-level-button:hover {
     background: var(--bg3-background-highlight);
 }
 
-.action-type-button.used,
-.feature-button.used,
-.spell-level-button.used {
+.bg3-hud .action-type-button.used,
+.bg3-hud .feature-button.used,
+.bg3-hud .spell-level-button.used {
     filter: saturate(0.3) brightness(0.7);
     cursor: default;
     opacity: 0.7;
 }
 
-.action-type-button.used:hover,
-.feature-button.used:hover,
-.spell-level-button.used:hover {
+.bg3-hud .action-type-button.used:hover,
+.bg3-hud .feature-button.used:hover,
+.bg3-hud .spell-level-button.used:hover {
     background: transparent;
 }
 
-.spell-level-wrapper {
+.bg3-hud .spell-level-wrapper {
     position: relative;
     width: 32px;
     height: 32px;
 }
 
-.spell-level-button {
+.bg3-hud .spell-level-button {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -79,7 +79,7 @@
     padding: 2px;
 }
 
-.spell-level-label {
+.bg3-hud .spell-level-label {
     position: absolute;
     top: -13px;
     left: 0;
@@ -91,28 +91,28 @@
     z-index: 1;
 }
 
-.spell-slot-row {
+.bg3-hud .spell-slot-row {
     display: flex;
     gap: 2px;
     justify-content: center;
     width: 100%;
 }
 
-.spell-slot-box {
+.bg3-hud .spell-slot-box {
     border-radius: 2px;
     border-width: 1px;
     border-style: solid;
     box-sizing: border-box;
 }
 
-.spell-container {
+.bg3-hud .spell-container {
     display: flex;
     gap: 1px;
     align-items: center;
     margin-left: 2px;
 }
 
-.action-container {
+.bg3-hud .action-container {
     display: flex;
     gap: 1px;
     align-items: center;

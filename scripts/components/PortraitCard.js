@@ -58,7 +58,7 @@ export class PortraitCard {
 
     _createCard() {
         this.element = document.createElement("div");
-        this.element.classList.add("bg3-hud", "portrait-card", "visible");
+        this.element.classList.add("portrait-card", "visible");
         this.element.setAttribute("data-container-index", this.gridContainer.index);
 
         // Create death saves container first (it will be positioned absolutely)
@@ -74,11 +74,11 @@ export class PortraitCard {
 
     _createDeathSavesContainer() {
         const container = document.createElement("div");
-        container.classList.add("bg3-hud", "death-saves-container");
+        container.classList.add("death-saves-container");
 
         // Create success boxes (from 3 to 1)
         const successesContainer = document.createElement("div");
-        successesContainer.classList.add("bg3-hud", "death-saves-group");
+        successesContainer.classList.add("death-saves-group");
         for (let i = 0; i <= 2; i++) {
             const box = document.createElement("div");
             box.classList.add("death-save-box", "success", "clickable");
@@ -333,7 +333,7 @@ export class PortraitCard {
 
     _createImageContainer() {
         const container = document.createElement("div");
-        container.classList.add("bg3-hud", "portrait-image-container");
+        container.classList.add("portrait-image-container");
 
         const token = canvas.tokens.get(this.gridContainer.ui.manager.currentTokenId);
         if (!token?.actor) return container;
@@ -372,12 +372,12 @@ export class PortraitCard {
         if (!token?.actor) return;
 
         // Remove any existing menu
-        const existingMenu = document.querySelector('.bg3-hud.menu-container');
+        const existingMenu = document.querySelector('.menu-container');
         if (existingMenu) existingMenu.remove();
 
         // Create context menu
         const menu = document.createElement("div");
-        menu.classList.add("bg3-hud", "menu-container", "visible");
+        menu.classList.add("menu-container", "visible");
         // Add it to the portrait container instead of document.body
         this.element.appendChild(menu);
 
@@ -438,14 +438,14 @@ export class PortraitCard {
 
     _createImageMenuItem(icon, label, onClick, isActive = false) {
         const item = document.createElement("div");
-        item.classList.add("bg3-hud", "menu-item");
+        item.classList.add("menu-item");
         
         const iconEl = document.createElement("span");
-        iconEl.classList.add("bg3-hud", "menu-item-icon");
+        iconEl.classList.add("menu-item-icon");
         iconEl.innerHTML = icon;
         
         const labelEl = document.createElement("span");
-        labelEl.classList.add("bg3-hud", "menu-item-label");
+        labelEl.classList.add("menu-item-label");
         labelEl.textContent = label;
         
         // Create checkbox like in lock controls
