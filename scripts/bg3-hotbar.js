@@ -31,6 +31,9 @@ export class BG3Hotbar {
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
 
+        // Register scene controls
+        this._registerSceneControls();
+
         // Log initialization
         console.log(`${CONFIG.MODULE_NAME} | Initialized`);
 
@@ -56,38 +59,92 @@ export class BG3Hotbar {
         }
     }
 
-    static _registerSettings() {
-        // Core UI Settings
-        game.settings.register(CONFIG.MODULE_NAME, 'enableUI', {
-            name: 'BG3.Settings.EnableUI.Name',
-            hint: 'BG3.Settings.EnableUI.Hint',
-            scope: 'client',
-            config: true,
-            type: Boolean,
-            default: true,
-            onChange: async value => {
-                // Always clean up existing UI first
-                if (this.manager?.ui) {
-                    this.manager.ui.destroy();
-                    this.manager.ui = null;
-                }
+    static _registerSceneControls() {
+        Hooks.on('getSceneControlButtons', (controls) => {
+            const tokenTools = controls.find(c => c.name === "token");
+            if (!tokenTools) return;
 
-                // If enabling UI
-                if (value) {
-                    // If we don't have a manager, initialize one
-                    if (!this.manager) {
-                        await this.init();
-                    }
+            const isActive = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
+            
+            tokenTools.tools.push({
+                name: "toggleBG3UI",
+                title: "Toggle BG3 Hotbar",
+                icon: "fas fa-gamepad",
+                toggle: true,
+                active: isActive,
+                onClick: () => this._toggleUI()
+            });
+        });
+    }
+
+    static async _toggleUI() {
+        const currentState = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
+        await game.settings.set(CONFIG.MODULE_NAME, 'uiEnabled', !currentState);
+        
+        // Update scene controls button state
+        const tokenTools = ui.controls.controls.find(c => c.name === "token");
+        const toggleButton = tokenTools?.tools.find(t => t.name === "toggleBG3UI");
+        if (toggleButton) {
+            toggleButton.active = !currentState;
+            ui.controls.render();
+        }
+        
+        // Handle UI state
+        if (!currentState) {
+            // Enabling UI
+            if (!this.manager) {
+                await this.init();
+            } else if (this.manager && !this.manager.ui) {
+                const controlled = canvas.tokens?.controlled[0];
+                
+                // Check if we have a controlled token
+                if (controlled) {
+                    await this.manager.updateHotbarForControlledToken(true);
+                } else {
+                    // No token selected, but check if deselect lock is enabled
+                    const isDeselectLocked = this.controlsManager.isLockSettingEnabled('deselect') && 
+                                            this.controlsManager.isMasterLockEnabled();
                     
-                    // Force an update for the current token if one is selected
-                    const controlled = canvas.tokens.controlled[0];
-                    if (controlled && this.manager) {
-                        await this.manager.updateHotbarForControlledToken(true);
+                    // If deselect lock is enabled and we have a currentTokenId, try to restore UI
+                    if (isDeselectLocked && this.manager.currentTokenId) {
+                        // Force create the UI even with no token selected
+                        this.manager.ui = new HotbarUI(this.manager);
+                        console.log(`${CONFIG.MODULE_NAME} | Restored UI with deselect lock enabled`);
                     }
                 }
             }
+        } else {
+            // Disabling UI
+            if (this.manager?.ui) {
+                this.manager.ui.destroy();
+                this.manager.ui = null;
+            }
+        }
+    }
+
+    static _registerSettings() {
+        // UI Toggle Setting (hidden from settings menu)
+        game.settings.register(CONFIG.MODULE_NAME, 'uiEnabled', {
+            name: "UI Enabled",
+            scope: 'client',
+            config: false,
+            type: Boolean,
+            default: true
         });
 
+        // Register keybinding for toggling UI
+        game.keybindings.register(CONFIG.MODULE_NAME, "toggleUI", {
+            name: "Toggle BG3 Hotbar",
+            hint: "Toggles the BG3 Inspired Hotbar UI visibility",
+            editable: [{ key: "KeyH" }],
+            onDown: () => {
+                this._toggleUI();
+            },
+            restricted: false,
+            precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+        });
+
+        // Core UI Settings
         game.settings.register(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
             name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
             hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
@@ -404,6 +461,10 @@ export class BG3Hotbar {
         Hooks.on("controlToken", async (token, controlled) => {
             if (!this.manager) return;
             
+            // Check if UI is enabled in settings
+            const isUIEnabled = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
+            if (!isUIEnabled) return;
+            
             if (!controlled) {
                 // Token was deselected, clean up UI if not locked
                 const isDeselectLocked = this.controlsManager.isLockSettingEnabled('deselect') && 
@@ -416,7 +477,14 @@ export class BG3Hotbar {
                 return;
             }
             
-            await this.manager.updateHotbarForControlledToken();
+            // Token was selected, update or create UI
+            if (!this.manager.ui) {
+                // UI doesn't exist but should (UI is enabled and token selected)
+                await this.manager.updateHotbarForControlledToken(true);
+            } else {
+                // UI exists, just update it
+                await this.manager.updateHotbarForControlledToken();
+            }
         });
 
         // Token creation hook for auto-populating unlinked tokens

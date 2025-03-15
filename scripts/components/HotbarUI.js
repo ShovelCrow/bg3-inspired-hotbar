@@ -46,7 +46,7 @@ class HotbarUI {
 
   _createUI() {
     // Check if UI is enabled in settings
-    if (!game.settings.get(CONFIG.MODULE_NAME, 'enableUI')) {
+    if (!game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) {
       // Clean up any existing UI
       if (this.element) {
         this.destroy();

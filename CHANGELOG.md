@@ -1,3 +1,16 @@
+## [1.8.0] - 2025-03-15
+### Added
+#### UI Toggle
+- Added Scene Controls for toggling the hotbar UI with the gamepad icon (#50)
+- Toggle state persists per client between refreshes
+- Added keybinding support for toggling the hotbar UI
+  - Default key: H
+  - Can be customized in Foundry VTT's control settings if you have conflicts with other modules
+
+### Improved
+#### Code Organization
+- Moved inline CSS from `ActiveEffectsContainer.js` to `effects.css` (#33)
+
 ## [1.7.1] - 2025-03-14
 ### Added
 #### Activity Support
@@ -9,7 +22,6 @@
   - Uses provided icon from data if available
   - Defaults to system activity type icons (attack.svg, heal.svg, etc.)
 
-### Fixed
 ## [1.7.0] - 2025-03-14
 ### Added
 #### Drag and Drop from other sources

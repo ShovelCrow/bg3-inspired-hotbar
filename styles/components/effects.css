@@ -1,6 +1,6 @@
 .bg3-hud .effects-container {
     position: absolute;
-    bottom: 100%; /* Position it above the container */
+    top: -26px; /* Position it above the container, matching the original inline style */
     right: 0;
     min-width: 20px;
     max-width: 300px;

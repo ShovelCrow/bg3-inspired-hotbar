@@ -17,26 +17,7 @@ export class ActiveEffectsContainer {
 
   _createContainer() {
     this.element = document.createElement("div");
-    this.element.classList.add("effects-container");
-    Object.assign(this.element.style, {
-      position: "absolute",
-      top: "-26px",
-      right: "0", // Right aligned
-      minWidth: "20px",
-      maxWidth: "300px",
-      background: CONFIG.COLORS.BACKGROUND,
-      border: `1px solid ${CONFIG.COLORS.BORDER}`,
-      borderRadius: "3px",
-      display: "flex",
-      alignItems: "center",
-      padding: "2px 4px",
-      boxSizing: "border-box",
-      zIndex: CONFIG.Z_INDEX.OVERLAY.ABILITY_CARD - 1,
-      cursor: "pointer",
-      flexWrap: "wrap",
-      gap: "2px",
-      flexDirection: "row-reverse" // Expand leftward
-    });
+    this.element.classList.add("effects-container", "bg3-hud");
   }
 
   _registerHooks() {
@@ -126,12 +107,6 @@ export class ActiveEffectsContainer {
     wrapper.dataset.uuid = effect.uuid;
     const img = document.createElement("img");
     img.src = effect.icon;
-    Object.assign(img.style, {
-      width: "16px",
-      height: "16px",
-      display: "block",
-      cursor: "pointer"
-    });
 
     // Toggle effect status on click.
     wrapper.addEventListener("click", async (e) => {
