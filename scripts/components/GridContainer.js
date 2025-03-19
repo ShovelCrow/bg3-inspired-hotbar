@@ -95,6 +95,15 @@ class GridContainer {
     }
 
     this._setupCellEvents(cell, slotKey);
+      
+    // If weapon slot
+    if(this.data.for == 'weapon-set') {
+      if(this.ui.manager.activeSet == parseInt(this.element.dataset.containerIndex) && this.data.oldWeapons != this.data.items) {
+        this.data.oldWeapons = foundry.utils.deepClone(this.data.items);
+        this.ui.switchSet.bind(this.ui)(this.index);
+      }
+    }
+
     return cell;
   }
 
@@ -172,6 +181,36 @@ class GridContainer {
 
     // Store drag data on the cell.
     cell._dragData = item ? { containerIndex: this.index, slotKey: cell.getAttribute("data-slot") } : null;
+
+    // Weapon cell container & 2-handed weapon
+    if(this.data.for == 'weapon-set') {
+      try {
+        const itemData = await fromUuid(item.uuid),
+          parentNode = cell.parentNode;
+        if(parentNode?.classList.contains('bg3-weapon-container') && itemData?.type === 'weapon') {
+          if(itemData?.labels?.properties?.find(p => p.abbr === 'two') && cell.dataset.slot === '0-0') {
+            // Check if there is already a weapon in the second slot
+            cell.classList.add('has-2h')
+            const img2 = document.createElement("img");
+            img2.src = item.icon;
+            img2.alt = item.name || "";
+            img2.classList.add("bg3-hud", "hotbar-item");
+            img2.style.borderRadius = '3px';
+            // Make sure the image doesn't interfere with drag operations
+            img2.draggable = false;
+            img2.style.pointerEvents = "none";
+            parentNode.lastChild?.appendChild(img2);
+            if(this.data?.items['1-0']) {
+              delete this.data.items['1-0'];
+              this.render();
+              await this.ui.manager.persist();
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("Error fetching item data for uses display:", error);
+      }
+    }
   }
 
   _setupCellEvents(cell, slotKey) {
@@ -254,7 +293,7 @@ class GridContainer {
       // Handle internal moves (between slots/containers)
       // First, store the item that's currently in the target slot (if any)
       const targetItem = this.data.items[slotKey];
-      const sourceContainer = this.ui.gridContainers[dragData.containerIndex];
+      const sourceContainer = this.data.for == 'weapon-set' ? this.ui.weaponContainer[dragData.containerIndex] : this.ui.gridContainers[dragData.containerIndex];
 
       // Move the dragged item to the target slot
       this.data.items[slotKey] = dragData.item;

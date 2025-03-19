@@ -307,6 +307,14 @@ class HotbarUI {
    * Re-render everything.
    */
   async render() {
+    // Render weapons containers
+    this.weaponContainer.forEach(container => {
+      container.render();
+    })
+    
+    // Render combat container
+    this.combatContainer?.render();
+
     // Render grid containers
     this.gridContainers.forEach(container => {
       container.render();
@@ -404,6 +412,18 @@ class HotbarUI {
   }
 
   clearAllItems() {
+    // Clear all items from weapons containers
+    this.weaponContainer.forEach(container => {
+      container.data.items = {};
+      container.render();
+    });
+
+    if(this.combatContainer) {
+      // Clear all items from combat container
+      this.combatContainer.data.items = {};
+      this.combatContainer.render();
+    }
+    
     // Clear all items from all containers
     this.gridContainers.forEach(container => {
       container.data.items = {};
