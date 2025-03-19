@@ -425,6 +425,15 @@ export class BG3Hotbar {
             default: ["consumable"],
         });
 
+        game.settings.register(CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
+            name: 'Allow passives for auto-populate',
+            hint: 'If activated, passives will be also added to hotbars.',
+            scope: 'world',
+            config: false,
+            type: Boolean,
+            default: false,
+        });
+
         // Register the chip selector menu item
         game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
             name: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Name'),
