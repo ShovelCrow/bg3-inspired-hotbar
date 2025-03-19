@@ -351,6 +351,17 @@ export class PortraitCard {
 
         // Add double-click event listener to open character sheet
         image.addEventListener('dblclick', (event) => {
+            if(game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
+            event.preventDefault();
+            event.stopPropagation();
+            if (token?.actor) {
+                token.actor.sheet.render(true);
+            }
+        });
+
+        // Add double-click event listener to open character sheet
+        image.addEventListener('click', (event) => {
+            if(!game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
             event.preventDefault();
             event.stopPropagation();
             if (token?.actor) {
