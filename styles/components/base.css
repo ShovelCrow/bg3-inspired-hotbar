@@ -34,6 +34,7 @@
   align-self: end;
   align-items: end;
   justify-content: center;
+  align-items: end;
   z-index: var(--bg3-z-grid);
   font-family: "Signika", sans-serif;
   scale: var(--bg3-scale-ui);
