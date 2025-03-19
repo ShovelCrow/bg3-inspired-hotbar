@@ -176,3 +176,38 @@
 .bg3-hud .death-saves-skull.clickable:active {
   transform: scale(0.95);
 }
+
+
+/* ==========================================================================
+   Extra Infos
+   ========================================================================== */
+
+.bg3-hud .portrait-card .extra-info {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  text-shadow: var(--shadow-text-stroke);
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.bg3-hud .portrait-card .extra-info-one {
+  left: 20px;
+}
+
+.bg3-hud .portrait-card .extra-info-one i {
+  margin-right: 5px;
+  color: #5abef5FF;
+}
+
+.bg3-hud .portrait-card .extra-info-two {
+  right: 20px;
+}
+
+.bg3-hud .portrait-card .extra-info-two i {
+  margin-left: 5px;
+  color: #af68d5;
+}
