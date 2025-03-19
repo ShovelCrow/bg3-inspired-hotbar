@@ -62,7 +62,7 @@
 }
 
 .bg3-hud .turn-button {
-    background-image: url(../../icons/duration.webp);
+    /* background-image: url(../../icons/duration.webp); */
 }
 
 .bg3-hud .rest-turn-label {
