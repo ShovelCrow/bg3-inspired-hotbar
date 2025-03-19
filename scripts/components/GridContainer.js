@@ -177,12 +177,12 @@ class GridContainer {
   _setupCellEvents(cell, slotKey) {
     // Set up draggable state
     const item = this.data.items[slotKey];
-    cell.setAttribute("draggable", item ? "true" : "false");
+    cell.setAttribute("draggable", item && !this.data.locked ? "true" : "false");
     cell.classList.toggle("bg3-hud", "has-item", !!item);
 
     // Basic dragstart: set dataTransfer with a simple JSON object
     cell.addEventListener("dragstart", (e) => {
-      if (this.ui.dragDropManager.isLocked()) {
+      if (this.ui.dragDropManager.isLocked() || this.data.locked) {
         e.preventDefault();
         return;
       }
@@ -221,7 +221,7 @@ class GridContainer {
     // Allow dropping by preventing default on dragover
     cell.addEventListener("dragover", (e) => {
       e.preventDefault();
-      if (this.ui.dragDropManager.isLocked()) return;
+      if (this.ui.dragDropManager.isLocked() || this.data.locked) return;
       e.dataTransfer.dropEffect = "move";
       cell.classList.add("dragover");
     });
@@ -229,7 +229,7 @@ class GridContainer {
     // On drop, parse the source data and update the target slot
     cell.addEventListener("drop", async (e) => {
       e.preventDefault();
-      if (this.ui.dragDropManager.isLocked()) return;
+      if (this.ui.dragDropManager.isLocked() || this.data.locked) return;
 
       cell.classList.remove("dragover");
 
@@ -278,13 +278,13 @@ class GridContainer {
     // Basic visual feedback on dragenter/dragleave
     cell.addEventListener("dragenter", (e) => {
       e.preventDefault();
-      if (this.ui.dragDropManager.isLocked()) return;
+      if (this.ui.dragDropManager.isLocked() || this.data.locked) return;
       cell.classList.add("dragover");
     });
 
     cell.addEventListener("dragleave", (e) => {
       e.preventDefault();
-      if (this.ui.dragDropManager.isLocked()) return;
+      if (this.ui.dragDropManager.isLocked() || this.data.locked) return;
       cell.classList.remove("dragover");
     });
 
