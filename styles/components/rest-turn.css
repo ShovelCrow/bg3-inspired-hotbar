@@ -12,7 +12,7 @@
 .bg3-hud .rest-turn-container {
     position: relative;
     display: flex;
-    min-height: 168px;
+    min-height: 184px;
     min-width: 80px;
     flex-direction: column;
     gap: 0.25rem;

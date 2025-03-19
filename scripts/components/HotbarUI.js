@@ -471,6 +471,11 @@ class HotbarUI {
     const isFaded = this.element?.classList.contains('faded');
     this._updateFadeState(isFaded);
   }
+  
+  toggleUI(state) {
+    const toggleInput = document.getElementById('toggle-input');
+    if(toggleInput) toggleInput.checked = !state;
+  }
 }
 
 export { HotbarUI };
