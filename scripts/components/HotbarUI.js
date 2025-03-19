@@ -124,7 +124,7 @@ class HotbarUI {
     }
     this.combatContainer = new GridContainer(this, combatContainerData, 0);
     this.combatContainer.element.id = "bg3-combat-container";
-    this.combatContainer.element.classList.toggle('hidden', game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
+    this.combatContainer.element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
 
     weaponContainer.appendChild(this.combatContainer.element);
 
