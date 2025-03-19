@@ -25,14 +25,18 @@ class GridContainer {
   }
 
   _createContainer() {
-    this.element = document.createElement("div");
+    this.element = document.createElement(this.data.type ?? "div");
     this.element.classList.add("bg3-hud", "hotbar-subcontainer", "drag-cursor");
     this.element.setAttribute("data-container-index", this.index);
+    if(this.data.type == 'label' && this.data.for) {
+        this.element.setAttribute("for", `${this.data.for}-${this.index}`);
+    }
     
     // Set initial grid template via CSS variables.
     this.element.style.setProperty('--cols', this.data.cols);
     this.element.style.setProperty('--rows', this.data.rows);
-    this.element.style.setProperty('--cell-size', `${CONFIG.CELL_SIZE}px`);
+    console.log(this.data.size)
+    this.element.style.setProperty('--cell-size', `${CONFIG.CELL_SIZE * (this.data.size ?? 1)}px`);
     
     this.render();
   }
@@ -55,7 +59,7 @@ class GridContainer {
     // Update grid template
     this.element.style.setProperty('--cols', this.data.cols);
     this.element.style.setProperty('--rows', this.data.rows);
-    this.element.style.setProperty('--cell-size', `${CONFIG.CELL_SIZE}px`);
+    this.element.style.setProperty('--cell-size', `${CONFIG.CELL_SIZE * (this.data.size ?? 1)}px`);
     
     // Force a reflow to update grid layout.
     this.element.offsetHeight;

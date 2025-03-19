@@ -70,6 +70,81 @@ export const CONFIG = {
             subclass: "#9370db",   // Medium Purple
             default: "#808080"     // Gray for unknown types
         }
+    },
+
+    COMBATACTIONDATA: {
+        "0-0": {
+            "uuid": "Item.NxdZDpCnlK7lZmNQ",
+            "name": "Grapple",
+            "icon": "icons/magic/control/buff-strength-muscle-damage-red.webp",
+            "type": "feat",
+            "activation": {
+                "type": "action",
+                "cost": null,
+                "condition": ""
+            },
+            "sortData": {}
+        },
+        "1-0": {
+            "uuid": "Item.cMSvUkLZrGIRzFB0",
+            "name": "Shove",
+            "icon": "icons/skills/melee/unarmed-punch-fist-white.webp",
+            "type": "feat",
+            "activation": {
+                "type": "action",
+                "cost": null,
+                "condition": ""
+            },
+            "sortData": {}
+        },
+        "1-2": {
+            "uuid": "Item.JrPIFzd0J3VEM3rr",
+            "name": "Disengage",
+            "icon": "icons/skills/movement/feet-winged-boots-blue.webp",
+            "type": "feat",
+            "activation": {
+                "type": "action",
+                "cost": null,
+                "condition": ""
+            },
+            "sortData": {}
+        },
+        "0-2": {
+            "uuid": `Item.RC2W0i5c64S9fwdQ`,
+            "name": "Dodge",
+            "icon": "icons/equipment/shield/buckler-wooden-boss-lightning.webp",
+            "type": "feat",
+            "activation": {
+                "type": "action",
+                "cost": null,
+                "condition": ""
+            },
+            "sortData": {}
+        },
+        "1-1": {
+            "uuid": "Item.erW9Jj9BYmufqbx1",
+            "name": "Dash",
+            "icon": "icons/skills/movement/figure-running-gray.webp",
+            "type": "feat",
+            "activation": {
+                "type": "action",
+                "cost": null,
+                "condition": ""
+            },
+            "sortData": {}
+        },
+        "0-1": {
+            "uuid": "Item.hj5qto1IOul6UaEx",
+            "name": "Hide",
+            "icon": "icons/containers/barrels/barrel-open-brown-red.webp",
+            "type": "feat",
+            "activation": {
+                "type": "action",
+                "cost": null,
+                "condition": ""
+            },
+            "sortData": {}
+        }
     }
 };
 

@@ -10,9 +10,11 @@ export class HotbarManager {
         this.ui = null;
         this.currentTokenId = null;
         this.containers = [];
+        this.weaponsContainers = [];
         this.tokenConfigs = new Map(); // Store configurations per token
         this.portraitVisible = true;
         this.itemManager = new ItemUpdateManager(this);
+        this.activeSet = 0;
         this._initializeContainers();
     }
 
@@ -25,6 +27,20 @@ export class HotbarManager {
                 cols: CONFIG.INITIAL_COLS,
                 rows: CONFIG.ROWS,
                 items: {}
+            });
+        }
+        
+        // Create 3 weapons containers
+        for(let i = 0; i < 3; i++) {
+            this.weaponsContainers.push({
+                index: i,
+                cols: 2,
+                rows: 1,
+                items: {},
+                type: 'label',
+                for: 'weapon-set',
+                size: 1.5,
+                delOnly: true
             });
         }
     }

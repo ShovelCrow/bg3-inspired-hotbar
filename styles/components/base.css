@@ -32,6 +32,7 @@
   position: fixed;
   display: flex;
   align-self: end;
+  align-items: end;
   justify-content: center;
   z-index: var(--bg3-z-grid);
   font-family: "Signika", sans-serif;
@@ -102,8 +103,8 @@
    ========================================================================== */
 
 .bg3-hud .hotbar-cell {
-    width: var(--bg3-cell-size);
-    height: var(--bg3-cell-size);
+    width: var(--cell-size);
+    height: var(--cell-size);
     background: #333;
     border: 2px solid var(--bg3-border);
     border-radius: 4px;
@@ -181,7 +182,7 @@
 .bg3-hud .hotbar-item {
     width: calc(100% - 4px);
     height: calc(100% - 4px);
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     display: block;
     margin: 0;

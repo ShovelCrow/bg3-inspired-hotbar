@@ -166,7 +166,7 @@ export class BG3Hotbar {
         // Visual Settings - Appearance
         game.settings.register(CONFIG.MODULE_NAME, 'uiScale', {
             name: 'UI Scale',
-            hint: 'Change the UI  (50% to 300%) according to your preferences and settings.',
+            hint: 'Change the UI scale (50% to 300%) according to your preferences and settings.',
             scope: 'client',
             config: true,
             type: Number,
@@ -178,6 +178,18 @@ export class BG3Hotbar {
             default: 100,
             onChange: value => {
                 this.manager?.ui?.element?.style.setProperty('--bg3-scale-ui', value/100);
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showCombatContainer', {
+            name: 'Add a basic actions container',
+            hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: value => {
+              if (this.manager?.ui?.combatContainer?.element) this.manager.ui.combatContainer.element.classList.toggle('hidden', !value);
             }
         });
 

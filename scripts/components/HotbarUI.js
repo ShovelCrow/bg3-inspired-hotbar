@@ -23,7 +23,10 @@ class HotbarUI {
     this.controlsContainer = null;
     this.passivesContainer = null;
     this.activeEffectsContainer = null;
+    this.weaponContainer = [];
+    this.combatContainer = null;
     this._fadeTimeout = null;
+    this.combatActionsArray = [];
     this.dragDropManager = new DragDropManager(this);
 
     // Initialize bound methods as class properties
@@ -45,7 +48,7 @@ class HotbarUI {
     this._initializeFadeOut();
   }
 
-  _createUI() {
+  async _createUI() {
     // Check if UI is enabled in settings
     if (!game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) {
       // Clean up any existing UI
@@ -68,11 +71,69 @@ class HotbarUI {
     this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
     this.element.style.setProperty('--bg3-scale-ui', game.settings.get(CONFIG.MODULE_NAME, 'uiScale')/100);
         
+    // Create weapons containers
+    const weaponContainer = document.createElement("div");
+    weaponContainer.classList.add("bg3-hotbar-weaponcontainer");
+
+    // Create weapons containers based on manager's data
+    this.weaponContainer = this.manager.weaponsContainers.map((containerData, index) => {
+      const container = new GridContainer(this, containerData, index);
+      container.element.classList.add("bg3-weapon-container");
+
+      weaponContainer.appendChild(container.element);
+
+      const weaponInput = document.createElement("input");
+      weaponInput.setAttribute('type', 'radio');
+      weaponInput.setAttribute('name', 'weapon-choice');
+      weaponInput.setAttribute('id', `weapon-set-${index}`);
+      if(index === this.manager.activeSet) weaponInput.checked = true;
+
+      weaponInput.addEventListener("change", this.switchSet.bind(this, index));
+
+      weaponContainer.style.setProperty('--cell-size', container.element.style.getPropertyValue('--cell-size'))
+
+      weaponContainer.prepend(weaponInput);
+      return container;
+    });
+
+    const token = canvas.tokens.get(BG3Hotbar.manager.currentTokenId),
+        tmpArray = [],
+        actionsClone = foundry.utils.deepClone(CONFIG.COMBATACTIONDATA);
+
+    Object.entries(actionsClone).forEach(([key, value]) => {
+      const hasItem = token?.actor.items.find(item => item.type == 'feat' && item.name == value.name)
+      if(hasItem) value.uuid = hasItem.uuid;
+      else {
+        let tmpItem = this.combatActionsArray.find(it => it.name == value.name);
+        if(tmpItem) tmpArray.push(tmpItem);
+      }
+    })
+    if(tmpArray) {
+      let tmpDoc = await token.actor.createEmbeddedDocuments('Item', tmpArray);
+      tmpDoc.forEach(doc => Object.values(actionsClone).find(value => value.name == doc.name).uuid = doc.uuid)
+    }
+
+    // Create Combat Action Container
+    const combatContainerData = {
+        index: 0,
+        cols: 2,
+        rows: CONFIG.ROWS,
+        items: actionsClone,
+        size: 1.5,
+        locked: true
+    }
+    this.combatContainer = new GridContainer(this, combatContainerData, 0);
+    this.combatContainer.element.id = "bg3-combat-container";
+    this.combatContainer.element.classList.toggle('hidden', game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
+
+    weaponContainer.appendChild(this.combatContainer.element);
+
+    this.element.appendChild(weaponContainer);
+        
     // Create sub container
     this.subContainer = document.createElement("div");
     this.subContainer.classList.add("bg3-hotbar-subcontainer");
     this.element.appendChild(this.subContainer);
-
     
     // Create passives container
     this.passivesContainer = new PassivesContainer(this);
@@ -462,6 +523,45 @@ class HotbarUI {
   updateFadeDelay() {
     const isFaded = this.element?.classList.contains('faded');
     this._updateFadeState(isFaded);
+  }
+
+  async switchSet(index) {
+    const token = canvas.tokens.get(BG3Hotbar.manager.currentTokenId),
+      weaponsList = token?.actor?.items.filter(w => w.type == 'weapon'),
+      toUpdate = [],
+      weapons = this.weaponContainer.find(wc => wc.index === index);
+    if(weapons) {
+      if(this.manager.activeSet !== index) {
+        this.manager.activeSet = index;
+        await this.manager.persist();
+      }
+      if(Object.values(weapons.data.items).length) {
+        Object.values(weapons.data.items).forEach(w => {
+          toUpdate.push({_id: w.uuid.split('.').pop(), "system.equipped": 1})
+        })
+      }
+      weaponsList.forEach(w => {
+        if(w.system.equipped && !toUpdate.find(wu => wu._id == w.id)) toUpdate.push({_id: w.id, "system.equipped": 0})
+      })
+      await token.actor.updateEmbeddedDocuments("Item", toUpdate);
+    }
+  }
+
+  async loadCombatActions() {
+    if (!game.modules.get("chris-premades")?.active) return;
+    let pack = game.packs.get("chris-premades.CPRActions"),
+        promises = [];
+    Object.entries(CONFIG.COMBATACTIONDATA).forEach(([key, value]) => {
+        let macroID = pack.index.find(t =>  t.type == 'feat' && t.name === value.name)._id;
+        if(macroID) {
+            promises.push(new Promise(async (resolve, reject) => {
+                let item = await pack.getDocument(macroID);
+                if(item) this.combatActionsArray.push(item)
+                resolve();
+            }))
+        }
+    })
+    await Promise.all(promises).then((values) => {})
   }
 }
 
