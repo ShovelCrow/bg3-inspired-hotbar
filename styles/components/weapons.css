@@ -21,7 +21,7 @@
 }
 
 .bg3-hud .bg3-weapon-container, #bg3-combat-container {
-    width: fit-content;
+    width: fit-content !important;
     height: fit-content;
 }
 
