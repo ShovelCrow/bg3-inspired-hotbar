@@ -380,6 +380,15 @@ export class BG3Hotbar {
         });
 
         // Auto-Population Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens', {
+            name: 'Auto-Populate Linked Tokens',
+            hint: 'Automatically populate the hotbar for newly created linked tokens based on the settings below',
+            scope: 'world',
+            config: true,
+            type: Boolean,
+            default: true
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
             name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
             hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
@@ -506,14 +515,17 @@ export class BG3Hotbar {
 
         // Token creation hook for auto-populating unlinked tokens
         Hooks.on("createToken", async (token) => {
-            if (!token?.actor || token.actorLink) return;
+            if (!token?.actor || token.actor.type === 'character') return;
             
             // Check if auto-populate for unlinked tokens is enabled
-            const shouldAutoPopulate = game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens');
-            if (!shouldAutoPopulate) return;
+            if(!token.actorLink && game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens')) {
+                await AutoPopulateCreateToken.populateUnlinkedToken(token);
+            }
             
-            // Auto-populate the token's hotbar
-            await AutoPopulateCreateToken.populateUnlinkedToken(token);
+            // Check if auto-populate for unlinked tokens is enabled
+            if(token.actorLink && game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens')) {
+                await AutoPopulateCreateToken.populateUnlinkedToken(token);
+            }
         });
 
         // Actor updates

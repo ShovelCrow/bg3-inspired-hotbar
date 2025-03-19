@@ -83,7 +83,7 @@ export class AutoPopulateDefaults extends FormApplication {
 
 export class AutoPopulateCreateToken {
     static async populateUnlinkedToken(token) {
-        if (!token?.actor || token.actorLink) return;
+        if (!token?.actor || token.actor.type === 'character') return;
 
         try {
             // Check if user has permission to modify this token
