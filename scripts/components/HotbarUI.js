@@ -67,6 +67,7 @@ class HotbarUI {
     this.element.style.transition = "transform 0.3s ease-in-out, opacity 0.3s ease-in-out";
     this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
     this.element.style.setProperty('--bg3-scale-ui', game.settings.get(CONFIG.MODULE_NAME, 'uiScale')/100);
+    this.element.setAttribute('theme-option', game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
         
     // Create sub container
     this.subContainer = document.createElement("div");

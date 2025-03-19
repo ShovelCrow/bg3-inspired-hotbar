@@ -13,6 +13,9 @@ export class BG3Hotbar {
     static controlsManager = null;
 
     static async init() {
+        // Apply custom theme
+        this._applyTheme();
+
         // Ensure we clean up any existing manager/UI
         if (this.manager?.ui) {
             this.manager.ui.destroy();
@@ -42,6 +45,24 @@ export class BG3Hotbar {
         if (controlled) {
             controlled.release(); // This will trigger our controlToken hook properly
         }
+    }
+
+    static _applyTheme() {
+      const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption');
+      if(theme !== 'default') {
+        const themeConfig = CONFIG.THEME[theme];
+        if(themeConfig) {
+            const style = document.createElement('style');
+            style.setAttribute('type', 'text/css');
+            style.setAttribute('custom-theme', theme)
+            style.textContent = Object.entries(themeConfig).map(([k, v]) => `${k} {\n${Object.entries(v).map(([k2, v2]) => `${k2}:${v2};`).join('\n')}\n}`).join('\n');
+            document.head.appendChild(style);
+        }
+      } else if(document.head.querySelector('[custom-theme]')) {
+        const currentTheme = document.head.querySelector('[custom-theme]');
+        currentTheme.parentNode.removeChild(currentTheme);
+      }
+      console.log()
     }
     
     static _applyMacrobarCollapseSetting() {
@@ -164,6 +185,24 @@ export class BG3Hotbar {
         });
 
         // Visual Settings - Appearance
+        game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
+            name: 'Theme options',
+            hint: 'Choose between available themes',
+            scope: 'client',
+            config: true,
+            type: String,
+            choices: {
+                'default': 'Default',
+                'gold': 'Gold',
+                'custom': 'Custom (Coming soon !)'
+            },
+            default: 'default',
+            onChange: value => {
+                if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+                this._applyTheme()
+            }
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'uiScale', {
             name: 'UI Scale',
             hint: 'Change the UI  (50% to 300%) according to your preferences and settings.',
