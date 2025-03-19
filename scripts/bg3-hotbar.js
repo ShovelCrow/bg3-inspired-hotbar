@@ -601,12 +601,16 @@ export class BG3Hotbar {
         // Add combat turn update hooks
         Hooks.on("updateCombat", (combat, changed, options, userId) => {
             if (!this.manager?.ui?.filterContainer) return;
+
+            // Update elements reacting to combat
+            this.manager?.ui?.combat?.forEach((component) => component.updateVisibility());
             
             // Only process if the turn actually changed
             if (!hasProperty(changed, "turn") && !hasProperty(changed, "round")) return;
             
             // Handle the turn update in the filter container
             this.manager.ui.filterContainer.handleCombatTurnUpdate();
+            if (changed.round === 1 && changed.turn === 0) this._onStartCombat(combat);
         });
 
         // Handle combat start
@@ -617,6 +621,7 @@ export class BG3Hotbar {
 
         // Handle when combat is actually deleted/removed
         Hooks.on("deleteCombat", (combat) => {
+            this.manager?.ui?.combat?.forEach((component) => component.updateVisibility());
             if (!this.manager?.ui?.filterContainer) return;
             this.manager.ui.filterContainer.resetUsedActions();
         });
@@ -724,6 +729,17 @@ export class BG3Hotbar {
                 }
             }
         });
+    }
+
+    static async _onStartCombat(combat) {
+      // Token was selected, update or create UI
+      if (!this.manager.ui) {
+          // UI doesn't exist but should (UI is enabled and token selected)
+          await this.manager.updateHotbarForControlledToken(true);
+      } else {
+          // UI exists, just update it
+          await this.manager.updateHotbarForControlledToken();
+      }
     }
 }
 

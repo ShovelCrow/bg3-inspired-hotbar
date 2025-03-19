@@ -2,6 +2,7 @@
     /* Colors */
     --bg3-background: #222222f2;
     --bg3-border: #444;
+    --bg3-border-width: 1px;
     --bg3-text: #ddd;
     --bg3-background-highlight: #3a3a3a;
     
@@ -217,3 +218,11 @@
 .bg3-hud .hotbar-item-uses.depleted {
     color: #ff4444;
 } 
+
+/* ==========================================================================
+   Global Styles
+   ========================================================================== */
+
+.bg3-hud .hidden {
+  display: none !important;
+}

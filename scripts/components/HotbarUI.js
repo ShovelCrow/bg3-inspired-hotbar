@@ -10,6 +10,7 @@ import { ActiveEffectsContainer } from './ActiveEffectsContainer.js';
 import { TooltipFactory } from '../tooltip/TooltipFactory.js';
 import { DragDropManager } from '../managers/DragDropManager.js';
 import { BG3Hotbar } from '../bg3-hotbar.js';
+import { RestTurnContainer } from './RestTurnContainer.js';
 
 class HotbarUI {
   constructor(manager) {
@@ -22,6 +23,7 @@ class HotbarUI {
     this.controlsContainer = null;
     this.passivesContainer = null;
     this.activeEffectsContainer = null;
+    this.combat = [];
     this._fadeTimeout = null;
     this.dragDropManager = new DragDropManager(this);
 
@@ -105,6 +107,12 @@ class HotbarUI {
 
     // Create settings menu with control column
     this.controlsContainer = new ControlsContainer(this);
+
+    // Create rest turn container
+    const restTurnContainer = new RestTurnContainer(ui);
+    this.element.appendChild(restTurnContainer.element);
+
+    this.combat.push(restTurnContainer);
 
     // Add keyboard event listener
     document.addEventListener('keydown', this._handleKeyDown);
