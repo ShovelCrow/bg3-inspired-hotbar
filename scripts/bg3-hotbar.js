@@ -164,6 +164,20 @@ export class BG3Hotbar {
         });
 
         // Visual Settings - Appearance
+        game.settings.register(CONFIG.MODULE_NAME, 'autoScale', {
+            name: 'Auto UI scale',
+            hint: 'Auto scale the UI based on your browser. Disable the UI scale parameter below.',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: () => {
+                if(this.manager?.ui) {
+                    this.manager.ui.updateUIScale();
+                }
+            }
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'uiScale', {
             name: 'UI Scale',
             hint: 'Change the UI  (50% to 300%) according to your preferences and settings.',
@@ -173,11 +187,13 @@ export class BG3Hotbar {
             range: {
                 min: 50,
                 max: 300,
-                step: 10
+                step: 5
             },
             default: 100,
-            onChange: value => {
-                this.manager?.ui?.element?.style.setProperty('--bg3-scale-ui', value/100);
+            onChange: () => {
+                if(this.manager?.ui) {
+                    this.manager.ui.updateUIScale();
+                }
             }
         });
 
