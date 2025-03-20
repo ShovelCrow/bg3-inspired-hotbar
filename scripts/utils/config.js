@@ -83,13 +83,11 @@ export const CONFIG = {
                 "--primary-border-width": "2px",
                 "--primary-border-color": "#b78846",
                 "--bg3-border": "#161616",
-                "--shadow-text-stroke": "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000"
+                "--shadow-text-stroke": "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+                "--bg3-portrait-size": "175px"
             },
             "img": {
                 border: "unset"
-            },
-            "#bg3-hotbar-container": {
-                
             },
             ".bg3-hud .bg3-hotbar-subcontainer": {
                 padding: "2px 6px"
@@ -137,10 +135,6 @@ export const CONFIG = {
             ".bg3-hud .rest-turn-container": {
                 "margin-left": "20px",
                 "min-height": "168px"
-            },
-            ".bg3-hud .portrait-card": {
-                width: "175px",
-                height: "175px"
             },
             ".bg3-hud .damage-overlay": {
                 top: "unset",

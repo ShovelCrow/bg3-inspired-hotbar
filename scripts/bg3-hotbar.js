@@ -202,6 +202,20 @@ export class BG3Hotbar {
                 this._applyTheme()
             }
         });
+        
+        game.settings.register(CONFIG.MODULE_NAME, 'autoScale', {
+            name: 'Auto UI scale',
+            hint: 'Auto scale the UI based on your browser. Disable the UI scale parameter below.',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: () => {
+                if(this.manager?.ui) {
+                    this.manager.ui.updateUIScale();
+                }
+            }
+        });
 
         game.settings.register(CONFIG.MODULE_NAME, 'uiScale', {
             name: 'UI Scale',
@@ -212,13 +226,48 @@ export class BG3Hotbar {
             range: {
                 min: 50,
                 max: 300,
-                step: 10
+                step: 5
             },
             default: 100,
-            onChange: value => {
-                this.manager?.ui?.element?.style.setProperty('--bg3-scale-ui', value/100);
+            onChange: () => {
+                if(this.manager?.ui) {
+                    this.manager.ui.updateUIScale();
+                }
             }
         });
+
+        /* game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
+            name: 'UI Position',
+            hint: 'Choose where the hotbar should be placed.',
+            scope: 'client',
+            config: true,
+            type: String,
+            choices: {
+                'center': 'Center',
+                'left': 'Left',
+                'right': 'Right'
+            },
+            default: 'center',
+            onChange: value => {
+                if (this.manager?.ui) {
+                    this.manager.ui.element.dataset.position = value;
+                }
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, "posPadding", {
+            name: 'Position padding',
+            hint: 'Distance from the side of the screen for Left/Right position.',
+            scope: "client",
+            config: true,
+            type: Number,
+            default: 0,
+            onChange: value => {
+                if(this.manager?.ui) {
+                    this.manager.ui.element.setProperty('--position-padding', `${value}px`);
+                }
+            },
+        }); */
 
         game.settings.register(CONFIG.MODULE_NAME, 'showItemNames', {
             name: 'Show Item Names',

@@ -66,8 +66,11 @@ class HotbarUI {
     this.element.classList.add("bg3-hud");
     this.element.style.transition = "transform 0.3s ease-in-out, opacity 0.3s ease-in-out";
     this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
-    this.element.style.setProperty('--bg3-scale-ui', game.settings.get(CONFIG.MODULE_NAME, 'uiScale')/100);
     this.element.setAttribute('theme-option', game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
+    /* this.element.dataset.position = game.settings.get(CONFIG.MODULE_NAME, 'uiPosition');
+    this.element.style.setProperty('--position-padding', `${game.settings.get(CONFIG.MODULE_NAME, 'posPadding')}px`); */
+    // this.element.style.setProperty('--bg3-scale-ui', game.settings.get(CONFIG.MODULE_NAME, 'uiScale')/100);
+    this.updateUIScale();
         
     // Create sub container
     this.subContainer = document.createElement("div");
@@ -463,6 +466,14 @@ class HotbarUI {
   updateFadeDelay() {
     const isFaded = this.element?.classList.contains('faded');
     this._updateFadeState(isFaded);
+  }
+
+  updateUIScale() {
+    if(game.settings.get(CONFIG.MODULE_NAME, 'autoScale')) {
+      this.element.style.setProperty('--bg3-scale-ui', window.innerHeight / 1500);
+    } else {
+      this.element.style.setProperty('--bg3-scale-ui', game.settings.get(CONFIG.MODULE_NAME, 'uiScale')/100);
+    }
   }
 }
 
