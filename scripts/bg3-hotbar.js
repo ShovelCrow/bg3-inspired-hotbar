@@ -197,6 +197,39 @@ export class BG3Hotbar {
             }
         });
 
+        /* game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
+            name: 'UI Position',
+            hint: 'Choose where the hotbar should be placed.',
+            scope: 'client',
+            config: true,
+            type: String,
+            choices: {
+                'center': 'Center',
+                'left': 'Left',
+                'right': 'Right'
+            },
+            default: 'center',
+            onChange: value => {
+                if (this.manager?.ui) {
+                    this.manager.ui.element.dataset.position = value;
+                }
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, "posPadding", {
+            name: 'Position padding',
+            hint: 'Distance from the side of the screen for Left/Right position.',
+            scope: "client",
+            config: true,
+            type: Number,
+            default: 0,
+            onChange: value => {
+                if(this.manager?.ui) {
+                    this.manager.ui.element.setProperty('--position-padding', `${value}px`);
+                }
+            },
+        }); */
+
         game.settings.register(CONFIG.MODULE_NAME, 'showItemNames', {
             name: 'Show Item Names',
             hint: 'Display item names below each hotbar item',
