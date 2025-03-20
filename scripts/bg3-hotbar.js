@@ -567,7 +567,11 @@ export class BG3Hotbar {
 
         // Actor updates
         Hooks.on("updateActor", async (actor, changes, options, userId) => {
-            if (!this.manager || game.user.id !== userId) return;
+            if(!this.manager) return;
+            
+            if(changes?.flags?.[CONFIG.MODULE_NAME] && game.user.id !== userId) this.manager.socketUpdateData(actor, changes);
+            
+            if (game.user.id !== userId) return;
             
             // Check if this update affects our current token
             const token = canvas.tokens.get(this.manager.currentTokenId);
