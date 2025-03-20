@@ -172,7 +172,8 @@ export class HotbarManager {
                         type: 'label',
                         for: 'weapon-set',
                         size: 1.5,
-                        delOnly: true
+                        delOnly: true,
+                        allowDuplicate: true
                     });
                   }
                 }
@@ -199,7 +200,8 @@ export class HotbarManager {
                 type: container.type,
                 for: container.for,
                 size: container.size,
-                delOnly: container.delOnly
+                delOnly: container.delOnly,
+                allowDuplicate: container.allowDuplicate
             }));
 
             // Final state after loading
@@ -222,7 +224,8 @@ export class HotbarManager {
                     type: 'label',
                     for: 'weapon-set',
                     size: 1.5,
-                    delOnly: true
+                    delOnly: true,
+                    allowDuplicate: true
                 });
             }
         } else {
@@ -248,7 +251,8 @@ export class HotbarManager {
               type: container.type,
               for: container.for,
               size: container.size,
-              delOnly: container.delOnly
+              delOnly: container.delOnly,
+              allowDuplicate: container.allowDuplicate
             })),
             activeSet: this.activeSet,
             portraitVisible: this.portraitVisible
