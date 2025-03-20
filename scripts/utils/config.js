@@ -108,8 +108,8 @@ export const CONFIG = {
                 gap: "0"
             },
             ".bg3-hud .passive-feature-icon img, .bg3-hud .active-effect-icon img": {
-                width: "24px",
-                height: "24px",
+                width: "36px",
+                height: "36px",
                 border: "1px solid var(--color-border-dark)",
                 "background-color": "var(--bg3-background)"
             },
