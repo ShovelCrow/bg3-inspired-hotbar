@@ -15,7 +15,9 @@ export class HotbarManager {
         this.portraitVisible = true;
         this.itemManager = new ItemUpdateManager(this);
         this.activeSet = 0;
+        this.combatActionsArray = [];
         this._initializeContainers();
+        this.loadCombatActions();
     }
 
     _initializeContainers() {
@@ -320,6 +322,23 @@ export class HotbarManager {
         if (token.actor && !token.actorLink) {
             await token.actor.unsetFlag(CONFIG.MODULE_NAME, CONFIG.FLAG_NAME);
         }
+    }
+
+    async loadCombatActions() {
+        if (!game.modules.get("chris-premades")?.active) return;
+        let pack = game.packs.get("chris-premades.CPRActions"),
+            promises = [];
+        Object.entries(CONFIG.COMBATACTIONDATA).forEach(([key, value]) => {
+            let macroID = pack.index.find(t =>  t.type == 'feat' && t.name === value.name)._id;
+            if(macroID) {
+                promises.push(new Promise(async (resolve, reject) => {
+                    let item = await pack.getDocument(macroID);
+                    if(item) this.combatActionsArray.push(item)
+                    resolve();
+                }))
+            }
+        })
+        await Promise.all(promises).then((values) => {})
     }
 
     // Clean up all data

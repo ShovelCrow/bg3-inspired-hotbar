@@ -26,7 +26,6 @@ class HotbarUI {
     this.weaponContainer = [];
     this.combatContainer = null;
     this._fadeTimeout = null;
-    this.combatActionsArray = [];
     this.dragDropManager = new DragDropManager(this);
 
     // Initialize bound methods as class properties
@@ -104,11 +103,11 @@ class HotbarUI {
       const hasItem = token?.actor.items.find(item => item.type == 'feat' && item.name == value.name)
       if(hasItem) value.uuid = hasItem.uuid;
       else {
-        let tmpItem = this.combatActionsArray.find(it => it.name == value.name);
+        let tmpItem = this.manager.combatActionsArray.find(it => it.name == value.name);
         if(tmpItem) tmpArray.push(tmpItem);
       }
     })
-    if(tmpArray) {
+    if(tmpArray.length) {
       let tmpDoc = await token.actor.createEmbeddedDocuments('Item', tmpArray);
       tmpDoc.forEach(doc => Object.values(actionsClone).find(value => value.name == doc.name).uuid = doc.uuid)
     }
@@ -565,23 +564,6 @@ class HotbarUI {
       })
       await token.actor.updateEmbeddedDocuments("Item", toUpdate);
     }
-  }
-
-  async loadCombatActions() {
-    if (!game.modules.get("chris-premades")?.active) return;
-    let pack = game.packs.get("chris-premades.CPRActions"),
-        promises = [];
-    Object.entries(CONFIG.COMBATACTIONDATA).forEach(([key, value]) => {
-        let macroID = pack.index.find(t =>  t.type == 'feat' && t.name === value.name)._id;
-        if(macroID) {
-            promises.push(new Promise(async (resolve, reject) => {
-                let item = await pack.getDocument(macroID);
-                if(item) this.combatActionsArray.push(item)
-                resolve();
-            }))
-        }
-    })
-    await Promise.all(promises).then((values) => {})
   }
 }
 

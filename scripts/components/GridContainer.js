@@ -35,7 +35,6 @@ class GridContainer {
     // Set initial grid template via CSS variables.
     this.element.style.setProperty('--cols', this.data.cols);
     this.element.style.setProperty('--rows', this.data.rows);
-    console.log(this.data.size)
     this.element.style.setProperty('--cell-size', `${CONFIG.CELL_SIZE * (this.data.size ?? 1)}px`);
     
     this.render();
@@ -352,12 +351,6 @@ class GridContainer {
           return;
         }
 
-        const itemData = await fromUuid(item.uuid);
-        if (!itemData) {
-          ui.notifications.error(game.i18n.localize("BG3.Hotbar.Errors.UnableToRetrieve"));
-          return;
-        }
-
         let actor = null;
         if (this.lastKnownActorId) {
           actor = game.actors.get(this.lastKnownActorId);
@@ -368,6 +361,25 @@ class GridContainer {
             actor = token.actor;
             this.lastKnownActorId = actor.id;
           }
+        }
+
+        if(!item.uuid) {
+          ChatMessage.create({
+            user: game.user,
+            speaker: {
+                actor: actor,
+                token: actor.token,
+                alias: actor.name
+            },
+            content: '\n<div class="dnd5e2 chat-card item-card" data-display-challenge="">\n\n<section class="card-header description collapsible">\n\n<header class="summary">\n<img class="gold-icon" src="'.concat(item.icon, '">\n<div class="name-stacked border">\n<span class="title">').concat(item.name, '</span>\n<span class="subtitle">\nFeature\n</span>\n</div>\n<i class="fas fa-chevron-down fa-fw"></i>\n</header>\n\n<section class="details collapsible-content card-content">\n<div class="wrapper">\n').concat(item.description, "\n</div>\n</section>\n</section>\n\n\n</div>\n")
+          });
+          return;
+        }
+
+        const itemData = await fromUuid(item.uuid);
+        if (!itemData) {
+          ui.notifications.error(game.i18n.localize("BG3.Hotbar.Errors.UnableToRetrieve"));
+          return;
         }
         if (!actor) {
           ui.notifications.error(game.i18n.localize("BG3.Hotbar.Errors.NoActor"));
