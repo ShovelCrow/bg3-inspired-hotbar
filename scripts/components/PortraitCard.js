@@ -544,7 +544,12 @@ export class PortraitCard {
     }
 
     _createExtraInfo = function(container, actor) {
-        console.log('bg3', actor)
+        // Remove previous infos
+        const extraInfos = this.element.getElementsByClassName('extra-info');
+        while(extraInfos.length > 0) {
+            extraInfos[0].parentNode.removeChild(extraInfos[0]);
+        }
+
         const extra1 = document.createElement("div");
         extra1.classList.add("extra-info", "extra-info-one");
         const extraText1 = document.createElement("span");
