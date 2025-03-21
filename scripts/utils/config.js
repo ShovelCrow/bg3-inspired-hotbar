@@ -111,6 +111,9 @@ export const CONFIG = {
                 border: "1px solid var(--color-border-dark)",
                 "background-color": "var(--bg3-background)"
             },
+            ".bg3-hud .filter-container": {
+                bottom: "calc(100% - 5px)"
+            },
             ".bg3-hud .hotbar-cell": {
                 width: "var(--cell-size)",
                 height: "var(--cell-size)"
