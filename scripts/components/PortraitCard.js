@@ -551,24 +551,24 @@ export class PortraitCard {
         }
 
         const extra1 = document.createElement("div");
-        extra1.classList.add("extra-info", "extra-info-one");
+        extra1.classList.add("extra-info", "extra-info-one", "fas", "fa-shield");
         const extraText1 = document.createElement("span");
         extraText1.innerText = actor.system.attributes.ac.value;
         extra1.appendChild(extraText1);
-        const extraIcon1 = document.createElement("i");
-        extraIcon1.classList.add("fas", "fa-shield");
-        extra1.appendChild(extraIcon1);
+        // const extraIcon1 = document.createElement("i");
+        // extraIcon1.classList.add("fas", "fa-shield");
+        // extra1.appendChild(extraIcon1);
         extra1.appendChild(extraText1);
         container.appendChild(extra1);
 
         const extra2 = document.createElement("div");
-        extra2.classList.add("extra-info", "extra-info-two");
+        extra2.classList.add("extra-info", "extra-info-two", "fas", "fa-book-open");
         const extraText2 = document.createElement("span");
         extraText2.innerText = actor.system.attributes.spelldc;  
         extra2.appendChild(extraText2);
-        const extraIcon2 = document.createElement("i");
-        extraIcon2.classList.add("fas", "fa-hand-holding-magic");
-        extra2.appendChild(extraIcon2);
+        // const extraIcon2 = document.createElement("i");
+        // extraIcon2.classList.add("fas", "fa-book-open");
+        // extra2.appendChild(extraIcon2);
         container.appendChild(extra2);
     }
 
