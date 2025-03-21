@@ -157,7 +157,7 @@ export class ContextMenu {
         // Container-wide options
         const token = canvas.tokens.get(this.ui?.manager?.currentTokenId);
         if (token?.actor) {
-            if(this.currentContainer.data?.delOnly === true) {
+            if(this.currentContainer.data?.delOnly !== true) {
                 const autoPopulateOption = this._createMenuItem(
                     '<i class="fas fa-magic"></i>',
                     "Auto-Populate This Container",
@@ -178,7 +178,7 @@ export class ContextMenu {
             }
 
             // Sort Items option
-            if(this.currentContainer.data?.delOnly === true) {
+            if(this.currentContainer.data?.delOnly !== true) {
                 const sortOption = this._createMenuItem(
                     '<i class="fas fa-sort"></i>',
                     "Sort Items In This Container",
