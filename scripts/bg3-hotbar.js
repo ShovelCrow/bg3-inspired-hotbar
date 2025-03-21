@@ -11,6 +11,7 @@ import { TooltipFactory } from './tooltip/TooltipFactory.js';
 export class BG3Hotbar {
     static manager = null;
     static controlsManager = null;
+    static macroBarTimeout = null;
 
     static async init() {
         // Ensure we clean up any existing manager/UI
@@ -44,7 +45,7 @@ export class BG3Hotbar {
         }
     }
     
-    static _applyMacrobarCollapseSetting() {
+    static _applyMacrobarCollapseSetting(msg) {
         // We need to wait for the UI to be ready before collapsing the hotbar
         if (!ui.hotbar) {
             // UI not ready, deferring macrobar collapse
@@ -53,9 +54,20 @@ export class BG3Hotbar {
         }
         
         const collapseMacrobar = game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
-        // Applying macrobar collapse setting only on initial page load
-        if (collapseMacrobar) {
+        // Applying macrobar collapse setting
+        if (collapseMacrobar === 'always' || collapseMacrobar === 'true') {
             ui.hotbar.collapse();
+        } else if (collapseMacrobar === 'never' || collapseMacrobar === 'false') {
+            ui.hotbar.expand();
+        } else if(collapseMacrobar === 'select') {
+            if(this.macroBarTimeout) clearTimeout(this.macroBarTimeout);
+            if(!!this.manager.ui) {
+                ui.hotbar.collapse();
+            } else {
+                this.macroBarTimeout = setTimeout(() => {
+                    ui.hotbar.expand();
+                }, 100);
+            }
         }
     }
 
@@ -150,16 +162,16 @@ export class BG3Hotbar {
             hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
             scope: 'world',
             config: true,
-            type: Boolean,
-            default: false,
-            onChange: value => {
+            type: String,
+            choices: {
+                'always': 'Always',
+                'never': 'Never',
+                'select': 'When Hotbar visible'
+            },
+            default: 'always',
+            onChange: () => {
                 // Handle the macrobar state when the setting changes
-                // Macrobar collapse setting changed
-                if (value) {
-                    ui.hotbar.collapse();
-                } else {
-                    ui.hotbar.expand();
-                }
+                this._applyMacrobarCollapseSetting();
             }
         });
 
@@ -540,6 +552,7 @@ export class BG3Hotbar {
                     this.manager.ui = null;
                     this.manager.currentTokenId = null;
                 }
+                this._applyMacrobarCollapseSetting('hide');
                 return;
             }
             
@@ -551,6 +564,7 @@ export class BG3Hotbar {
                 // UI exists, just update it
                 await this.manager.updateHotbarForControlledToken();
             }
+            this._applyMacrobarCollapseSetting('show');
         });
 
         // Token creation hook for auto-populating unlinked tokens
