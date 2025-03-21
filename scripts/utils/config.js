@@ -160,6 +160,9 @@ export const CONFIG = {
             },
             ".bg3-hud .spell-level-label": {
                 "text-shadow": "var(--shadow-text-stroke)"
+            },
+            ".bg3-hud .action-type-button, .bg3-hud .feature-button, .bg3-hud .spell-level-button": {
+                "box-shadow": "0px 0px 5px black"
             }
         },
         custom: []
