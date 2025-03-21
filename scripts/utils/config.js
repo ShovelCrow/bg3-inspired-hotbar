@@ -157,6 +157,9 @@ export const CONFIG = {
                 height: "40px",
                 "font-size": "var(--font-size-20)",
                 top: "-20px"
+            },
+            ".bg3-hud .spell-level-label": {
+                "text-shadow": "var(--shadow-text-stroke)"
             }
         },
         custom: []
