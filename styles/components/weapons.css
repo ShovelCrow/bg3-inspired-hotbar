@@ -71,10 +71,17 @@
     padding: 4px;
 }
 
+@keyframes disable-pointer-events {
+    0%, 99% {
+        pointer-events: none;  
+    }  
+}
+
 #weapon-set-0:checked ~ .bg3-weapon-container[data-container-index="0"], #weapon-set-1:checked ~ .bg3-weapon-container[data-container-index="1"], #weapon-set-2:checked ~ .bg3-weapon-container[data-container-index="2"] {
     transform: translateY(0%) scale(1);
     opacity: 1;
     z-index: 1;
+    animation: disable-pointer-events 400ms;
 }
 
 #weapon-set-0:checked ~ .bg3-weapon-container[data-container-index="1"], #weapon-set-1:checked ~ .bg3-weapon-container[data-container-index="2"], #weapon-set-2:checked ~ .bg3-weapon-container[data-container-index="0"] {
