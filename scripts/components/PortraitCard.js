@@ -564,7 +564,7 @@ export class PortraitCard {
         const extra2 = document.createElement("div");
         extra2.classList.add("extra-info", "extra-info-two", "fas", "fa-book-open");
         const extraText2 = document.createElement("span");
-        extraText2.innerText = actor.system.attributes.spelldc;  
+        extraText2.innerText = actor.system.attributes.spell.dc;  
         extra2.appendChild(extraText2);
         // const extraIcon2 = document.createElement("i");
         // extraIcon2.classList.add("fas", "fa-book-open");
