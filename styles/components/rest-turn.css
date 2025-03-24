@@ -103,6 +103,10 @@
     border-color: #cc3333;
 }
 
+#toggle-input {
+    display: none;
+}
+
 #toggle-input:checked ~ #bg3-hotbar-container {
     transform: translateY(calc(100% + 15px));
 }
