@@ -7,6 +7,7 @@ import { ControlsManager } from './managers/ControlsManager.js';
 import { AutoPopulateCreateToken, AutoPopulateDefaults } from './features/AutoPopulateCreateToken.js';
 import { AutoPopulateContainer } from './features/AutoPopulateContainer.js';
 import { TooltipFactory } from './tooltip/TooltipFactory.js';
+import { ExtraInfosDialog } from './features/ExtraInfosDialog.js';
 
 export class BG3Hotbar {
     static manager = null;
@@ -191,7 +192,7 @@ export class BG3Hotbar {
         });
 
         game.settings.register(CONFIG.MODULE_NAME, 'showExtraInfo', {
-          name: 'Show AC and DC on character portrait.',
+          name: 'Show extra datas on character portrait.',
           // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
           scope: 'client',
           config: true,
@@ -203,6 +204,27 @@ export class BG3Hotbar {
                 BG3Hotbar.manager.ui.portraitCard.update(actor);
             }
           }
+        });
+        
+        game.settings.register(CONFIG.MODULE_NAME, "dataExtraInfo", {
+            scope: "client",
+            config: false,
+            type: Array,
+            default: CONFIG.EXTRAINFOS ?? [],
+            onChange: () => {
+                if(BG3Hotbar.manager?.ui?.portraitCard) {
+                    const token = canvas.tokens.get(this.manager.currentTokenId);
+                    if (token) BG3Hotbar.manager.ui.portraitCard.update(token.actor)
+                };
+            },
+        });
+        
+        game.settings.registerMenu(CONFIG.MODULE_NAME, "menuExtraInfo", {
+            name: 'Portrait extra datas settings',
+            label: 'Configure',
+            hint: 'Extra datas to show on character portrait.',
+            icon: "fas fa-cogs",
+            type: ExtraInfosDialog,
         });
 
         game.settings.register(CONFIG.MODULE_NAME, 'showItemNames', {

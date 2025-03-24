@@ -550,26 +550,20 @@ export class PortraitCard {
             extraInfos[0].parentNode.removeChild(extraInfos[0]);
         }
 
-        const extra1 = document.createElement("div");
-        extra1.classList.add("extra-info", "extra-info-one", "fas", "fa-shield");
-        const extraText1 = document.createElement("span");
-        extraText1.innerText = actor.system.attributes.ac.value;
-        extra1.appendChild(extraText1);
-        // const extraIcon1 = document.createElement("i");
-        // extraIcon1.classList.add("fas", "fa-shield");
-        // extra1.appendChild(extraIcon1);
-        extra1.appendChild(extraText1);
-        container.appendChild(extra1);
-
-        const extra2 = document.createElement("div");
-        extra2.classList.add("extra-info", "extra-info-two", "fas", "fa-book-open");
-        const extraText2 = document.createElement("span");
-        extraText2.innerText = actor.system.attributes.spell.dc;  
-        extra2.appendChild(extraText2);
-        // const extraIcon2 = document.createElement("i");
-        // extraIcon2.classList.add("fas", "fa-book-open");
-        // extra2.appendChild(extraIcon2);
-        container.appendChild(extra2);
+        const savedData = game.settings.get(CONFIG.MODULE_NAME, "dataExtraInfo");
+        console.log(savedData)
+        for(let i = 0; i < savedData.length; i++) {
+            if(!savedData[i].attr || savedData[i].attr == '') continue;
+            const attr = foundry.utils.getProperty(actor.system, savedData[i].attr) ?? foundry.utils.getProperty(actor.system, savedData[i].attr + ".value");
+            if(!attr) continue;
+            const extra = document.createElement("div");
+            extra.classList.add("extra-info", `extra-info-${i}`, ...savedData[i].icon.split(' '));
+            extra.style.setProperty('--icon-color', savedData[i].color);
+            const extraText = document.createElement("span");
+            extraText.innerText = attr;
+            extra.appendChild(extraText);
+            container.appendChild(extra);
+        }
     }
 
     toggle() {
