@@ -199,6 +199,7 @@
 
 .bg3-hud .portrait-card .extra-info span {
   z-index: 1;
+  line-height: 1.5em;
 }
 
 .bg3-hud .portrait-card .extra-info::before {
@@ -210,11 +211,11 @@
 }
 
 .bg3-hud .portrait-card .extra-info-0, .bg3-hud .portrait-card .extra-info-1 {
-  top: 10px;
+  top: 5px;
 }
 
 .bg3-hud .portrait-card .extra-info-4, .bg3-hud .portrait-card .extra-info-5 {
-  bottom: 20px;
+  bottom: 15px;
 }
 
 .bg3-hud .portrait-card .extra-info-0, .bg3-hud .portrait-card .extra-info-4 {

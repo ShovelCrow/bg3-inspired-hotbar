@@ -9,6 +9,7 @@
                     <label for="attr{{@index}}">Attribute</label>
                     <input type="text" class="attr" name="attr{{@index}}" value="{{attr}}">
                     <select class="list-attr">
+                        <option></option>
                         {{#each ../listAttrChoices as |attrs|}}
                         <option value="{{attrs.value}}" {{#if (eq attrs.value ../attr)}}selected{{/if}}>{{attrs.value}}</option>
                         {{/each}}

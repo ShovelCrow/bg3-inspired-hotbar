@@ -551,10 +551,9 @@ export class PortraitCard {
         }
 
         const savedData = game.settings.get(CONFIG.MODULE_NAME, "dataExtraInfo");
-        console.log(savedData)
         for(let i = 0; i < savedData.length; i++) {
             if(!savedData[i].attr || savedData[i].attr == '') continue;
-            const attr = foundry.utils.getProperty(actor.system, savedData[i].attr) ?? foundry.utils.getProperty(actor.system, savedData[i].attr + ".value");
+            const attr = foundry.utils.getProperty(actor.system, savedData[i].attr) ?? foundry.utils.getProperty(actor.system, savedData[i].attr + ".value") ?? this._getInfoFromSettings(savedData[i].attr);
             if(!attr) continue;
             const extra = document.createElement("div");
             extra.classList.add("extra-info", `extra-info-${i}`, ...savedData[i].icon.split(' '));
@@ -563,6 +562,15 @@ export class PortraitCard {
             extraText.innerText = attr;
             extra.appendChild(extraText);
             container.appendChild(extra);
+        }
+    }
+
+    _getInfoFromSettings(stringInfo) {
+        try {
+            const [module, data] = stringInfo.split('.');
+            return game.settings.get(module, data);            
+        } catch (error) {
+            return null;
         }
     }
 
