@@ -126,12 +126,15 @@
     justify-content: center;
 }
 
-.bg3-hud .filter-spell-point .spell-level-button:not([data-level="0"]) {
+.bg3-hud .filter-spell-point .spell-level-button:not([data-level="0"]) .spell-slot-box {
     display: none;
 }
 
 .bg3-hud .filter-spell-point .spell-level-label {
-    position: unset;
+    /* position: unset; */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
 }
 
 /* background: var(--bg3-background-highlight); */
