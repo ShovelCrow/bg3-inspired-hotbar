@@ -1,3 +1,33 @@
+## [2.0.0] - 2025-03-25
+**Thanks @Dapoulp for the PR's. Lots of great work while I was on holiday!**
+
+## UI Scale
+  - Remove Portrait Card from first container
+  - Fix remaining code with 'enableUI'
+  - Fix highlightStyle setting register module name
+  - Fix deprecated ActiveEffect icon to img
+
+  - Added UI scale feature
+  - Add forced hidden css rule
+  - Add 'align-items: end;' to #bg3-hotbar-container
+
+## Filter Cantrip and Design
+  - Add cantrip to filter and opacity .25 to "excluded" items
+
+## Rest & Turn Buttons
+  - Added Rest & Turn buttons
+  - Handle Auto Hide Combat
+
+## Weapon Sets and Common Actions Containers
+  - Add weapons sets container
+  - Auto-equip weapons when switching set
+  - Disable "offhand" slot if 2-handed weapon equipped
+  - Add common actions container (Dodge, Dash, etc)
+  - Add option to hide common actions container
+  - Common actions container: Use CPR items if installed, or chat message if not
+  - Auto-populate weapons sets for non-character actors
+
+
 ## [1.8.0] - 2025-03-15
 ### Added
 #### UI Toggle

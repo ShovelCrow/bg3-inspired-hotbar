@@ -7,6 +7,7 @@ import { ControlsManager } from './managers/ControlsManager.js';
 import { AutoPopulateCreateToken, AutoPopulateDefaults } from './features/AutoPopulateCreateToken.js';
 import { AutoPopulateContainer } from './features/AutoPopulateContainer.js';
 import { TooltipFactory } from './tooltip/TooltipFactory.js';
+import { ExtraInfosDialog } from './features/ExtraInfosDialog.js';
 
 export class BG3Hotbar {
     static manager = null;
@@ -197,7 +198,7 @@ export class BG3Hotbar {
             }
         });
 
-        /* game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
+        game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
             name: 'UI Position',
             hint: 'Choose where the hotbar should be placed.',
             scope: 'client',
@@ -210,25 +211,54 @@ export class BG3Hotbar {
             },
             default: 'center',
             onChange: value => {
-                if (this.manager?.ui) {
-                    this.manager.ui.element.dataset.position = value;
-                }
+                this.manager?.ui?.element?.style.setProperty('--bg3-scale-ui', value/100);
             }
         });
 
-        game.settings.register(CONFIG.MODULE_NAME, "posPadding", {
-            name: 'Position padding',
-            hint: 'Distance from the side of the screen for Left/Right position.',
-            scope: "client",
+        game.settings.register(CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
+            name: 'Open character sheet on click',
+            hint: 'Open the character sheet with a single click on portrait instead of double click.',
+            scope: 'client',
             config: true,
-            type: Number,
-            default: 0,
-            onChange: value => {
-                if(this.manager?.ui) {
-                    this.manager.ui.element.setProperty('--position-padding', `${value}px`);
-                }
+            type: Boolean,
+            default: false
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showExtraInfo', {
+          name: 'Show extra datas on character portrait.',
+          // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+          scope: 'client',
+          config: true,
+          type: Boolean,
+          default: false,
+          onChange: value => {
+            if(BG3Hotbar.manager.ui.portraitCard) {
+                const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
+                BG3Hotbar.manager.ui.portraitCard.update(actor);
+            }
+          }
+        });
+        
+        game.settings.register(CONFIG.MODULE_NAME, "dataExtraInfo", {
+            scope: "client",
+            config: false,
+            type: Array,
+            default: CONFIG.EXTRAINFOS ?? [],
+            onChange: () => {
+                if(BG3Hotbar.manager?.ui?.portraitCard) {
+                    const token = canvas.tokens.get(this.manager.currentTokenId);
+                    if (token) BG3Hotbar.manager.ui.portraitCard.update(token.actor)
+                };
             },
-        }); */
+        });
+        
+        game.settings.registerMenu(CONFIG.MODULE_NAME, "menuExtraInfo", {
+            name: 'Portrait extra datas settings',
+            label: 'Configure',
+            hint: 'Extra datas to show on character portrait.',
+            icon: "fas fa-cogs",
+            type: ExtraInfosDialog,
+        });
 
         game.settings.register(CONFIG.MODULE_NAME, 'showItemNames', {
             name: 'Show Item Names',
@@ -826,4 +856,4 @@ Hooks.once('ready', async () => {
         return;
     }
     await BG3Hotbar.init();
-}); 
+});

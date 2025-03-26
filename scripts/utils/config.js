@@ -70,7 +70,16 @@ export const CONFIG = {
             subclass: "#9370db",   // Medium Purple
             default: "#808080"     // Gray for unknown types
         }
-    }
+    },
+
+    EXTRAINFOS: [
+        {attr: 'attributes.ac.value', icon: 'fas fa-shield', color: '#5abef5', pos: 'Top Left'},
+        {attr: 'attributes.spell.dc', icon: 'fas fa-book-open', color: '#af68d5', pos: 'Top Right'},
+        {attr: '', icon: '', color: '', pos: 'Left'},
+        {attr: '', icon: '', color: '', pos: 'Right'},
+        {attr: '', icon: '', color: '', pos: 'Bottom Left'},
+        {attr: '', icon: '', color: '', pos: 'Bottom Right'}
+    ]
 };
 
 /**
