@@ -132,6 +132,14 @@
             "Hint": "Choose whether to display token images or character portraits by default. This can be overridden per token. For the first time you enable this setting, it will apply to all tokens that do not have a portrait set.",
             "Token": "Always Use Token Image",
             "Portrait": "Always Use Character Portrait"
+        },
+        "SettingsCategories": {
+            "HotbarContainer": "Hotbar buttons",
+            "CombatContainer": "Common Actions Container",
+            "Global": "Global",
+            "Portrait": "Character Portrait",
+            "Tooltip": "Tooltip",
+            "AutoPopulating": "Auto-Populating"
         }
     }
 } 

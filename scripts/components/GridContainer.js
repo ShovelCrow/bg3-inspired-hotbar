@@ -229,6 +229,7 @@ class GridContainer {
       e.dataTransfer.effectAllowed = "move";
       // Set a simple JSON payload containing the source slot key and the item
       e.dataTransfer.setData("text/plain", JSON.stringify({
+        container: this.id ?? this.data.id,
         type: item.type,
         slotKey: slotKey,
         containerIndex: this.index,
@@ -260,8 +261,10 @@ class GridContainer {
         return;
       }
 
+      const sourceContainer = dragData.container == 'weapon-container' ? this.ui.weaponContainer[dragData.containerIndex] : (dragData.container == 'combat-container' ? this.ui.combatContainer[0] : this.ui.gridContainers[dragData.containerIndex]);
+
       // Do nothing if dropped in the same slot
-      if (dragData.slotKey === slotKey && dragData.containerIndex === this.index) return;
+      if (dragData.container === this.data.id && dragData.slotKey === slotKey && dragData.containerIndex === this.index) return;
 
       // For a macro drop from Foundry or an item drop from an actor sheet
       if (dragData.type === "Macro" || dragData.uuid?.startsWith("Macro.") || dragData.uuid) {
@@ -272,7 +275,6 @@ class GridContainer {
       // Handle internal moves (between slots/containers)
       // First, store the item that's currently in the target slot (if any)
       const targetItem = this.data.items[slotKey];
-      const sourceContainer = this.data.for == 'weapon-set' ? this.ui.weaponContainer[dragData.containerIndex] : this.ui.gridContainers[dragData.containerIndex];
 
       // Move the dragged item to the target slot
       this.data.items[slotKey] = dragData.item;
@@ -287,7 +289,8 @@ class GridContainer {
 
       // Re-render and persist changes
       await this.render();
-      if (dragData.containerIndex !== this.index) {
+      if (dragData.container !== this.data.id || dragData.containerIndex !== this.index) {
+      // if (dragData.containerIndex !== this.index) {
         await sourceContainer?.render();
       }
       await this.ui.manager.persist();

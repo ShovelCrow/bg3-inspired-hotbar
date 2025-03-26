@@ -11,6 +11,7 @@ import { TooltipFactory } from '../tooltip/TooltipFactory.js';
 import { DragDropManager } from '../managers/DragDropManager.js';
 import { BG3Hotbar } from '../bg3-hotbar.js';
 import { RestTurnContainer } from './RestTurnContainer.js';
+import { AutoPopulateCreateToken } from '../features/AutoPopulateCreateToken.js';
 
 class HotbarUI {
   constructor(manager) {
@@ -26,7 +27,7 @@ class HotbarUI {
     this.activeEffectsContainer = null;
     this.combat = [];
     this.weaponContainer = [];
-    this.combatContainer = null;
+    this.combatContainer = [];
     this._fadeTimeout = null;
     this.dragDropManager = new DragDropManager(this);
 
@@ -101,37 +102,13 @@ class HotbarUI {
       return container;
     });
 
-    const token = canvas.tokens.get(BG3Hotbar.manager.currentTokenId),
-        tmpArray = [],
-        actionsClone = foundry.utils.deepClone(CONFIG.COMBATACTIONDATA);
-
-    Object.entries(actionsClone).forEach(([key, value]) => {
-      const hasItem = token?.actor.items.find(item => item.type == 'feat' && item.name == value.name)
-      if(hasItem) value.uuid = hasItem.uuid;
-      else {
-        let tmpItem = this.manager.combatActionsArray.find(it => it.name == value.name);
-        if(tmpItem) tmpArray.push(tmpItem);
-      }
-    })
-    if(tmpArray.length) {
-      let tmpDoc = await token.actor.createEmbeddedDocuments('Item', tmpArray);
-      tmpDoc.forEach(doc => Object.values(actionsClone).find(value => value.name == doc.name).uuid = doc.uuid)
-    }
-
     // Create Combat Action Container
-    const combatContainerData = {
-        index: 0,
-        cols: 2,
-        rows: CONFIG.ROWS,
-        items: actionsClone,
-        size: 1.5,
-        locked: true
-    }
-    this.combatContainer = new GridContainer(this, combatContainerData, 0);
-    this.combatContainer.element.id = "bg3-combat-container";
-    this.combatContainer.element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
+    this.combatContainer.push(new GridContainer(this, this.manager.combatContainer[0], 0));
+    this.combatContainer[0].element.id = "bg3-combat-container";
+    this.combatContainer[0].element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
+    console.log(this.manager.combatContainer[0], this.combatContainer[0])
 
-    weaponContainer.appendChild(this.combatContainer.element);
+    weaponContainer.appendChild(this.combatContainer[0].element);
 
     this.element.appendChild(weaponContainer);
         
@@ -324,7 +301,7 @@ class HotbarUI {
     })
     
     // Render combat container
-    this.combatContainer?.render();
+    this.combatContainer[0]?.render();
 
     // Render grid containers
     this.gridContainers.forEach(container => {
@@ -429,10 +406,10 @@ class HotbarUI {
       container.render();
     });
 
-    if(this.combatContainer) {
+    if(this.combatContainer[0]) {
       // Clear all items from combat container
-      this.combatContainer.data.items = {};
-      this.combatContainer.render();
+      this.combatContainer[0].data.items = {};
+      this.combatContainer[0].render();
     }
     
     // Clear all items from all containers
@@ -557,7 +534,12 @@ class HotbarUI {
 
   updateUIScale() {
     if (!this.element) return;
-    const scale = game.settings.get(CONFIG.MODULE_NAME, 'uiScale') / 100;
+    let scale = 1;
+    if(game.settings.get(CONFIG.MODULE_NAME, 'autoScale')) {
+      scale = window.innerHeight / 1500;
+    } else {
+      scale = game.settings.get(CONFIG.MODULE_NAME, 'uiScale') / 100;
+    }
     this.element.style.setProperty('--bg3-scale-ui', scale);
   }
 
