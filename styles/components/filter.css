@@ -118,6 +118,10 @@
     align-items: center;
 }
 
+.bg3-hud .filter-container .spell-level-button[data-level="0"] .spell-slot-box {
+    border-width: 3px;
+}
+
 /** Spell Points **/
 
 .bg3-hud .filter-spell-point .spell-level-wrapper {
@@ -136,5 +140,3 @@
     transform: translateY(-50%);
     pointer-events: none;
 }
-
-/* background: var(--bg3-background-highlight); */
