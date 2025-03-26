@@ -4,11 +4,11 @@
 
 .bg3-hud .portrait-card {
   position: absolute;
-  right: calc(100% + 10px);
+  right: calc(100% + 172px);
   bottom: 0;
   width: var(--bg3-portrait-size);
   min-width: 80px;
-  height: 200px;
+  height: var(--bg3-portrait-size);
   min-height: 80px;
   border-radius: 50%;
   overflow: visible;
@@ -175,4 +175,66 @@
 
 .bg3-hud .death-saves-skull.clickable:active {
   transform: scale(0.95);
+}
+
+
+/* ==========================================================================
+   Extra Infos
+   ========================================================================== */
+
+.bg3-hud .portrait-card .extra-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  position: absolute;
+  z-index: 20;
+  text-shadow: var(--shadow-text-stroke);
+  color: #fff;
+  font-size: 1.5em;
+  font-weight: bold;
+  pointer-events: none;
+  transform: unset;
+}
+
+.bg3-hud .portrait-card .extra-info span {
+  z-index: 1;
+  line-height: 1.5em;
+}
+
+.bg3-hud .portrait-card .extra-info::before {
+  font-size: xx-large;
+  position: absolute;
+  z-index: 0;
+  font-family: "Font Awesome 6 Pro";
+  color: var(--icon-color);
+}
+
+.bg3-hud .portrait-card .extra-info-0, .bg3-hud .portrait-card .extra-info-1 {
+  top: 5px;
+}
+
+.bg3-hud .portrait-card .extra-info-4, .bg3-hud .portrait-card .extra-info-5 {
+  bottom: 15px;
+}
+
+.bg3-hud .portrait-card .extra-info-0, .bg3-hud .portrait-card .extra-info-4 {
+  left: 25px;
+}
+
+.bg3-hud .portrait-card .extra-info-1, .bg3-hud .portrait-card .extra-info-5 {
+  right: 25px;
+}
+
+.bg3-hud .portrait-card .extra-info-2, .bg3-hud .portrait-card .extra-info-3 {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.bg3-hud .portrait-card .extra-info-2 {
+  left: 5px;
+}
+
+.bg3-hud .portrait-card .extra-info-3 {
+  right: 5px;
 }

@@ -348,9 +348,21 @@ export class PortraitCard {
         // Add health overlay
         this._createHealthOverlay(container, token.actor);
         this._createHPText(container, token.actor);
+        if(game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo')) this._createExtraInfo(container, token.actor);
 
         // Add double-click event listener to open character sheet
         image.addEventListener('dblclick', (event) => {
+            if(game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
+            event.preventDefault();
+            event.stopPropagation();
+            if (token?.actor) {
+                token.actor.sheet.render(true);
+            }
+        });
+
+        // Add double-click event listener to open character sheet
+        image.addEventListener('click', (event) => {
+            if(!game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
             event.preventDefault();
             event.stopPropagation();
             if (token?.actor) {
@@ -531,6 +543,37 @@ export class PortraitCard {
         container.appendChild(hpText);
     }
 
+    _createExtraInfo = function(container, actor) {
+        // Remove previous infos
+        const extraInfos = this.element.getElementsByClassName('extra-info');
+        while(extraInfos.length > 0) {
+            extraInfos[0].parentNode.removeChild(extraInfos[0]);
+        }
+
+        const savedData = game.settings.get(CONFIG.MODULE_NAME, "dataExtraInfo");
+        for(let i = 0; i < savedData.length; i++) {
+            if(!savedData[i].attr || savedData[i].attr == '') continue;
+            const attr = foundry.utils.getProperty(actor.system, savedData[i].attr) ?? foundry.utils.getProperty(actor.system, savedData[i].attr + ".value") ?? this._getInfoFromSettings(savedData[i].attr);
+            if(!attr) continue;
+            const extra = document.createElement("div");
+            extra.classList.add("extra-info", `extra-info-${i}`, ...savedData[i].icon.split(' '));
+            extra.style.setProperty('--icon-color', savedData[i].color);
+            const extraText = document.createElement("span");
+            extraText.innerText = attr;
+            extra.appendChild(extraText);
+            container.appendChild(extra);
+        }
+    }
+
+    _getInfoFromSettings(stringInfo) {
+        try {
+            const [module, data] = stringInfo.split('.');
+            return game.settings.get(module, data);            
+        } catch (error) {
+            return null;
+        }
+    }
+
     toggle() {
         this.element.classList.toggle('visible', this.isVisible);
     }
@@ -587,6 +630,16 @@ export class PortraitCard {
 
         // Update HP text
         this._createHPText(container, token.actor);
+
+        // Update Extra Infos
+        if(game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo')) {
+          this._createExtraInfo(container, token.actor);
+        } else if(document.getElementsByClassName('extra-info').length) {
+          const extraInfo = document.getElementsByClassName('extra-info');
+          while(extraInfo.length > 0) {
+            extraInfo[0].parentNode.removeChild(extraInfo[0]);
+          }
+        }
 
         // Update death saves
         this._updateDeathSaves(token.actor);

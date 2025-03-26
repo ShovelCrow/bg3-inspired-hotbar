@@ -7,12 +7,16 @@ import { ControlsManager } from './managers/ControlsManager.js';
 import { AutoPopulateCreateToken, AutoPopulateDefaults } from './features/AutoPopulateCreateToken.js';
 import { AutoPopulateContainer } from './features/AutoPopulateContainer.js';
 import { TooltipFactory } from './tooltip/TooltipFactory.js';
+import { ExtraInfosDialog } from './features/ExtraInfosDialog.js';
 
 export class BG3Hotbar {
     static manager = null;
     static controlsManager = null;
 
     static async init() {
+        // Apply custom theme
+        this._applyTheme();
+
         // Ensure we clean up any existing manager/UI
         if (this.manager?.ui) {
             this.manager.ui.destroy();
@@ -42,6 +46,24 @@ export class BG3Hotbar {
         if (controlled) {
             controlled.release(); // This will trigger our controlToken hook properly
         }
+    }
+
+    static _applyTheme() {
+      const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption');
+      if(theme !== 'default') {
+        const themeConfig = CONFIG.THEME[theme];
+        if(themeConfig) {
+            const style = document.createElement('style');
+            style.setAttribute('type', 'text/css');
+            style.setAttribute('custom-theme', theme)
+            style.textContent = Object.entries(themeConfig).map(([k, v]) => `${k} {\n${Object.entries(v).map(([k2, v2]) => `${k2}:${v2};`).join('\n')}\n}`).join('\n');
+            document.head.appendChild(style);
+        }
+      } else if(document.head.querySelector('[custom-theme]')) {
+        const currentTheme = document.head.querySelector('[custom-theme]');
+        currentTheme.parentNode.removeChild(currentTheme);
+      }
+      console.log()
     }
     
     static _applyMacrobarCollapseSetting() {
@@ -164,6 +186,24 @@ export class BG3Hotbar {
         });
 
         // Visual Settings - Appearance
+        game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
+            name: 'Theme options',
+            hint: 'Choose between available themes',
+            scope: 'client',
+            config: true,
+            type: String,
+            choices: {
+                'default': 'Default',
+                'gold': 'Gold',
+                'custom': 'Custom (Coming soon !)'
+            },
+            default: 'default',
+            onChange: value => {
+                if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+                this._applyTheme()
+            }
+        });
+        
         game.settings.register(CONFIG.MODULE_NAME, 'autoScale', {
             name: 'Auto UI scale',
             hint: 'Auto scale the UI based on your browser. Disable the UI scale parameter below.',
@@ -180,7 +220,7 @@ export class BG3Hotbar {
 
         game.settings.register(CONFIG.MODULE_NAME, 'uiScale', {
             name: 'UI Scale',
-            hint: 'Change the UI  (50% to 300%) according to your preferences and settings.',
+            hint: 'Change the UI scale (50% to 300%) according to your preferences and settings.',
             scope: 'client',
             config: true,
             type: Number,
@@ -197,7 +237,7 @@ export class BG3Hotbar {
             }
         });
 
-        /* game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
+        game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
             name: 'UI Position',
             hint: 'Choose where the hotbar should be placed.',
             scope: 'client',
@@ -210,25 +250,79 @@ export class BG3Hotbar {
             },
             default: 'center',
             onChange: value => {
-                if (this.manager?.ui) {
-                    this.manager.ui.element.dataset.position = value;
-                }
+                this.manager?.ui?.element?.style.setProperty('--bg3-scale-ui', value/100);
             }
         });
+      
+        game.settings.register(CONFIG.MODULE_NAME, 'autoHideCombat', {
+          name: 'Hide UI when not in combat and show only on your turn',
+          // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+          scope: 'client',
+          config: true,
+          type: Boolean,
+          default: false,
+          onChange: value => {
+            if(!value) document.getElementById("toggle-input").checked = false;
+            else BG3Hotbar._onUpdateCombat(true);
+          }
+        });
 
-        game.settings.register(CONFIG.MODULE_NAME, "posPadding", {
-            name: 'Position padding',
-            hint: 'Distance from the side of the screen for Left/Right position.',
-            scope: "client",
+        game.settings.register(CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
+            name: 'Open character sheet on click',
+            hint: 'Open the character sheet with a single click on portrait instead of double click.',
+            scope: 'client',
             config: true,
-            type: Number,
-            default: 0,
-            onChange: value => {
-                if(this.manager?.ui) {
-                    this.manager.ui.element.setProperty('--position-padding', `${value}px`);
-                }
+            type: Boolean,
+            default: false
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showExtraInfo', {
+          name: 'Show extra datas on character portrait.',
+          // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+          scope: 'client',
+          config: true,
+          type: Boolean,
+          default: false,
+          onChange: value => {
+            if(BG3Hotbar.manager.ui.portraitCard) {
+                const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
+                BG3Hotbar.manager.ui.portraitCard.update(actor);
+            }
+          }
+        });
+        
+        game.settings.register(CONFIG.MODULE_NAME, "dataExtraInfo", {
+            scope: "client",
+            config: false,
+            type: Array,
+            default: CONFIG.EXTRAINFOS ?? [],
+            onChange: () => {
+                if(BG3Hotbar.manager?.ui?.portraitCard) {
+                    const token = canvas.tokens.get(this.manager.currentTokenId);
+                    if (token) BG3Hotbar.manager.ui.portraitCard.update(token.actor)
+                };
             },
-        }); */
+        });
+        
+        game.settings.registerMenu(CONFIG.MODULE_NAME, "menuExtraInfo", {
+            name: 'Portrait extra datas settings',
+            label: 'Configure',
+            hint: 'Extra datas to show on character portrait.',
+            icon: "fas fa-cogs",
+            type: ExtraInfosDialog,
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showCombatContainer', {
+            name: 'Add a basic actions container',
+            hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: value => {
+              if (this.manager?.ui?.combatContainer?.element) this.manager.ui.combatContainer.element.classList.toggle('hidden', !value);
+            }
+        });
 
         game.settings.register(CONFIG.MODULE_NAME, 'showItemNames', {
             name: 'Show Item Names',
@@ -429,6 +523,15 @@ export class BG3Hotbar {
         });
 
         // Auto-Population Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens', {
+            name: 'Auto-Populate Linked Tokens',
+            hint: 'Automatically populate the hotbar for newly created linked tokens based on the settings below',
+            scope: 'world',
+            config: true,
+            type: Boolean,
+            default: true
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
             name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
             hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
@@ -463,6 +566,15 @@ export class BG3Hotbar {
             config: false,
             type: Array,
             default: ["consumable"],
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
+            name: 'Allow passives for auto-populate',
+            hint: 'If activated, passives will be also added to hotbars.',
+            scope: 'world',
+            config: false,
+            type: Boolean,
+            default: false,
         });
 
         // Register the chip selector menu item
@@ -555,19 +667,26 @@ export class BG3Hotbar {
 
         // Token creation hook for auto-populating unlinked tokens
         Hooks.on("createToken", async (token) => {
-            if (!token?.actor || token.actorLink) return;
+            if (!token?.actor || token.actor.type === 'character') return;
             
             // Check if auto-populate for unlinked tokens is enabled
-            const shouldAutoPopulate = game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens');
-            if (!shouldAutoPopulate) return;
+            if(!token.actorLink && game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens')) {
+                await AutoPopulateCreateToken.populateUnlinkedToken(token);
+            }
             
-            // Auto-populate the token's hotbar
-            await AutoPopulateCreateToken.populateUnlinkedToken(token);
+            // Check if auto-populate for unlinked tokens is enabled
+            if(token.actorLink && game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens')) {
+                await AutoPopulateCreateToken.populateUnlinkedToken(token);
+            }
         });
 
         // Actor updates
         Hooks.on("updateActor", async (actor, changes, options, userId) => {
-            if (!this.manager || game.user.id !== userId) return;
+            if(!this.manager) return;
+            
+            if(changes?.flags?.[CONFIG.MODULE_NAME] && game.user.id !== userId) this.manager.socketUpdateData(actor, changes);
+            
+            if (game.user.id !== userId) return;
             
             // Check if this update affects our current token
             const token = canvas.tokens.get(this.manager.currentTokenId);
@@ -666,12 +785,14 @@ export class BG3Hotbar {
 
         // Add combat turn update hooks
         Hooks.on("updateCombat", (combat, changed, options, userId) => {
-            if (!this.manager?.ui?.filterContainer) return;
+            
+            this._onUpdateCombat(combat, changed);
             
             // Only process if the turn actually changed
-            if (!hasProperty(changed, "turn") && !hasProperty(changed, "round")) return;
+            if (!foundry.utils.hasProperty(changed, "turn") && !foundry.utils.hasProperty(changed, "round")) return;
             
             // Handle the turn update in the filter container
+            if (!this.manager?.ui?.filterContainer) return;
             this.manager.ui.filterContainer.handleCombatTurnUpdate();
         });
 
@@ -683,6 +804,8 @@ export class BG3Hotbar {
 
         // Handle when combat is actually deleted/removed
         Hooks.on("deleteCombat", (combat) => {
+            this.manager?.ui?.combat?.forEach((component) => component.updateVisibility());
+            if (game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat')) BG3Hotbar.manager.ui?.toggleUI(false);
             if (!this.manager?.ui?.filterContainer) return;
             this.manager.ui.filterContainer.resetUsedActions();
         });
@@ -791,6 +914,28 @@ export class BG3Hotbar {
             }
         });
     }
+
+    static async _onStartCombat(combat) {
+      // Token was selected, update or create UI
+      if (!this.manager.ui) {
+          // UI doesn't exist but should (UI is enabled and token selected)
+          await this.manager.updateHotbarForControlledToken(true);
+      } else {
+          // UI exists, just update it
+          await this.manager.updateHotbarForControlledToken();
+      }
+    }
+
+    static async _onUpdateCombat(combat, updates) {
+        this.manager?.ui?.combat?.forEach((component) => component.updateVisibility());
+        if (combat === true || "round" in updates || "turn" in updates) {
+          if (game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat')) {
+            const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
+            BG3Hotbar.manager.ui?.toggleUI(!!game.combat?.started && game.combat?.combatant?.actor === actor);
+          }
+        }
+        if (updates && updates.round === 1 && updates.turn === 0) this._onStartCombat(combat);
+      }
 }
 
 // Initialize the module when Foundry is ready
@@ -801,4 +946,4 @@ Hooks.once('ready', async () => {
         return;
     }
     await BG3Hotbar.init();
-}); 
+});
