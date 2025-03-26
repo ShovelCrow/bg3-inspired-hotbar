@@ -3,6 +3,8 @@
     --bg3-background: #222222f2;
     --bg3-border: #444;
     --bg3-border-width: 1px;
+    --primary-border-width: 1px;
+    --primary-border-color: #444;
     --bg3-text: #ddd;
     --bg3-background-highlight: #3a3a3a;
     
@@ -33,6 +35,7 @@
   position: fixed;
   display: flex;
   align-self: end;
+  align-items: end;
   justify-content: center;
   align-items: end;
   z-index: var(--bg3-z-grid);
@@ -64,7 +67,7 @@
   position: relative;
   display: flex;
   background: var(--bg3-background);
-  border: var(--bg3-border-width) solid var(--bg3-border);
+  border: var(--primary-border-width) solid var(--primary-border-color);
   border-radius: 8px;
   padding: 8px;
   align-items: stretch;
@@ -119,8 +122,8 @@
    ========================================================================== */
 
 .bg3-hud .hotbar-cell {
-    width: var(--bg3-cell-size);
-    height: var(--bg3-cell-size);
+    width: var(--cell-size);
+    height: var(--cell-size);
     background: #333;
     border: 2px solid var(--bg3-border);
     border-radius: 4px;
@@ -198,7 +201,7 @@
 .bg3-hud .hotbar-item {
     width: calc(100% - 4px);
     height: calc(100% - 4px);
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     display: block;
     margin: 0;
