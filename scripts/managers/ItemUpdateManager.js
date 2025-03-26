@@ -349,6 +349,7 @@ export class ItemUpdateManager {
         for (const container of this.manager.weaponsContainers) {
             for (const [slot, item] of Object.entries(container.items)) {
                 const itemData = await fromUuid(item.uuid);
+                if(itemData?.documentName == 'Macro') continue;
                 
                 if (!itemData || !actor.items.has(itemData.id)) {
                     // Removing invalid item
