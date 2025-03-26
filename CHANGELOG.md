@@ -1,22 +1,24 @@
 ## [2.0.0] - 2025-03-25
 **Thanks @Dapoulp for the PR's. Lots of great work while I was on holiday!**
 
-## UI Scale
+## Optimisations
   - Remove Portrait Card from first container
-  - Fix remaining code with 'enableUI'
+  - Fix remaining code with 'enableUI' [#57]
   - Fix highlightStyle setting register module name
   - Fix deprecated ActiveEffect icon to img
+  - Handle Auto Show/Hide Combat [#50]
 
-  - Added UI scale feature
+## UI Scale
+  - Added UI scale feature [#23-#49]
   - Add forced hidden css rule
   - Add 'align-items: end;' to #bg3-hotbar-container
 
 ## Filter Cantrip and Design
-  - Add cantrip to filter and opacity .25 to "excluded" items
+  - Add cantrip to filter
+  - Opacity 0.25 to "excluded" items
 
 ## Rest & Turn Buttons
-  - Added Rest & Turn buttons
-  - Handle Auto Hide Combat
+  - Added Rest & Turn buttons [#79]
 
 ## Weapon Sets and Common Actions Containers
   - Add weapons sets container
@@ -27,6 +29,17 @@
   - Common actions container: Use CPR items if installed, or chat message if not
   - Auto-populate weapons sets for non-character actors
 
+## Auto-Populate Linked Token
+  - Add Auto-populate Linked token option
+
+## Portrait extra info
+  - Add setting to display AC & Spell DC on Portrait as well as custom extra infos. Use Font Awesome icons.[#35-#18]
+
+## Theme Settings
+  - Add setting to change module Theme
+
+## Client Synchronization
+  - Add client synchronization. Now updates hotbar between clients looking at the same HUD. [#46]
 
 ## [1.8.0] - 2025-03-15
 ### Added
