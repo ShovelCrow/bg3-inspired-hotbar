@@ -1,9 +1,9 @@
 :root {
-    --rest-base-background: #414B55E6;
+    --rest-base-background: #333;
     --rest-base-color: #B4D2DCFF;
     --rest-hover-background: #747e88e6;
     --rest-hover-color: #B4D2DCFF;
-    --turn-base-background: #374B3CE6;
+    --turn-base-background: #333;
     --turn-base-color: #B4D2DCFF;
     --turn-hover-background: #849889e6;
     --turn-hover-color: #B4D2DCFF;

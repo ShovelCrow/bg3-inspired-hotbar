@@ -18,6 +18,10 @@ export class RestTurnContainer {
     }
 
     render() {
+        // Clear existing buttons
+        this.element.innerHTML = '';
+        this._buttons = [];
+
         const dataToggle = {
             type: 'label',
             class: ["btn-toggle", "fas", "fa-caret-down"],
@@ -63,15 +67,25 @@ export class RestTurnContainer {
         }
         this._buttons.push(new RestTurnButton(dataLong));
 
+        // Add buttons to container
         for(let i = 0; i < this._buttons.length; i++) {
             this.element.appendChild(this._buttons[i].element);
         }
 
-        if(document.getElementById('toggle-input')) return;
-        const toggleInput = document.createElement('input');
-        toggleInput.setAttribute('type', 'checkbox');
-        toggleInput.setAttribute('id', `toggle-input`);
-        document.body.insertBefore(toggleInput, this.ui.element);
+        // Handle toggle input
+        if (!document.getElementById('toggle-input')) {
+            const toggleInput = document.createElement('input');
+            toggleInput.setAttribute('type', 'checkbox');
+            toggleInput.setAttribute('id', 'toggle-input');
+            // Insert before the main container if it exists
+            const container = document.getElementById('bg3-hotbar-container');
+            if (container && container.parentNode) {
+                container.parentNode.insertBefore(toggleInput, container);
+            } else {
+                // If container doesn't exist yet, append to body
+                document.body.appendChild(toggleInput);
+            }
+        }
     }
 
     updateVisibility() {
