@@ -465,6 +465,7 @@ export class FilterContainer {
 
         const spellContainer = document.createElement("div");
         spellContainer.classList.add("spell-container");
+        if(this.hotbarUI.manager.checkSpellPoint()) spellContainer.classList.add("filter-spell-point");
 
         let actor = null;
 

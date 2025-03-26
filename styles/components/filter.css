@@ -116,4 +116,22 @@
     display: flex;
     gap: 1px;
     align-items: center;
-} 
+}
+
+/** Spell Points **/
+
+.bg3-hud .filter-spell-point .spell-level-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg3-hud .filter-spell-point .spell-level-button:not([data-level="0"]) {
+    display: none;
+}
+
+.bg3-hud .filter-spell-point .spell-level-label {
+    position: unset;
+}
+
+/* background: var(--bg3-background-highlight); */

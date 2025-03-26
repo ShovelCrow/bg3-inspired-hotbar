@@ -229,4 +229,8 @@ export class HotbarManager {
             }
         }
     }
+
+    checkSpellPoint() {
+        return true;
+    }
 } 
