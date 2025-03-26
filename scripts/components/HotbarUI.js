@@ -10,6 +10,7 @@ import { ActiveEffectsContainer } from './ActiveEffectsContainer.js';
 import { TooltipFactory } from '../tooltip/TooltipFactory.js';
 import { DragDropManager } from '../managers/DragDropManager.js';
 import { BG3Hotbar } from '../bg3-hotbar.js';
+import { RestTurnContainer } from './RestTurnContainer.js';
 
 class HotbarUI {
   constructor(manager) {
@@ -23,6 +24,7 @@ class HotbarUI {
     this.controlsContainer = null;
     this.passivesContainer = null;
     this.activeEffectsContainer = null;
+    this.combat = [];
     this._fadeTimeout = null;
     this.dragDropManager = new DragDropManager(this);
 
@@ -116,6 +118,12 @@ class HotbarUI {
 
     // Create settings menu with control column
     this.controlsContainer = new ControlsContainer(this);
+
+    // Create rest turn container
+    const restTurnContainer = new RestTurnContainer(this);
+    this.element.appendChild(restTurnContainer.element);
+
+    this.combat.push(restTurnContainer);
 
     // Add keyboard event listener
     document.addEventListener('keydown', this._handleKeyDown);
@@ -463,16 +471,13 @@ class HotbarUI {
   }
 
   updateFadeDelay() {
-    const isFaded = this.element?.classList.contains('faded');
-    this._updateFadeState(isFaded);
+    this._initializeFadeOut();
   }
 
   updateUIScale() {
-    if(game.settings.get(CONFIG.MODULE_NAME, 'autoScale')) {
-      this.element.style.setProperty('--bg3-scale-ui', window.innerHeight / 1500);
-    } else {
-      this.element.style.setProperty('--bg3-scale-ui', game.settings.get(CONFIG.MODULE_NAME, 'uiScale')/100);
-    }
+    if (!this.element) return;
+    const scale = game.settings.get(CONFIG.MODULE_NAME, 'uiScale') / 100;
+    this.element.style.setProperty('--bg3-scale-ui', scale);
   }
 }
 
