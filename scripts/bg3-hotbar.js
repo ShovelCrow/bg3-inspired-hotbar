@@ -435,6 +435,20 @@ export class BG3Hotbar {
             default: 'border'
         });
 
+        game.settings.register(CONFIG.MODULE_NAME, 'fadeControlsMenu', {
+            name: 'Hide/Show hotbar controls menu on hover',
+            // hint: 'Display remaining uses in the top-right corner of items',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: false,
+            onChange: value => {
+                if (this.manager?.ui?.controlsContainer) {
+                    this.manager.ui.controlsContainer.element.classList.toggle('fade', value);
+                }
+            }
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'showCombatContainer', {
             name: 'Add a basic actions container',
             hint: 'Display a extra container for basic actions like dodge, dash, etc (Compatible with CPR)',
