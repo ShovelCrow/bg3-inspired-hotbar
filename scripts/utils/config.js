@@ -89,8 +89,7 @@ export const CONFIG = {
                 "--primary-border-color": "#b78846",
                 "--bg3-border": "#161616",
                 "--shadow-text-stroke": "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
-                "--bg3-portrait-size": "175px",
-                "--bg3-cell-border-width": "2px"
+                "--bg3-portrait-size": "175px"
             },
             "img": {
                 border: "unset"

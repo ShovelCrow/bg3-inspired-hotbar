@@ -118,6 +118,7 @@ class GridContainer {
           if(itemData.system?.activation?.type) cell.dataset.actionType = itemData.system.activation.type.toLowerCase();
           cell.dataset.itemType = itemData.type;
           if(itemData.type === "spell") cell.dataset.isPact = itemData.system.preparation?.mode === "pact";
+          if(itemData.type === 'feat') cell.dataset.featType = itemData.system.type?.value || 'default';
           if (itemData?.system?.uses) {
             const uses = itemData.system.uses;
             const value = uses.value ?? 0;
