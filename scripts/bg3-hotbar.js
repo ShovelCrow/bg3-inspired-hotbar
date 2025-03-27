@@ -232,6 +232,35 @@ export class BG3Hotbar {
             }
         });
 
+         game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
+             name: 'UI Position',
+             hint: 'Choose where the hotbar should be placed.',
+             scope: 'client',
+             config: true,
+             type: String,
+             choices: {
+                 'center': 'Center',
+                 'left': 'Left',
+                 'right': 'Right'
+             },
+             default: 'center',
+             onChange: value => {
+                if(this.manager?.ui?.element) this.manager.ui.element.dataset('position', value);
+             }
+         });
+         
+        game.settings.register(MODULE_ID, "tooltipColor", {
+            name: "UI Position - Padding",
+            hint: "Space from the screen border. From the left if UI Position -> Left, From the right if UI Position -> Right",
+            scope: "client",
+            config: true,
+            type: Number,
+            default: 0,
+            onChange: value => {
+                if(this.manager?.ui?.element) this.manager.ui.element.style.setProperty('--position-padding', `${value}px`);
+            },
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'normalOpacity', {
             name: 'BG3.Settings.NormalOpacity.Name',
             hint: 'BG3.Settings.NormalOpacity.Hint',
@@ -289,23 +318,6 @@ export class BG3Hotbar {
                 }
             }
         });
-
-       /*  game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
-            name: 'UI Position',
-            hint: 'Choose where the hotbar should be placed.',
-            scope: 'client',
-            config: true,
-            type: String,
-            choices: {
-                'center': 'Center',
-                'left': 'Left',
-                'right': 'Right'
-            },
-            default: 'center',
-            onChange: value => {
-                this.manager?.ui?.element?.style.setProperty('--bg3-scale-ui', value/100);
-            }
-        }); */
       
         game.settings.register(CONFIG.MODULE_NAME, 'autoHideCombat', {
           name: 'Hide UI when not in combat and show only on your turn',

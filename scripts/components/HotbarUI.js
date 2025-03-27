@@ -73,9 +73,8 @@ class HotbarUI {
     this.element.style.transition = "transform 0.3s ease-in-out, opacity 0.3s ease-in-out";
     this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
     this.element.setAttribute('theme-option', game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
-    /* this.element.dataset.position = game.settings.get(CONFIG.MODULE_NAME, 'uiPosition');
-    this.element.style.setProperty('--position-padding', `${game.settings.get(CONFIG.MODULE_NAME, 'posPadding')}px`); */
-    // this.element.style.setProperty('--bg3-scale-ui', game.settings.get(CONFIG.MODULE_NAME, 'uiScale')/100);
+    this.element.dataset.position = game.settings.get(CONFIG.MODULE_NAME, 'uiPosition');
+    this.element.style.setProperty('--position-padding', `${game.settings.get(CONFIG.MODULE_NAME, 'posPadding')}px`);
     this.updateUIScale();
         
     // Create weapons containers
