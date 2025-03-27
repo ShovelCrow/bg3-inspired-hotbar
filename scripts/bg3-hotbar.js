@@ -344,15 +344,6 @@ export class BG3Hotbar {
           }
         });
 
-        game.settings.register(CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
-            name: 'Open character sheet on click',
-            hint: 'Open the character sheet with a single click on portrait instead of double click.',
-            scope: 'client',
-            config: true,
-            type: Boolean,
-            default: false
-        });
-
         // Portrait Settings
         game.settings.register(CONFIG.MODULE_NAME, 'defaultPortraitPreferences', {
             name: 'BG3.Settings.DefaultPortraitPreferences.Name',
@@ -371,6 +362,15 @@ export class BG3Hotbar {
                     this.manager.ui.portraitCard.loadImagePreference();
                 }
             }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
+            name: 'Open character sheet on click',
+            hint: 'Open the character sheet with a single click on portrait instead of double click.',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: false
         });
 
         game.settings.register(CONFIG.MODULE_NAME, 'showExtraInfo', {
