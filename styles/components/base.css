@@ -33,6 +33,7 @@
     --bg3-cell-size: 50px;
     --bg3-filter-button-size: 32px;
     --bg3-portrait-size: 200px;
+    --portrait-right: 172px;
 }
 
 /* ==========================================================================
@@ -50,26 +51,33 @@
   font-family: "Signika", sans-serif;
   scale: var(--bg3-scale-ui);
   transform-origin: bottom;
-  margin-bottom: calc(10px* var(--bg3-scale-ui));
+  /* margin-bottom: calc(10px* var(--bg3-scale-ui)); */
   gap: 0.25rem;
   padding: 0;
   width: 100%;
+  padding-bottom: var(--position-bottom);
 }
 
-/* #bg3-hotbar-container {
-  width: calc(100% / var(--bg3-scale-ui));
-  left: calc(-100%*(1 - var(--bg3-scale-ui)));
+#bg3-hotbar-container {
+  /* width: calc(100% / var(--bg3-scale-ui));
+  left: calc(-100%*(1 - var(--bg3-scale-ui))); */
 }
 
 #bg3-hotbar-container[data-position="left"] {
+  /* justify-content: flex-start;
+  padding-left: calc(var(--bg3-portrait-size) + 20px + var(--position-padding)); */
   justify-content: flex-start;
-  padding-left: calc(var(--bg3-portrait-size) + 20px + var(--position-padding));
+  transform-origin: bottom left;
+  padding-left: calc(var(--portrait-right) + 15px + var(--position-padding));
 }
 
 #bg3-hotbar-container[data-position="right"] {
+  /* justify-content: flex-end;
+  padding-right: var(--position-padding); */
   justify-content: flex-end;
+  transform-origin: bottom right;
   padding-right: var(--position-padding);
-} */
+}
 
 .bg3-hud .bg3-hotbar-subcontainer {
   position: relative;

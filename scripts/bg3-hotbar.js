@@ -245,11 +245,11 @@ export class BG3Hotbar {
              },
              default: 'center',
              onChange: value => {
-                if(this.manager?.ui?.element) this.manager.ui.element.dataset('position', value);
+                if(this.manager?.ui?.element) this.manager.ui.element.dataset.position = value;
              }
          });
          
-        game.settings.register(MODULE_ID, "tooltipColor", {
+        game.settings.register(CONFIG.MODULE_NAME, "posPadding", {
             name: "UI Position - Padding",
             hint: "Space from the screen border. From the left if UI Position -> Left, From the right if UI Position -> Right",
             scope: "client",
@@ -258,6 +258,18 @@ export class BG3Hotbar {
             default: 0,
             onChange: value => {
                 if(this.manager?.ui?.element) this.manager.ui.element.style.setProperty('--position-padding', `${value}px`);
+            },
+        });
+         
+        game.settings.register(CONFIG.MODULE_NAME, "posPaddingBottom", {
+            name: "UI Position - Bottom",
+            hint: "Space from the bottom of the screen.",
+            scope: "client",
+            config: true,
+            type: Number,
+            default: 10,
+            onChange: value => {
+                if(this.manager?.ui?.element) this.manager.ui.element.style.setProperty('--position-bottom', `${value}px`);
             },
         });
 
