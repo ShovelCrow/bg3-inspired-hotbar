@@ -35,9 +35,6 @@ export class BG3Hotbar {
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
 
-        // Register scene controls
-        this._registerSceneControls();
-
         // Log initialization
         console.log(`${CONFIG.MODULE_NAME} | Initialized`);
 
@@ -79,24 +76,6 @@ export class BG3Hotbar {
         if (collapseMacrobar) {
             ui.hotbar.collapse();
         }
-    }
-
-    static _registerSceneControls() {
-        Hooks.on('getSceneControlButtons', (controls) => {
-            const tokenTools = controls.find(c => c.name === "token");
-            if (!tokenTools) return;
-
-            const isActive = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
-            
-            tokenTools.tools.push({
-                name: "toggleBG3UI",
-                title: "Toggle BG3 Hotbar",
-                icon: "fas fa-gamepad",
-                toggle: true,
-                active: isActive,
-                onClick: () => this._toggleUI()
-            });
-        });
     }
 
     static async _toggleUI() {
@@ -946,4 +925,21 @@ Hooks.once('ready', async () => {
         return;
     }
     await BG3Hotbar.init();
+});
+
+
+Hooks.on('getSceneControlButtons', (controls) => {
+    const tokenTools = controls.find(c => c.name === "token");
+    if (!tokenTools) return;
+
+    const isActive = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled') ?? true;
+    
+    tokenTools.tools.push({
+        name: "toggleBG3UI",
+        title: "Toggle BG3 Hotbar",
+        icon: "fas fa-gamepad",
+        toggle: true,
+        active: isActive,
+        onClick: () => BG3Hotbar._toggleUI()
+    });
 });
