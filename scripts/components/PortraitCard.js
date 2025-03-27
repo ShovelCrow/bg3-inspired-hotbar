@@ -8,6 +8,7 @@ export class PortraitCard {
         this.gridContainer = gridContainer;
         this.element = null;
         this.abilityButton = null;
+        this.extraInfosContainer = null;
         this.stabilizationTimer = null;  // Add timer reference
         this.isStabilizing = false;      // Add stabilization state
         this.lastHpValue = null;  // Track HP changes
@@ -59,7 +60,19 @@ export class PortraitCard {
     _createCard() {
         this.element = document.createElement("div");
         this.element.classList.add("portrait-card", "visible");
+        if(game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage')) this.element.classList.add('portrait-hidden');
         this.element.setAttribute("data-container-index", this.gridContainer.index);
+        
+        // Create the ability button
+        this.abilityButton = new AbilityButton(this);
+
+        // Create extra infos
+        if(game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo')) {
+            this.extraInfosContainer = document.createElement("div");
+            this.extraInfosContainer.classList.add("extra-infos-container");
+            this._createExtraInfo(this.extraInfosContainer);
+            this.element.appendChild(this.extraInfosContainer);
+        }
 
         // Create death saves container first (it will be positioned absolutely)
         const deathSavesContainer = this._createDeathSavesContainer();
@@ -67,9 +80,6 @@ export class PortraitCard {
 
         const imageContainer = this._createImageContainer();
         this.element.appendChild(imageContainer);
-        
-        // Create the ability button
-        this.abilityButton = new AbilityButton(this);
     }
 
     _createDeathSavesContainer() {
@@ -334,7 +344,7 @@ export class PortraitCard {
     _createImageContainer() {
         const container = document.createElement("div");
         container.classList.add("portrait-image-container");
-
+        
         const token = canvas.tokens.get(this.gridContainer.ui.manager.currentTokenId);
         if (!token?.actor) return container;
 
@@ -348,7 +358,6 @@ export class PortraitCard {
         // Add health overlay
         this._createHealthOverlay(container, token.actor);
         this._createHPText(container, token.actor);
-        if(game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo')) this._createExtraInfo(container, token.actor);
 
         // Add double-click event listener to open character sheet
         image.addEventListener('dblclick', (event) => {
@@ -543,7 +552,10 @@ export class PortraitCard {
         container.appendChild(hpText);
     }
 
-    _createExtraInfo = function(container, actor) {
+    _createExtraInfo = function(container) {
+        const token = canvas.tokens.get(this.gridContainer.ui.manager.currentTokenId);
+        if (!token?.actor) return;
+        
         // Remove previous infos
         const extraInfos = this.element.getElementsByClassName('extra-info');
         while(extraInfos.length > 0) {
@@ -553,7 +565,7 @@ export class PortraitCard {
         const savedData = game.settings.get(CONFIG.MODULE_NAME, "dataExtraInfo");
         for(let i = 0; i < savedData.length; i++) {
             if(!savedData[i].attr || savedData[i].attr == '') continue;
-            const attr = foundry.utils.getProperty(actor.system, savedData[i].attr) ?? foundry.utils.getProperty(actor.system, savedData[i].attr + ".value") ?? this._getInfoFromSettings(savedData[i].attr);
+            const attr = foundry.utils.getProperty(token.actor.system, savedData[i].attr) ?? foundry.utils.getProperty(token.actor.system, savedData[i].attr + ".value") ?? this._getInfoFromSettings(savedData[i].attr);
             if(!attr) continue;
             const extra = document.createElement("div");
             extra.classList.add("extra-info", `extra-info-${i}`, ...savedData[i].icon.split(' '));
@@ -563,6 +575,8 @@ export class PortraitCard {
             extra.appendChild(extraText);
             container.appendChild(extra);
         }
+
+        return container;
     }
 
     _getInfoFromSettings(stringInfo) {
@@ -633,7 +647,7 @@ export class PortraitCard {
 
         // Update Extra Infos
         if(game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo')) {
-          this._createExtraInfo(container, token.actor);
+          this._createExtraInfo(this.extraInfosContainer);
         } else if(document.getElementsByClassName('extra-info').length) {
           const extraInfo = document.getElementsByClassName('extra-info');
           while(extraInfo.length > 0) {

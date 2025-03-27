@@ -1,0 +1,42 @@
+<form>
+    <div class="dialog-container">
+        <div class="form-group" data-setting-id="bg3-inspired-hotbar.hidePortraitImage">
+            <label>Hide Portrait Image</label>
+            <div class="form-fields">
+        
+                <input type="checkbox" name="bg3-inspired-hotbar.hidePortraitImage" data-dtype="Boolean" checked="">
+        
+            </div>
+        
+            <p class="notes">Also hide health overlay and text.</p>
+        </div>
+        <div class="form-group" data-setting-id="bg3-inspired-hotbar.defaultPortraitPreferences">
+            <label>Default Portrait Display</label>
+            <div class="form-fields">
+        
+                <select name="bg3-inspired-hotbar.defaultPortraitPreferences" data-dtype="String">
+                    <option value="token" selected="">Always Use Token Image</option><option value="portrait">Always Use Character Portrait</option>
+                </select>
+        
+            </div>
+        
+            <p class="notes">Choose whether to display token images or character portraits by default. This can be overridden per token. For the first time you enable this setting, it will apply to all tokens that do not have a portrait set.</p>
+        </div>
+        <div class="form-group" data-setting-id="bg3-inspired-hotbar.showSheetSimpleClick">
+            <label>Open character sheet on click</label>
+            <div class="form-fields">
+        
+                <input type="checkbox" name="bg3-inspired-hotbar.showSheetSimpleClick" data-dtype="Boolean" checked="">
+        
+            </div>
+        
+            <p class="notes">Open the character sheet with a single click on portrait instead of double click.</p>
+        </div>
+    </div>
+    <div class="dialog-buttons">
+        <button type="submit" class="dialog-button">
+            <i class="fas fa-save"></i>
+            {{localize "BG3.Settings.ContainerAutoPopulate.Save"}}
+        </button>
+    </div>
+</form>

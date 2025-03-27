@@ -7,7 +7,7 @@ import { ControlsManager } from './managers/ControlsManager.js';
 import { AutoPopulateCreateToken, AutoPopulateDefaults } from './features/AutoPopulateCreateToken.js';
 import { AutoPopulateContainer } from './features/AutoPopulateContainer.js';
 import { TooltipFactory } from './tooltip/TooltipFactory.js';
-import { ExtraInfosDialog } from './features/ExtraInfosDialog.js';
+import { ExtraInfosDialog, PortraitSettingDialog } from './features/ExtraInfosDialog.js';
 
 export class BG3Hotbar {
     static manager = null;
@@ -344,12 +344,20 @@ export class BG3Hotbar {
           }
         });
 
-        // Portrait Settings
+        // Portrait Settings        
+        game.settings.registerMenu(CONFIG.MODULE_NAME, "menuPortrait", {
+            name: 'Portrait settings',
+            label: 'Configure',
+            hint: 'Advanced settings for character portrait.',
+            icon: "fas fa-cogs",
+            type: PortraitSettingDialog,
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'defaultPortraitPreferences', {
             name: 'BG3.Settings.DefaultPortraitPreferences.Name',
             hint: 'BG3.Settings.DefaultPortraitPreferences.Hint',
             scope: 'client',
-            config: true,
+            config: false,
             type: String,
             choices: {
                 'token': 'BG3.Settings.DefaultPortraitPreferences.Token',
@@ -364,11 +372,25 @@ export class BG3Hotbar {
             }
         });
 
+        game.settings.register(CONFIG.MODULE_NAME, 'hidePortraitImage', {
+            name: 'Hide Portrait Image',
+            hint: 'Also hide health overlay and text.',
+            scope: 'client',
+            config: false,
+            type: Boolean,
+            default: false,
+            onChange: value => {
+              if(BG3Hotbar.manager.ui.portraitCard) {
+                BG3Hotbar.manager.ui.portraitCard.element.classList.toggle('portrait-hidden', value);
+              }
+            }
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
             name: 'Open character sheet on click',
             hint: 'Open the character sheet with a single click on portrait instead of double click.',
             scope: 'client',
-            config: true,
+            config: false,
             type: Boolean,
             default: false
         });
@@ -681,7 +703,6 @@ export class BG3Hotbar {
         // Add Categories to module settings
         Hooks.on("renderSettingsConfig", (app, html, data) => {
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
-            $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('[name="bg3-inspired-hotbar.defaultPortraitPreferences"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.tooltipDelay"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
@@ -689,6 +710,9 @@ export class BG3Hotbar {
 
             $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').appendTo($('[name="bg3-inspired-hotbar.showExtraInfo"]').parents('div.form-group:first'));
             $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').appendTo($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
+            $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertBefore($('[name="bg3-inspired-hotbar.showExtraInfo"]').parents('div.form-group:first'));
+            
+            $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first'));
         });
 
         // Canvas and token control hooks

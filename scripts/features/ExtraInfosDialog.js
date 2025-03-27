@@ -1,5 +1,34 @@
 import { CONFIG } from "../utils/config.js";
 
+export class PortraitSettingDialog extends FormApplication {
+    constructor () {
+        super();
+    }
+
+    static get defaultOptions() {
+        return {
+            ...super.defaultOptions,
+            title: 'Portrait settings',
+            id: "bg3-inspired-hotbar-portrait-settings",
+            template: `modules/bg3-inspired-hotbar/templates/portrait-dialog.hbs`,
+            height: "auto",
+            submitOnClose: false
+        };
+    }
+
+    getData() {
+        return {};
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+    }
+
+    async _onSubmit(event) {
+        event.preventDefault();
+        this.close();
+    }
+}
 export class ExtraInfosDialog extends FormApplication {
     constructor () {
         super();
