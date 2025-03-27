@@ -52,8 +52,8 @@
             "Hint": "When enabled, unlinked tokens will only show prepared spells and special spells (innate, at-will, pact, ritual, always). When disabled, all spells will appear."
         },
         "CollapseFoundryMacrobar": {
-            "Name": "Start Foundry Macrobar Collapsed",
-            "Hint": "Automatically collapse the default Foundry macrobar when loading"
+            "Name": "Collapse Foundry Macrobar",
+            "Hint": "Automatically collapse the default Foundry macrobar"
         },
         "ShowPassiveFeaturesContainer": {
             "Name": "Show Passive Features Container",
