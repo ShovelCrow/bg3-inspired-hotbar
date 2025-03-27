@@ -485,6 +485,7 @@ class HotbarUI {
   _initializeFadeOut() {
     // Add mousemove listener to document
     document.addEventListener('mousemove', this._handleMouseMove);
+    document.addEventListener('dragover', this._handleMouseMove);
     
     // Set initial state
     this._updateFadeState(false);
