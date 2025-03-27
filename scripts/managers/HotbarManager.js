@@ -427,6 +427,14 @@ export class HotbarManager {
         }
     }
 
+    checkSpellPoint() {
+        if (game.modules.get("dnd5e-spellpoints")?.active) {
+            const token = canvas.tokens.get(this.currentTokenId);
+            if(token && token.actor.items.find(i => i.system.identifier == "spell-points")) return true;
+        }
+        return false;
+    }
+    
     async socketUpdateData(actor, changes) {
         // Check if we have saved data for this token
         if(this.currentTokenId && this.tokenConfigs.has(this.currentTokenId)) {
