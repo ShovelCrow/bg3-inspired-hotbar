@@ -362,7 +362,10 @@ export class BG3Hotbar {
                 'bottom': game.i18n.localize('BG3.Settings.HighlightStyle.Bottom'),
                 'border': game.i18n.localize('BG3.Settings.HighlightStyle.Border')
             },
-            default: 'border'
+            default: 'border',
+            onChange: value => {
+                if(this.manager?.ui?.element) this.manager.ui.element.classList.toggle('cell-bottom-highlight', value === 'bottom');
+            }
         });
 
         // Visual Settings - Opacity and Fading

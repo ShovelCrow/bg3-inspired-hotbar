@@ -68,6 +68,7 @@ class HotbarUI {
     this.element = document.createElement("div");
     this.element.id = "bg3-hotbar-container";
     this.element.classList.add("bg3-hud");
+    if(game.settings.get('bg3-inspired-hotbar', 'highlightStyle') === 'bottom') this.element.classList.add("cell-bottom-highlight");
     this.element.style.transition = "transform 0.3s ease-in-out, opacity 0.3s ease-in-out";
     this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
     this.element.setAttribute('theme-option', game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
