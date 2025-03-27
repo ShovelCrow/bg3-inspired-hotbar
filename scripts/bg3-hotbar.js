@@ -165,7 +165,7 @@ export class BG3Hotbar {
         game.settings.register(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
             name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
             hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
-            scope: 'world',
+            scope: 'client',
             config: true,
             type: String,
             choices: {
