@@ -7,11 +7,14 @@
     --primary-border-color: #444;
     --bg3-text: #ddd;
     --bg3-background-highlight: #3a3a3a;
+
+    /* Cells */
+    --bg3-cell-border-width: 2px;
     
     /* Action Colors */
-    --bg3-action: var(--color-action, #e69500);
-    --bg3-bonus: var(--color-bonus, #2ecc71);
-    --bg3-reaction: var(--color-reaction, #e74c3c);
+    --bg3-action: var(--color-action, #2ecc71);
+    --bg3-bonus: var(--color-bonus, #e67e22);
+    --bg3-reaction: var(--color-reaction, #fe85f6);
     --bg3-feature: var(--color-feature, #9b59b6);
     --bg3-spell: var(--color-spell, #3498db);
     --bg3-pact: var(--color-pact, #8e44ad);
@@ -125,7 +128,7 @@
     width: var(--cell-size);
     height: var(--cell-size);
     background: #333;
-    border: 2px solid var(--bg3-border);
+    border: var(--bg3-cell-border-width) solid var(--bg3-border);
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -138,6 +141,35 @@
     padding: 0;
     box-sizing: border-box;
     user-select: none;
+    opacity: 1;
+}
+
+.bg3-hud .hotbar-cell.action-used, .bg3-hud .hotbar-cell.action-excluded {
+  opacity: .25;
+}
+
+.bg3-hud .hotbar-cell[data-action-type="action"].action-highlighted {
+  border-color: var(--bg3-action);
+}
+
+.bg3-hud .hotbar-cell[data-action-type="bonus"].action-highlighted {
+  border-color: var(--bg3-bonus);
+}
+
+.bg3-hud .hotbar-cell[data-action-type="reaction"].action-highlighted {
+  border-color: var(--bg3-reaction);
+}
+
+.bg3-hud .hotbar-cell[data-action-type="feature"].action-highlighted {
+  border-color: var(--bg3-feature);
+}
+
+.bg3-hud .hotbar-cell[data-action-type="spell"].action-highlighted {
+  border-color: var(--bg3-spell);
+}
+
+.bg3-hud .hotbar-cell[data-action-type="pact"].action-highlighted {
+  border-color: var(--bg3-pact);
 }
 
 .bg3-hud .hotbar-cell:hover {

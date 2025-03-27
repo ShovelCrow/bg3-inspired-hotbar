@@ -55,7 +55,7 @@ export const CONFIG = {
         BACKGROUND_LIGHT: "#2e2e2e",
         BACKGROUND_HIGHLIGHT: "#3e3e3e",
         BACKGROUND_ACTIVE: "#4e4e4e",
-        BORDER: "#444444",
+        // BORDER: "#444444",
         TEXT: {
             PRIMARY: "#dddddd",
             SECONDARY: "#999999"
@@ -89,7 +89,8 @@ export const CONFIG = {
                 "--primary-border-color": "#b78846",
                 "--bg3-border": "#161616",
                 "--shadow-text-stroke": "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
-                "--bg3-portrait-size": "175px"
+                "--bg3-portrait-size": "175px",
+                "--bg3-cell-border-width": "2px"
             },
             "img": {
                 border: "unset"

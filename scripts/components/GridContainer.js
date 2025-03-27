@@ -115,6 +115,7 @@ class GridContainer {
       if (item.type !== "Macro") {
         try {
           const itemData = await fromUuid(item.uuid);
+          if(itemData.system?.activation?.type) cell.dataset.actionType = itemData.system.activation.type.toLowerCase();
           if (itemData?.system?.uses) {
             const uses = itemData.system.uses;
             const value = uses.value ?? 0;

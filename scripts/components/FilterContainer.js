@@ -128,8 +128,8 @@ export class FilterContainer {
             if (this.selectedActionType === type) {
                 this.selectedActionType = null;
                 button.style.borderColor = "transparent";
-                this._updateActionTypeHighlights();
             }
+            this._updateActionTypeHighlights();
         } else {
             // Mark action as used
             this.usedActions.add(type);
@@ -139,8 +139,8 @@ export class FilterContainer {
             if (this.selectedActionType === type) {
                 this.selectedActionType = null;
                 button.style.borderColor = "transparent";
-                this._updateActionTypeHighlights();
             }
+            this._updateActionTypeHighlights();
         }
     }
 
@@ -279,11 +279,12 @@ export class FilterContainer {
         
         this.hotbarUI.gridContainers.forEach((container) => {
             container.element.querySelectorAll(".hotbar-cell").forEach(async (cell) => {
-                cell.style.boxShadow = 'none';
-                cell.style.borderColor = CONFIG.COLORS.BORDER;
-                cell.style.borderWidth = '2px';
-                cell.style.borderBottom = `2px solid ${CONFIG.COLORS.BORDER}`;
-                cell.style.opacity = '1';
+                // cell.style.boxShadow = 'none';
+                // cell.style.borderColor = CONFIG.COLORS.BORDER;
+                // cell.style.borderWidth = '2px';
+                // cell.style.borderBottom = `2px solid ${CONFIG.COLORS.BORDER}`;
+                // cell.style.opacity = '1';
+                cell.classList.remove('action-used', 'action-highlighted', 'action-excluded');
                 
                 const slotKey = cell.dataset.slot;
                 const item = container.data.items[slotKey];
@@ -295,10 +296,18 @@ export class FilterContainer {
 
                         const activation = itemData.system?.activation?.type?.toLowerCase();
                         
+                        if(this.usedActions.has(activation)) {
+                            cell.classList.add('action-used');
+                            return;
+                        }
+                        
                         if (this.selectedActionType) {
-                            let color = null;
+                            // let color = null;
+
+                            if(this.selectedActionType === activation) cell.classList.add('action-highlighted');
+                            else cell.classList.add('action-excluded')
                             
-                            if (this.selectedActionType === "action" && activation === "action") {
+                            /* if (this.selectedActionType === "action" && activation === "action") {
                                 color = CONFIG.COLORS.ACTION;
                             } else if (this.selectedActionType === "bonus" && activation === "bonus") {
                                 color = CONFIG.COLORS.BONUS;
@@ -315,7 +324,7 @@ export class FilterContainer {
                                         cell.style.borderColor = color;
                                         break;
                                 }
-                            }
+                            } */
                         }
                     } catch (error) {
                         console.error("Error updating action highlights:", error);
@@ -330,11 +339,11 @@ export class FilterContainer {
         
         this.hotbarUI.gridContainers.forEach((container) => {
             container.element.querySelectorAll(".hotbar-cell").forEach(async (cell) => {
-                cell.style.boxShadow = 'none';
-                cell.style.borderColor = CONFIG.COLORS.BORDER;
-                cell.style.borderWidth = '2px';
-                cell.style.borderBottom = `2px solid ${CONFIG.COLORS.BORDER}`;
-                cell.style.opacity = '1';
+                // cell.style.boxShadow = 'none';
+                // cell.style.borderColor = CONFIG.COLORS.BORDER;
+                // cell.style.borderWidth = '2px';
+                // cell.style.borderBottom = `2px solid ${CONFIG.COLORS.BORDER}`;
+                // cell.style.opacity = '1';
                 
                 const slotKey = cell.dataset.slot;
                 const item = container.data.items[slotKey];
@@ -374,11 +383,11 @@ export class FilterContainer {
         
         this.hotbarUI.gridContainers.forEach((container) => {
             container.element.querySelectorAll(".hotbar-cell").forEach(async (cell) => {
-                cell.style.boxShadow = 'none';
-                cell.style.borderColor = CONFIG.COLORS.BORDER;
-                cell.style.borderWidth = '2px';
-                cell.style.borderBottom = `2px solid ${CONFIG.COLORS.BORDER}`;
-                cell.style.opacity = '1';
+                // cell.style.boxShadow = 'none';
+                // cell.style.borderColor = CONFIG.COLORS.BORDER;
+                // cell.style.borderWidth = '2px';
+                // cell.style.borderBottom = `2px solid ${CONFIG.COLORS.BORDER}`;
+                // cell.style.opacity = '1';
                 
                 const slotKey = cell.dataset.slot;
                 const item = container.data.items[slotKey];
