@@ -77,6 +77,7 @@ export class BG3Hotbar {
         }
         
         const collapseMacrobar = game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
+        if(collapseMacrobar !== 'full' && document.querySelector("#hotbar").style.display != 'flex') document.querySelector("#hotbar").style.display = 'flex';
         // Applying macrobar collapse setting
         if (collapseMacrobar === 'always' || collapseMacrobar === 'true') {
             ui.hotbar.collapse();
@@ -91,7 +92,7 @@ export class BG3Hotbar {
                     ui.hotbar.expand();
                 }, 100);
             }
-        }
+        } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
     }
 
     static async _toggleUI() {
@@ -171,7 +172,8 @@ export class BG3Hotbar {
             choices: {
                 'always': 'Always',
                 'never': 'Never',
-                'select': 'When Hotbar visible'
+                'select': 'When Hotbar visible',
+                'full': 'Fully hidden'
             },
             default: 'always',
             onChange: () => {
