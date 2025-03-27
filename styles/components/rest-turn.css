@@ -16,11 +16,15 @@
     min-width: 80px;
     flex-direction: column;
     gap: 0.25rem;
-    justify-content: space-around;
+    justify-content: flex-start;
     margin-left: 35px;
 }
 
 .bg3-hud .rest-turn-container i {
+    font-size: x-large;
+}
+
+.bg3-hud .rest-turn-container .turn-button i {
     font-size: xx-large;
 }
 
@@ -43,11 +47,12 @@
     padding: .5rem 1rem 2rem;
     position: relative;
     transition: all .3s ease-in-out;
-    flex: 1;
+    /* flex: 1; */
     border-radius: 8px;
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    height: 66px;
 }
 
 .bg3-hud .rest-turn-button.end-turn {
@@ -63,6 +68,7 @@
 
 .bg3-hud .turn-button {
     /* background-image: url(../../icons/duration.webp); */
+    height: 136px;
 }
 
 .bg3-hud .rest-turn-label {
@@ -82,7 +88,7 @@
 
 .bg3-hud .btn-toggle {
     position: absolute;
-    bottom: calc(100% + 5px);
+    bottom: 0;
     width: 100%;
     height: 25px;
     z-index: 90;
@@ -109,6 +115,10 @@
 
 #toggle-input:checked ~ #bg3-hotbar-container {
     transform: translateY(calc(100% + 15px));
+}
+
+#toggle-input:checked ~ #bg3-hotbar-container label.btn-toggle {
+    bottom: calc(100% + 15px);
 }
 
 #toggle-input:checked ~ #bg3-hotbar-container .filter-container, #toggle-input:checked ~ #bg3-hotbar-container .passives-container, #toggle-input:checked ~ #bg3-hotbar-container .effects-container, #toggle-input:checked ~ #bg3-hotbar-container .bg3-hotbar-weaponcontainer, #toggle-input:checked ~ #bg3-hotbar-container .portrait-card {
