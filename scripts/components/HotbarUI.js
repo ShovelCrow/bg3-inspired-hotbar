@@ -548,7 +548,6 @@ class HotbarUI {
   }
 
   async switchSet(index) {
-    console.log('switchSet')
     // Check if needed
     if(!this.weaponContainer[index]?.data) return;
     if(this.manager?.activeSet === index && this.weaponContainer[index].data?.oldWeapons == this.weaponContainer[index].data?.items) return;
