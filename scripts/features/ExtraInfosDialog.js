@@ -21,10 +21,12 @@ export class PortraitSettingDialog extends FormApplication {
             hidePortraitImage: game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage'),
             showExtraInfo: game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo'),
             defaultPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences'),
-            ShapePortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'shapePortraitPreferences'),
-            BorderPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'borderPortraitPreferences'),
+            shapePortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'shapePortraitPreferences'),
+            borderPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'borderPortraitPreferences'),
             showSheetSimpleClick: game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick'),
-            backgroundPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences')
+            backgroundPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences'),
+            showHealthOverlay: game.settings.get(CONFIG.MODULE_NAME, 'showHealthOverlay'),
+            showHPText: game.settings.get(CONFIG.MODULE_NAME, 'showHPText')
         };
         return {configData};
     }

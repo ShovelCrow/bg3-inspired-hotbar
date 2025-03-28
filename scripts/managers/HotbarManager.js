@@ -388,7 +388,6 @@ export class HotbarManager {
 
         // Save to actor flags
         await targetActor.setFlag(CONFIG.MODULE_NAME, CONFIG.FLAG_NAME, dataToSave);
-        console.log(targetActor.getFlag(CONFIG.MODULE_NAME, CONFIG.FLAG_NAME).combatContainer[0].items)
     }
 
     async cleanupInvalidItems(actor) {

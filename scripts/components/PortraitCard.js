@@ -494,6 +494,7 @@ export class PortraitCard {
     _createHealthOverlay(container, actor) {
         const healthOverlay = document.createElement("div");
         healthOverlay.classList.add("health-overlay");
+        if(!game.settings.get(CONFIG.MODULE_NAME, 'showHealthOverlay')) healthOverlay.classList.add("hidden");
         
         // Create the base red damage overlay
         const damageOverlay = document.createElement("div");
@@ -535,6 +536,7 @@ export class PortraitCard {
 
         const hpText = document.createElement("div");
         hpText.classList.add("hp-text");
+        if(!game.settings.get(CONFIG.MODULE_NAME, 'showHPText')) hpText.classList.add("hidden");
         
         // Add temp HP if it exists
         const tempHp = actor.system.attributes?.hp?.temp || 0;
@@ -705,7 +707,6 @@ export class PortraitCard {
 
         // First check for actor-specific saved preference
         const saved = await token.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage");
-        console.log(saved);
         
         if (saved !== undefined) {
             this.useTokenImage = saved;
@@ -714,7 +715,7 @@ export class PortraitCard {
             const defaultPref = game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences');
             this.useTokenImage = defaultPref === 'token';
         }
-console.log(this.useTokenImage, game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences'))
+        
         // Update the image immediately if we have one
         const portraitImg = this.element.querySelector('.portrait-image');
         if (portraitImg) {

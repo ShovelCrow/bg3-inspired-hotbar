@@ -146,9 +146,21 @@
             "Simple": "Simple",
             "Styled": "Styled (Round shape only)"
         },
-        "backgroundPortraitPreferences": {
+        "BackgroundPortraitPreferences": {
             "Name": "Background Portrait Image",
             "Hint": "Choose character portraits background color."
+        },
+        "ShowHealthOverlay": {
+            "Name": "Show health overlay",
+            "Hint": ""
+        },
+        "ShowHPText": {
+            "Name": "Show HP text",
+            "Hint": ""
+        },
+        "ShowRestTurnButton": {
+            "Name": "Show Rest/Turns button",
+            "Hint": ""
         },
         "SettingsCategories": {
             "HotbarContainer": "Hotbar buttons",

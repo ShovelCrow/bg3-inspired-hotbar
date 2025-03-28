@@ -451,6 +451,40 @@ export class BG3Hotbar {
             default: false
         });
 
+        game.settings.register(CONFIG.MODULE_NAME, 'showHealthOverlay', {
+          name: 'Show health overlay on character portrait.',
+          // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+          scope: 'client',
+          config: false,
+          type: Boolean,
+          default: true,
+          onChange: value => {
+            /* if(BG3Hotbar.manager.ui.portraitCard) {
+                const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
+                BG3Hotbar.manager.ui.portraitCard.update(actor);
+            } */
+            if(BG3Hotbar.manager.ui.portraitCard) {
+                const overlay = document.getElementsByClassName('health-overlay');
+                if(overlay && overlay[0]) overlay[0].classList.toggle('hidden', !value)
+            }
+          }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showHPText', {
+          name: 'Show HP text on character portrait.',
+          // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+          scope: 'client',
+          config: false,
+          type: Boolean,
+          default: true,
+          onChange: value => {
+            if(BG3Hotbar.manager.ui.portraitCard) {
+                const text = document.getElementsByClassName('hp-text');
+                if(text && text[0]) text[0].classList.toggle('hidden', !value)
+            }
+          }
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'showExtraInfo', {
           name: 'Show extra datas on character portrait.',
           // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
@@ -541,6 +575,20 @@ export class BG3Hotbar {
             onChange: value => {
                 if (this.manager?.ui?.controlsContainer) {
                     this.manager.ui.controlsContainer.element.classList.toggle('fade', value);
+                }
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'showRestTurnButton', {
+            name: 'BG3.Settings.ShowRestTurnButton.Name',
+            hint: 'BG3.Settings.ShowRestTurnButton.Hint',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: () => {
+                if (this.manager?.ui?.restTurnContainer) {
+                    this.manager.ui.restTurnContainer.render();
                 }
             }
         });
