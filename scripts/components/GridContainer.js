@@ -76,12 +76,12 @@ class GridContainer {
     this._setupCellEvents(cell, slotKey);
       
     // If weapon slot
-    if(this.data.for == 'weapon-set') {
+    /* if(this.data.for == 'weapon-set') {
       if(this.ui.manager.activeSet == parseInt(this.element.dataset.containerIndex) && this.data.oldWeapons != this.data.items) {
         this.data.oldWeapons = foundry.utils.deepClone(this.data.items);
         this.ui.switchSet.bind(this.ui)(this.index);
       }
-    }
+    } */
 
     return cell;
   }
