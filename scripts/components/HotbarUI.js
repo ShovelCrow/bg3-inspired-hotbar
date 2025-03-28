@@ -107,7 +107,6 @@ class HotbarUI {
     this.combatContainer.push(new GridContainer(this, this.manager.combatContainer[0], 0));
     this.combatContainer[0].element.id = "bg3-combat-container";
     this.combatContainer[0].element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
-    console.log(this.manager.combatContainer[0], this.combatContainer[0])
 
     weaponContainer.appendChild(this.combatContainer[0].element);
 
@@ -172,6 +171,9 @@ class HotbarUI {
 
     // Initial render
     this.render();
+
+    // Equip weapons if needed
+    this.switchSet(this.manager.activeSet);
   }
 
   /**
@@ -546,6 +548,12 @@ class HotbarUI {
   }
 
   async switchSet(index) {
+    console.log('switchSet')
+    // Check if needed
+    if(!this.weaponContainer[index]?.data) return;
+    if(this.manager?.activeSet === index && this.weaponContainer[index].data?.oldWeapons == this.weaponContainer[index].data?.items) return;
+    this.weaponContainer[index].data.oldWeapons = foundry.utils.deepClone(this.weaponContainer[index].data.items);
+
     const token = canvas.tokens.get(BG3Hotbar.manager.currentTokenId),
       weaponsList = token?.actor?.items.filter(w => w.type == 'weapon'),
       toUpdate = [],
