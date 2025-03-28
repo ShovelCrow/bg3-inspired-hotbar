@@ -133,6 +133,19 @@
             "Token": "Always Use Token Image",
             "Portrait": "Always Use Character Portrait"
         },
+        "ShapePortraitPreferences": {
+            "Name": "Shape Portrait Display",
+            "Hint": "Choose character portraits shape.",
+            "Round": "Round",
+            "Square": "Square"
+        },
+        "BorderPortraitPreferences": {
+            "Name": "Border Portrait Display",
+            "Hint": "Choose character portraits border.",
+            "None": "None",
+            "Simple": "Simple",
+            "Styled": "Styled"
+        },
         "SettingsCategories": {
             "HotbarContainer": "Hotbar buttons",
             "CombatContainer": "Common Actions Container",

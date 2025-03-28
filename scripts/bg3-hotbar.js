@@ -374,6 +374,45 @@ export class BG3Hotbar {
             }
         });
 
+        game.settings.register(CONFIG.MODULE_NAME, 'ShapePortraitPreferences', {
+            name: 'BG3.Settings.ShapePortraitPreferences.Name',
+            hint: 'BG3.Settings.ShapePortraitPreferences.Hint',
+            scope: 'client',
+            config: false,
+            type: String,
+            choices: {
+                'round': 'BG3.Settings.ShapePortraitPreferences.Round',
+                'square': 'BG3.Settings.ShapePortraitPreferences.Square'
+            },
+            default: 'round',
+            onChange: () => {
+                // Refresh UI if it exists
+                /* if (this.manager?.ui?.portraitCard) {
+                    this.manager.ui.portraitCard.loadImagePreference();
+                } */
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'BorderPortraitPreferences', {
+            name: 'BG3.Settings.BorderPortraitPreferences.Name',
+            hint: 'BG3.Settings.BorderPortraitPreferences.Hint',
+            scope: 'client',
+            config: false,
+            type: String,
+            choices: {
+                'none': 'BG3.Settings.BorderPortraitPreferences.None',
+                'simple': 'BG3.Settings.BorderPortraitPreferences.Simple',
+                'styled': 'BG3.Settings.BorderPortraitPreferences.Styled'
+            },
+            default: 'none',
+            onChange: () => {
+                // Refresh UI if it exists
+                /* if (this.manager?.ui?.portraitCard) {
+                    this.manager.ui.portraitCard.loadImagePreference();
+                } */
+            }
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'hidePortraitImage', {
             name: 'Hide Portrait Image',
             hint: 'Also hide health overlay and text.',
@@ -401,7 +440,7 @@ export class BG3Hotbar {
           name: 'Show extra datas on character portrait.',
           // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
           scope: 'client',
-          config: true,
+          config: false,
           type: Boolean,
           default: false,
           onChange: value => {
@@ -710,9 +749,9 @@ export class BG3Hotbar {
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.HotbarContainer")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
 
-            $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').appendTo($('[name="bg3-inspired-hotbar.showExtraInfo"]').parents('div.form-group:first'));
-            $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').appendTo($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
-            $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertBefore($('[name="bg3-inspired-hotbar.showExtraInfo"]').parents('div.form-group:first'));
+            $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
+            $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
+            $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
             
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first'));
         });

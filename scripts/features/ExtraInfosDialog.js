@@ -17,7 +17,15 @@ export class PortraitSettingDialog extends FormApplication {
     }
 
     getData() {
-        return {};
+        const configData = {
+            hidePortraitImage: game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage'),
+            showExtraInfo: game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo'),
+            defaultPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences'),
+            ShapePortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'ShapePortraitPreferences'),
+            BorderPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'BorderPortraitPreferences'),
+            showSheetSimpleClick: game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')
+        };
+        return {configData};
     }
 
     activateListeners(html) {
