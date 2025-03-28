@@ -374,7 +374,7 @@ export class BG3Hotbar {
             }
         });
 
-        game.settings.register(CONFIG.MODULE_NAME, 'ShapePortraitPreferences', {
+        game.settings.register(CONFIG.MODULE_NAME, 'shapePortraitPreferences', {
             name: 'BG3.Settings.ShapePortraitPreferences.Name',
             hint: 'BG3.Settings.ShapePortraitPreferences.Hint',
             scope: 'client',
@@ -385,15 +385,15 @@ export class BG3Hotbar {
                 'square': 'BG3.Settings.ShapePortraitPreferences.Square'
             },
             default: 'round',
-            onChange: () => {
+            onChange: value => {
                 // Refresh UI if it exists
-                /* if (this.manager?.ui?.portraitCard) {
-                    this.manager.ui.portraitCard.loadImagePreference();
-                } */
+                if (this.manager?.ui?.portraitCard?.element) {
+                    this.manager.ui.portraitCard.element.setAttribute("data-shape", value);
+                }
             }
         });
 
-        game.settings.register(CONFIG.MODULE_NAME, 'BorderPortraitPreferences', {
+        game.settings.register(CONFIG.MODULE_NAME, 'borderPortraitPreferences', {
             name: 'BG3.Settings.BorderPortraitPreferences.Name',
             hint: 'BG3.Settings.BorderPortraitPreferences.Hint',
             scope: 'client',
@@ -405,11 +405,26 @@ export class BG3Hotbar {
                 'styled': 'BG3.Settings.BorderPortraitPreferences.Styled'
             },
             default: 'none',
-            onChange: () => {
+            onChange: value => {
                 // Refresh UI if it exists
-                /* if (this.manager?.ui?.portraitCard) {
-                    this.manager.ui.portraitCard.loadImagePreference();
-                } */
+                if (this.manager?.ui?.portraitCard?.element) {
+                    this.manager.ui.portraitCard.element.setAttribute("data-border", value);
+                }
+            }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences', {
+            name: 'BG3.Settings.BackgroundPortraitPreferences.Name',
+            hint: 'BG3.Settings.BackgroundPortraitPreferences.Hint',
+            scope: 'client',
+            config: false,
+            type: String,
+            default: '',
+            onChange: value => {
+                // Refresh UI if it exists
+                if (this.manager?.ui?.portraitCard?.element) {
+                    this.manager.ui.portraitCard.element.style.setProperty('--img-background-color', (value && value != '' ? value : 'var(--bg3-background-highlight)'));
+                }
             }
         });
 
@@ -419,10 +434,10 @@ export class BG3Hotbar {
             scope: 'client',
             config: false,
             type: Boolean,
-            default: false,
+            default: true,
             onChange: value => {
               if(BG3Hotbar.manager.ui.portraitCard) {
-                BG3Hotbar.manager.ui.portraitCard.element.classList.toggle('portrait-hidden', value);
+                BG3Hotbar.manager.ui.portraitCard.element.classList.toggle('portrait-hidden', !value);
               }
             }
         });

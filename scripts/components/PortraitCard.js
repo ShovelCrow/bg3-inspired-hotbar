@@ -60,19 +60,21 @@ export class PortraitCard {
     _createCard() {
         this.element = document.createElement("div");
         this.element.classList.add("portrait-card", "visible");
-        if(game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage')) this.element.classList.add('portrait-hidden');
+        if(!game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage')) this.element.classList.add('portrait-hidden');
         this.element.setAttribute("data-container-index", this.gridContainer.index);
+        this.element.setAttribute("data-shape", game.settings.get(CONFIG.MODULE_NAME, 'shapePortraitPreferences'));
+        this.element.setAttribute("data-border", game.settings.get(CONFIG.MODULE_NAME, 'borderPortraitPreferences'));
+        
+        if(game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences')) this.element.style.setProperty('--img-background-color', game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences'));
         
         // Create the ability button
         this.abilityButton = new AbilityButton(this);
 
         // Create extra infos
-        if(game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo')) {
-            this.extraInfosContainer = document.createElement("div");
-            this.extraInfosContainer.classList.add("extra-infos-container");
-            this._createExtraInfo(this.extraInfosContainer);
-            this.element.appendChild(this.extraInfosContainer);
-        }
+        this.extraInfosContainer = document.createElement("div");
+        this.extraInfosContainer.classList.add("extra-infos-container");
+        this.element.appendChild(this.extraInfosContainer);
+        if(game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo')) this._createExtraInfo(this.extraInfosContainer);
 
         // Create death saves container first (it will be positioned absolutely)
         const deathSavesContainer = this._createDeathSavesContainer();
@@ -353,6 +355,7 @@ export class PortraitCard {
         image.classList.add("portrait-image");
         image.src = token.document.texture.src;
         image.alt = token.actor.name;
+        
         container.appendChild(image);
 
         // Add health overlay
@@ -702,6 +705,7 @@ export class PortraitCard {
 
         // First check for actor-specific saved preference
         const saved = await token.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage");
+        console.log(saved);
         
         if (saved !== undefined) {
             this.useTokenImage = saved;
@@ -710,7 +714,7 @@ export class PortraitCard {
             const defaultPref = game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences');
             this.useTokenImage = defaultPref === 'token';
         }
-
+console.log(this.useTokenImage, game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences'))
         // Update the image immediately if we have one
         const portraitImg = this.element.querySelector('.portrait-image');
         if (portraitImg) {

@@ -21,9 +21,10 @@ export class PortraitSettingDialog extends FormApplication {
             hidePortraitImage: game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage'),
             showExtraInfo: game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo'),
             defaultPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences'),
-            ShapePortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'ShapePortraitPreferences'),
-            BorderPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'BorderPortraitPreferences'),
-            showSheetSimpleClick: game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')
+            ShapePortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'shapePortraitPreferences'),
+            BorderPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'borderPortraitPreferences'),
+            showSheetSimpleClick: game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick'),
+            backgroundPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences')
         };
         return {configData};
     }
@@ -34,6 +35,14 @@ export class PortraitSettingDialog extends FormApplication {
 
     async _onSubmit(event) {
         event.preventDefault();
+        let data = [];
+        const form = this.element[0].querySelectorAll('div.form-fields:not([data-exclude="true"])');
+        for (let i = 0; i < form.length; i++) {
+            const input = form[i].querySelector("input") ?? form[i].querySelector("select"),
+                value = input.type == 'checkbox' ? input.checked : input.value;
+            game.settings.set(CONFIG.MODULE_NAME, input.name.split('.')[1], value);
+        }
+        console.log(game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences'));
         this.close();
     }
 }

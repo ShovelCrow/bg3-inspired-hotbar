@@ -144,7 +144,11 @@
             "Hint": "Choose character portraits border.",
             "None": "None",
             "Simple": "Simple",
-            "Styled": "Styled"
+            "Styled": "Styled (Round shape only)"
+        },
+        "backgroundPortraitPreferences": {
+            "Name": "Background Portrait Image",
+            "Hint": "Choose character portraits background color."
         },
         "SettingsCategories": {
             "HotbarContainer": "Hotbar buttons",
