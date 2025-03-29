@@ -442,6 +442,26 @@ export class BG3Hotbar {
             }
         });
 
+        game.settings.register(CONFIG.MODULE_NAME, 'overlayModePortrait', {
+            name: 'BG3.Settings.OverlayModePortrait.Name',
+            hint: 'BG3.Settings.OverlayModePortrait.Hint',
+            scope: 'client',
+            config: false,
+            type: String,
+            choices: {
+                'classic': 'BG3.Settings.OverlayModePortrait.None',
+                'bend': 'BG3.Settings.OverlayModePortrait.Simple'
+            },
+            default: 'classic',
+            onChange: value => {
+                // Refresh UI if it exists
+                if (this.manager?.ui?.portraitCard?.element) {
+                    const imageContainer = document.getElementsByClassName('portrait-image-subcontainer');
+                    if(imageContainer[0]) imageContainer[0].setAttribute('data-bend-mode', value);
+                }
+            }
+        });
+
         game.settings.register(CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
             name: 'Open character sheet on click',
             hint: 'Open the character sheet with a single click on portrait instead of double click.',

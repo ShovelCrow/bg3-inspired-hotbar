@@ -351,15 +351,18 @@ export class PortraitCard {
         if (!token?.actor) return container;
 
         // Add token image
+        const imageContainer = document.createElement("div");
+        imageContainer.classList.add("portrait-image-subcontainer");
+        imageContainer.setAttribute('data-bend-mode', game.settings.get(CONFIG.MODULE_NAME, 'overlayModePortrait'));
         const image = document.createElement("img");
         image.classList.add("portrait-image");
         image.src = token.document.texture.src;
         image.alt = token.actor.name;
         
-        container.appendChild(image);
+        imageContainer.appendChild(image);
 
         // Add health overlay
-        this._createHealthOverlay(container, token.actor);
+        this._createHealthOverlay(imageContainer, token.actor);
         this._createHPText(container, token.actor);
 
         // Add double-click event listener to open character sheet
@@ -382,6 +385,7 @@ export class PortraitCard {
             }
         });
 
+        container.appendChild(imageContainer);
         // Add context menu for image selection
         container.addEventListener('contextmenu', this._handleImageContextMenu.bind(this));
 

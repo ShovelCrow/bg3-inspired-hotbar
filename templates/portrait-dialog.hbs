@@ -73,6 +73,17 @@
         
             <p class="notes">{{localize "BG3.Settings.BackgroundPortraitPreferences.Hint"}}</p>
         </div>
+        <div class="form-group" data-setting-id="bg3-inspired-hotbar.overlayModePortrait">
+            <label>{{localize "BG3.Settings.OverlayModePortrait.Name"}}</label>
+            <div class="form-fields">
+                <select name="bg3-inspired-hotbar.overlayModePortrait" data-dtype="String">
+                    <option value="classic" {{#if (eq configData.overlayModePortrait 'classic')}}selected{{/if}}>{{localize "BG3.Settings.OverlayModePortrait.classic"}}</option>
+                    <option value="bend" {{#if (eq configData.overlayModePortrait 'bend')}}selected{{/if}}>{{localize "BG3.Settings.OverlayModePortrait.bend"}}</option>
+                </select>
+            </div>
+        
+            <p class="notes">{{localize "BG3.Settings.OverlayModePortrait.Hint"}}</p>
+        </div>
         <div class="form-group group-header">Other settings</div>
         <div class="form-group" data-setting-id="bg3-inspired-hotbar.showSheetSimpleClick">
             <label>Open character sheet on click</label>

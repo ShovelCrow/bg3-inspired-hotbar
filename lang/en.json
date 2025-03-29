@@ -162,6 +162,12 @@
             "Name": "Show Rest/Turns button",
             "Hint": ""
         },
+        "OverlayModePortrait": {
+            "Name": "Health Overlay Display",
+            "Hint": "While in Bend mode, Health Overlay won't cover transparent part of Character Portrait.",
+            "classic": "Classic",
+            "bend": "Bend mode"
+        },
         "SettingsCategories": {
             "HotbarContainer": "Hotbar buttons",
             "CombatContainer": "Common Actions Container",

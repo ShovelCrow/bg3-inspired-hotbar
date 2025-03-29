@@ -26,7 +26,8 @@ export class PortraitSettingDialog extends FormApplication {
             showSheetSimpleClick: game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick'),
             backgroundPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences'),
             showHealthOverlay: game.settings.get(CONFIG.MODULE_NAME, 'showHealthOverlay'),
-            showHPText: game.settings.get(CONFIG.MODULE_NAME, 'showHPText')
+            showHPText: game.settings.get(CONFIG.MODULE_NAME, 'showHPText'),
+            overlayModePortrait: game.settings.get(CONFIG.MODULE_NAME, 'overlayModePortrait')
         };
         return {configData};
     }
