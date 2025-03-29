@@ -447,12 +447,8 @@ export class BG3Hotbar {
             hint: 'BG3.Settings.OverlayModePortrait.Hint',
             scope: 'client',
             config: false,
-            type: String,
-            choices: {
-                'classic': 'BG3.Settings.OverlayModePortrait.None',
-                'bend': 'BG3.Settings.OverlayModePortrait.Simple'
-            },
-            default: 'classic',
+            type: Boolean,
+            default: false,
             onChange: value => {
                 // Refresh UI if it exists
                 if (this.manager?.ui?.portraitCard?.element) {

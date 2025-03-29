@@ -76,10 +76,7 @@
         <div class="form-group" data-setting-id="bg3-inspired-hotbar.overlayModePortrait">
             <label>{{localize "BG3.Settings.OverlayModePortrait.Name"}}</label>
             <div class="form-fields">
-                <select name="bg3-inspired-hotbar.overlayModePortrait" data-dtype="String">
-                    <option value="classic" {{#if (eq configData.overlayModePortrait 'classic')}}selected{{/if}}>{{localize "BG3.Settings.OverlayModePortrait.classic"}}</option>
-                    <option value="bend" {{#if (eq configData.overlayModePortrait 'bend')}}selected{{/if}}>{{localize "BG3.Settings.OverlayModePortrait.bend"}}</option>
-                </select>
+                <input type="checkbox" name="bg3-inspired-hotbar.overlayModePortrait" data-dtype="Boolean" {{#if configData.overlayModePortrait}}checked{{/if}}>
             </div>
         
             <p class="notes">{{localize "BG3.Settings.OverlayModePortrait.Hint"}}</p>

@@ -398,9 +398,9 @@
   bottom: 5px;
 }
 
-.portrait-image-subcontainer[data-bend-mode="bend"] {
-  mask-image: url(https://i.sstatic.net/FwTzE.png);
-  -webkit-mask-image: url(http://localhost:30000/assets/tokens/player/tarquin-token.png);
+.portrait-image-subcontainer[data-bend-mode="true"] {
+  mask-image: var(--bend-img);
+  -webkit-mask-image: var(--bend-img);
   mask-mode: alpha;
   -webkit-mask-mode: alpha;
   mask-repeat: no-repeat;

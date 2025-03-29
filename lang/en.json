@@ -163,10 +163,8 @@
             "Hint": ""
         },
         "OverlayModePortrait": {
-            "Name": "Health Overlay Display",
-            "Hint": "While in Bend mode, Health Overlay won't cover transparent part of Character Portrait.",
-            "classic": "Classic",
-            "bend": "Bend mode"
+            "Name": "Health Overlay as Mask",
+            "Hint": "If checked, Health Overlay won't cover transparent part of Character Portrait. Can be disable in right click menu for a specific token."
         },
         "SettingsCategories": {
             "HotbarContainer": "Hotbar buttons",
