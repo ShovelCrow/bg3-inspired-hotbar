@@ -349,7 +349,7 @@ export class BG3Hotbar {
         // Portrait Settings        
         game.settings.registerMenu(CONFIG.MODULE_NAME, "menuPortrait", {
             name: 'Portrait settings',
-            label: 'Configure',
+            label: 'Configure Portrait',
             hint: 'Advanced settings for character portrait.',
             icon: "fas fa-cogs",
             type: PortraitSettingDialog,
@@ -423,7 +423,7 @@ export class BG3Hotbar {
             onChange: value => {
                 // Refresh UI if it exists
                 if (this.manager?.ui?.portraitCard?.element) {
-                    this.manager.ui.portraitCard.element.style.setProperty('--img-background-color', (value && value != '' ? value : 'var(--bg3-background-highlight)'));
+                    this.manager.ui.portraitCard.element.style.setProperty('--img-background-color', (value && value != '' ? value : 'transparent'));
                 }
             }
         });
@@ -515,7 +515,7 @@ export class BG3Hotbar {
         
         game.settings.registerMenu(CONFIG.MODULE_NAME, "menuExtraInfo", {
             name: 'Portrait extra datas settings',
-            label: 'Configure',
+            label: 'Configure Portait Extra Datas',
             hint: 'Extra datas to show on character portrait.',
             icon: "fas fa-cogs",
             type: ExtraInfosDialog,

@@ -567,6 +567,11 @@ class HotbarUI {
       await token.actor.updateEmbeddedDocuments("Item", toUpdate);
     }
   }
+
+  toggleUI(state) {
+    const toggleInput = document.getElementById('toggle-input');
+    if(toggleInput) toggleInput.checked = !state;
+  }
 }
 
 export { HotbarUI };

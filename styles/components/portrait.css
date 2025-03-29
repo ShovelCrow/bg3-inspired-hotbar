@@ -13,7 +13,7 @@
   /* border-radius: 50%; */
   overflow: visible;
   display: block;
-  --img-background-color: var(--bg3-background-highlight);
+  --img-background-color: transparent;
 }
 
 .bg3-hud .portrait-image-container {

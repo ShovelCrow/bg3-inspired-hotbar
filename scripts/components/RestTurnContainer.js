@@ -22,13 +22,6 @@ export class RestTurnContainer {
         // Clear existing buttons
         this.element.innerHTML = '';
         this._buttons = [];
-
-        const dataToggle = {
-            type: 'label',
-            class: ["btn-toggle", "fas", "fa-caret-down"],
-            attr: {"title": 'Show/Hide HotBar UI', "for": 'toggle-input'}
-        }
-        this._buttons.push(new RestTurnButton(dataToggle));
     
         if(game.settings.get(CONFIG.MODULE_NAME, 'showRestTurnButton')) {
             const dataEnd = {
@@ -69,6 +62,13 @@ export class RestTurnContainer {
             }
             if(this.actor?.type != 'vehicle') this._buttons.push(new RestTurnButton(dataLong));
         }
+
+        const dataToggle = {
+            type: 'label',
+            class: ["btn-toggle", "fas", "fa-caret-down"],
+            attr: {"title": 'Show/Hide HotBar UI', "for": 'toggle-input'}
+        }
+        this._buttons.push(new RestTurnButton(dataToggle));
     
         // Add buttons to container
         for(let i = 0; i < this._buttons.length; i++) {
