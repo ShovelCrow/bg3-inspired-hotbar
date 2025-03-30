@@ -5,7 +5,7 @@
 .bg3-hud .hotbar-control-column {
   position: absolute;
   bottom: 0;
-  left: calc(100% + 8px);
+  left: calc(100% - 7px);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -21,7 +21,7 @@
   width: 24px;
   height: 24px;
   background: #2a2a2a;
-  border-radius: 4px;
+  border-radius: 50%;
   color: #cc3333;
   display: flex;
   align-items: center;
@@ -31,6 +31,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   position: relative;  /* Add this to make it the positioning context for menus */ 
   transition: opacity 0.3s ease-in-out 0s;
+  border: var(--primary-border-width) solid var(--primary-border-color);
 }
 
 .bg3-hud .hotbar-control-column.fade {

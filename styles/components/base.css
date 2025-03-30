@@ -1,12 +1,13 @@
 :root {
     /* Colors */
     --bg3-background: #222222f2;
-    --bg3-border: #444;
+    --bg3-border: #161616;
     --bg3-border-width: 1px;
-    --primary-border-width: 1px;
+    --primary-border-width: 2px;
     --primary-border-color: #444;
     --bg3-text: #ddd;
     --bg3-background-highlight: #3a3a3a;
+    --shadow-text-stroke: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 
     /* Cells */
     --bg3-cell-border-width: 2px;
@@ -32,8 +33,12 @@
     /* Sizing */
     --bg3-cell-size: 50px;
     --bg3-filter-button-size: 32px;
-    --bg3-portrait-size: 200px;
+    --bg3-portrait-size: 175px;
     --portrait-right: 172px;
+}
+
+img {
+  border: unset;
 }
 
 /* ==========================================================================
@@ -85,7 +90,7 @@
   background: var(--bg3-background);
   border: var(--primary-border-width) solid var(--primary-border-color);
   border-radius: 8px;
-  padding: 8px;
+  padding: 2px 6px;
   align-items: stretch;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
@@ -123,14 +128,13 @@
   display: grid;
   grid-template-columns: repeat(var(--cols), var(--cell-size));
   grid-template-rows: repeat(var(--rows), var(--cell-size));
-  gap: 4px;
+  gap: 1px;
   padding: 4px;
-  background: rgba(0, 0, 0, 0.5);
+  background: #222222f2;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  width: calc(var(--cols) * (var(--cell-size) + 4px) + 8px);
   transition: width 0.1s ease;
-  width: var(--cols-override, calc(var(--cols) * (var(--cell-size) + 4px) + 8px));
+  width: var(--cols-override, calc(var(--cols) * (var(--cell-size) + 1px) + 8px));
 }
 
 /* ==========================================================================
@@ -270,8 +274,8 @@
    ========================================================================== */
 
 .bg3-hud .hotbar-item {
-    width: calc(100% - 4px);
-    height: calc(100% - 4px);
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     object-position: center;
     display: block;
@@ -313,6 +317,7 @@
     font-weight: bold;
     z-index: 11;
     pointer-events: none;
+    text-shadow: var(--shadow-text-stroke);
 }
 
 .bg3-hud .hotbar-item-uses.depleted {
