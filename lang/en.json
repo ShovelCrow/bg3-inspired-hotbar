@@ -164,7 +164,7 @@
         },
         "OverlayModePortrait": {
             "Name": "Health Overlay as Mask",
-            "Hint": "If checked, Health Overlay won't cover transparent part of Character Portrait. Can be disable in right click menu for a specific token."
+            "Hint": "If checked, Health Overlay won't cover transparent part of Character Portrait. Check it if you're using Dynamic Token Ring."
         },
         "SettingsCategories": {
             "HotbarContainer": "Hotbar buttons",
