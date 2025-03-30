@@ -614,7 +614,7 @@ export class PortraitCard {
         }
     }
 
-    _updatePortraitImage(img) {
+    async _updatePortraitImage(img) {
         const portraitImg = this.element.querySelector('.portrait-image'),
             imageContainer = this.element.querySelector('.portrait-image-subcontainer');
         if (portraitImg) {

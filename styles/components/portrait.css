@@ -26,6 +26,7 @@
   outline: none;
   box-shadow: none;
   /* border-radius: 50%; */
+  background-color: var(--img-background-color);
 }
 
 .bg3-hud .portrait-image {
@@ -36,7 +37,6 @@
   border: none;
   outline: none;
   box-shadow: none;
-  background-color: var(--img-background-color);
 }
 
 /* ==========================================================================

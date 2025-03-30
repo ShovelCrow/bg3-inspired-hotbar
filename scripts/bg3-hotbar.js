@@ -1021,8 +1021,11 @@ export class BG3Hotbar {
         });
 
         // Initialize the module when ready
-        Hooks.once('ready', () => {
+        Hooks.once('ready', async () => {
             // Module is ready
+            Handlebars.registerHelper({
+
+            });
         });
     }
 

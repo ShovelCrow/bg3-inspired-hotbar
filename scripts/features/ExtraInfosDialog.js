@@ -17,18 +17,23 @@ export class PortraitSettingDialog extends FormApplication {
     }
 
     getData() {
-        const configData = {
-            hidePortraitImage: game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage'),
-            showExtraInfo: game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo'),
-            defaultPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences'),
-            shapePortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'shapePortraitPreferences'),
-            borderPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'borderPortraitPreferences'),
-            showSheetSimpleClick: game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick'),
-            backgroundPortraitPreferences: game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences'),
-            showHealthOverlay: game.settings.get(CONFIG.MODULE_NAME, 'showHealthOverlay'),
-            showHPText: game.settings.get(CONFIG.MODULE_NAME, 'showHPText'),
-            overlayModePortrait: game.settings.get(CONFIG.MODULE_NAME, 'overlayModePortrait')
-        };
+        const dataKeys = ['hidePortraitImage', 'showExtraInfo', 'defaultPortraitPreferences', 'shapePortraitPreferences', 'borderPortraitPreferences', 'showSheetSimpleClick', 'backgroundPortraitPreferences', 'showHealthOverlay', 'showHPText', 'overlayModePortrait'],
+            configData = {},
+            configAdv = {};
+        for(let i = 0; i < dataKeys.length; i++) {
+            const setting = game.settings.settings.get(`${CONFIG.MODULE_NAME}.${dataKeys[i]}`);
+            if(setting.scope === 'client' || game.user.isGM) configData[dataKeys[i]] = game.settings.get(CONFIG.MODULE_NAME, dataKeys[i]);
+            /* if(setting.scope === 'client' || game.user.isGM) {
+                configAdv[dataKeys[i]] = {
+                    type: setting.choices ? 'Select' : setting.type.name,
+                    key: setting.key,
+                    choices: setting.choices ?? null,
+                    value: game.settings.get(CONFIG.MODULE_NAME, dataKeys[i]),
+                    name: game.i18n.localize(dataKeys[i].name),
+                    hint: game.i18n.localize(dataKeys[i].hint)
+                }
+            } */
+        }
         return {configData};
     }
 
