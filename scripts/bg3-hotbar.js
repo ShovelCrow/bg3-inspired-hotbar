@@ -192,6 +192,7 @@ export class BG3Hotbar {
             choices: {
                 'default': 'Default',
                 'gold': 'Gold',
+                'old': '(Old)',
                 'custom': 'Custom (Coming soon !)'
             },
             default: 'default',

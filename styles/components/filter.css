@@ -1,6 +1,6 @@
 .bg3-hud .filter-container {
     position: absolute;
-    bottom: calc(100% - 10px);
+    bottom: calc(100% - 5px);
     left: 50%;
     transform: translateX(-50%);
     background: var(--bg3-background);
@@ -41,6 +41,7 @@
     box-sizing: border-box;
     background: transparent;
     filter: saturate(1);
+    box-shadow: 0px 0px 5px black;
 }
 
 .bg3-hud .action-type-button:hover,
@@ -89,6 +90,7 @@
     font-weight: bold;
     background: transparent;
     z-index: 1;
+    text-shadow: var(--shadow-text-stroke);
 }
 
 .bg3-hud .spell-slot-row {

@@ -12,13 +12,12 @@
 .bg3-hud .rest-turn-container {
     position: relative;
     display: flex;
-    min-height: 184px;
+    min-height: 168px;
     min-width: 80px;
     flex-direction: column;
     gap: 0.25rem;
     justify-content: flex-start;
-    margin-left: 35px;
-    padding-bottom: 30px;
+    margin-left: 20px;
 }
 
 .bg3-hud .rest-turn-container i {
@@ -54,7 +53,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    height: 66px;
+    border: var(--primary-border-width) solid var(--primary-border-color);
 }
 
 .bg3-hud .rest-turn-button.end-turn {
