@@ -55,6 +55,10 @@
             "Name": "Collapse Foundry Macrobar",
             "Hint": "Automatically collapse the default Foundry macrobar"
         },
+        "HidePlayerList": {
+            "Name": "Hide Player List",
+            "Hint": "Automatically the player list"
+        },
         "ShowPassiveFeaturesContainer": {
             "Name": "Show Passive Features Container",
             "Hint": "Display the container of passive features above the portrait"
@@ -173,6 +177,11 @@
             "Portrait": "Character Portrait",
             "Tooltip": "Tooltip",
             "AutoPopulating": "Auto-Populating"
+        },
+        "MenuTheme": {
+            "Name": "Theme configuration",
+            "Hint": "Choose between available themes or create a custom one.",
+            "Label": "Configure Theme"
         }
     }
 } 

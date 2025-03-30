@@ -181,3 +181,63 @@
 #bg3-hotbar-auto-populate-defaults .sheet-footer button i {
   margin-right: 0.5em;
 } 
+
+/** Details & Summary **/
+#bg3-inspired-hotbar-theme-settings .form-group {
+  margin-bottom: 0.25rem;
+}
+
+form [name="details-color"] .form-group label {
+  flex: 1.5;
+}
+form [name="details-color"] > div {
+  padding-bottom: 1em;;
+}
+
+.color-setting-header {
+  text-align: center;
+  font-style: italic;
+}
+
+#bg3-inspired-hotbar-theme-settings .notes {
+  margin-bottom: 0.5rem;
+}
+
+details {
+  position: relative;
+  border-top: 1px solid rgba(0, 0, 0, .1);
+  padding-top: 1em;
+}
+
+details summary {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+details summary::after {
+  content: "\f139";
+  position: absolute;
+  font-family: "Font Awesome 6 Pro";
+  font-weight: 900;
+  font-size: larger;
+  right: 0;
+  margin-right: 0.5em;
+}
+
+details[open] summary::after {
+  content: "\f13a";
+}
+
+details summary::marker,
+:is(::-webkit-details-marker) {
+  content: '';
+  /* content: "+ ";
+  font-family: monospace;
+  color: red;
+  font-weight: bold; */
+}
+
+details[open] summary::marker {
+  /* content: "- "; */
+}

@@ -8,6 +8,7 @@ import { AutoPopulateCreateToken, AutoPopulateDefaults } from './features/AutoPo
 import { AutoPopulateContainer } from './features/AutoPopulateContainer.js';
 import { TooltipFactory } from './tooltip/TooltipFactory.js';
 import { ExtraInfosDialog, PortraitSettingDialog } from './features/ExtraInfosDialog.js';
+import { ThemeSettingDialog } from './features/ThemeDialog.js';
 
 export class BG3Hotbar {
     static manager = null;
@@ -36,6 +37,10 @@ export class BG3Hotbar {
         
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
+
+        // Hide Player List if enabled
+        const playerList = document.getElementById('players');
+        if(playerList) playerList.classList.toggle('hidden', game.settings.get(CONFIG.MODULE_NAME, 'hidePlayerList'));
 
         // Log initialization
         console.log(`${CONFIG.MODULE_NAME} | Initialized`);
@@ -162,32 +167,20 @@ export class BG3Hotbar {
             precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
         });
 
-        // Core UI Settings
-        game.settings.register(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
-            name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
-            hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
-            scope: 'client',
-            config: true,
-            type: String,
-            choices: {
-                'always': 'Always',
-                'never': 'Never',
-                'select': 'When Hotbar visible',
-                'full': 'Fully hidden'
-            },
-            default: 'always',
-            onChange: () => {
-                // Handle the macrobar state when the setting changes
-                this._applyMacrobarCollapseSetting();
-            }
+        // Visual Settings - Appearance
+        game.settings.registerMenu(CONFIG.MODULE_NAME, "menuTheme", {
+            name: 'BG3.Settings.MenuTheme.Name',
+            label: 'BG3.Settings.MenuTheme.Label',
+            hint: 'BG3.Settings.MenuTheme.Hint',
+            icon: "fas fa-cogs",
+            type: ThemeSettingDialog,
         });
 
-        // Visual Settings - Appearance
         game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
             name: 'Theme options',
             hint: 'Choose between available themes',
             scope: 'client',
-            config: true,
+            config: false,
             type: String,
             choices: {
                 'default': 'Default',
@@ -345,6 +338,39 @@ export class BG3Hotbar {
             if(!value) document.getElementById("toggle-input").checked = false;
             else BG3Hotbar._onUpdateCombat(true);
           }
+        });
+
+        // Core UI Settings
+        game.settings.register(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
+            name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
+            hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
+            scope: 'client',
+            config: true,
+            type: String,
+            choices: {
+                'always': 'Always',
+                'never': 'Never',
+                'select': 'When Hotbar visible',
+                'full': 'Fully hidden'
+            },
+            default: 'always',
+            onChange: () => {
+                // Handle the macrobar state when the setting changes
+                this._applyMacrobarCollapseSetting();
+            }
+        });
+        
+        game.settings.register(CONFIG.MODULE_NAME, 'hidePlayerList', {
+            name: 'BG3.Settings.HidePlayerList.Name',
+            hint: 'BG3.Settings.HidePlayerList.Hint',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: value => {
+                const playerList = document.getElementById('players');
+                if(playerList) playerList.classList.toggle('hidden', value);
+            }
         });
 
         // Portrait Settings        
@@ -823,15 +849,15 @@ export class BG3Hotbar {
     static _registerHooks() {
         // Add Categories to module settings
         Hooks.on("renderSettingsConfig", (app, html, data) => {
-            $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
+            $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.tooltipDelay"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.HotbarContainer")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
 
-            $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
+            $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.hidePlayerList"]').parents('div.form-group:first'));
             $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
-            $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
+            $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.hidePlayerList"]').parents('div.form-group:first'));
             
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first'));
         });
