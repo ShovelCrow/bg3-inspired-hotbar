@@ -25,6 +25,7 @@ class HotbarUI {
     this.controlsContainer = null;
     this.passivesContainer = null;
     this.activeEffectsContainer = null;
+    this.restTurnContainer = null;
     this.combat = [];
     this.weaponContainer = [];
     this.combatContainer = [];
@@ -158,10 +159,10 @@ class HotbarUI {
     this.controlsContainer = new ControlsContainer(this);
 
     // Create rest turn container
-    const restTurnContainer = new RestTurnContainer(this);
-    this.element.appendChild(restTurnContainer.element);
+    this.restTurnContainer = new RestTurnContainer(this);
+    this.element.appendChild(this.restTurnContainer.element);
 
-    this.combat.push(restTurnContainer);
+    this.combat.push(this.restTurnContainer);
 
     // Add keyboard event listener
     document.addEventListener('keydown', this._handleKeyDown);
@@ -572,6 +573,11 @@ class HotbarUI {
       })
       await token.actor.updateEmbeddedDocuments("Item", toUpdate);
     }
+  }
+
+  toggleUI(state) {
+    const toggleInput = document.getElementById('toggle-input');
+    if(toggleInput) toggleInput.checked = !state;
   }
 }
 
