@@ -171,6 +171,9 @@ class HotbarUI {
 
     // Initial render
     this.render();
+
+    // Equip weapons if needed
+    this.switchSet(this.manager.activeSet);
   }
 
   /**
@@ -545,6 +548,11 @@ class HotbarUI {
   }
 
   async switchSet(index) {
+    // Check if needed
+    if(!this.weaponContainer[index]?.data) return;
+    if(this.manager?.activeSet === index && this.weaponContainer[index].data?.oldWeapons == this.weaponContainer[index].data?.items) return;
+    this.weaponContainer[index].data.oldWeapons = foundry.utils.deepClone(this.weaponContainer[index].data.items);
+
     const token = canvas.tokens.get(BG3Hotbar.manager.currentTokenId),
       weaponsList = token?.actor?.items.filter(w => w.type == 'weapon'),
       toUpdate = [],

@@ -31,7 +31,7 @@ Related Issue: [#61]
 Related Issue: [#97]
 - Weapons will be auto-equipped only when switching sets, allowing to equip other weapons manually
 
-### Added:
+### Improvements:
 
 - Added settings to customize UI position and padding
 - Added option to fully hide the macrobar
