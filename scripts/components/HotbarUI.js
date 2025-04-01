@@ -107,7 +107,6 @@ class HotbarUI {
     this.combatContainer.push(new GridContainer(this, this.manager.combatContainer[0], 0));
     this.combatContainer[0].element.id = "bg3-combat-container";
     this.combatContainer[0].element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
-    console.log(this.manager.combatContainer[0], this.combatContainer[0])
 
     weaponContainer.appendChild(this.combatContainer[0].element);
 
@@ -564,6 +563,19 @@ class HotbarUI {
         if(w.system.equipped && !toUpdate.find(wu => wu._id == w.id)) toUpdate.push({_id: w.id, "system.equipped": 0})
       })
       await token.actor.updateEmbeddedDocuments("Item", toUpdate);
+    }
+  }
+
+  toggleUI() {
+    const toggleInput = document.getElementById('toggle-input');
+    if(toggleInput) {
+      const autoHideSetting = game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat');
+      let state = false;
+      if (autoHideSetting !== 'false') {
+        const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
+        state = (autoHideSetting == 'true' && !game.combat?.started) || (autoHideSetting == 'init' && (!game.combat?.started || !(game.combat?.started && game.combat?.combatant?.actor === actor)));
+      }
+      toggleInput.checked = state;
     }
   }
 }

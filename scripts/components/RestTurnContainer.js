@@ -85,6 +85,7 @@ export class RestTurnContainer {
                 // If container doesn't exist yet, append to body
                 document.body.appendChild(toggleInput);
             }
+            this.ui.toggleUI();
         }
     }
 

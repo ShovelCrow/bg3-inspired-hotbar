@@ -33,6 +33,7 @@ export class PortraitCard {
                 if (oldHp <= 0 && newHp < oldHp) {
                     this._handleDamageAtZeroHp(actor, options?.critical ?? false);
                 }
+                this.update(actor);
             }
         });
     }
