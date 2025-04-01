@@ -57,6 +57,8 @@ export class BG3Hotbar {
 
     static _applyTheme() {
       const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption');
+      const currentTheme = document.head.querySelector('[custom-theme]');
+      if(currentTheme) currentTheme.parentNode.removeChild(currentTheme);
       if(theme !== 'default') {
         const themeConfig = CONFIG.THEME[theme];
         if(themeConfig) {
@@ -66,11 +68,7 @@ export class BG3Hotbar {
             style.textContent = Object.entries(themeConfig).map(([k, v]) => `${k} {\n${Object.entries(v).map(([k2, v2]) => `${k2}:${v2};`).join('\n')}\n}`).join('\n');
             document.head.appendChild(style);
         }
-      } else if(document.head.querySelector('[custom-theme]')) {
-        const currentTheme = document.head.querySelector('[custom-theme]');
-        currentTheme.parentNode.removeChild(currentTheme);
       }
-      console.log()
     }
     
     static _applyMacrobarCollapseSetting(msg) {
@@ -1050,9 +1048,6 @@ export class BG3Hotbar {
         // Initialize the module when ready
         Hooks.once('ready', async () => {
             // Module is ready
-            Handlebars.registerHelper({
-
-            });
         });
     }
 
@@ -1220,4 +1215,29 @@ Hooks.on('getSceneControlButtons', (controls) => {
         active: isActive,
         onClick: () => BG3Hotbar._toggleUI()
     });
+});
+
+
+/* {{#switch 'a'}} 
+    {{#case 'a'}} A {{/case}} 
+    {{#case 'b'}} B {{/case}} 
+    {{#default '188'}} {{/default}}
+{{/switch}} */
+Handlebars.registerHelper('switch', function(value, options) {
+    this.switch_value = value;
+    this.switch_break = false;
+    return options.fn(this);
+});
+    
+Handlebars.registerHelper('case', function(value, options) {
+    if (value == this.switch_value) {
+        this.switch_break = true;
+        return options.fn(this);
+    }
+});
+    
+Handlebars.registerHelper('default', function(value, options) {
+    if (this.switch_break == false) {
+        return value;
+    }
 });
