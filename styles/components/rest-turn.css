@@ -18,6 +18,7 @@
     gap: 0.25rem;
     justify-content: flex-start;
     margin-left: 35px;
+    padding-bottom: 30px;
 }
 
 .bg3-hud .rest-turn-container i {
@@ -44,7 +45,8 @@
 
 .bg3-hud .rest-turn-button {
     display: flex;
-    padding: .5rem 1rem 2rem;
+    /* padding: .5rem 1rem 2rem; */
+    padding: 0.5rem 1rem 1.9rem;
     position: relative;
     transition: all .3s ease-in-out;
     /* flex: 1; */
@@ -75,7 +77,8 @@
     align-items: center;
     bottom: 0px;
     display: flex;
-    height: 2.5rem;
+    /* height: 2.5rem; */
+    height: 2rem;
     justify-content: center;
     left: 0px;
     position: absolute;
@@ -125,6 +128,14 @@
     transition: all .3s ease-in-out !important;
     opacity: 0 !important;
     pointer-events: none !important;
+}
+
+#toggle-input:checked ~ #bg3-hotbar-container .rest-turn-button {
+    pointer-events: none;
+}
+
+#toggle-input:checked ~ #bg3-hotbar-container .btn-toggle {
+    bottom: calc(100% + 5px);
 }
 
 #toggle-input:checked ~ #bg3-hotbar-container .btn-toggle::before {
