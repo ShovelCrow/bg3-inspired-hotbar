@@ -15,6 +15,7 @@ export class BG3Hotbar {
     static controlsManager = null;
     static combatActionsArray = [];
     static macroBarTimeout = null;
+    static controlTokenTimeout = null;
 
     static async init() {
         // Apply custom theme
@@ -326,15 +327,19 @@ export class BG3Hotbar {
         });
       
         game.settings.register(CONFIG.MODULE_NAME, 'autoHideCombat', {
-          name: 'Hide UI when not in combat and show only on your turn',
+          name: 'Auto Hide UI',
           // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
           scope: 'client',
           config: true,
-          type: Boolean,
+          type: String,
           default: false,
-          onChange: value => {
-            if(!value) document.getElementById("toggle-input").checked = false;
-            else BG3Hotbar._onUpdateCombat(true);
+          choices: {
+              'false': 'Never',
+              'true': 'When not in combat',
+              'init': 'When not in combat and it\'s not your turn'
+          },
+          onChange: () => {
+            BG3Hotbar._onUpdateCombat(true);
           }
         });
 
@@ -879,33 +884,41 @@ export class BG3Hotbar {
 
         Hooks.on("controlToken", async (token, controlled) => {
             if (!this.manager) return;
-            
+                
             // Check if UI is enabled in settings
             const isUIEnabled = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
             if (!isUIEnabled) return;
-            
-            if (!controlled) {
-                // Token was deselected, clean up UI if not locked
-                const isDeselectLocked = this.controlsManager.isLockSettingEnabled('deselect') && 
-                                        this.controlsManager.isMasterLockEnabled();
-                if (this.manager.ui && !isDeselectLocked) {
-                    this.manager.ui.destroy();
-                    this.manager.ui = null;
-                    this.manager.currentTokenId = null;
+
+            if(this.controlTokenTimeout) clearTimeout(this.controlTokenTimeout)
+            // this.controlTokenTimeout = setTimeout(async () => {
+                if (!controlled && !canvas.tokens.controlled.length) {
+                    setTimeout(async () => {
+                        if(!canvas.tokens.controlled.length) {
+                            // Token was deselected, clean up UI if not locked
+                            const isDeselectLocked = this.controlsManager.isLockSettingEnabled('deselect') && 
+                                                    this.controlsManager.isMasterLockEnabled();
+                            if (this.manager.ui && !isDeselectLocked) {
+                                this.manager.ui.destroy();
+                                this.manager.ui = null;
+                                this.manager.currentTokenId = null;
+                            }
+                            this._applyMacrobarCollapseSetting('hide');
+                            return;
+                        }
+                    }, 100);
                 }
-                this._applyMacrobarCollapseSetting('hide');
-                return;
-            }
-            
-            // Token was selected, update or create UI
-            if (!this.manager.ui) {
-                // UI doesn't exist but should (UI is enabled and token selected)
-                await this.manager.updateHotbarForControlledToken(true);
-            } else {
-                // UI exists, just update it
-                await this.manager.updateHotbarForControlledToken();
-            }
-            this._applyMacrobarCollapseSetting('show');
+                if(!controlled) return;
+                
+                // Token was selected, update or create UI
+                if (!this.manager.ui) {
+                    // UI doesn't exist but should (UI is enabled and token selected)
+                    await this.manager.updateHotbarForControlledToken(true);
+                } else {
+                    // UI exists, just update it
+                    await this.manager.updateHotbarForControlledToken();
+                }
+                this._applyMacrobarCollapseSetting('show');
+            // },100);
         });
 
         // Token creation hook for auto-populating unlinked tokens
@@ -1020,7 +1033,6 @@ export class BG3Hotbar {
 
         // Add combat turn update hooks
         Hooks.on("updateCombat", (combat, changed, options, userId) => {
-            
             this._onUpdateCombat(combat, changed);
             
             // Only process if the turn actually changed
@@ -1040,7 +1052,7 @@ export class BG3Hotbar {
         // Handle when combat is actually deleted/removed
         Hooks.on("deleteCombat", (combat) => {
             this.manager?.ui?.combat?.forEach((component) => component.updateVisibility());
-            if (game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat')) BG3Hotbar.manager.ui?.toggleUI(false);
+            BG3Hotbar.manager.ui?.toggleUI();
             if (!this.manager?.ui?.filterContainer) return;
             this.manager.ui.filterContainer.resetUsedActions();
         });
@@ -1151,6 +1163,7 @@ export class BG3Hotbar {
     }
 
     static async _onStartCombat(combat) {
+    // this.manager.currentTokenId = canvas.tokens.controlled[0].id;
       // Token was selected, update or create UI
       if (!this.manager.ui) {
           // UI doesn't exist but should (UI is enabled and token selected)
@@ -1159,16 +1172,12 @@ export class BG3Hotbar {
           // UI exists, just update it
           await this.manager.updateHotbarForControlledToken();
       }
+      BG3Hotbar.manager.ui?.toggleUI();
     }
 
     static async _onUpdateCombat(combat, updates) {
         this.manager?.ui?.combat?.forEach((component) => component.updateVisibility());
-        if (combat === true || "round" in updates || "turn" in updates) {
-          if (game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat')) {
-            const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
-            BG3Hotbar.manager.ui?.toggleUI(!!game.combat?.started && game.combat?.combatant?.actor === actor);
-          }
-        }
+        if (combat === true || (updates && ("round" in updates || "turn" in updates))) BG3Hotbar.manager.ui?.toggleUI();
         if (updates && updates.round === 1 && updates.turn === 0) this._onStartCombat(combat);
     }
 

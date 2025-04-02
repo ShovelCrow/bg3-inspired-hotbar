@@ -67,16 +67,19 @@ export class HotbarManager {
         const controlled = canvas.tokens.controlled[0];
         
         // Case 1: No token or multiple tokens selected
+        // if (!controlled || canvas.tokens.controlled.length > 1) {
         if (!controlled || canvas.tokens.controlled.length > 1) {
             // If multiple tokens are selected, always hide the hotbar
-            if (canvas.tokens.controlled.length > 1) {
-                if (this.ui) {
-                    this.ui.destroy();
-                    this.ui = null;
-                    this.currentTokenId = null;
+            setTimeout(async () => {
+                if (canvas.tokens.controlled.length > 1) {
+                    if (this.ui) {
+                        this.ui.destroy();
+                        this.ui = null;
+                        this.currentTokenId = null;
+                    }
+                    return;
                 }
-                return;
-            }
+            }, 100);
             // For no tokens selected, just return as cleanup is handled in controlToken hook
             return;
         }
@@ -129,7 +132,8 @@ export class HotbarManager {
         }
 
         // Always destroy old UI for new token or force update
-        if (this.ui) {
+        if (this.ui && (this.currentTokenId !== controlled.id || forceUpdate)) {
+        // if (this.ui) {
             this.ui.destroy();
             this.ui = null;
         }
@@ -253,15 +257,17 @@ export class HotbarManager {
                 allowDuplicate: container.allowDuplicate
             }));
 
-            this.combatContainer = [{
-                id: combatContainerData[0].id,
-                index: combatContainerData[0].index,
-                cols: combatContainerData[0].cols,
-                rows: combatContainerData[0].rows,
-                items: foundry.utils.deepClone(combatContainerData[0].items || {}),
-                size: combatContainerData[0].size,
-                locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
-            }];
+            if(combatContainerData?.[0]) {
+                this.combatContainer = [{
+                    id: combatContainerData[0].id,
+                    index: combatContainerData[0].index,
+                    cols: combatContainerData[0].cols,
+                    rows: combatContainerData[0].rows,
+                    items: foundry.utils.deepClone(combatContainerData[0].items || {}),
+                    size: combatContainerData[0].size,
+                    locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
+                }];
+            }
 
             // Final state after loading
 

@@ -575,9 +575,17 @@ class HotbarUI {
     }
   }
 
-  toggleUI(state) {
+  toggleUI() {
     const toggleInput = document.getElementById('toggle-input');
-    if(toggleInput) toggleInput.checked = !state;
+    if(toggleInput) {
+      const autoHideSetting = game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat');
+      let state = false;
+      if (autoHideSetting !== 'false') {
+        const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
+        state = (autoHideSetting == 'true' && !game.combat?.started) || (autoHideSetting == 'init' && (!game.combat?.started || !(game.combat?.started && game.combat?.combatant?.actor === actor)));
+      }
+      toggleInput.checked = state;
+    }
   }
 }
 

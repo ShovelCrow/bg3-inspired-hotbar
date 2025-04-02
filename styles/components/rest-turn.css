@@ -90,7 +90,6 @@
 
 .bg3-hud .btn-toggle {
     position: absolute;
-    /* bottom: calc(100% + 5px); */
     bottom: 0;
     width: 100%;
     height: 25px;
