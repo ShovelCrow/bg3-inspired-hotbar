@@ -123,7 +123,8 @@
             "Cancel": "Cancel",
             "Save": "Save Changes",
             "SaveSuccess": "Container auto-populate settings saved successfully",
-            "Configure": "Configure Container Auto-Populate"
+            "Configure": "Configure Container Auto-Populate",
+            "Export": "Export Theme"
         },
         "HighlightStyle": {
             "Name": "Highlight Style",

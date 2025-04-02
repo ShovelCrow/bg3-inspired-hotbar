@@ -192,20 +192,24 @@
 }
 
 #bg3-inspired-hotbar-theme-settings form details > div {
-  padding-bottom: 1em;;
+  padding: 0.5em 5px 1em;
 }
 
 #bg3-inspired-hotbar-theme-settings form details > div > div {
-  margin-bottom: 1em;;
+  margin-bottom: 1em;
 }
 
 #bg3-inspired-hotbar-theme-settings form .form-group .form-fields > input[type="number"] {
-  max-width: 70px;
+  max-width: 93px;
   text-align: right;
 }
 
 #bg3-inspired-hotbar-theme-settings form .form-group .form-fields .input-unit {
   text-align: left;
+}
+
+#bg3-inspired-hotbar-theme-settings .dialog-buttons {
+  display: flex;
 }
 
 .color-setting-header {
@@ -220,13 +224,18 @@
 details {
   position: relative;
   border-top: 1px solid rgba(0, 0, 0, .1);
-  padding-top: 1em;
+  /* padding-top: 1em; */
 }
 
 details summary {
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
   font-weight: 600;
   cursor: pointer;
+  padding: 1em 0 1em 5px;
+}
+
+details summary:hover, details[open] summary {
+  background-color: rgba(0, 0, 0, .1);
 }
 
 details summary::after {

@@ -2,6 +2,7 @@
    BG3-Inspired Hotbar CSS
    ========================================================================== */
 
+@import './components/default.css';
 @import './components/ability-card.css';
 @import './components/base.css';
 @import './components/controls.css';

@@ -189,7 +189,7 @@ export class BG3Hotbar {
             default: 'default',
             onChange: value => {
                 if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
-                this._applyTheme()
+                this._applyTheme();
             }
         });
         
