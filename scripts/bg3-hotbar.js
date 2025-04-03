@@ -877,7 +877,7 @@ export class BG3Hotbar {
                                 this.manager.ui = null;
                                 this.manager.currentTokenId = null;
                             }
-                            this._applyMacrobarCollapseSetting('hide');
+                            if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting('hide');
                             return;
                         }
                     }, 100);
@@ -892,7 +892,7 @@ export class BG3Hotbar {
                     // UI exists, just update it
                     await this.manager.updateHotbarForControlledToken();
                 }
-                this._applyMacrobarCollapseSetting('show');
+                if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting('show');
             // },100);
         });
 
