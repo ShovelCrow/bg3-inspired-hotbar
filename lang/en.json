@@ -57,7 +57,7 @@
         },
         "HidePlayerList": {
             "Name": "Hide Player List",
-            "Hint": "Automatically the player list"
+            "Hint": "Automatically hide the player list"
         },
         "ShowPassiveFeaturesContainer": {
             "Name": "Show Passive Features Container",
