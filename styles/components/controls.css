@@ -18,8 +18,8 @@
    ========================================================================== */
 
 .bg3-hud .hotbar-control-button {
-  width: 24px;
-  height: 24px;
+  width: calc(var(--bg3-hotbar-cell-size) / 2);
+  height: calc(var(--bg3-hotbar-cell-size) / 2);
   background: #2a2a2a;
   border-radius: 50%;
   color: #cc3333;
@@ -31,7 +31,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   position: relative;  /* Add this to make it the positioning context for menus */ 
   transition: opacity 0.3s ease-in-out 0s;
-  border: var(--primary-border-width) solid var(--primary-border-color);
+  border: var(--bg3-border-size) solid var(--bg3-border-color);
 }
 
 .bg3-hud .hotbar-control-column.fade {
@@ -43,7 +43,7 @@
 }
 
 .bg3-hud .hotbar-control-button:hover {
-  background: #333;
+  background: var(--bg3-background-color);
   border-color: #cc3333;
 }
 
@@ -53,7 +53,7 @@
 }
 
 .bg3-hud .hotbar-control-button.disabled:hover {
-  background: #2a2a2a;
+  background: var(--bg3-background-color-hover);
 }
 
 .bg3-hud .hotbar-control-button i {
@@ -62,5 +62,5 @@
 
 .bg3-hud .hotbar-control-button.locked {
   background: #cc3333;
-  color: #fff;
+  color: var(--bg3-text-color);
 }

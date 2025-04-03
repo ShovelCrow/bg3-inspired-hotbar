@@ -1,9 +1,9 @@
 .bg3-hud .passives-container {
     position: absolute;
-    bottom: calc(100% + var(--primary-border-width));
+    bottom: calc(100% + var(--bg3-hotbar-border-size));
     left: 0;
-    min-width: 20px;
-    max-width: 300px;
+    min-width: var(--bg3-passive-cell-size);
+    max-width: calc(var(--bg3-passive-cell-size) * 10);
     border-radius: 3px;
     display: flex;
     align-items: center;
@@ -18,16 +18,16 @@
 
 /* Empty container state */
 .bg3-hud .passives-container:empty {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
+    width: var(--bg3-passive-cell-size);
+    height: var(--bg3-passive-cell-size);
+    min-width: var(--bg3-passive-cell-size);
 }
 
 /* Populated container state */
 .bg3-hud .passives-container:not(:empty) {
     width: auto;
     height: auto;
-    min-width: 20px;
+    min-width: var(--bg3-passive-cell-size);
 }
 
 .bg3-hud .passive-feature-icon {
@@ -40,13 +40,13 @@
 }
 
 .bg3-hud .passive-feature-icon img {
-    width: 36px;
-    height: 36px;
+    width: var(--bg3-passive-cell-size);
+    height: var(--bg3-passive-cell-size);
     display: block;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    border: 1px solid var(--color-border-dark);
-    background-color: var(--bg3-background);
+    border: var(--bg3-passive-border-size) solid var(--bg3-passive-border-color);
+    background-color: var(--bg3-passive-background-color);
 }
 
 .bg3-hud .passive-feature-icon:hover img {
@@ -54,7 +54,7 @@
 }
 
 .bg3-hud .passive-feature-icon:hover {
-    background: var(--bg3-background-highlight);
+    background: var(--bg3-passive-background-color-hover);
 }
 
 .bg3-hud .passive-feature-icon:not(:hover) {
@@ -108,15 +108,15 @@
 }
 
 .bg3-hud-dialog.configure-passives .passives-list::-webkit-scrollbar-track {
-    background: var(--bg3-background);
+    background: var(--bg3-passive-background-color);
     border-radius: 6px;
 }
 
 .bg3-hud-dialog.configure-passives .passives-list::-webkit-scrollbar-thumb {
-    background: var(--bg3-border);
+    background: var(--bg3-passive-border-color);
     border-radius: 4px;
 }
 
 .bg3-hud-dialog.configure-passives .passives-list::-webkit-scrollbar-thumb:hover {
-    background: var(--bg3-background-highlight);
+    background: var(--bg3-passive-background-color-hover);
 } 

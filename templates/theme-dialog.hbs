@@ -1,14 +1,11 @@
 <form class="package-configuration">
-    <div class="dialog-container" style="width: 600px; height: 850px;">
+    <div class="dialog-container" style="width: 600px; height: 900px;">
         <div class="form-group group-header">Theme settings</div>
         <div class="form-group" data-setting-id="bg3-inspired-hotbar.themeOption" style="margin-top: 1em;">
             <label>{{localize "BG3.Settings.MenuTheme.Name"}}</label>
             <div class="form-fields">
                 <select name="bg3-inspired-hotbar.themeOption" data-dtype="String" data-exclude="true">
-                    <option value="default" {{#if (eq configData.themeOption 'default')}}selected{{/if}}>Default</option>
-                    <option value="gold" {{#if (eq configData.themeOption 'gold')}}selected{{/if}}>Gold</option>
-                    <option value="old" {{#if (eq configData.themeOption 'old')}}selected{{/if}}>Old</option>
-                    <option value="custom" {{#if (eq configData.themeOption 'custom')}}selected{{/if}}>Custom</option>
+                    {{{themeList}}}
                 </select>
             </div>
             <p class="notes">{{localize "BG3.Settings.MenuTheme.Hint"}}</p>
@@ -28,10 +25,10 @@
                             <div class="form-fields">
                                 {{#switch field.type}}
                                     {{#case 'color'}}
-                                        <input type="text" class="color css-var" name="{{id}}" data-dtype="String" value="{{field.value}}" {{#if field.placeholder}}placeholder="{{field.placeholder}}"{{/if}}>
-                                        <input type="color" data-exclude="true" data-edit="{{id}}" value="{{field.value}}">
-                                        <input type="text" class="color css-var" name="{{id}}-hover" data-dtype="String" value="{{field.value2}}" {{#if field.placeholder}}placeholder="{{field.placeholder}}"{{/if}}>
-                                        <input type="color" data-exclude="true" data-edit="{{id}}-hover" value="{{field.value2}}">
+                                        <div class="color-picker-container"><input type="text" class="css-var" name="{{id}}" is="colorpicker-input" data-responsive-color value="{{field.value}}" style="background-color: {{field.value}};"></div>
+                                        {{#if hasHover}}
+                                            <div class="color-picker-container"><input type="text" class="css-var" name="{{id}}-hover" is="colorpicker-input" data-responsive-color value="{{field.value2}}" style="background-color: {{field.value}};"></div>
+                                        {{/if}}
                                     {{/case}}
                                     {{#case 'select'}}
                                         <select class="css-var" name="{{id}}" data-dtype="String">
@@ -56,13 +53,13 @@
         {{/each}}
     </div>
     <div class="dialog-buttons">
-        <button type="submit" class="dialog-button">
-            <i class="fas fa-save"></i>
-            {{localize "BG3.Settings.ContainerAutoPopulate.Save"}}
-        </button>
         <button data-type="export" class="dialog-button">
             <i class="fas fa-file-export"></i>
             {{localize "BG3.Settings.ContainerAutoPopulate.Export"}}
+        </button>
+        <button type="submit" class="dialog-button">
+            <i class="fas fa-save"></i>
+            {{localize "BG3.Settings.ContainerAutoPopulate.Save"}}
         </button>
     </div>
 </form>

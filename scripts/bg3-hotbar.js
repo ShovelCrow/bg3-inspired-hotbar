@@ -56,20 +56,22 @@ export class BG3Hotbar {
         this.loadCombatActions();
     }
 
-    static _applyTheme() {
-      const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption');
-      const currentTheme = document.head.querySelector('[custom-theme]');
-      if(currentTheme) currentTheme.parentNode.removeChild(currentTheme);
-      if(theme !== 'default') {
-        const themeConfig = CONFIG.THEME[theme];
+    static async _applyTheme() {
+        const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption'),
+            currentTheme = document.head.querySelector('[custom-theme]'),
+            themeFile = game.settings.get(CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ? await ThemeSettingDialog.loadThemeFile(game.settings.get(CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(CONFIG.MODULE_NAME, 'themeCustom'),
+            themeConfig = {...CONFIG.BASE_THEME, ...themeFile};
         if(themeConfig) {
-            const style = document.createElement('style');
-            style.setAttribute('type', 'text/css');
-            style.setAttribute('custom-theme', theme)
-            style.textContent = Object.entries(themeConfig).map(([k, v]) => `${k} {\n${Object.entries(v).map(([k2, v2]) => `${k2}:${v2};`).join('\n')}\n}`).join('\n');
-            document.head.appendChild(style);
+            const styleContent = `:root{${Object.entries(themeConfig).map(([k, v]) => `${k}:${v};`).join('\n')}}`;
+            if(currentTheme) currentTheme.innerHTML = styleContent;
+            else {
+                const style = document.createElement('style');
+                style.setAttribute('type', 'text/css');
+                style.setAttribute('custom-theme', theme)
+                style.textContent = styleContent;
+                document.head.appendChild(style);
+            }
         }
-      }
     }
     
     static _applyMacrobarCollapseSetting(msg) {
@@ -167,30 +169,56 @@ export class BG3Hotbar {
         });
 
         // Visual Settings - Appearance
+        game.settings.register(CONFIG.MODULE_NAME, 'scopeTheme', {
+            name: 'BG3.Settings.scopeTheme.Name',
+            hint: 'BG3.Settings.scopeTheme.Hint',
+            scope: 'world',
+            config: true,
+            type: Boolean,
+            requiresReload: true,
+            default: true
+        });
+
+        const scopeTheme = game.settings.get(CONFIG.MODULE_NAME, "scopeTheme");
+
         game.settings.registerMenu(CONFIG.MODULE_NAME, "menuTheme", {
             name: 'BG3.Settings.MenuTheme.Name',
             label: 'BG3.Settings.MenuTheme.Label',
             hint: 'BG3.Settings.MenuTheme.Hint',
             icon: "fas fa-cogs",
             type: ThemeSettingDialog,
+            restricted: !scopeTheme,
         });
 
         game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
             name: 'Theme options',
             hint: 'Choose between available themes',
-            scope: 'client',
+            scope: scopeTheme ? 'client' : 'world',
             config: false,
             type: String,
-            choices: {
+            /* choices: {
                 'default': 'Default',
                 'gold': 'Gold',
                 'old': '(Old)',
                 'custom': 'Custom (Coming soon !)'
-            },
+            }, */
             default: 'default',
+            // onChange: value => {
+                // if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+                // this._applyTheme();
+            // }
+        });
+
+        game.settings.register(CONFIG.MODULE_NAME, 'themeCustom', {
+            name: 'Theme custom',
+            hint: '',
+            scope: scopeTheme ? 'client' : 'world',
+            config: false,
+            type: Object,
+            default: {},
             onChange: value => {
-                if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
-                this._applyTheme();
+                // if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+                // this._applyTheme();
             }
         });
         
@@ -852,7 +880,7 @@ export class BG3Hotbar {
     static _registerHooks() {
         // Add Categories to module settings
         Hooks.on("renderSettingsConfig", (app, html, data) => {
-            $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first'));
+            $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertAfter($('[data-tab="bg3-inspired-hotbar"] h2'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.tooltipDelay"]').parents('div.form-group:first'));
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
@@ -1055,6 +1083,12 @@ export class BG3Hotbar {
             BG3Hotbar.manager.ui?.toggleUI();
             if (!this.manager?.ui?.filterContainer) return;
             this.manager.ui.filterContainer.resetUsedActions();
+        });
+
+        Hooks.on("pickerDone", (element, color) => {
+            const $input =  $(element).parent().find('input[is="colorpicker-input"]');
+            console.log($input)
+            $input.trigger('change');
         });
 
         // Initialize the module when ready

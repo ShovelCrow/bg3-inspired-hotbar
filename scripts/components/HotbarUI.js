@@ -82,6 +82,7 @@ class HotbarUI {
     // Create weapons containers
     const weaponContainer = document.createElement("div");
     weaponContainer.classList.add("bg3-hotbar-weaponcontainer");
+    // weaponContainer.style.setProperty('--bg3-hotbar-cell-size', getComputedStyle(document.documentElement).getPropertyValue('--bg3-weapon-cell-size'));
 
     // Create weapons containers based on manager's data
     this.weaponContainer = this.manager.weaponsContainers.map((containerData, index) => {
@@ -98,7 +99,7 @@ class HotbarUI {
 
       weaponInput.addEventListener("change", this.switchSet.bind(this, index));
 
-      weaponContainer.style.setProperty('--cell-size', container.element.style.getPropertyValue('--cell-size'))
+      // weaponContainer.style.setProperty('--bg3-hotbar-cell-size', container.element.style.getPropertyValue('--bg3-hotbar-cell-size'))
 
       weaponContainer.prepend(weaponInput);
       return container;

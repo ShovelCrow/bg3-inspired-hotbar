@@ -43,7 +43,7 @@ export class HotbarManager {
                 items: {},
                 type: 'label',
                 for: 'weapon-set',
-                size: 1.5,
+                // size: 1.5,
                 delOnly: true,
                 allowDuplicate: true
             });
@@ -56,7 +56,7 @@ export class HotbarManager {
             cols: 2,
             rows: 3,
             items: {},
-            size: 1.5,
+            // size: 1.5,
             locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
         }];
 
@@ -108,7 +108,7 @@ export class HotbarManager {
                 items: foundry.utils.deepClone(container.items),
                 type: container.type,
                 for: container.for,
-                size: container.size,
+                // size: container.size,
                 delOnly: container.delOnly,
                 allowDuplicate: container.allowDuplicate
             }));
@@ -119,7 +119,7 @@ export class HotbarManager {
                 cols: this.combatContainer[0].cols,
                 rows: this.combatContainer[0].rows,
                 items: foundry.utils.deepClone(this.combatContainer[0].items),
-                size: this.combatContainer[0].size
+                // size: this.combatContainer[0].size
             }];
             
             this.tokenConfigs.set(this.currentTokenId, {
@@ -157,7 +157,7 @@ export class HotbarManager {
                 items: foundry.utils.deepClone(container.items),
                 type: container.type,
                 for: container.for,
-                size: container.size,
+                // size: container.size,
                 delOnly: container.delOnly,
                 allowDuplicate: container.allowDuplicate
             }));
@@ -167,7 +167,7 @@ export class HotbarManager {
                 cols: config.combatContainer[0].cols,
                 rows: config.combatContainer[0].rows,
                 items: foundry.utils.deepClone(config.combatContainer[0].items),
-                size: config.combatContainer[0].size,
+                // size: config.combatContainer[0].size,
                 locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
             }];
             this.portraitVisible = config.portraitVisible;
@@ -212,7 +212,7 @@ export class HotbarManager {
                         items: {},
                         type: 'label',
                         for: 'weapon-set',
-                        size: 1.5,
+                        // size: 1.5,
                         delOnly: true,
                         allowDuplicate: true
                     });
@@ -225,7 +225,7 @@ export class HotbarManager {
                         cols: 2,
                         rows: 3,
                         items: {},
-                        size: 1.5,
+                        // size: 1.5,
                         locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
                     }];
                 }
@@ -252,7 +252,7 @@ export class HotbarManager {
                 items: foundry.utils.deepClone(container.items || {}),
                 type: container.type,
                 for: container.for,
-                size: container.size,
+                // size: container.size,
                 delOnly: container.delOnly,
                 allowDuplicate: container.allowDuplicate
             }));
@@ -264,7 +264,7 @@ export class HotbarManager {
                     cols: combatContainerData[0].cols,
                     rows: combatContainerData[0].rows,
                     items: foundry.utils.deepClone(combatContainerData[0].items || {}),
-                    size: combatContainerData[0].size,
+                    // size: combatContainerData[0].size,
                     locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
                 }];
             }
@@ -289,7 +289,7 @@ export class HotbarManager {
                     items: {},
                     type: 'label',
                     for: 'weapon-set',
-                    size: 1.5,
+                    // size: 1.5,
                     delOnly: true,
                     allowDuplicate: true
                 });
@@ -317,7 +317,7 @@ export class HotbarManager {
               items: foundry.utils.deepClone(container.items),
               type: container.type,
               for: container.for,
-              size: container.size,
+            //   size: container.size,
               delOnly: container.delOnly,
               allowDuplicate: container.allowDuplicate
             })),
@@ -327,7 +327,7 @@ export class HotbarManager {
                 cols: this.combatContainer[0].cols,
                 rows: this.combatContainer[0].rows,
                 items: foundry.utils.deepClone(this.combatContainer[0].items),
-                size: this.combatContainer[0].size
+                // size: this.combatContainer[0].size
             }],
             activeSet: this.activeSet,
             portraitVisible: this.portraitVisible
@@ -361,7 +361,7 @@ export class HotbarManager {
             items: foundry.utils.deepClone(container.items),  // Use Foundry's deep clone utility
             type: 'label',
             for: 'weapon-set',
-            size: 1.5,
+            // size: 1.5,
             delOnly: true,
             allowDuplicate: true
         }));
@@ -372,7 +372,7 @@ export class HotbarManager {
             cols: this.combatContainer[0].cols,
             rows: this.combatContainer[0].rows,
             items: foundry.utils.deepClone(this.combatContainer[0].items),
-            size: this.combatContainer[0].size
+            // size: this.combatContainer[0].size
         }];
 
         // Create the data object including portrait visibility

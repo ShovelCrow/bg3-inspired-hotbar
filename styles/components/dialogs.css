@@ -264,3 +264,19 @@ details summary::marker,
 details[open] summary::marker {
   /* content: "- "; */
 }
+
+#bg3-inspired-hotbar-theme-settings ::placeholder {
+  opacity: 0.5 !important;
+}
+
+#bg3-inspired-hotbar-theme-settings ::-ms-input-placeholder {
+  opacity: 0.5 !important;
+}
+
+#bg3-inspired-hotbar-theme-settings .window-content {
+  overflow: visible;
+}
+
+#bg3-inspired-hotbar-theme-settings select {
+  text-transform: capitalize;
+}

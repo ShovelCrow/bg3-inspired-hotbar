@@ -1,65 +1,85 @@
 :root {
-    --bg3-border-color: "";
-    --bg3-border-color-hover: "";
-    --bg3-background-color: "";
-    --bg3-background-color-hover: "";
-    --bg3-text-color: "";
-    --bg3-text-color-hover: "";
-    --bg3-cell-size: "";
-    --bg3-border-size: "";
-    --bg3-portrait-cell-size: "";
-    --bg3-hotbar-border-color: "";
-    --bg3-hotbar-border-color-hover: "";
-    --bg3-hotbar-background-color: "";
-    --bg3-hotbar-background-color-hover: "";
-    --bg3-hotbar-text-color: "";
-    --bg3-hotbar-text-color-hover: "";
-    --bg3-hotbar-cell-size: "";
-    --bg3-hotbar-border-size: "";
-    --bg3-weapon-border-color: "";
-    --bg3-weapon-border-color-hover: "";
-    --bg3-weapon-background-color: "";
-    --bg3-weapon-background-color-hover: "";
-    --bg3-weapon-text-color: "";
-    --bg3-weapon-text-color-hover: "";
-    --bg3-weapon-cell-size: "";
-    --bg3-weapon-border-size: "";
-    --bg3-filter-border-color: "";
-    --bg3-filter-border-color-hover: "";
-    --bg3-filter-background-color: "";
-    --bg3-filter-background-color-hover: "";
-    --bg3-filter-text-color: "";
-    --bg3-filter-text-color-hover: "";
-    --bg3-filter-cell-size: "";
-    --bg3-filter-border-size: "";
-    --bg3-passive-border-color: "";
-    --bg3-passive-border-color-hover: "";
-    --bg3-passive-background-color: "";
-    --bg3-passive-background-color-hover: "";
-    --bg3-passive-text-color: "";
-    --bg3-passive-text-color-hover: "";
-    --bg3-passive-cell-size: "";
-    --bg3-passive-border-size: "";
-    --bg3-active-border-color: "";
-    --bg3-active-border-color-hover: "";
-    --bg3-active-background-color: "";
-    --bg3-active-background-color-hover: "";
-    --bg3-active-text-color: "";
-    --bg3-active-text-color-hover: "";
-    --bg3-active-cell-size: "";
-    --bg3-active-border-size: "";
-    --bg3-rest-border-color: "";
-    --bg3-rest-border-color-hover: "";
-    --bg3-rest-background-color: "";
-    --bg3-rest-background-color-hover: "";
-    --bg3-rest-text-color: "";
-    --bg3-rest-text-color-hover: "";
-    --bg3-rest-border-size: "";
-    --bg3-tooltip-border-color: "";
-    --bg3-tooltip-border-color-hover: "";
-    --bg3-tooltip-background-color: "";
-    --bg3-tooltip-background-color-hover: "";
-    --bg3-tooltip-text-color: "";
-    --bg3-tooltip-text-color-hover: "";
-    --bg3-tooltip-border-size: ""
+    /** Global **/
+    --bg3-border-color: #444;
+    --bg3-border-color-hover: #666;
+    --bg3-background-color: #222;
+    --bg3-background-color-hover: #3a3a3a;
+    --bg3-text-color: #ddd;
+    --bg3-text-color-hover: #ddd;
+    --bg3-text-secondary-color: #fff;
+    /* --bg3-cell-size: 50px; */
+    --bg3-border-size: 2px;
+    /** Portrait **/
+    --bg3-portrait-size: 175px;
+    /** Hotbar **/
+    --bg3-hotbar-border-color: var(--bg3-border-color);
+    --bg3-hotbar-border-color-hover: var(--bg3-border-color-hover);
+    --bg3-hotbar-background-color: var(--bg3-background-color);
+    --bg3-hotbar-background-color-hover: var(--bg3-background-color-hover);
+    --bg3-hotbar-text-color: var(--bg3-text-color);
+    --bg3-hotbar-text-color-hover: var(--bg3-text-color-hover);
+    --bg3-hotbar-cell-size: 50px;
+    --bg3-hotbar-border-size: var(--bg3-border-size);
+    --bg3-hotbar-drag-color: #cc3333;
+    --bg3-hotbar-drag-color-hover: #d10000;
+    /** Weapons Sets **/
+    --bg3-weapon-border-color: var(--bg3-border-color);
+    --bg3-weapon-border-color-hover: var(--bg3-border-color-hover);
+    --bg3-weapon-background-color: var(--bg3-background-color);
+    --bg3-weapon-background-color-hover: var(--bg3-background-color-hover);
+    --bg3-weapon-text-color: var(--bg3-text-color);
+    --bg3-weapon-text-color-hover: var(--bg3-text-color-hover);
+    --bg3-weapon-cell-size: 75px;
+    --bg3-weapon-border-size: var(--bg3-border-size);
+    /** Filter **/
+    --bg3-filter-border-color: var(--bg3-border-color);
+    --bg3-filter-border-color-hover: var(--bg3-border-color-hover);
+    --bg3-filter-background-color: var(--bg3-background-color);
+    --bg3-filter-background-color-hover: var(--bg3-background-color-hover);
+    --bg3-filter-text-color: var(--bg3-text-color);
+    --bg3-filter-text-color-hover: var(--bg3-text-color-hover);
+    --bg3-filter-cell-size: 32px;
+    --bg3-filter-border-size: var(--bg3-border-size);
+    /** Passive Effects **/
+    --bg3-passive-border-color: var(--bg3-border-color);
+    --bg3-passive-border-color-hover: var(--bg3-border-color-hover);
+    --bg3-passive-background-color: var(--bg3-background-color);
+    --bg3-passive-background-color-hover: var(--bg3-background-color-hover);
+    --bg3-passive-text-color: var(--bg3-text-color);
+    --bg3-passive-text-color-hover: var(--bg3-text-color-hover);
+    --bg3-passive-cell-size: 36px;
+    --bg3-passive-border-size: var(--bg3-border-size);
+    /** Active Effects **/
+    --bg3-active-border-color: var(--bg3-border-color);
+    --bg3-active-border-color-hover: var(--bg3-border-color-hover);
+    --bg3-active-background-color: var(--bg3-background-color);
+    --bg3-active-background-color-hover: var(--bg3-background-color-hover);
+    --bg3-active-text-color: var(--bg3-text-color);
+    --bg3-active-text-color-hover: var(--bg3-text-color-hover);
+    --bg3-active-cell-size: 36px;
+    --bg3-active-border-size: var(--bg3-border-size);
+    /** Rest Turn Buttons **/
+    --bg3-rest-border-color: var(--bg3-border-color);
+    --bg3-rest-border-color-hover: var(--bg3-border-color-hover);
+    --bg3-rest-background-color: var(--bg3-background-color);
+    --bg3-rest-background-color-hover: var(--bg3-background-color-hover);
+    --bg3-rest-text-color: var(--bg3-text-color);
+    --bg3-rest-text-color-hover: var(--bg3-text-color-hover);
+    --bg3-turn-border-color: var(--bg3-border-color);
+    --bg3-turn-border-color-hover: var(--bg3-border-color-hover);
+    --bg3-turn-background-color: var(--bg3-background-color);
+    --bg3-turn-background-color-hover: var(--bg3-background-color-hover);
+    --bg3-turn-text-color: var(--bg3-text-color);
+    --bg3-turn-text-color-hover: var(--bg3-text-color-hover);
+    --bg3-rest-border-size: var(--bg3-border-size);
+    /** Tooltip **/
+    --bg3-tooltip-border-color: var(--bg3-border-color);
+    /* --bg3-tooltip-border-color-hover: var(--bg3-border-color-hover); */
+    --bg3-tooltip-background-color: var(--bg3-background-color);
+    /* --bg3-tooltip-background-color-hover: var(--bg3-background-color-hover); */
+    --bg3-tooltip-text-color: var(--bg3-text-color);
+    --bg3-tooltip-text-secondary-color: var(--bg3-text-secondary-color);
+    --bg3-tooltip-component-color: #aaa;
+    /* --bg3-tooltip-text-color-hover: var(--bg3-text-color-hover); */
+    --bg3-tooltip-border-size: var(--bg3-border-size);
 }

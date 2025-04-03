@@ -34,7 +34,7 @@
     --bg3-cell-size: 50px;
     --bg3-filter-button-size: 32px;
     --bg3-portrait-size: 175px;
-    --portrait-right: 172px;
+    --portrait-right: calc(2*(var(--bg3-weapon-cell-size) + 11px));
 }
 
 img {
@@ -56,29 +56,19 @@ img {
   font-family: "Signika", sans-serif;
   scale: var(--bg3-scale-ui);
   transform-origin: bottom;
-  /* margin-bottom: calc(10px* var(--bg3-scale-ui)); */
   gap: 0.25rem;
   padding: 0;
   width: 100%;
   padding-bottom: var(--position-bottom);
 }
 
-#bg3-hotbar-container {
-  /* width: calc(100% / var(--bg3-scale-ui));
-  left: calc(-100%*(1 - var(--bg3-scale-ui))); */
-}
-
 #bg3-hotbar-container[data-position="left"] {
-  /* justify-content: flex-start;
-  padding-left: calc(var(--bg3-portrait-size) + 20px + var(--position-padding)); */
   justify-content: flex-start;
   transform-origin: bottom left;
   padding-left: calc(var(--portrait-right) + 15px + var(--position-padding));
 }
 
 #bg3-hotbar-container[data-position="right"] {
-  /* justify-content: flex-end;
-  padding-right: var(--position-padding); */
   justify-content: flex-end;
   transform-origin: bottom right;
   padding-right: var(--position-padding);
@@ -87,9 +77,9 @@ img {
 .bg3-hud .bg3-hotbar-subcontainer {
   position: relative;
   display: flex;
-  background: var(--bg3-background);
-  border: var(--primary-border-width) solid var(--primary-border-color);
-  border-radius: 8px;
+  background: var(--bg3-background-color);
+  border: var(--bg3-border-size) solid var(--bg3-border-color);
+  border-radius: var(--bg3-border-radius);
   padding: 2px 6px;
   align-items: stretch;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -126,15 +116,15 @@ img {
 
 .bg3-hud .hotbar-subcontainer {
   display: grid;
-  grid-template-columns: repeat(var(--cols), var(--cell-size));
-  grid-template-rows: repeat(var(--rows), var(--cell-size));
+  grid-template-columns: repeat(var(--cols), var(--bg3-hotbar-cell-size));
+  grid-template-rows: repeat(var(--rows), var(--bg3-hotbar-cell-size));
   gap: 1px;
   padding: 4px;
-  background: #222222f2;
+  background: var(--bg3-hotbar-sub-background-color);
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   transition: width 0.1s ease;
-  width: var(--cols-override, calc(var(--cols) * (var(--cell-size) + 1px) + 8px));
+  width: var(--cols-override, calc(var(--cols) * (var(--bg3-hotbar-cell-size) + 1px) + 8px));
 }
 
 /* ==========================================================================
@@ -142,15 +132,15 @@ img {
    ========================================================================== */
 
 .bg3-hud .hotbar-cell {
-    width: var(--cell-size);
-    height: var(--cell-size);
-    background: #333;
-    border: var(--bg3-cell-border-width) solid var(--bg3-border);
+    width: var(--bg3-hotbar-cell-size);
+    height: var(--bg3-hotbar-cell-size);
+    background: var(--bg3-hotbar-background-color);
+    border: var(--bg3-cell-border-width) solid var(--bg3-hotbar-border-color);
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--bg3-text);
+    color: var(--bg3-hotbar-text-color);
     font-size: 0.8em;
     overflow: hidden;
     position: relative;
@@ -162,9 +152,9 @@ img {
 }
 
 .bg3-hud.cell-bottom-highlight .hotbar-cell {
-  border-top-color: var(--bg3-border) !important;
-  border-left-color: var(--bg3-border) !important;
-  border-right-color: var(--bg3-border) !important;
+  border-top-color: var(--bg3-cell-border-width) !important;
+  border-left-color: var(--bg3-cell-border-width) !important;
+  border-right-color: var(--bg3-cell-border-width) !important;
 }
 
 .bg3-hud .hotbar-cell.action-used, .bg3-hud .hotbar-cell.action-excluded {
@@ -216,12 +206,12 @@ img {
 }
 
 .bg3-hud .hotbar-cell:hover {
-    border-color: #666;
-    background: var(--bg3-background-highlight);
+    border-color: var(--bg3-hotbar-border-color-hover);
+    background: var(--bg3-hotbar-background-color-hover);
 }
 
 .bg3-hud .hotbar-cell.dragover {
-    background: #444;
+    background: var(--bg3-border-color);
     border-color: #888;
 }
 
@@ -235,7 +225,7 @@ img {
 
 .bg3-hud .hotbar-drag-bar {
   width: 4px;
-  background: #cc3333;
+  background: var(--bg3-hotbar-drag-color);
   cursor: ew-resize;
   align-self: stretch;
   border-radius: 2px;
@@ -247,7 +237,7 @@ img {
 
 .bg3-hud .hotbar-drag-bar:hover, 
 .bg3-hud .hotbar-drag-bar.dragging {
-  background: #d10000;
+  background: var(--bg3-hotbar-drag-color-hover);
 }
 
 .bg3-hud .drag-indicator {
@@ -330,4 +320,26 @@ img {
 
 .bg3-hud .hidden {
   display: none !important;
+}
+
+/* ==========================================================================
+   Global Styles
+   ========================================================================== */
+
+.color-picker-container {
+  position: relative;
+  width: fit-content;
+  /* padding-right: 1px; */
+}
+
+.color-picker-container .picker_wrapper {
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+  z-index: 1;
+  /* box-shadow: 0 0 0 1px black; */
+}
+
+.color-picker-container input[is="colorpicker-input"] {
+  text-align: center;
 }

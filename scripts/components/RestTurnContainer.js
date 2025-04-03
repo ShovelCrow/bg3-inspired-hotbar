@@ -119,16 +119,16 @@ class RestTurnButton {
         btnContainer.classList.add(...this.class);
         if(!this.visible) btnContainer.classList.add('hidden');
         Object.entries(this.attr).forEach(([value, index]) => btnContainer.setAttribute(value, index));
+        if(this.icon) {
+            const btnIcon = document.createElement("i");
+            btnIcon.classList.add("fas", this.icon);
+            btnContainer.appendChild(btnIcon);
+        }
         if(this.label) {
             const btnLabel = document.createElement("span");
             btnLabel.classList.add("rest-turn-label");
             btnLabel.innerText = this.label;
             btnContainer.appendChild(btnLabel);
-        }
-        if(this.icon) {
-            const btnIcon = document.createElement("i");
-            btnIcon.classList.add("fas", this.icon);
-            btnContainer.appendChild(btnIcon);
         }
 
         return btnContainer;

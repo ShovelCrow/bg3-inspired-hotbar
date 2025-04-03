@@ -1,9 +1,9 @@
 .bg3-hud .effects-container {
     position: absolute;
-    bottom: calc(100% + var(--primary-border-width));
+    bottom: calc(100% + var(--bg3-hotbar-border-size));
     right: 0;
-    min-width: 20px;
-    max-width: 300px;
+    min-width: var(--bg3-active-cell-size);
+    max-width: calc(var(--bg3-active-cell-size) * 10);
     border-radius: 3px;
     display: flex;
     align-items: center;
@@ -27,13 +27,13 @@
 }
 
 .bg3-hud .active-effect-icon img {
-    width: 36px;
-    height: 36px;
+    width: var(--bg3-active-cell-size);
+    height: var(--bg3-active-cell-size);
     display: block;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    border: 1px solid var(--color-border-dark);
-    background-color: var(--bg3-background);
+    border: var(--bg3-active-border-size) solid var(--bg3-active-border-color);
+    background-color: var(--bg3-active-background-color);
 }
 
 .bg3-hud .active-effect-icon.disabled img {

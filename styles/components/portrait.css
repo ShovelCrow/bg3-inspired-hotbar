@@ -10,7 +10,6 @@
   min-width: 80px;
   height: var(--bg3-portrait-size);
   min-height: 80px;
-  /* border-radius: 50%; */
   overflow: visible;
   display: block;
   --img-background-color: transparent;
@@ -338,7 +337,7 @@
 }
 
 .bg3-hud .portrait-card[data-border="simple"] .portrait-image-container::after {
-  border: calc(var(--primary-border-width)*2) solid var(--primary-border-color);
+  border: calc(var(--bg3-border-size)*2) solid var(--bg3-border-color);
 }
 
 

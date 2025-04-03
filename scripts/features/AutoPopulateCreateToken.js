@@ -122,7 +122,7 @@ export class AutoPopulateCreateToken {
                         items: {},
                         type: 'label',
                         for: 'weapon-set',
-                        size: 1.5,
+                        // size: 1.5,
                         delOnly: true,
                         allowDuplicate: true,
                         data: {
@@ -133,7 +133,7 @@ export class AutoPopulateCreateToken {
                             items: {},
                             type: 'label',
                             for: 'weapon-set',
-                            size: 1.5,
+                            // size: 1.5,
                             delOnly: true,
                             allowDuplicate: true
                         }

@@ -27,7 +27,7 @@ class GridContainer {
     // Set initial grid template via CSS variables.
     this.element.style.setProperty('--cols', this.data.cols);
     this.element.style.setProperty('--rows', this.data.rows);
-    this.element.style.setProperty('--cell-size', `${CONFIG.CELL_SIZE * (this.data.size ?? 1)}px`);
+    // this.element.style.setProperty('--bg3-hotbar-cell-size', `${CONFIG.CELL_SIZE * (this.data.size ?? 1)}px`);
     
     this.render();
   }
@@ -48,7 +48,7 @@ class GridContainer {
     // Update grid template
     this.element.style.setProperty('--cols', this.data.cols);
     this.element.style.setProperty('--rows', this.data.rows);
-    this.element.style.setProperty('--cell-size', `${CONFIG.CELL_SIZE * (this.data.size ?? 1)}px`);
+    // this.element.style.setProperty('--bg3-hotbar-cell-size', `${CONFIG.CELL_SIZE * (this.data.size ?? 1)}px`);
     
     // Force a reflow to update grid layout.
     this.element.offsetHeight;

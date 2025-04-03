@@ -183,6 +183,10 @@
             "Name": "Theme configuration",
             "Hint": "Choose between available themes or create a custom one.",
             "Label": "Configure Theme"
+        },
+        "scopeTheme": {
+            "Name": "Theme Scope",
+            "Hint": "If checked every player will be able to choose it's own theme. Otherwise the theme selected by the GM will be the same for everyone."
         }
     }
 } 
