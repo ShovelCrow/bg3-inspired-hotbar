@@ -72,7 +72,7 @@ export class FilterContainer {
                 color = CONFIG.COLORS.DEFAULT;
         }
         
-        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}">${symbol}${type[0].toUpperCase() + type.slice(1)}${symbol}</h4><p class="notes"><i>Left Click to highligh items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
+        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}">${symbol}${type[0].toUpperCase() + type.slice(1)}${symbol}</h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
         button.dataset.tooltipDirection = "UP";
 
         button.style.color = color;
@@ -171,7 +171,7 @@ export class FilterContainer {
             : "transparent";
         
         const label = isPact ? 'Pact Magic' : (level === 0 ? 'Cantrip' : `Spell Level ${level}`);
-        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}">${label}</h4><p class="notes"><i>Left Click to highligh items using this slot.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
+        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}">${label}</h4><p class="notes"><i>Left Click to highlight items using this slot.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
         button.dataset.tooltipDirection = "UP";
 
         const rows = Math.ceil(spellLevel.max / 2);
@@ -247,7 +247,7 @@ export class FilterContainer {
         button.style.borderColor = this.featuresEnabled ? color : "transparent";
         button.innerHTML = '<i class="fas fa-star"></i>';
         
-        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}"><i class="fas fa-star"></i>Feature<i class="fas fa-star"></i></h4><p class="notes"><i>Left Click to highligh items of type feature.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
+        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}"><i class="fas fa-star"></i>Feature<i class="fas fa-star"></i></h4><p class="notes"><i>Left Click to highlight items of type feature.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
         button.dataset.tooltipDirection = "UP";
 
         button.addEventListener("mouseenter", () => {
