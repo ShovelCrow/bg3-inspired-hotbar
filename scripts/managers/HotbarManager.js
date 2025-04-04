@@ -62,30 +62,19 @@ export class HotbarManager {
 
     }
 
-    async updateHotbarForControlledToken(forceUpdate = false) {
-        // Get currently controlled token
-        const controlled = canvas.tokens.controlled[0];
-        
+    async updateHotbarForControlledToken(token, forceUpdate = false) {
         // Case 1: No token or multiple tokens selected
-        // if (!controlled || canvas.tokens.controlled.length > 1) {
-        if (!controlled || canvas.tokens.controlled.length > 1) {
-            // If multiple tokens are selected, always hide the hotbar
-            setTimeout(async () => {
-                if (canvas.tokens.controlled.length > 1) {
-                    if (this.ui) {
-                        this.ui.destroy();
-                        this.ui = null;
-                        this.currentTokenId = null;
-                    }
-                    return;
-                }
-            }, 100);
-            // For no tokens selected, just return as cleanup is handled in controlToken hook
+        if(!token) {
+            if (this.ui) {
+                this.ui.destroy();
+                this.ui = null;
+                this.currentTokenId = null;
+            }
             return;
         }
 
         // Case 2: Same token selected - only proceed if forcing update
-        if (this.currentTokenId === controlled.id && !forceUpdate) {
+        if (this.currentTokenId === token.id && !forceUpdate) {
             return;
         }
 
@@ -132,14 +121,14 @@ export class HotbarManager {
         }
 
         // Always destroy old UI for new token or force update
-        if (this.ui && (this.currentTokenId !== controlled.id || forceUpdate)) {
-        // if (this.ui) {
+        /* if (this.ui && (this.currentTokenId !== token.id || forceUpdate)) {
+            console.log('updateHotbarForControlledToken to destroy')
             this.ui.destroy();
             this.ui = null;
-        }
+        } */
 
         // Update current token and load its config
-        this.currentTokenId = controlled.id;
+        this.currentTokenId = token.id;
         
         if (this.tokenConfigs.has(this.currentTokenId) && !forceUpdate) {
             const config = this.tokenConfigs.get(this.currentTokenId);
@@ -178,7 +167,7 @@ export class HotbarManager {
 
         // Create new UI
         this.ui = new HotbarUI(this);
-        console.log(`${CONFIG.MODULE_NAME} | Created UI for token: ${controlled.name}`);
+        console.log(`${CONFIG.MODULE_NAME} | Created UI for token: ${token.name}`);
     }
 
     async _loadTokenData() {
@@ -446,7 +435,7 @@ export class HotbarManager {
             // Check if this update affects our current token to force UI update
             const token = canvas.tokens.get(this.currentTokenId);
             if (!!token && token.actor?.id === actor.id && !!this.ui) {
-                await this.updateHotbarForControlledToken(true);
+                await this.updateHotbarForControlledToken(token, true);
             }
         }
     }

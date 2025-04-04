@@ -61,10 +61,10 @@ class HotbarUI {
       return;
     }
 
-    // Remove existing UI if it exists
+    /* // Remove existing UI if it exists
     if (this.element) {
       this.destroy();
-    }
+    } */
 
     // Create main container with transition
     this.element = document.createElement("div");
@@ -73,10 +73,20 @@ class HotbarUI {
     if(game.settings.get('bg3-inspired-hotbar', 'highlightStyle') === 'bottom') this.element.classList.add("cell-bottom-highlight");
     this.element.style.transition = "transform 0.3s ease-in-out, opacity 0.3s ease-in-out";
     this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
-    this.element.setAttribute('theme-option', game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
     this.element.dataset.position = game.settings.get(CONFIG.MODULE_NAME, 'uiPosition');
     this.element.style.setProperty('--position-padding', `${game.settings.get(CONFIG.MODULE_NAME, 'posPadding')}px`);
     this.element.style.setProperty('--position-bottom', `${game.settings.get(CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
+    
+    if(this.manager?.ui?.element) this.manager.ui.element.replaceWith(this.element);
+    else {
+      // Append to document
+      document.body.appendChild(this.element);
+    }
+
+    // Append to document
+    // document.body.appendChild(this.element);
+
+
     this.updateUIScale();
         
     // Create weapons containers
@@ -166,9 +176,6 @@ class HotbarUI {
 
     // Add keyboard event listener
     document.addEventListener('keydown', this._handleKeyDown);
-
-    // Append to document
-    document.body.appendChild(this.element);
 
     // Initial render
     this.render();
