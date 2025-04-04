@@ -7,40 +7,6 @@ export const CONFIG = {
     ROWS: 3,
     DRAG_THRESHOLD: 40, // 80% of cell width
     TOOLTIP_DELAY: 500, // Default tooltip delay in ms
-
-    CONTAINERSDATA: {
-        hotbar: {
-            count: 3,
-            config: {
-                get cols() { return CONFIG.INITIAL_COLS},
-                get rows() { return CONFIG.ROWS},
-                items: {}
-            }
-        },
-        weapon: {
-            count: 3,
-            config: {
-                cols: 2,
-                rows: 1,
-                items: {},
-                type: 'label',
-                for: 'weapon-set',
-                // size: 1.5,
-                delOnly: true,
-                allowDuplicate: true
-            }
-        },
-        combat: {
-            count: 1,
-            config: {
-                cols: 2,
-                rows: 3,
-                items: {},
-                // size: 1.5,
-                // locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
-            }
-        }
-    },
     
     // Z-Index Layers
     Z_INDEX: {
@@ -74,8 +40,6 @@ export const CONFIG = {
     // State Management
     FLAG_NAME: "hotbarConfig",
     MODULE_NAME: "bg3-inspired-hotbar",
-    // PATHs
-    get COMPONENTS_PATH() { return `modules/${CONFIG.MODULE_NAME}/templates/components/`},
     
     // Styling
     COLORS: {
@@ -347,6 +311,184 @@ export function registerHooks() {
         
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first'));
     });
+
+
+
+    /*
+    // Canvas and token control hooks
+    Hooks.on("canvasReady", async () => {
+        if (this.manager) {
+            // When canvas is ready, check for selected token
+            const controlled = canvas.tokens?.controlled[0];
+            if (controlled) {
+                await this.manager.updateHotbarForControlledToken(controlled, true);
+            } else {
+                // Clean up UI if no token is selected
+                if (this.manager.ui) {
+                    this.manager.ui.destroy();
+                    this.manager.ui = null;
+                }
+            }
+        }
+    });
+
+    Hooks.on("controlToken", async (token, controlled) => {
+        if (!this.manager) return;
+        
+        if ((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) {
+            setTimeout(() => {
+                if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.manager.updateHotbarForControlledToken(null);
+            }, 100);
+        }
+        if (!controlled) return;
+        if (game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) {
+            if (!this.manager.ui) {
+                // UI doesn't exist but should (UI is enabled and token selected)
+                await this.manager.updateHotbarForControlledToken(token, true);
+            } else {
+                // UI exists, just update it
+                await this.manager.updateHotbarForControlledToken(token);
+            }
+            if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+        }
+    });
+
+    // Token creation hook for auto-populating unlinked tokens
+    Hooks.on("createToken", async (token) => {
+        if (!token?.actor) return;
+
+        await AutoPopulateCreateToken.populateUnlinkedToken(token);
+    });
+
+    // Actor updates
+    Hooks.on("updateActor", async (actor, changes, options, userId) => {
+        if(!this.manager) return;
+        
+        if(changes?.flags?.[CONFIG.MODULE_NAME] && game.user.id !== userId) this.manager.socketUpdateData(actor, changes);
+        
+        if (game.user.id !== userId) return;
+        
+        // Check if this update affects our current token
+        const token = canvas.tokens.get(this.manager.currentTokenId);
+        if (!token || token.actor?.id !== actor.id) return;
+        
+        // Update UI components
+        if (this.manager.ui) {
+            // Update portrait card for any actor changes
+            if (this.manager.ui.portraitCard) {
+                this.manager.ui.portraitCard.update(actor);
+            }
+            
+            // Update filter container for spell slot changes
+            if (changes.system?.spells && this.manager.ui.filterContainer) {
+                this.manager.ui.filterContainer.render();
+            }
+            
+            // Update passives container if items changed
+            if (changes.items && this.manager.ui.passivesContainer) {
+                await this.manager.ui.passivesContainer.update();
+            }
+            
+            // Let ItemUpdateManager handle item changes
+            if (changes.items || changes.system?.spells) {
+                await this.manager.itemManager.cleanupInvalidItems(actor);
+            }
+        }
+    });
+
+    // Item creation/deletion/updates are now handled by ItemUpdateManager
+    
+    // Token deletion
+    Hooks.on("deleteToken", async (scene, tokenData) => {
+        if (!this.manager) return;
+
+        const token = canvas.tokens.get(tokenData._id);
+        const isPlayerCharacter = token?.actor?.hasPlayerOwner;
+        const isCurrentToken = tokenData._id === this.manager.currentTokenId;
+        const isLocked = this.controlsManager.isLockSettingEnabled('deselect') && 
+                        this.controlsManager.isMasterLockEnabled();
+
+        // Only clean up data if:
+        // 1. It's an unlinked token, OR
+        // 2. It's the current token AND either:
+        //    - It's not a player character, OR
+        //    - It's not locked
+        if (!token?.actorLink || (isCurrentToken && (!isPlayerCharacter || !isLocked))) {
+            await this.manager.cleanupTokenData(tokenData._id);
+        }
+
+        // Handle UI cleanup based on token type and current status
+        if (isCurrentToken) {
+            // Only clear currentTokenId if it's not a locked player character
+            if (!isPlayerCharacter || !isLocked) {
+                this.manager.currentTokenId = null;
+                
+                if (this.manager.ui) {
+                    this.manager.ui.destroy();
+                    this.manager.ui = null;
+                }
+                await this.manager.updateHotbarForControlledToken(null);
+            }
+        }
+    });
+
+    // Token updates
+    Hooks.on("updateToken", async (token, changes, options, userId) => {
+        if (!this.manager || game.user.id !== userId) return;
+        
+        // If this is our current token and actor-related data changed
+        if (token.id === this.manager.currentTokenId && 
+            (changes.actorId || changes.actorData || changes.actorLink)) {
+            await this.manager.updateHotbarForControlledToken(token);
+        }
+    });
+
+    // Scene deletion
+    Hooks.on("deleteScene", async (scene) => {
+        if (!this.manager) return;
+
+        // Clean up data for unlinked tokens in the scene
+        for (const tokenData of scene.tokens) {
+            const token = canvas.tokens.get(tokenData._id);
+            if (token && !token.actorLink) {
+                await this.manager.cleanupTokenData(tokenData._id);
+            }
+        }
+
+        // If the current token was in this scene, update the UI
+        const token = canvas.tokens.get(this.manager.currentTokenId);
+        if (token && token.scene.id === scene.id) {
+            this.manager.currentTokenId = null;
+            await this.manager.updateHotbarForControlledToken(null);
+        }
+    });
+
+    // Add combat turn update hooks
+    Hooks.on("updateCombat", (combat, changed, options, userId) => {
+        this._onUpdateCombat(combat, changed);
+        
+        // Only process if the turn actually changed
+        if (!foundry.utils.hasProperty(changed, "turn") && !foundry.utils.hasProperty(changed, "round")) return;
+        
+        // Handle the turn update in the filter container
+        if (!this.manager?.ui?.filterContainer) return;
+        this.manager.ui.filterContainer.handleCombatTurnUpdate();
+    });
+
+    // Handle combat start
+    Hooks.on("combatStart", (combat) => {
+        if (!this.manager?.ui?.filterContainer) return;
+        this.manager.ui.filterContainer.handleCombatTurnUpdate();
+    });
+
+    // Handle when combat is actually deleted/removed
+    Hooks.on("deleteCombat", (combat) => {
+        this.manager?.ui?.combat?.forEach((component) => component.updateVisibility());
+        BG3Hotbar.manager.ui?.toggleUI();
+        if (!this.manager?.ui?.filterContainer) return;
+        this.manager.ui.filterContainer.resetUsedActions();
+    });
+    */
 }
 
 export function registerSettings() {
@@ -1007,4 +1149,50 @@ export function registerSettings() {
         default: {}
     });
     */
+}
+
+/**
+ * Helper function to determine token linkage status
+ * @param {Actor} actor - The actor to check
+ * @param {string} tokenId - The token ID to check
+ * @returns {boolean} - Whether the token is considered linked
+ */
+export function isTokenLinked(actor, tokenId) {
+    // Get the token from the canvas
+    const token = canvas.tokens.get(tokenId);
+    
+    // If we have a token, check its document's actorLink property
+    if (token) {
+        return token.document.actorLink;
+    }
+    
+    // If no token found, assume it's linked if it's not a synthetic token actor
+    return !actor.isToken;
+}
+
+/**
+ * Helper function to determine if spell preparation should be enforced
+ * @param {Actor} actor - The actor to check
+ * @param {string} tokenId - The token ID to check
+ * @returns {boolean} - Whether spell preparation should be enforced
+ */
+export function shouldEnforceSpellPreparation(actor, tokenId) {
+    const isLinked = isTokenLinked(actor, tokenId);
+    
+    // Debug log to help track issues
+    console.debug("BG3 Inspired Hotbar | Spell preparation check:", {
+        actorId: actor.id,
+        actorName: actor.name,
+        tokenId: tokenId,
+        isLinked: isLinked,
+        setting: isLinked ? 'PC' : 'NPC'
+    });
+
+    // If linked token (including PCs) - use PC setting
+    if (isLinked) {
+        return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationPC');
+    }
+    
+    // If unlinked token - use NPC setting
+    return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC');
 }
