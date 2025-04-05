@@ -1,17 +1,23 @@
+import { CONFIG } from '../utils/config.js';
 
 export class BG3Component {
     constructor(data) {
         this.data = data;
         this.element = document.createElement(this.elementType);
         this.element.classList.add(...this.classes);
+        // this.element = document.createElement('template');
     }
     
     get template() {
-        return `${CONFIG.COMPONENTS_PATH}${Object.getPrototypeOf(this.constructor).name}.hbs`;
+        return `${CONFIG.COMPONENTS_PATH}${this.constructor.name}.hbs`;
     }
 
     get classes() {
         return [];
+    }
+
+    get elementType() {
+        return "div";
     }
 
     async getData() {
@@ -34,6 +40,7 @@ export class BG3Component {
         const tempElement = document.createElement("div");
         tempElement.innerHTML = rendered;
         this.element.innerHTML = tempElement.firstElementChild.innerHTML;
+        // this.element.innerHTML = rendered;
         // this.setColorScheme();
         // this.setVisibility();
     }

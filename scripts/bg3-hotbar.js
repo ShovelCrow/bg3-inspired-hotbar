@@ -1,6 +1,9 @@
 // BG3 Inspired Hotbar Module - Main Entry Point
 
-import { GridContainer } from './components/GridContainer.js';
+import { HotbarContainer } from './components/HotbarContainer.js';
+import { PortraitContainer } from './components/PortraitContainer.js';
+import { RestTurnContainer } from './components/RestTurnContainer.js';
+import { WeaponContainer } from './components/WeaponContainer.js';
 import { HotbarManager } from './managers/HotbarManager.js';
 import { CONFIG } from './utils/config.js';
 
@@ -86,7 +89,7 @@ export class BG3Hotbar extends Application {
 
     async generate(token) {
         if(!token) {
-            this.manager = null;
+            // this.manager = null;
             return this.close();
         }
 
@@ -95,18 +98,24 @@ export class BG3Hotbar extends Application {
 
     async _renderInner(data) {
         
-        const element = await super._renderInner(data);
+        const element = await super._renderInner(data),
+            html = element[0];
 
-        for(let i = 0; i < this.manager.containers.hotbar.length; i++) {
-            const container = new GridContainer(this.manager.containers.hotbar[i]);
+        const portraitContainer = new PortraitContainer();
+        portraitContainer.render();
+        html.appendChild(portraitContainer.element)
 
-        }
-        for(let i = 0; i < this.manager.containers.weapon.length; i++) {
-            const container = new GridContainer(this.manager.containers.weapon[i]);
-        }
-        for(let i = 0; i < this.manager.containers.combat.length; i++) {
-            const container = new GridContainer(this.manager.containers.combat[i]);
-        }
+        const weaponContainer = new WeaponContainer();
+        weaponContainer.render();
+        html.appendChild(weaponContainer.element)
+        
+        const container = new HotbarContainer(this.manager.containers.hotbar);
+        await container.render();
+        html.appendChild(container.element)
+        
+        const restContainer = new RestTurnContainer();
+        restContainer.render();
+        html.appendChild(restContainer.element)
         
         return element;
     }

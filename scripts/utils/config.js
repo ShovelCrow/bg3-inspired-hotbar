@@ -1008,3 +1008,7 @@ export function registerSettings() {
     });
     */
 }
+
+export function registerHandlebarsPartials() {
+    
+}
