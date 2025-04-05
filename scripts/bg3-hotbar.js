@@ -1,9 +1,9 @@
 // BG3 Inspired Hotbar Module - Main Entry Point
 
-import { HotbarContainer } from './components/HotbarContainer.js';
-import { PortraitContainer } from './components/PortraitContainer.js';
-import { RestTurnContainer } from './components/RestTurnContainer.js';
-import { WeaponContainer } from './components/WeaponContainer.js';
+import { HotbarContainer } from './components/containers/HotbarContainer.js';
+import { PortraitContainer } from './components/containers/PortraitContainer.js';
+import { RestTurnContainer } from './components/containers/RestTurnContainer.js';
+import { WeaponContainer } from './components/containers/WeaponContainer.js';
 import { HotbarManager } from './managers/HotbarManager.js';
 import { CONFIG } from './utils/config.js';
 
@@ -103,19 +103,19 @@ export class BG3Hotbar extends Application {
 
         const portraitContainer = new PortraitContainer();
         portraitContainer.render();
-        html.appendChild(portraitContainer.element)
+        html.appendChild(portraitContainer.element);
 
-        const weaponContainer = new WeaponContainer();
+        const weaponContainer = new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat});
         weaponContainer.render();
-        html.appendChild(weaponContainer.element)
+        html.appendChild(weaponContainer.element);
         
         const container = new HotbarContainer(this.manager.containers.hotbar);
         await container.render();
-        html.appendChild(container.element)
+        html.appendChild(container.element);
         
         const restContainer = new RestTurnContainer();
         restContainer.render();
-        html.appendChild(restContainer.element)
+        html.appendChild(restContainer.element);
         
         return element;
     }

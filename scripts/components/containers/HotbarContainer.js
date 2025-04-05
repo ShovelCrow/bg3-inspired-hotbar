@@ -1,4 +1,5 @@
-import { BG3Component } from "./component.js";
+import { BG3Component } from "../component.js";
+import { ControlContainer } from "./ControlContainer.js";
 import { DragBar } from "./DragBar.js";
 import { GridContainer } from "./GridContainer.js";
 
@@ -18,12 +19,16 @@ export class HotbarContainer extends BG3Component {
                 container = new GridContainer(gridData);
             container.render();
             this.element.appendChild(container.element);
+            this.addComponent(container);
             if(i < this.data.length - 1) {
                 const dragBar = new DragBar();
                 dragBar.render();
                 this.element.appendChild(dragBar.element);
             }
         }
+        const controls = new ControlContainer();
+        controls.render();
+        this.element.appendChild(controls.element);
 
         return this.element;
     }

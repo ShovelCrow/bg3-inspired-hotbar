@@ -265,6 +265,8 @@
   opacity: 1;
 }
 
+/** A reprendre à partir de là **/
+
 /* ==========================================================================
    Hotbar Items
    ========================================================================== */
@@ -323,15 +325,15 @@
    Global Styles
    ========================================================================== */
 
-.bg3-hud .hidden {
+/* .bg3-hud .hidden {
   display: none !important;
-}
+} */
 
 /* ==========================================================================
    Global Styles
    ========================================================================== */
 
-aside#tooltip .notes {
+/* aside#tooltip .notes {
   flex: 0 0 100%;
   font-size: var(--font-size-12);
   line-height: var(--line-height-16);
@@ -342,6 +344,4 @@ aside#tooltip .notes {
 aside#tooltip .custom-tooltip i {
   margin: 0 1em;
   color: var(--data-color);
- /*  display: flex;
-  justify-content: flex-start; */
-}
+} */

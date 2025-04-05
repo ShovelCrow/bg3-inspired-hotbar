@@ -3,9 +3,12 @@ import { CONFIG } from '../utils/config.js';
 export class BG3Component {
     constructor(data) {
         this.data = data;
+        this.components = [];
         this.element = document.createElement(this.elementType);
         this.element.classList.add(...this.classes);
         // this.element = document.createElement('template');
+
+        // if(this.data.events) this._registerEvents();
     }
     
     get template() {
@@ -17,11 +20,37 @@ export class BG3Component {
     }
 
     get elementType() {
-        return "div";
+        return this.data?.type ?? "div";
     }
 
     async getData() {
         return {};
+    }
+
+    get visible() {
+        return true;
+    }
+
+    /* get components() {
+        return this.components;
+    }
+
+    set components(components) {
+        this.components = components;
+    } */
+
+    addComponent(component) {
+        this.components.push(component);
+    }
+
+    setVisibility() {
+        this.element.classList.toggle("hidden", !this.visible);
+    }
+
+    _registerEvents() {
+        Object.entries(this.events).forEach(([trigger, fn]) => {
+            this.element.addEventListener(trigger, fn);
+        })
     }
 
     async render() {

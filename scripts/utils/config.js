@@ -27,7 +27,9 @@ export const CONFIG = {
                 for: 'weapon-set',
                 // size: 1.5,
                 delOnly: true,
-                allowDuplicate: true
+                allowDuplicate: true,
+                type: 'label',
+                class: ['bg3-weapon-set']
             }
         },
         combat: {
@@ -36,6 +38,7 @@ export const CONFIG = {
                 cols: 2,
                 rows: 3,
                 items: {},
+                class: ['bg3-combat-container']
                 // size: 1.5,
                 // locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
             }

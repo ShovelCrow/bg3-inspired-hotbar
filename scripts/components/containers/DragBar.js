@@ -1,4 +1,4 @@
-import { BG3Component } from "./component.js";
+import { BG3Component } from "../component.js";
 
 export class DragBar extends BG3Component {
     constructor(data) {
