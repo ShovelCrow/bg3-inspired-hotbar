@@ -29,7 +29,12 @@ export const CONFIG = {
                 delOnly: true,
                 allowDuplicate: true,
                 type: 'label',
-                class: ['bg3-weapon-set']
+                class: ['bg3-weapon-set'],
+                events: {
+                    'click': function() {
+                        if(this.element.dataset.containerIndex !== this._parent.activeSet) this._parent.activeSet = this.element.dataset.containerIndex;
+                    }
+                }
             }
         },
         combat: {

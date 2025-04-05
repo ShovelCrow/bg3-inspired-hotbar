@@ -4,14 +4,29 @@ export class GridCell extends BG3Component {
     constructor(data) {
         super(data);
         this.element.setAttribute('data-slot', `${data.col}-${data.row}`);
-        this.element.setAttribute('draggable', false);
+        this.element.setAttribute('draggable', !!this.data.item);
     }
 
     get classes() {
         return ['hotbar-cell', 'drag-cursor'];
     }
 
+    get slotKey() {
+        return this.element.dataset.slot;
+    }
+
+    get _dragData() {
+        return this.data.item ? { containerIndex: this._parent.index, slotKey: this.slotKey } : null;
+    }
+
     async getData() {
         return {...super.getData(), ...this.data};
+    }
+
+    async render() {
+        const html = await super.render();
+        this.element.classList.toggle('has-item', !!this.data.item)
+
+        return this.element;
     }
 }

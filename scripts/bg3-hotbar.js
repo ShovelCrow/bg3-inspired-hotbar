@@ -12,6 +12,9 @@ export class BG3Hotbar extends Application {
         super();
 
         this._manager = null;
+        this.components = {
+            hotbar: []
+        };
 
         /** Hooks Event **/
         Hooks.on("createToken", this._onCreateToken.bind(this));
@@ -89,10 +92,11 @@ export class BG3Hotbar extends Application {
 
     async generate(token) {
         if(!token) {
-            // this.manager = null;
+            this.manager.currentTokenId = null;
             return this.close();
         }
-
+        this.manager.currentTokenId = token.id;
+        this.manager._loadTokenData();
         this.render(true);
     }
 
@@ -110,6 +114,7 @@ export class BG3Hotbar extends Application {
         html.appendChild(weaponContainer.element);
         
         const container = new HotbarContainer(this.manager.containers.hotbar);
+        container._parent = this;
         await container.render();
         html.appendChild(container.element);
         

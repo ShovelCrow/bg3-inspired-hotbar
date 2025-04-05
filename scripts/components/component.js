@@ -4,11 +4,12 @@ export class BG3Component {
     constructor(data) {
         this.data = data;
         this.components = [];
+        this._parent = null;
         this.element = document.createElement(this.elementType);
         this.element.classList.add(...this.classes);
         // this.element = document.createElement('template');
 
-        // if(this.data.events) this._registerEvents();
+        this._registerEvents();
     }
     
     get template() {
@@ -31,6 +32,15 @@ export class BG3Component {
         return true;
     }
 
+    async loadTemplate(data) {
+        try {
+            const testTpl = await renderTemplate(this.template, data);
+            return testTpl;
+        } catch (error) {
+            return $(`<${this.elementType}>`).prop('outerHTML');
+        }
+    }
+
     /* get components() {
         return this.components;
     }
@@ -48,9 +58,11 @@ export class BG3Component {
     }
 
     _registerEvents() {
-        Object.entries(this.events).forEach(([trigger, fn]) => {
-            this.element.addEventListener(trigger, fn);
-        })
+        if(this.data?.events) {
+            Object.entries(this.data.events).forEach(([trigger, fn]) => {
+                this.element.addEventListener(trigger, fn.bind(this));
+            })
+        }
     }
 
     async render() {
@@ -65,7 +77,7 @@ export class BG3Component {
 
     async _renderInner() {
         const data = await this.getData();
-        const rendered = await renderTemplate(this.template, data);
+        const rendered = await this.loadTemplate(data);
         const tempElement = document.createElement("div");
         tempElement.innerHTML = rendered;
         this.element.innerHTML = tempElement.firstElementChild.innerHTML;

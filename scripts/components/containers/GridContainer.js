@@ -16,7 +16,9 @@ export class GridContainer extends BG3Component {
         const html = await super.render();
         for(let r = 0; r < this.data.rows; r++) {
             for(let c = 0; c < this.data.cols; c++) {
-                const cell = new GridCell({row: r, col: c});
+                const item = this.data?.items?.[`${c}-${r}`] ?? null,
+                    cell = new GridCell({row: r, col: c, item: item});
+                cell._parent = this;
                 cell.render();
                 this.element.appendChild(cell.element);
                 this.addComponent(cell);

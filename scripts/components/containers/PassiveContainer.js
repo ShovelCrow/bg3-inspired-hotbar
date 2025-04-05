@@ -1,0 +1,122 @@
+import { CONFIG } from '../../utils/config.js';
+import { PassiveButton } from '../buttons/passiveButton.js';
+import { BG3Component } from "../component.js";
+
+export class PassiveContainer extends BG3Component {
+    constructor(data) {
+        super(data);
+        // Show tooltip on hover
+        this.element.title = "Right-click to configure passive features";
+    }
+
+    get classes() {
+        return ['bg3-passives-container'];
+    }
+
+    get passivesList() {
+        if(!ui.BG3HOTBAR.manager.token && !ui.BG3HOTBAR.manager.actor) return null;
+        const actor = ui.BG3HOTBAR.manager.actor;
+
+        const availablePassives = actor.items.filter(item => 
+            item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive")
+        );
+        const saved = actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
+        let featuresToShow = [];
+        if (this.selectedPassives) {
+            featuresToShow = availablePassives.filter(item => this.selectedPassives.has(item.uuid));
+        }
+        return featuresToShow;
+    }
+
+    get selectedPassives() {
+        if(!ui.BG3HOTBAR.manager.token && !ui.BG3HOTBAR.manager.actor) return null;
+        const saved = ui.BG3HOTBAR.manager.actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
+        if (saved && Array.isArray(saved)) return new Set(saved);
+        return;
+    }
+
+    _registerEvents() {
+        this.element.addEventListener('contextmenu', this._showPassivesDialog.bind(this));
+    }
+
+    async _showPassivesDialog(event) {
+        console.log('_showPassivesDialog')
+        event.preventDefault();        
+        let actor = ui.BG3HOTBAR.manager.actor;
+                
+        // Get all available passive features from the actor
+        const availableFeatures = actor.items
+            .filter(item => item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive"))
+            .map(item => ({
+                uuid: item.uuid,
+                name: item.name,
+                img: item.img,
+                selected: this.selectedPassives?.has(item.uuid)
+            }));
+
+        // Create and show dialog using the template
+        const dialog = new Dialog({
+            title: "Configure Passive Features",
+            content: await renderTemplate(`modules/${CONFIG.MODULE_NAME}/templates/dialog/passives-dialog.hbs`, {
+                features: availableFeatures
+            }),
+            buttons: {
+                save: {
+                    icon: '<i class="fas fa-save"></i>',
+                    label: "Save",
+                    callback: async (html) => {
+                        // Use jQuery to query within the dialog's content container
+                        const $dialogContent = $(html);
+                        // Find all checkboxes and build a new set based on their checked state
+                        const newSelection = new Set();
+                        $dialogContent.find("input.passives-checkbox").each(function() {
+                            if ($(this).is(":checked")) {
+                                newSelection.add($(this).val());
+                            }
+                        });
+                        // Update our selection and persist it
+                        await ui.BG3HOTBAR.manager.actor.setFlag(CONFIG.MODULE_NAME, "selectedPassives", Array.from(newSelection));
+                        this.render();
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel"
+                }
+            },
+            default: "save"
+        }, {
+            classes: ["configure-passives", "bg3-hud-dialog"],
+            resizable: false
+        });
+        
+        dialog.render(true);
+
+        // Add click handlers after dialog is rendered
+        setTimeout(() => {
+            const $rows = $('.passives-row');
+            
+            // Click handlers for rows
+            $rows.on('click', function(e) {
+                if (!$(e.target).is('input')) {
+                    const checkbox = $(this).find('input[type="checkbox"]');
+                    checkbox.prop('checked', !checkbox.prop('checked'));
+                }
+            });
+        }, 100);
+    }
+
+    async render() {
+        const html = await super.render();
+        const passivesList = this.passivesList;
+        if(passivesList.length === 0) this.element.style.visibility = 'hidden';
+        // console.log(passivesList)
+        for(let i = 0; i < passivesList.length; i++) {
+            const btn = new PassiveButton({item: passivesList[i]});
+            btn._parent = this;
+            btn.render();
+            this.element.appendChild(btn.element);
+        }
+        return this.element;
+    }
+}

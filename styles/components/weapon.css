@@ -72,27 +72,27 @@
         pointer-events: none;  
     }  
 }
-
-#weapon-set-0:checked ~ .bg3-weapon-set[data-container-index="0"], #weapon-set-1:checked ~ .bg3-weapon-set[data-container-index="1"], #weapon-set-2:checked ~ .bg3-weapon-set[data-container-index="2"] {
+/* data-active-set */
+#bg3-hotbar-container .bg3-weapon-container[data-active-set="0"] .bg3-weapon-set[data-container-index="0"], #bg3-hotbar-container .bg3-weapon-container[data-active-set="1"] .bg3-weapon-set[data-container-index="1"], #bg3-hotbar-container .bg3-weapon-container[data-active-set="2"] .bg3-weapon-set[data-container-index="2"] {
     transform: translateY(0%) scale(1);
     opacity: 1;
     z-index: 1;
     animation: disable-pointer-events 400ms;
 }
 
-#weapon-set-0:checked ~ .bg3-weapon-set[data-container-index="2"], #weapon-set-1:checked ~ .bg3-weapon-set[data-container-index="0"], #weapon-set-2:checked ~ .bg3-weapon-set[data-container-index="1"] {
+#bg3-hotbar-container .bg3-weapon-container[data-active-set="0"] .bg3-weapon-set[data-container-index="2"], #bg3-hotbar-container .bg3-weapon-container[data-active-set="1"] .bg3-weapon-set[data-container-index="0"], #bg3-hotbar-container .bg3-weapon-container[data-active-set="2"] .bg3-weapon-set[data-container-index="1"] {
     transform: translateY(var(--weapon-translate)) scale(var(--weapon-scale));
     opacity: var(--weapon-opacity);
     z-index: 0;
 }
 
-#weapon-set-0:checked ~ .bg3-weapon-set[data-container-index="1"], #weapon-set-1:checked ~ .bg3-weapon-set[data-container-index="2"], #weapon-set-2:checked ~ .bg3-weapon-set[data-container-index="0"] {
+#bg3-hotbar-container .bg3-weapon-container[data-active-set="0"] .bg3-weapon-set[data-container-index="1"], #bg3-hotbar-container .bg3-weapon-container[data-active-set="1"] .bg3-weapon-set[data-container-index="2"], #bg3-hotbar-container .bg3-weapon-container[data-active-set="2"] .bg3-weapon-set[data-container-index="0"] {
     transform: translateY(var(--weapon-translate2)) scale(var(--weapon-scale));
     opacity: var(--weapon-opacity);
     z-index: 0;
 }
 
-#weapon-set-0:checked ~ .bg3-weapon-set[data-container-index="1"] .hotbar-cell, #weapon-set-1:checked ~ .bg3-weapon-set[data-container-index="2"] .hotbar-cell, #weapon-set-2:checked ~ .bg3-weapon-set[data-container-index="0"] .hotbar-cell, #weapon-set-0:checked ~ .bg3-weapon-set[data-container-index="2"] .hotbar-cell, #weapon-set-1:checked ~ .bg3-weapon-set[data-container-index="0"] .hotbar-cell, #weapon-set-2:checked ~ .bg3-weapon-set[data-container-index="1"] .hotbar-cell {
+#bg3-hotbar-container .bg3-weapon-container[data-active-set="0"] .bg3-weapon-set[data-container-index="1"] .hotbar-cell, #bg3-hotbar-container .bg3-weapon-container[data-active-set="1"] .bg3-weapon-set[data-container-index="2"] .hotbar-cell, #bg3-hotbar-container .bg3-weapon-container[data-active-set="2"] .bg3-weapon-set[data-container-index="0"] .hotbar-cell, #bg3-hotbar-container .bg3-weapon-container[data-active-set="0"] .bg3-weapon-set[data-container-index="2"] .hotbar-cell, #bg3-hotbar-container .bg3-weapon-container[data-active-set="1"] .bg3-weapon-set[data-container-index="0"] .hotbar-cell, #bg3-hotbar-container .bg3-weapon-container[data-active-set="2"] .bg3-weapon-set[data-container-index="1"] .hotbar-cell {
     pointer-events: none;
 }
 

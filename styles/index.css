@@ -9,6 +9,9 @@
 @import './components/weapon.css';
 @import './components/controls.css';
 @import './components/portrait.css';
+@import './components/passive.css';
+@import './components/active.css';
+@import './components/dialog.css';
 /* @import './components/controls.css';
 @import './components/dialogs.css';
 @import './components/effects.css';

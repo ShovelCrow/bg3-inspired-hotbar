@@ -1,3 +1,9 @@
 <div>
-    
+    {{#if item}}
+        {{#if item.icon}}
+            <img src="{{item.icon}}" alt="{{item.name}}" class="hotbar-item" draggable="false">
+        {{else}}
+            <div>{{item.name}}</div>
+        {{/if}}
+    {{/if}}
 </div>
