@@ -38,7 +38,7 @@ export class ControlContainer extends BG3Component {
                 type: 'div',
                 class: ["hotbar-control-button"], 
                 icon: 'fa-unlock',
-                title: 'Lock hotbar settings (Right-click for options)',
+                title: 'Lock hotbar settings<br>(Right-click for options)',
                 events: {
                     'click': function() {
                         // game.combat.nextTurn.bind(game.combat)()

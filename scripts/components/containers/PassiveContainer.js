@@ -5,12 +5,14 @@ import { BG3Component } from "../component.js";
 export class PassiveContainer extends BG3Component {
     constructor(data) {
         super(data);
-        // Show tooltip on hover
-        this.element.title = "Right-click to configure passive features";
     }
 
     get classes() {
         return ['bg3-passives-container'];
+    }
+
+    get dataTooltip() {
+        return {type: 'simple', content: "Right-click to configure passive features"};
     }
 
     get passivesList() {
@@ -35,7 +37,7 @@ export class PassiveContainer extends BG3Component {
         return;
     }
 
-    _registerEvents() {
+    async _registerEvents() {
         this.element.addEventListener('contextmenu', this._showPassivesDialog.bind(this));
     }
 

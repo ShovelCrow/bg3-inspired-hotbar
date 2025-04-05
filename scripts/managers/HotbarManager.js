@@ -28,19 +28,21 @@ export class HotbarManager {
         })
     }
 
-    convertAllFormat(savedData) {
-        return [savedData.containers, savedData.weaponsContainers, savedData.combatContainer];
+    convertOldFormat(savedData) {
+        return [foundry.utils.deepClone(savedData.containers), foundry.utils.deepClone(savedData.weaponsContainers), foundry.utils.deepClone(savedData.combatContainer)];
     }
 
     async _loadTokenData() {
         if(!this.token || !this.actor) return;
-        const savedData = this.actor.getFlag(CONFIG.MODULE_NAME, CONFIG.FLAG_NAME);
+        const containersData = this.actor.getFlag(CONFIG.MODULE_NAME, CONFIG.CONTAINERS_NAME),
+            savedData = this.actor.getFlag(CONFIG.MODULE_NAME, CONFIG.FLAG_NAME);
 
-        if(savedData) {
-            let containersData, weaponsContainersData, combatContainerData;
+        if(containersData) this.containers = foundry.utils.deepClone(containersData);
+        else if(savedData) {
+            let hotbarContainersData, weaponsContainersData, combatContainerData;
             if (Array.isArray(savedData)) {
                 // Old format: direct array of containers
-                containersData = foundry.utils.deepClone(savedData);
+                hotbarContainersData = foundry.utils.deepClone(savedData);
                 this.portraitVisible = true; // Default for old format
                 // Using old data format, portrait defaulted to hidden
             } else {
@@ -49,7 +51,7 @@ export class HotbarManager {
                 weaponsContainersData = foundry.utils.deepClone(savedData.weaponsContainers);
                 combatContainerData = foundry.utils.deepClone(savedData.combatContainer); */
                 // console.log(this.convertAllFormat(savedData));
-                const [hotbarData, weaponData, combatData] = this.convertAllFormat(savedData);
+                const [hotbarData, weaponData, combatData] = this.convertOldFormat(savedData);
                 if(Array.isArray(hotbarData)) {
                     hotbarData.forEach(c => {
                         this.containers.hotbar[c.index].cols = c.cols;
@@ -72,8 +74,10 @@ export class HotbarManager {
                     });
                 }
             }
-        } else {
-
         }
+    }
+
+    async persist() {
+        this.actor.setFlag(CONFIG.MODULE_NAME, CONFIG.CONTAINERS_NAME, this.containers)
     }
 } 

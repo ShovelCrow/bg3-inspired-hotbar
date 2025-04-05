@@ -3,8 +3,6 @@ import { BG3Component } from "../component.js";
 export class GridCell extends BG3Component {
     constructor(data) {
         super(data);
-        this.element.setAttribute('data-slot', `${data.col}-${data.row}`);
-        this.element.setAttribute('draggable', !!this.data.item);
     }
 
     get classes() {
@@ -25,6 +23,8 @@ export class GridCell extends BG3Component {
 
     async render() {
         const html = await super.render();
+        this.element.setAttribute('data-slot', `${this.data.col}-${this.data.row}`);
+        this.element.setAttribute('draggable', !!this.data.item);
         this.element.classList.toggle('has-item', !!this.data.item)
 
         return this.element;

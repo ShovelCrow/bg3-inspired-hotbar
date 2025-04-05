@@ -5,7 +5,6 @@ import { GridContainer } from "./GridContainer.js";
 export class WeaponContainer extends BG3Component {
     constructor(data) {
         super(data);
-        this.element.setAttribute('data-active-set', this.activeSet);
     }
 
     get classes() {
@@ -24,6 +23,7 @@ export class WeaponContainer extends BG3Component {
     async render() {
         const html = await super.render(),
             combatContainer = new GridContainer(this.data.combat[0]);
+        this.element.setAttribute('data-active-set', this.activeSet);
         combatContainer.render();
         for(let i = 0; i < this.data.weapon.length; i++) {
             const gridData = this.data.weapon[i],

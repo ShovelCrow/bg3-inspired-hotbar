@@ -81,6 +81,7 @@ export const CONFIG = {
     
     // State Management
     FLAG_NAME: "hotbarConfig",
+    CONTAINERS_NAME: "containersConfig",
     MODULE_NAME: "bg3-inspired-hotbar",
     // PATHs
     get COMPONENTS_PATH() { return `modules/${CONFIG.MODULE_NAME}/templates/components/`},

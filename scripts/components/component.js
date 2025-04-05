@@ -8,8 +8,6 @@ export class BG3Component {
         this.element = document.createElement(this.elementType);
         this.element.classList.add(...this.classes);
         // this.element = document.createElement('template');
-
-        this._registerEvents();
     }
     
     get template() {
@@ -57,7 +55,7 @@ export class BG3Component {
         this.element.classList.toggle("hidden", !this.visible);
     }
 
-    _registerEvents() {
+    async _registerEvents() {
         if(this.data?.events) {
             Object.entries(this.data.events).forEach(([trigger, fn]) => {
                 this.element.addEventListener(trigger, fn.bind(this));
@@ -65,8 +63,33 @@ export class BG3Component {
         }
     }
 
+    get dataTooltip() {
+        return null;
+    }
+
+    async setTooltip() {
+        if(this.dataTooltip) {
+            switch (this.dataTooltip.type) {
+                case 'basic':
+                    this.element.title = this.dataTooltip.content;
+                    break;    
+                case 'simple':
+                    this.element.dataset.tooltip = this.dataTooltip.content;
+                    this.element.dataset.tooltipDirection = this.dataTooltip.direction ?? 'UP';
+                    break;   
+                case 'advanced':
+                    this.element.dataset.title = this.dataTooltip.content;
+                    break;        
+                default:
+                    break;
+            }
+        } else return;
+    }
+
     async render() {
         await this._renderInner();
+        await this._registerEvents();
+        await this.setTooltip();
         // await this.activateListeners(this.element);
         // if (this.hasTooltip) await this.activateTooltipListeners();
         // const parentClass = Object.getPrototypeOf(this.constructor);

@@ -4,7 +4,6 @@ import { BG3Component } from "../component.js";
 export class ActiveButton extends BG3Component {
     constructor(data) {
         super(data);
-        this.element.dataset.uuid = this.data.item.uuid;
     }
 
     get classes() {
@@ -15,7 +14,7 @@ export class ActiveButton extends BG3Component {
         return this.data.item;
     }
 
-    _registerEvents() {
+    async _registerEvents() {
         this.element.addEventListener("click", async (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -77,6 +76,7 @@ export class ActiveButton extends BG3Component {
 
     async render() {
         const html = await super.render();
+        this.element.dataset.uuid = this.data.item.uuid;
         this.element.classList.toggle('disabled', this.data.item.disabled);
         return this.element;
     }

@@ -49,7 +49,7 @@ export class DragBar extends BG3Component {
       }
     };
 
-    handleMouseUp (e) {
+    handleMouseUp(e) {
         if (!this.isDragging) return;
         
         // Calculate the final delta
@@ -74,7 +74,7 @@ export class DragBar extends BG3Component {
           ui.BG3HOTBAR.components.hotbar[this.index + 1].render();
           
           // Save the changes
-        //   this.manager.persist();
+          ui.BG3HOTBAR.manager.persist();
         }
         
         // Clean up
@@ -89,7 +89,7 @@ export class DragBar extends BG3Component {
         document.removeEventListener('mouseup', this.handleMouseUp);
     };
 
-    _registerEvents() {
+    async _registerEvents() {
         // Mouse down event to start dragging
         this.element.addEventListener("mousedown", async (e) => {
             e.preventDefault();

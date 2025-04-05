@@ -14,7 +14,13 @@ export class BaseButton extends BG3Component {
         else return true;
     }
 
+    get dataTooltip() {
+        if(!this.data.title) return null;
+        else return {type: 'simple', content: this.data.title};
+    }
+
     async render() {
+        const html = await super.render();
         // const btnContainer = document.createElement(this.data.type);
         // btnContainer.classList.add(...this.data.class);
         if(!this.visible) this.element.classList.add('hidden');
@@ -30,7 +36,6 @@ export class BaseButton extends BG3Component {
             btnIcon.classList.add("fas", this.data.icon);
             this.element.appendChild(btnIcon);
         }
-        if(this.data.title) this.element.setAttribute('title', this.data.title);
         return this.element;
     }
 }
