@@ -1,4 +1,6 @@
 import { BG3Component } from "../component.js";
+import { CONFIG } from "../../utils/config.js";
+import { FilterButton } from "../buttons/filterButton.js";
 
 export class FilterContainer extends BG3Component {
     constructor(data) {
@@ -9,19 +11,48 @@ export class FilterContainer extends BG3Component {
         return ['bg3-filter-subcontainer'];
     }
 
-    get filterDate() {
-        return [
+    get filterData() {
+        const filterData = [
             {
-                type: 'div',
+                id: 'action',
+                label: 'Action',
+                symbol: '<i class="fas fa-circle">',
                 class: ['action-type-button'],
-                title: `<div class="custom-tooltip"><h4 style="--data-color:#2ecc71"><i class="fas fa-circle" style="border-radius: 0;"></i>Action<i class="fas fa-circle" style="border-radius: 0;"></i></h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`,
-                
+                color: CONFIG.COLORS.ACTION
+            },
+            {
+                id: 'bonus',
+                label: 'Bonus Action',
+                symbol: '<i class="fas fa-triangle">',
+                class: ['action-type-button'],
+                color: CONFIG.COLORS.BONUS
+            },
+            {
+                id: 'reaction',
+                label: 'Reaction',
+                symbol: '<i class="fas fa-sparkle">',
+                class: ['action-type-button'],
+                color: CONFIG.COLORS.REACTION
+            },
+            {
+                id: 'feature',
+                label: 'Feature',
+                symbol: '<i class="fas fa-star">',
+                class: ['action-type-button'],
+                color: CONFIG.COLORS.FEATURE_HIGHLIGHT
             }
         ]
+        return filterData;
     }
 
     async render() {
         const html = await super.render();
+        this.filterData.forEach(async b => {
+            const filterBtn = new FilterButton(b);
+            await filterBtn.render();
+            this.element.appendChild({btn: filterBtn});
+        })
+
         
         return this.element;
     }

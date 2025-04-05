@@ -1,0 +1,57 @@
+import { BG3Component } from "../component.js";
+
+
+export class FilterButton extends BG3Component {
+    constructor(data) {
+        super(data);
+    }
+
+    get classes() {
+        return this.data.classes;
+    }
+
+    get isPact() {
+        return false;
+    }
+
+    get level() {
+        return 1;
+    }
+
+    async getData() {
+        return this.data.btn;
+    }
+
+    get dataTooltip() {
+        let desc = '';
+        switch (this.btn.id) {
+            case 'action':
+            case 'bonus':
+            case 'reaction':
+                desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}">${this.data.symbol}${this.data.label}</h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                break;
+            case 'feature':
+                desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}"><i class="fas fa-star"></i>Feature<i class="fas fa-star"></i></h4><p class="notes"><i>Left Click to highlight items of type feature.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                break;
+            case 'spell':
+                const label = !this.isPact && this.level > 0 ? `${this.data.label} ${this.level}` : this.label;
+                button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}">${label}</h4><p class="notes"><i>Left Click to highlight items using this slot.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                break;
+            default:
+                break;
+        }
+        return desc;
+    }
+
+    async _registerEvents() {
+        /* this.element.addEventListener("click", async () => {
+            if(this.data.item.use) await this.data.item.use();
+        }); */
+    }
+
+    async render() {
+        const html = await super.render();
+        
+        return this.element;
+    }
+}

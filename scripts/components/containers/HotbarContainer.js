@@ -2,6 +2,7 @@ import { BG3Component } from "../component.js";
 import { ActiveContainer } from "./ActiveContainer.js";
 import { ControlContainer } from "./ControlContainer.js";
 import { DragBar } from "./DragBar.js";
+import { FilterContainer } from "./FilterContainer.js";
 import { GridContainer } from "./GridContainer.js";
 import { PassiveContainer } from "./PassiveContainer.js";
 
@@ -22,6 +23,9 @@ export class HotbarContainer extends BG3Component {
         const activeContainer = new ActiveContainer();
         activeContainer.render();
         this.element.appendChild(activeContainer.element);
+        const filterContainer = new FilterContainer();
+        filterContainer.render();
+        this.element.appendChild(filterContainer.element);
         for(let i = 0; i < this.data.length; i++) {
             const gridData = this.data[i],
                 container = new GridContainer(gridData);
