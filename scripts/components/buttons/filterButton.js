@@ -7,7 +7,7 @@ export class FilterButton extends BG3Component {
     }
 
     get classes() {
-        return this.data.classes;
+        return this.data.class;
     }
 
     get isPact() {
@@ -19,28 +19,28 @@ export class FilterButton extends BG3Component {
     }
 
     async getData() {
-        return this.data.btn;
+        return this.data;
     }
 
     get dataTooltip() {
         let desc = '';
-        switch (this.btn.id) {
+        switch (this.data.id) {
             case 'action':
             case 'bonus':
             case 'reaction':
-                desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}">${this.data.symbol}${this.data.label}</h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}"><i class="fas ${this.data.symbol}"></i>${this.data.label}<i class="fas ${this.data.symbol}"></i></h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
                 break;
             case 'feature':
-                desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}"><i class="fas fa-star"></i>Feature<i class="fas fa-star"></i></h4><p class="notes"><i>Left Click to highlight items of type feature.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}"><i class="fas ${this.data.symbol}"></i>Feature<i class="fas ${this.data.symbol}"></i></h4><p class="notes"><i>Left Click to highlight items of type feature.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
                 break;
             case 'spell':
-                const label = !this.isPact && this.level > 0 ? `${this.data.label} ${this.level}` : this.label;
-                button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}">${label}</h4><p class="notes"><i>Left Click to highlight items using this slot.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                const label = !this.data.isPact && this.data.level > 0 ? `${this.data.label} ${this.data.level}` : this.data.label;
+                desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}">${label}</h4><p class="notes"><i>Left Click to highlight items using this slot.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
                 break;
             default:
                 break;
         }
-        return desc;
+        return {type: 'simple', content: desc};
     }
 
     async _registerEvents() {
@@ -51,6 +51,7 @@ export class FilterButton extends BG3Component {
 
     async render() {
         const html = await super.render();
+        this.element.style.color = this.data.color;
         
         return this.element;
     }

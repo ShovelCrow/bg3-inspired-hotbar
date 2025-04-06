@@ -1,9 +1,10 @@
 // Module Lifecycle Management
 import { BG3Hotbar } from './bg3-hotbar.js';
-import { CONFIG, registerKeybinding, registerHooks, registerEarly, registerSettings } from './utils/config.js';
+import { CONFIG, registerKeybinding, registerHooks, registerEarly, registerSettings, registerHandlebars } from './utils/config.js';
 
 Hooks.once('init', () => {
     registerEarly();
+    registerHandlebars();
     // registerKeybinding();
 });
 
