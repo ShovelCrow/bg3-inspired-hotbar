@@ -1,7 +1,5 @@
-- Foundry Controls Menu Button Toggle
 - Hotbar controls lock & settings
 
-- Slide down button
 - Drag & Drop cells
 - Cell contextmenu
 - Auto-populating
@@ -16,3 +14,10 @@
 
 /** BUGS **/
 - Combat switch token on turn flicking
+
+
+
+/** Done **/
+- Slide down button
+- Foundry Controls Menu Button Toggle
+

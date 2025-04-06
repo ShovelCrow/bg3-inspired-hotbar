@@ -64,7 +64,7 @@ export class BG3Hotbar extends Application {
         }
         if (!controlled) return;
 
-        this.generate(token);
+        if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) this.generate(token);
     }
 
     _onDeleteToken(scene, tokenData) {
@@ -91,7 +91,13 @@ export class BG3Hotbar extends Application {
         this._onUpdateCombat();
     }
 
+    toggle(state) {
+        game.settings.set(CONFIG.MODULE_NAME, 'uiEnabled', state);
+        this.generate(state ? (canvas.tokens?.controlled?.length > 1 ? null : canvas.tokens?.controlled?.[0]) : null);
+    }
+
     async generate(token) {
+        if (!this.manager) return;
         if(!token) {
             this.manager.currentTokenId = null;
             return this.close();

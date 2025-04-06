@@ -4,6 +4,7 @@ import { BG3Component } from "../component.js";
 export class RestTurnContainer extends BG3Component {
     constructor(data) {
         super(data);
+        this.slideState = false;
     }
 
     get classes() {
@@ -50,7 +51,8 @@ export class RestTurnContainer extends BG3Component {
                 attr: {"title": 'Show/Hide HotBar UI', "for": 'toggle-input'},
                 events: {
                     'click': () => {
-                        ui.BG3HOTBAR.element.classList.toggle('slidedown');
+                        this.slideState = !this.slideState;
+                        ui.BG3HOTBAR.element[0].classList.toggle('slidedown', this.slideState);
                     }
                 }
             }

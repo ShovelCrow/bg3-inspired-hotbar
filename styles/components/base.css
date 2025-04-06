@@ -98,15 +98,14 @@
     padding: 0;
     /* width: 100%; */
     padding-bottom: var(--position-bottom, 10px);
-}
-
-#bg3-hotbar-container.slidedown {
-
+    transition: all .3s ease-in-out !important;
+    --bg3-translate-x: 0%;
 }
 
 #bg3-hotbar-container[data-position="center"] {
     left: 50%;
-    transform: translateX(-50%);
+    --bg3-translate-x: -50%;
+    transform: translateX(var(--bg3-translate-x));
 }
 
 #bg3-hotbar-container[data-position="left"] {
