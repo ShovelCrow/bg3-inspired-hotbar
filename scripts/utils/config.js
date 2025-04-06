@@ -336,7 +336,9 @@ export function registerEarly() {
             icon: "fas fa-gamepad",
             toggle: true,
             active: isActive,
-            // onClick: () => BG3Hotbar._toggleUI()
+            onClick: () => {
+                // if(ui.BG3HOTBAR.rendered) ui.BG3HOTBAR.toggle()
+            }
         });
     });
 }

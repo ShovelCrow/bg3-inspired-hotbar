@@ -51,6 +51,10 @@ export class BG3Component {
         this.components.push(component);
     }
 
+    setComponentsVisibility() {
+        this.components.forEach(c => c.setVisibility());
+    }
+
     setVisibility() {
         this.element.classList.toggle("hidden", !this.visible);
     }

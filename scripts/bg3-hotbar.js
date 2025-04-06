@@ -12,6 +12,7 @@ export class BG3Hotbar extends Application {
         super();
 
         this._manager = null;
+        this.combat = [];
         this.components = {
             hotbar: []
         };
@@ -83,11 +84,11 @@ export class BG3Hotbar extends Application {
     }
 
     _onUpdateCombat(combat, changed, options, userId) {
-
+        this.combat.forEach(e => e.setComponentsVisibility());
     }
 
     _onDeleteCombat(combat) {
-
+        this._onUpdateCombat();
     }
 
     async generate(token) {
@@ -120,6 +121,7 @@ export class BG3Hotbar extends Application {
         const restContainer = new RestTurnContainer();
         restContainer.render();
         html.appendChild(restContainer.element);
+        this.combat.push(restContainer);
         
         return element;
     }

@@ -1,0 +1,18 @@
+- Foundry Controls Menu Button Toggle
+- Hotbar controls lock & settings
+
+- Slide down button
+- Drag & Drop cells
+- Cell contextmenu
+- Auto-populating
+- Portrait container
+- Enriched Tooltip
+- Hooks
+
+- Module Settings
+
+- Implement other branches
+
+
+/** BUGS **/
+- Combat switch token on turn flicking

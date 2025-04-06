@@ -8,4 +8,10 @@ export class PortraitContainer extends BG3Component {
     get classes() {
         return ["bg3-portrait-container"]
     }
+
+    async getData() {
+        return {
+            img: ui.BG3HOTBAR.manager.actor.img
+        };
+    }
 }

@@ -47,7 +47,12 @@ export class RestTurnContainer extends BG3Component {
             {
                 type: 'label',
                 class: ["btn-toggle", "fas", "fa-caret-down"],
-                attr: {"title": 'Show/Hide HotBar UI', "for": 'toggle-input'}
+                attr: {"title": 'Show/Hide HotBar UI', "for": 'toggle-input'},
+                events: {
+                    'click': () => {
+                        ui.BG3HOTBAR.element.classList.toggle('slidedown');
+                    }
+                }
             }
         ]
     }
@@ -56,6 +61,7 @@ export class RestTurnContainer extends BG3Component {
         const html = await super.render();
         for(let i = 0; i < this.btnData.length; i++) {
             const btn = new BaseButton(this.btnData[i]);
+            this.components.push(btn);
             btn.render();
             this.element.appendChild(btn.element);
         }
