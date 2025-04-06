@@ -44,13 +44,16 @@ export class FilterButton extends BG3Component {
     }
 
     async _registerEvents() {
-        /* this.element.addEventListener("click", async () => {
-            if(this.data.item.use) await this.data.item.use();
-        }); */
+        this.element.addEventListener("click", async (e) => {
+            e.preventDefault();
+           this._parent._parent._updateCellState('highlight', this.data.id, !this.state);
+           this.state = !this.state;
+        });
     }
 
     async render() {
         const html = await super.render();
+        this.state = true;
         this.element.style.color = this.data.color;
         
         return this.element;

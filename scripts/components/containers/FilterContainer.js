@@ -102,6 +102,7 @@ export class FilterContainer extends BG3Component {
         const html = await super.render();
         this.filterData.forEach(async b => {
             const filterBtn = new FilterButton(b);
+            filterBtn._parent = this;
             await filterBtn.render();
             this.element.appendChild(filterBtn.element);
         })

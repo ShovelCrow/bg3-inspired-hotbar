@@ -1,4 +1,5 @@
 import { BG3Component } from "../component.js";
+import { fromUuid } from "../../utils/foundryUtils.js";
 
 export class GridCell extends BG3Component {
     constructor(data) {
@@ -19,6 +20,11 @@ export class GridCell extends BG3Component {
 
     async getData() {
         return {...super.getData(), ...this.data};
+    }
+
+    get item() {
+        if(!this.data.uuid) return;
+        return fromUuid(this.data.uuid);
     }
 
     async render() {

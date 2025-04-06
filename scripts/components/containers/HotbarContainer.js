@@ -15,6 +15,21 @@ export class HotbarContainer extends BG3Component {
         return ["bg3-hotbar-container"]
     }
 
+    async _updateCellState(action, type, state) {
+        for(let i = 0; i < this.data.length; i++) {
+            console.log(this.data[i]);
+            const cell = this.data[i];
+            switch (action) {
+                case 'hightlight':
+                    cell.element.toggle()
+                    break;            
+                default:
+                    break;
+            }
+
+        }
+    }
+
     async render() {
         const html = await super.render();
         const passiveContainer = new PassiveContainer();
@@ -24,6 +39,7 @@ export class HotbarContainer extends BG3Component {
         activeContainer.render();
         this.element.appendChild(activeContainer.element);
         const filterContainer = new FilterContainer();
+        filterContainer._parent = this;
         filterContainer.render();
         this.element.appendChild(filterContainer.element);
         for(let i = 0; i < this.data.length; i++) {

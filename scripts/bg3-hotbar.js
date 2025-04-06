@@ -100,8 +100,7 @@ export class BG3Hotbar extends Application {
         this.render(true);
     }
 
-    async _renderInner(data) {
-        
+    async _renderInner(data) {        
         const element = await super._renderInner(data),
             html = element[0];
 
