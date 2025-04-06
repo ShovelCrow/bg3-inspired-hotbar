@@ -18,8 +18,12 @@ export class ControlContainer extends BG3Component {
                 icon: 'fa-plus',
                 title: 'Add Row',
                 events: {
-                    'click': function() {
-                        // game.combat.nextTurn.bind(game.combat)()
+                    'click': () => {
+                        ui.BG3HOTBAR.components.hotbar.forEach(c => {
+                            c.data.rows++;
+                            c.render();
+                        });
+                        ui.BG3HOTBAR.manager.persist();
                     }
                 }
             },
@@ -30,7 +34,13 @@ export class ControlContainer extends BG3Component {
                 title: 'Remove Row',
                 events: {
                     'click': function() {
-                        // game.combat.nextTurn.bind(game.combat)()
+                        if(ui.BG3HOTBAR.components.hotbar[0].data.rows > 1) {
+                            ui.BG3HOTBAR.components.hotbar.forEach(c => {
+                                c.data.rows--;
+                                c.render();
+                            });
+                            ui.BG3HOTBAR.manager.persist();
+                        }
                     }
                 }
             },
@@ -40,8 +50,8 @@ export class ControlContainer extends BG3Component {
                 icon: 'fa-unlock',
                 title: 'Lock hotbar settings<br>(Right-click for options)',
                 events: {
-                    'click': function() {
-                        // game.combat.nextTurn.bind(game.combat)()
+                    'click': function(e) {
+                        
                     }
                 }
             },
@@ -51,8 +61,8 @@ export class ControlContainer extends BG3Component {
                 icon: 'fa-cog',
                 title: 'Settings',
                 events: {
-                    'click': function() {
-                        // game.combat.nextTurn.bind(game.combat)()
+                    'click': function(e) {
+                        
                     }
                 }
             },

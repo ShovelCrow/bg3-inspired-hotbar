@@ -1,3 +1,4 @@
+import { fromUuid } from "../../utils/foundryUtils.js";
 import { BG3Component } from "../component.js";
 
 
@@ -22,6 +23,11 @@ export class FilterButton extends BG3Component {
         return this.data;
     }
 
+    setState(force) {
+        this.state = force ? false : !this.state;
+        this.element.style.borderColor = this.state ? this.data.color : 'transparent';
+    }
+
     get dataTooltip() {
         let desc = '';
         switch (this.data.id) {
@@ -43,17 +49,58 @@ export class FilterButton extends BG3Component {
         return {type: 'simple', content: desc};
     }
 
+    getDataToCompare(cell) {
+        switch (this.data.id) {
+            case 'spell':
+                if(this.data.isPact) return cell.dataset.isPact === 'true';
+                else return parseInt(cell.dataset.level) === this.data.level;
+            case 'feature':
+                return cell.dataset.itemType === 'feat';
+            default:
+                return this.data.id === cell.dataset.actionType;
+        }
+    }
+
+    async updateHighlight() {
+        this.setState();
+        $('.bg3-hotbar-container .bg3-hotbar-subcontainer .has-item').each(async (index, cell) => {
+            try {
+                const activation = this.getDataToCompare(cell);
+                cell.setAttribute('data-highlight', this.state ? (activation ? 'highlight' : 'excluded') : false);
+            } catch (error) {
+                console.error("Error updating highlights:", error);
+            }
+        })
+    }
+
     async _registerEvents() {
         this.element.addEventListener("click", async (e) => {
             e.preventDefault();
-           this._parent._parent._updateCellState('highlight', this.data.id, !this.state);
-           this.state = !this.state;
+            if(this.used) return;
+            await this._parent.clearFilters(this);
+            this.updateHighlight();
+        });
+
+        this.element.addEventListener("contextmenu", async (e) => {
+            e.preventDefault();
+            if(this.state) this.updateHighlight();
+            this.used = !this.used;
+            this.element.classList.toggle('used', this.used);
+            $('.bg3-hotbar-container .bg3-hotbar-subcontainer .has-item').each(async (index, cell) => {
+                try {
+                    const activation = this.getDataToCompare(cell);
+                    if(activation) cell.classList.toggle('used', this.used);
+                } catch (error) {
+                    console.error("Error updating used:", error);
+                }
+            })
         });
     }
 
     async render() {
         const html = await super.render();
-        this.state = true;
+        this.state = false;
+        this.used = false;
         this.element.style.color = this.data.color;
         
         return this.element;

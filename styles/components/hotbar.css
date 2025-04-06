@@ -94,51 +94,51 @@
   border-right-color: var(--bg3-border) !important;
 } */
 
-#bg3-hotbar-container .hotbar-cell.action-used, #bg3-hotbar-container .hotbar-cell.action-excluded {
+#bg3-hotbar-container .hotbar-cell.used, #bg3-hotbar-container .hotbar-cell[data-highlight="excluded"] {
   opacity: .25;
 }
 
-#bg3-hotbar-container .hotbar-cell.has-item[data-action-type="action"][data-highlight-type="action"] {
+#bg3-hotbar-container .hotbar-cell.has-item[data-action-type="action"][data-highlight="highlight"] {
     border-color: var(--bg3-action);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-action-type="bonus"][data-highlight-type="action"] {
+#bg3-hotbar-container .hotbar-cell[data-action-type="bonus"][data-highlight="highlight"] {
     border-color: var(--bg3-bonus);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-action-type="reaction"][data-highlight-type="action"] {
+#bg3-hotbar-container .hotbar-cell[data-action-type="reaction"][data-highlight="highlight"] {
     border-color: var(--bg3-reaction);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="default"][data-highlight-type="feat"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="default"][data-highlight="highlight"] {
     border-color: var(--bg3-feature-default);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="class"][data-highlight-type="feat"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="class"][data-highlight="highlight"] {
     border-color: var(--bg3-feature-class);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="race"][data-highlight-type="feat"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="race"][data-highlight="highlight"] {
     border-color: var(--bg3-feature-race);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="feat"][data-highlight-type="feat"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="feat"][data-highlight="highlight"] {
     border-color: var(--bg3-feature-feat);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="monster"][data-highlight-type="feat"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="monster"][data-highlight="highlight"] {
     border-color: var(--bg3-feature-monster);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="subclass"][data-highlight-type="feat"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="feat"][data-feat-type="subclass"][data-highlight="highlight"] {
     border-color: var(--bg3-feature-subclass);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-is-pact="false"][data-highlight-type="spell"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-is-pact="false"][data-highlight="highlight"] {
     border-color: var(--bg3-spell);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-is-pact="true"][data-highlight-type="spell"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-is-pact="true"][data-highlight="highlight"] {
     border-color: var(--bg3-pact);
 }
 

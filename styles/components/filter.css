@@ -15,7 +15,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     margin-bottom: 1px;
     transition: all 0.2s ease;
-    /* opacity: 0; */
+    opacity: 0;
 }
 
 #bg3-hotbar-container .filter-content {

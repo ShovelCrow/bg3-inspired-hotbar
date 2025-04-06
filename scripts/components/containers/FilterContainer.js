@@ -5,6 +5,7 @@ import { FilterButton } from "../buttons/filterButton.js";
 export class FilterContainer extends BG3Component {
     constructor(data) {
         super(data);
+        this.components = [];
     }
 
     get classes() {
@@ -97,12 +98,29 @@ export class FilterContainer extends BG3Component {
         const romanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
         return romanNumerals[num - 1] || num.toString();
     }
+    
+    async _registerEvents() {
+        ui.BG3HOTBAR.element[0].addEventListener("mouseenter", () => {
+            this.element.style.opacity = "1";
+        });
+    
+        ui.BG3HOTBAR.element[0].addEventListener("mouseleave", (event) => {
+            if (!this.element.contains(event.relatedTarget)) {
+                this.element.style.opacity = "0";
+            }
+        });
+    }
+
+    async clearFilters(current) {
+        for(let i=0; i<this.components.length; i++) if(this.components[i] !== current) this.components[i].setState(true);
+    }
 
     async render() {
         const html = await super.render();
         this.filterData.forEach(async b => {
             const filterBtn = new FilterButton(b);
             filterBtn._parent = this;
+            this.components.push(filterBtn);
             await filterBtn.render();
             this.element.appendChild(filterBtn.element);
         })
