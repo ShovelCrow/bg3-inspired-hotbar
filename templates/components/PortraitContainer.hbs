@@ -1,17 +1,12 @@
 <div>
-    <div class="bg3-portrait-subcontainer">
-        <img src="{{img}}">
-        <div class="health-overlay">
-            <div
-                class="damage-overlay"
-                style="height: 54.5455%; opacity: 1"
-            ></div>
-            <div class="damage-flash"></div>
-            <div class="healing-flash"></div>
+    <div class="portrait-image-container">
+        <div class="bg3-portrait-subcontainer">
+            <img class="portrait-image" src="{{img}}">
+            <div class="health-overlay" style="height: {{health.percent}}%; opacity: {{opacity}}"></div>
         </div>
-    </div>
-    <div class="hp-text">
-        <div class="temp-hp-text">+5</div>
-        <div>15/33</div>
+        <div class="hp-text">
+            {{#if (gt health.temp 0)}}<div class="temp-hp-text">+{{health.temp}}</div>{{/if}}
+            <div>{{health.current}}/{{health.max}}</div>
+        </div>
     </div>
 </div>
