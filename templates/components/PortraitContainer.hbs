@@ -1,12 +1,22 @@
 <div>
+    <div class="extra-infos-container">
+        {{#each extraInfos}}
+            <div class="extra-info extra-info-{{@index}} {{icon}}" style="--icon-color: {{color}}"><span>{{value}}</span></div>
+        {{/each}}
+    </div>
     <div class="portrait-image-container">
-        <div class="bg3-portrait-subcontainer">
+        <div class="portrait-image-subcontainer">
             <img class="portrait-image" src="{{img}}">
-            <div class="health-overlay" style="height: {{health.percent}}%; opacity: {{opacity}}"></div>
+            <div class="health-overlay">
+                <div class="damage-overlay" style="height: {{health.percent}}%; opacity: {{opacity}}"></div>
+            </div>
         </div>
         <div class="hp-text">
             {{#if (gt health.temp 0)}}<div class="temp-hp-text">+{{health.temp}}</div>{{/if}}
             <div>{{health.current}}/{{health.max}}</div>
         </div>
+    </div>
+    <div class="ability-button">
+        <i class="fas fa-dice-d20"></i>
     </div>
 </div>

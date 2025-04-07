@@ -16,14 +16,15 @@ export class BG3Hotbar extends Application {
         this.components = {
             hotbar: []
         };
+        this.macroBarTimeout = null;
 
         /** Hooks Event **/
         Hooks.on("createToken", this._onCreateToken.bind(this));
         Hooks.on("controlToken", this._onControlToken.bind(this));
-        Hooks.on("deleteToken", this._onDeleteToken.bind(this));
+        // Hooks.on("deleteToken", this._onDeleteToken.bind(this));
         Hooks.on("updateToken", this._onUpdateToken.bind(this));
         Hooks.on("updateActor", this._onUpdateActor.bind(this));
-        Hooks.on("deleteScene", this._onDeleteScene.bind(this));
+        // Hooks.on("deleteScene", this._onDeleteScene.bind(this));
         Hooks.on("updateCombat", this._onUpdateCombat.bind(this));
         Hooks.on("deleteCombat", this._onDeleteCombat.bind(this));
 
@@ -45,9 +46,17 @@ export class BG3Hotbar extends Application {
     }
 
     async _init() {
+
+        this._applyTheme();
+
         // Initialize the hotbar manager
         this.manager = new HotbarManager();
         console.log(this.manager);
+        
+        // Apply macrobar collapse setting immediately if it's enabled
+        this._applyMacrobarCollapseSetting();
+
+        this.updateUIScale();
     }
 
     _onCreateToken(token) {
@@ -67,19 +76,11 @@ export class BG3Hotbar extends Application {
         if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) this.generate(token);
     }
 
-    _onDeleteToken(scene, tokenData) {
-
-    }
-
     _onUpdateToken(token, changes, options, userId) {
 
     }
 
     _onUpdateActor(actor, changes, options, userId) {
-
-    }
-
-    _onDeleteScene(scene) {
 
     }
 
@@ -89,6 +90,114 @@ export class BG3Hotbar extends Application {
 
     _onDeleteCombat(combat) {
         this._onUpdateCombat();
+    }
+
+    _applyMacrobarCollapseSetting() {
+            // We need to wait for the UI to be ready before collapsing the hotbar
+            if (!ui.hotbar) {
+                // UI not ready, deferring macrobar collapse
+                Hooks.once('renderHotbar', () => this._applyMacrobarCollapseSetting());
+                return;
+            }
+            
+            const collapseMacrobar = game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
+            if(collapseMacrobar !== 'full' && document.querySelector("#hotbar").style.display != 'flex') document.querySelector("#hotbar").style.display = 'flex';
+            // Applying macrobar collapse setting
+            if (collapseMacrobar === 'always' || collapseMacrobar === 'true') {
+                ui.hotbar.collapse();
+            } else if (collapseMacrobar === 'never' || collapseMacrobar === 'false') {
+                ui.hotbar.expand();
+            } else if(collapseMacrobar === 'select') {
+                if(this.macroBarTimeout) clearTimeout(this.macroBarTimeout);
+                if(!!this.manager.ui) {
+                    ui.hotbar.collapse();
+                } else {
+                    this.macroBarTimeout = setTimeout(() => {
+                        ui.hotbar.expand();
+                    }, 100);
+                }
+            } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
+    }
+
+    _applyTheme() {
+        const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption');
+        if(theme !== 'default') {
+        const themeConfig = CONFIG.THEME[theme];
+        if(themeConfig) {
+            const style = document.createElement('style');
+            style.setAttribute('type', 'text/css');
+            style.setAttribute('custom-theme', theme)
+            style.textContent = Object.entries(themeConfig).map(([k, v]) => `${k} {\n${Object.entries(v).map(([k2, v2]) => `${k2}:${v2};`).join('\n')}\n}`).join('\n');
+            document.head.appendChild(style);
+        }
+        } else if(document.head.querySelector('[custom-theme]')) {
+            const currentTheme = document.head.querySelector('[custom-theme]');
+            currentTheme.parentNode.removeChild(currentTheme);
+        }
+    }
+    
+    updateUIScale() {
+        // const element = document.body;
+        let scale = 1;
+        if(game.settings.get(CONFIG.MODULE_NAME, 'autoScale')) {
+            scale = window.innerHeight / 1500;
+        } else {
+            scale = game.settings.get(CONFIG.MODULE_NAME, 'uiScale') / 100;
+        }
+        // element.style.setProperty('--bg3-scale-ui', scale);
+        return scale;
+    }    
+
+    // Update methods that other components can call
+    updateOpacity() {
+        if(!this.element[0]) return;
+        const isFaded = this.element[0].classList.contains('faded');
+        this._updateFadeState(isFaded);
+    }
+    
+    _updateFadeState(shouldFade) {
+        // Clear any existing timeout
+        if (this._fadeTimeout) {
+            clearTimeout(this._fadeTimeout);
+            this._fadeTimeout = null;
+        }
+
+        // If opacity is locked and master lock is enabled, always use normal opacity
+        if (BG3Hotbar.controlsManager.isLockSettingEnabled('opacity') && 
+            BG3Hotbar.controlsManager.isMasterLockEnabled()) {
+            this.element.classList.remove('faded');
+            this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
+            return;
+        }
+
+        // If we shouldn't fade or mouse is over module
+        if (!shouldFade) {
+            this.element.classList.remove('faded');
+            this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
+            return;
+        }
+
+        // Set timeout to fade
+        const delay = game.settings.get(CONFIG.MODULE_NAME, 'fadeOutDelay') * 1000;
+        this._fadeTimeout = setTimeout(() => {
+            if (this.element?.isConnected) {
+            this.element.classList.add('faded');
+            this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'fadedOpacity');
+            }
+        }, delay);
+    }
+
+    _initializeFadeOut() {
+        // Add mousemove listener to document
+        document.addEventListener('mousemove', this._handleMouseMove);
+        document.addEventListener('dragover', this._handleMouseMove);
+        
+        // Set initial state
+        this._updateFadeState(false);
+    }
+
+    updateFadeDelay() {
+      this._initializeFadeOut();
     }
 
     toggle(state) {
@@ -111,11 +220,34 @@ export class BG3Hotbar extends Application {
         const element = await super._renderInner(data),
             html = element[0];
 
-        const portraitContainer = new PortraitContainer();
+        // Apply setting
+        html.style.setProperty('--bg3-scale-ui', this.updateUIScale());
+        html.dataset.position = game.settings.get(CONFIG.MODULE_NAME, 'uiPosition');
+        html.style.setProperty('--position-padding', `${game.settings.get(CONFIG.MODULE_NAME, 'posPadding')}px`);
+        html.style.setProperty('--position-bottom', `${game.settings.get(CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
+        html.dataset.itemName = game.settings.get(CONFIG.MODULE_NAME, 'showItemNames');
+        html.dataset.itemUse = game.settings.get(CONFIG.MODULE_NAME, 'showItemUses');
+        html.dataset.cellHighlight = game.settings.get(CONFIG.MODULE_NAME, 'highlightStyle');
+
+        this.components = {
+            portrait: new PortraitContainer(),
+            weapon: new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat}),
+            container: new HotbarContainer(this.manager.containers.hotbar),
+            restTurn: new RestTurnContainer(),
+            hotbar: []
+        }
+
+        html.appendChild(this.components.portrait.element);
+        html.appendChild(this.components.weapon.element);
+        html.appendChild(this.components.container.element);
+        this.components.container._parent = this;
+        html.appendChild(this.components.restTurn.element);
+
+        /* // const portraitContainer = new PortraitContainer();
         portraitContainer.render();
         html.appendChild(portraitContainer.element);
 
-        const weaponContainer = new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat});
+        // const weaponContainer = new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat});
         weaponContainer.render();
         html.appendChild(weaponContainer.element);
         
@@ -124,10 +256,17 @@ export class BG3Hotbar extends Application {
         await container.render();
         html.appendChild(container.element);
         
-        const restContainer = new RestTurnContainer();
+        // const restContainer = new RestTurnContainer();
         restContainer.render();
-        html.appendChild(restContainer.element);
-        this.combat.push(restContainer);
+        html.appendChild(restContainer.element); */
+        this.combat.push(this.components.restTurn);
+
+        const promises = [];
+        Object.values(this.components).forEach((component) => {
+            if (component && !Array.isArray(component)) promises.push(component.render());
+        });
+
+        await Promise.all(promises);
         
         return element;
     }

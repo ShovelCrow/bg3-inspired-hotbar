@@ -65,6 +65,7 @@
 
 #bg3-hotbar-container .bg3-weapon-set .hotbar-cell {
     padding: 4px;
+    color: var(--bg3-weapon-text-color);
 }
 
 @keyframes disable-pointer-events {

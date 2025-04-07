@@ -100,7 +100,7 @@
 }
 
 #bg3-hotbar-container.slidedown {
-    transform: translate(var(--bg3-translate-x), calc(100% + 5px));
+    transform: translateY(calc(100% + 5px));
 }
 
 #bg3-hotbar-container.slidedown label.btn-toggle {

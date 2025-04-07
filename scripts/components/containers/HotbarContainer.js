@@ -9,10 +9,15 @@ import { PassiveContainer } from "./PassiveContainer.js";
 export class HotbarContainer extends BG3Component {
     constructor(data) {
         super(data);
+        this.components = [];
     }
 
     get classes() {
         return ["bg3-hotbar-container"]
+    }
+
+    async updateContainers() {
+
     }
 
     async render() {

@@ -4,6 +4,7 @@
 
 /* @import './components/ability-card.css'; */
 @import './components/base.css';
+@import './components/menu.css';
 @import './components/hotbar.css';
 @import './components/restturn.css';
 @import './components/weapon.css';
@@ -13,6 +14,7 @@
 @import './components/active.css';
 @import './components/dialog.css';
 @import './components/filter.css';
+@import './components/ability.css';
 /* @import './components/controls.css';
 @import './components/dialogs.css';
 @import './components/effects.css';

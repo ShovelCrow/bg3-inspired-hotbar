@@ -1,23 +1,41 @@
+- Hooks
 - Hotbar controls lock & settings
-
 - Drag & Drop cells
 - Cell contextmenu
 - Auto-populating
-- Portrait container
 - Enriched Tooltip
-- Hooks
+- Keybind
 
-- Module Settings
+- Fade methods + settings
+
+/** OPTIMIZE **/
+- Check DeathSavesContainer stabilizing feature
+- Update UI rendering (promise)
 
 - Implement other branches
 
 
 /** BUGS **/
 - Combat switch token on turn flicking
+- Portrait after/before - pointer-events
+- Module Settings
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 /** Done **/
 - Slide down button
 - Foundry Controls Menu Button Toggle
+- Portrait contextmenu & change image
 

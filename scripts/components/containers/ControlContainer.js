@@ -1,5 +1,6 @@
 import { BaseButton } from "../buttons/BaseButton.js";
 import { BG3Component } from "../component.js";
+import { CONFIG } from "../../utils/config.js";
 
 export class ControlContainer extends BG3Component {
     constructor(data) {
@@ -71,6 +72,7 @@ export class ControlContainer extends BG3Component {
     
     async render() {
         const html = await super.render();
+        if(game.settings.get(CONFIG.MODULE_NAME, 'fadeControlsMenu')) this.element.classList.add('fade');
         for(let i = 0; i < this.btnData.length; i++) {
             const btn = new BaseButton(this.btnData[i]);
             btn.render();

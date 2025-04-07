@@ -93,30 +93,34 @@
     z-index: var(--bg3-z-grid);
     font-family: "Signika", sans-serif;
     scale: var(--bg3-scale-ui, 1);
-    transform-origin: bottom;
     gap: 0.25rem;
     padding: 0;
     /* width: 100%; */
     padding-bottom: var(--position-bottom, 10px);
-    transition: all .3s ease-in-out !important;
-    --bg3-translate-x: 0%;
+    transition: transform .3s ease-in-out, opacity .3s ease-in-out;
+    /* --bg3-translate-x: 0%; */
+    /* transform: scale(var(--bg3-scale-ui, 1)); */
+    width: fit-content;
+    left: 0;
+    right: 0;
 }
 
 #bg3-hotbar-container[data-position="center"] {
-    left: 50%;
-    --bg3-translate-x: -50%;
-    transform: translateX(var(--bg3-translate-x));
+    transform-origin: bottom;
+    margin: 0 auto;
+    padding-right: var(--position-padding);
 }
 
 #bg3-hotbar-container[data-position="left"] {
-  justify-content: flex-start;
   transform-origin: bottom left;
-  /* padding-left: calc(var(--portrait-right) + 15px + var(--position-padding)); */
+  margin: 0 auto 0 0 auto 0 calc(var(--bg3-portrait-size) + 40px + var(--position-padding));
+  /* padding-left: calc(var(--bg3-portrait-size) + 15px + var(--position-padding)); */
 }
 
 #bg3-hotbar-container[data-position="right"] {
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   transform-origin: bottom right;
+  margin: 0 0 0 auto;
   padding-right: var(--position-padding, 0);
 }
 

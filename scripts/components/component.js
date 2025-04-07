@@ -26,6 +26,10 @@ export class BG3Component {
         return {};
     }
 
+    get locked() {
+        return this.locked ?? false;
+    }
+
     get visible() {
         return true;
     }
@@ -110,6 +114,6 @@ export class BG3Component {
         this.element.innerHTML = tempElement.firstElementChild.innerHTML;
         // this.element.innerHTML = rendered;
         // this.setColorScheme();
-        // this.setVisibility();
+        this.setVisibility();
     }
 }

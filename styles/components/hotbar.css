@@ -77,7 +77,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--bg3-text);
+    color: var(--bg3-hotbar-text-color);
     font-size: 0.8em;
     overflow: hidden;
     position: relative;
@@ -88,11 +88,11 @@
     opacity: 1;
 }
 
-/* #bg3-hotbar-container .hotbar-cell {
+#bg3-hotbar-container[data-cell-highlight="bottom"] .hotbar-cell {
   border-top-color: var(--bg3-border) !important;
   border-left-color: var(--bg3-border) !important;
   border-right-color: var(--bg3-border) !important;
-} */
+}
 
 #bg3-hotbar-container .hotbar-cell.used, #bg3-hotbar-container .hotbar-cell[data-highlight="excluded"] {
   opacity: .25;
@@ -182,6 +182,7 @@
     bottom: 0;
     left: 0;
     right: 0;
+    display: none;
     background: rgba(0, 0, 0, 0.7);
     padding: 2px;
     font-size: 0.7em;
@@ -193,10 +194,15 @@
     pointer-events: none;
 }
 
+#bg3-hotbar-container[data-item-name="true"] .hotbar-item-name {
+    display: block;
+}
+
 #bg3-hotbar-container .hotbar-item-uses {
     position: absolute;
     top: 2px;
     right: 2px;
+    display: none;
     color: #fff;
     padding: 1px 4px;
     border-radius: 3px;
@@ -209,3 +215,7 @@
 #bg3-hotbar-container .hotbar-item-uses.depleted {
     color: #ff4444;
 } 
+
+#bg3-hotbar-container[data-item-use="true"] .hotbar-item-uses {
+    display: block;
+}

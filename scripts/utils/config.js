@@ -1,5 +1,8 @@
 // Configuration constants for the BG3 Hotbar
 
+// import { AutoPopulateDefaults } from "../components/dialog/AutoPopulateCreateToken.js";
+import { ExtraInfosDialog, PortraitSettingDialog } from "../components/dialog/ExtraInfosDialog.js";
+
 export const CONFIG = {
     // UI Constants
     CELL_SIZE: 50,
@@ -341,7 +344,7 @@ export function registerEarly() {
     });
 }
 
-export function registerHooks() {
+export function updateSettingsDisplay() {
     // Add Categories to module settings
     Hooks.on("renderSettingsConfig", (app, html, data) => {
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
@@ -359,7 +362,6 @@ export function registerHooks() {
 }
 
 export function registerSettings() {
-/*
     // Core UI Settings
     game.settings.register(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
         name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
@@ -376,10 +378,10 @@ export function registerSettings() {
         default: 'always',
         onChange: () => {
             // Handle the macrobar state when the setting changes
-            this._applyMacrobarCollapseSetting();
+            ui.BG3HOTBAR._applyMacrobarCollapseSetting();
         }
     });
-
+    
     // Visual Settings - Appearance
     game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
         name: 'Theme options',
@@ -395,7 +397,7 @@ export function registerSettings() {
         default: 'default',
         onChange: value => {
             if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
-            this._applyTheme()
+            ui.BG3HOTBAR._applyTheme()
         }
     });
     
@@ -406,11 +408,7 @@ export function registerSettings() {
         config: true,
         type: Boolean,
         default: true,
-        onChange: () => {
-            if(this.manager?.ui) {
-                this.manager.ui.updateUIScale();
-            }
-        }
+        onChange: () => ui.BG3HOTBAR.updateUIScale()
     });
 
     game.settings.register(CONFIG.MODULE_NAME, 'uiScale', {
@@ -426,28 +424,26 @@ export function registerSettings() {
         },
         default: 100,
         onChange: () => {
-            if(this.manager?.ui && !game.settings.get(CONFIG.MODULE_NAME, 'autoScale')) {
-                this.manager.ui.updateUIScale();
-            }
+            if(ui.BG3HOTBAR.element[0]) ui.BG3HOTBAR.element[0].style.setProperty('--bg3-scale-ui', ui.BG3HOTBAR.updateUIScale());
         }
     });
 
-     game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
-         name: 'UI Position',
-         hint: 'Choose where the hotbar should be placed.',
-         scope: 'client',
-         config: true,
-         type: String,
-         choices: {
-             'center': 'Center',
-             'left': 'Left',
-             'right': 'Right'
-         },
-         default: 'center',
-         onChange: value => {
-            if(this.manager?.ui?.element) this.manager.ui.element.dataset.position = value;
-         }
-     });
+    game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
+        name: 'UI Position',
+        hint: 'Choose where the hotbar should be placed.',
+        scope: 'client',
+        config: true,
+        type: String,
+        choices: {
+            'center': 'Center',
+            'left': 'Left',
+            'right': 'Right'
+        },
+        default: 'center',
+        onChange: value => {
+           if(ui.BG3HOTBAR.element[0]) ui.BG3HOTBAR.element[0].dataset.position = value;
+        }
+    });
      
     game.settings.register(CONFIG.MODULE_NAME, "posPadding", {
         name: "UI Position - Padding",
@@ -457,7 +453,7 @@ export function registerSettings() {
         type: Number,
         default: 0,
         onChange: value => {
-            if(this.manager?.ui?.element) this.manager.ui.element.style.setProperty('--position-padding', `${value}px`);
+            if(ui.BG3HOTBAR.element[0]) ui.BG3HOTBAR.element[0].style.setProperty('--position-padding', `${value}px`);
         },
     });
      
@@ -469,7 +465,7 @@ export function registerSettings() {
         type: Number,
         default: 10,
         onChange: value => {
-            if(this.manager?.ui?.element) this.manager.ui.element.style.setProperty('--position-bottom', `${value}px`);
+            if(ui.BG3HOTBAR.element[0]) ui.BG3HOTBAR.element[0].style.setProperty('--position-bottom', `${value}px`);
         },
     });
 
@@ -486,9 +482,9 @@ export function registerSettings() {
         },
         default: 1.0,
         onChange: value => {
-            if (this.manager?.ui) {
-                this.manager.ui.updateOpacity();
-            }
+            // if (this.manager?.ui) {
+            //     this.manager.ui.updateOpacity();
+            // }
         }
     });
 
@@ -505,9 +501,9 @@ export function registerSettings() {
         },
         default: 1,
         onChange: value => {
-            if (this.manager?.ui) {
-                this.manager.ui.updateOpacity();
-            }
+            // if (this.manager?.ui) {
+            //     this.manager.ui.updateOpacity();
+            // }
         }
     });
 
@@ -525,9 +521,9 @@ export function registerSettings() {
         default: 5,
         onChange: value => {
             // Update the UI fade delay when the setting changes
-            if (this.manager?.ui) {
-                this.manager.ui.updateFadeDelay();
-            }
+            // if (this.manager?.ui) {
+            //     this.manager.ui.updateFadeDelay();
+            // }
         }
     });
   
@@ -544,7 +540,7 @@ export function registerSettings() {
           'init': 'When not in combat and it\'s not your turn'
       },
       onChange: () => {
-        BG3Hotbar._onUpdateCombat(true);
+        ui.BG3HOTBAR._onUpdateCombat(true);
       }
     });
 
@@ -570,8 +566,8 @@ export function registerSettings() {
         default: 'token',
         onChange: () => {
             // Refresh UI if it exists
-            if (this.manager?.ui?.portraitCard) {
-                this.manager.ui.portraitCard.loadImagePreference();
+            if (ui.BG3HOTBAR.components.portrait) {
+                ui.BG3HOTBAR.components.portrait.render();
             }
         }
     });
@@ -589,8 +585,8 @@ export function registerSettings() {
         default: 'round',
         onChange: value => {
             // Refresh UI if it exists
-            if (this.manager?.ui?.portraitCard?.element) {
-                this.manager.ui.portraitCard.element.setAttribute("data-shape", value);
+            if (ui.BG3HOTBAR.components.portrait?.element) {
+                ui.BG3HOTBAR.components.portrait.element.setAttribute("data-shape", value);
             }
         }
     });
@@ -609,8 +605,8 @@ export function registerSettings() {
         default: 'none',
         onChange: value => {
             // Refresh UI if it exists
-            if (this.manager?.ui?.portraitCard?.element) {
-                this.manager.ui.portraitCard.element.setAttribute("data-border", value);
+            if (ui.BG3HOTBAR.components.portrait?.element) {
+                ui.BG3HOTBAR.components.portrait.element.setAttribute("data-border", value);
             }
         }
     });
@@ -622,10 +618,10 @@ export function registerSettings() {
         config: false,
         type: String,
         default: '',
-        onChange: value => {
+        onChange: () => {
             // Refresh UI if it exists
-            if (this.manager?.ui?.portraitCard?.element) {
-                this.manager.ui.portraitCard.element.style.setProperty('--img-background-color', (value && value != '' ? value : 'transparent'));
+            if (ui.BG3HOTBAR.components.portrait) {
+                ui.BG3HOTBAR.components.portrait.portraitsetImgBGColor.bind(ui.BG3HOTBAR.components.portrait)();
             }
         }
     });
@@ -638,8 +634,8 @@ export function registerSettings() {
         type: Boolean,
         default: true,
         onChange: value => {
-          if(BG3Hotbar.manager.ui.portraitCard) {
-            BG3Hotbar.manager.ui.portraitCard.element.classList.toggle('portrait-hidden', !value);
+          if(ui.BG3HOTBAR.components.portrait?.element) {
+            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', !value);
           }
         }
     });
@@ -651,11 +647,10 @@ export function registerSettings() {
         config: false,
         type: Boolean,
         default: false,
-        onChange: value => {
+        onChange: () => {
             // Refresh UI if it exists
-            if (this.manager?.ui?.portraitCard?.element) {
-                const imageContainer = document.getElementsByClassName('portrait-image-subcontainer');
-                if(imageContainer[0]) imageContainer[0].setAttribute('data-bend-mode', value);
+            if (ui.BG3HOTBAR.components.portrait) {
+                ui.BG3HOTBAR.components.portrait.setPortraitBendMode.bind(ui.BG3HOTBAR.components.portrait)();
             }
         }
     });
@@ -676,10 +671,9 @@ export function registerSettings() {
       config: false,
       type: Boolean,
       default: true,
-      onChange: value => {
-        if(BG3Hotbar.manager.ui.portraitCard) {
-            const overlay = document.getElementsByClassName('health-overlay');
-            if(overlay && overlay[0]) overlay[0].classList.toggle('hidden', !value)
+      onChange: () => {
+        if(ui.BG3HOTBAR.components.portrait) {
+            ui.BG3HOTBAR.components.portrait.togglePortraitOverlay.bind(ui.BG3HOTBAR.components.portrait)();
         }
       }
     });
@@ -691,10 +685,9 @@ export function registerSettings() {
       config: false,
       type: Boolean,
       default: true,
-      onChange: value => {
-        if(BG3Hotbar.manager.ui.portraitCard) {
-            const text = document.getElementsByClassName('hp-text');
-            if(text && text[0]) text[0].classList.toggle('hidden', !value)
+      onChange: () => {
+        if(ui.BG3HOTBAR.components.portrait) {
+            ui.BG3HOTBAR.components.portrait.toggleHPText.bind(ui.BG3HOTBAR.components.portrait)();
         }
       }
     });
@@ -706,10 +699,9 @@ export function registerSettings() {
       config: false,
       type: Boolean,
       default: false,
-      onChange: value => {
+      onChange: () => {
         if(BG3Hotbar.manager.ui.portraitCard) {
-            const actor = canvas.tokens.get(BG3Hotbar.manager.currentTokenId)?.actor;
-            BG3Hotbar.manager.ui.portraitCard.update(actor);
+            ui.BG3HOTBAR.components.portrait.toggleExtraInfos.bind(ui.BG3HOTBAR.components.portrait)();
         }
       }
     });
@@ -720,10 +712,9 @@ export function registerSettings() {
         type: Array,
         default: CONFIG.EXTRAINFOS ?? [],
         onChange: () => {
-            if(BG3Hotbar.manager?.ui?.portraitCard) {
-                const token = canvas.tokens.get(this.manager.currentTokenId);
-                if (token) BG3Hotbar.manager.ui.portraitCard.update(token.actor)
-            };
+            if (ui.BG3HOTBAR.components.portrait) {
+                ui.BG3HOTBAR.components.portrait.render();
+            }
         },
     });
     
@@ -742,9 +733,9 @@ export function registerSettings() {
         config: true,
         type: Boolean,
         default: false,
-        onChange: () => {
-            if (this.manager?.ui) {
-                this.manager.ui.render();
+        onChange: value => {
+            if (ui.BG3HOTBAR.element[0]) {
+                ui.BG3HOTBAR.element[0].dataset.itemName = value;
             }
         }
     });
@@ -757,8 +748,8 @@ export function registerSettings() {
         type: Boolean,
         default: true,
         onChange: () => {
-            if (this.manager?.ui) {
-                this.manager.ui.render();
+            if (ui.BG3HOTBAR.element[0]) {
+                ui.BG3HOTBAR.element[0].dataset.itemUse = value;
             }
         }
     });
@@ -775,7 +766,9 @@ export function registerSettings() {
         },
         default: 'border',
         onChange: value => {
-            if(this.manager?.ui?.element) this.manager.ui.element.classList.toggle('cell-bottom-highlight', value === 'bottom');
+            if (ui.BG3HOTBAR.element[0]) {
+                ui.BG3HOTBAR.element[0].dataset.cellHighlight = value;
+            }
         }
     });
 
@@ -787,9 +780,8 @@ export function registerSettings() {
         type: Boolean,
         default: false,
         onChange: value => {
-            if (this.manager?.ui?.controlsContainer) {
-                this.manager.ui.controlsContainer.element.classList.toggle('fade', value);
-            }
+            const ctrlElem = document.querySelector('.bg3-control-container');
+            if(ctrlElem) ctrlElem.classList.toggle('fade', value);
         }
     });
 
@@ -801,8 +793,8 @@ export function registerSettings() {
         type: Boolean,
         default: true,
         onChange: () => {
-            if (this.manager?.ui?.restTurnContainer) {
-                this.manager.ui.restTurnContainer.render();
+            if (ui.BG3HOTBAR.components.restTurn) {
+                ui.BG3HOTBAR.components.restTurn.render();
             }
         }
     });
@@ -815,7 +807,7 @@ export function registerSettings() {
         type: Boolean,
         default: true,
         onChange: value => {
-          if (this.manager?.ui?.combatContainer[0]?.element) this.manager.ui.combatContainer[0].element.classList.toggle('hidden', !value);
+            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) ui.BG3HOTBAR.components.weapon.components.combat[0].element.classList.toggle('hidden', !value);
         }
     });
 
@@ -836,10 +828,7 @@ export function registerSettings() {
         type: Boolean,
         default: true,
         onChange: value => {
-            if (this.manager?.ui?.combatContainer) {
-                this.manager.ui.combatContainer[0].data.locked = value;
-                // this.manager.ui.combatContainer[0].render();
-            }
+            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) this.manager.ui.combatContainer[0].locked = value;
         }
     });
 
@@ -869,13 +858,7 @@ export function registerSettings() {
         scope: 'client',
         config: true,
         type: Boolean,
-        default: false,
-        onChange: () => {
-            // Force refresh of any open tooltips
-            if (this.manager?.ui) {
-                this.manager.ui.render();
-            }
-        }
+        default: false
     });
 
     game.settings.register(CONFIG.MODULE_NAME, 'showDamageRanges', {
@@ -884,12 +867,7 @@ export function registerSettings() {
         scope: 'client',
         config: true,
         type: Boolean,
-        default: false,
-        onChange: () => {
-            if (this.manager?.ui) {
-                this.manager.ui.render();
-            }
-        }
+        default: false
     });
 
     // Spell Preparation Settings
@@ -899,12 +877,7 @@ export function registerSettings() {
         scope: 'client',
         config: true,
         type: Boolean,
-        default: true,
-        onChange: () => {
-            if (this.manager?.ui) {
-                this.manager.ui.render();
-            }
-        }
+        default: true
     });
 
     game.settings.register(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC', {
@@ -913,12 +886,7 @@ export function registerSettings() {
         scope: 'client',
         config: true,
         type: Boolean,
-        default: false,
-        onChange: () => {
-            if (this.manager?.ui) {
-                this.manager.ui.render();
-            }
-        }
+        default: false
     });
 
     // Auto-Population Settings
@@ -977,13 +945,13 @@ export function registerSettings() {
     });
 
     // Register the chip selector menu item
-    game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
+    /* game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
         name: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Name'),
         label: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Configure'),
         icon: 'fas fa-tags',
         type: AutoPopulateDefaults,
         restricted: true
-    });
+    }); */
 
     // Lock System Settings
     game.settings.register(CONFIG.MODULE_NAME, 'lockSettings', {
@@ -1015,7 +983,6 @@ export function registerSettings() {
         type: Object,
         default: {}
     });
-    */
 }
 
 export function registerHandlebars() {
@@ -1029,4 +996,16 @@ export function registerHandlebars() {
         }
         return accum;
     });
+
+    Handlebars.registerHelper('math', function(lvalue, operator, rvalue) {
+        lvalue = parseFloat(lvalue);
+        rvalue = parseFloat(rvalue);
+        return {
+            "+": lvalue + rvalue,
+            "-": lvalue - rvalue,
+            "*": lvalue * rvalue,
+            "/": lvalue / rvalue,
+            "%": lvalue % rvalue
+        }[operator];
+    })
 }
