@@ -36,6 +36,9 @@ export class BG3Hotbar {
         
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
+        
+        // Apply player list visibility setting
+        this._applyPlayerListVisibility();
 
         // Log initialization
         console.log(`${CONFIG.MODULE_NAME} | Initialized`);
@@ -93,6 +96,28 @@ export class BG3Hotbar {
                 }, 100);
             }
         } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
+    }
+
+    static _applyPlayerListVisibility() {
+        const setting = game.settings.get(CONFIG.MODULE_NAME, 'playerListVisibility');
+        const body = document.body;
+        
+        // Remove existing classes first
+        body.classList.remove('bg3-player-list-hidden', 'bg3-player-list-hover');
+
+        // Check if player list exists
+        if (!ui?.players?.element) {
+             // If not rendered yet, wait for renderPlayerList hook
+             return; 
+        }
+        
+        // Apply new class based on setting
+        if (setting === 'hidden') {
+            body.classList.add('bg3-player-list-hidden');
+        } else if (setting === 'hover') {
+            body.classList.add('bg3-player-list-hover');
+        }
+        // 'always' visible is the default, no class needed
     }
 
     static async _toggleUI() {
@@ -440,18 +465,18 @@ export class BG3Hotbar {
         });
 
         game.settings.register(CONFIG.MODULE_NAME, 'highlightStyle', {
-            name: game.i18n.localize('BG3.Settings.HighlightStyle.Name'),
-            hint: game.i18n.localize('BG3.Settings.HighlightStyle.Hint'),
+            name: 'BG3.Settings.HighlightStyle.Name',
+            hint: 'BG3.Settings.HighlightStyle.Hint',
             scope: 'client',
             config: true,
             type: String,
             choices: {
-                'bottom': game.i18n.localize('BG3.Settings.HighlightStyle.Bottom'),
-                'border': game.i18n.localize('BG3.Settings.HighlightStyle.Border')
+                'bottom': 'BG3.Settings.HighlightStyle.Bottom',
+                'border': 'BG3.Settings.HighlightStyle.Border'
             },
-            default: 'border',
+            default: 'bottom',
             onChange: value => {
-                if(this.manager?.ui?.element) this.manager.ui.element.classList.toggle('cell-bottom-highlight', value === 'bottom');
+                if(this.manager?.ui) this.manager.ui.element.classList.toggle("cell-bottom-highlight", value === 'bottom');
             }
         });
 
@@ -677,9 +702,49 @@ export class BG3Hotbar {
             type: Object,
             default: {}
         });
+
+        // New setting for Player List Visibility
+        game.settings.register(CONFIG.MODULE_NAME, 'playerListVisibility', {
+            name: 'BG3.Settings.PlayerListVisibility.Name',
+            hint: 'BG3.Settings.PlayerListVisibility.Hint',
+            scope: 'client',
+            config: true,
+            type: String,
+            choices: {
+                "always": "BG3.Settings.PlayerListVisibility.Choices.always",
+                "hover": "BG3.Settings.PlayerListVisibility.Choices.hover",
+                "hidden": "BG3.Settings.PlayerListVisibility.Choices.hidden"
+            },
+            default: "always",
+            onChange: value => {
+                BG3Hotbar._applyPlayerListVisibility();
+            }
+        });
+
+        // Make sure settings are registered before hooks that might need them
+        console.log(`${CONFIG.MODULE_NAME} | Settings Registered`);
     }
 
     static _registerHooks() {
+        Hooks.once('init', () => {
+            console.log(`${CONFIG.MODULE_NAME} | Registering Settings`);
+            this._registerSettings();
+        });
+        
+        Hooks.once('ready', () => {
+            console.log(`${CONFIG.MODULE_NAME} | Ready`);
+            if (!game.modules.get('lib-wrapper')?.active && game.user.isGM) {
+                ui.notifications.error("BG3 Inspired Hotbar requires the 'libWrapper' module. Please install and activate it.");
+            }
+            this.init();
+        });
+
+        // Hook for initial player list rendering
+        Hooks.on("renderPlayerList", (playerListApp, html, data) => {
+            // Apply setting when player list is rendered/re-rendered
+             BG3Hotbar._applyPlayerListVisibility(); 
+        });
+
         // Add Categories to module settings
         Hooks.on("renderSettingsConfig", (app, html, data) => {
             $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
@@ -876,11 +941,6 @@ export class BG3Hotbar {
             if (game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat')) BG3Hotbar.manager.ui?.toggleUI(false);
             if (!this.manager?.ui?.filterContainer) return;
             this.manager.ui.filterContainer.resetUsedActions();
-        });
-
-        // Initialize the module when ready
-        Hooks.once('ready', () => {
-            // Module is ready
         });
     }
 

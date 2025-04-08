@@ -326,3 +326,31 @@
 .bg3-hud .hidden {
   display: none !important;
 }
+
+/* ==========================================================================
+   Foundry UI Tweaks
+   ========================================================================== */
+
+/* Player List Visibility */
+#players {
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Add transitions for smoothness */
+  transform-origin: bottom left;
+}
+
+body.bg3-player-list-hidden #players {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px); /* Optional: slight move down */
+}
+
+body.bg3-player-list-hover #players {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+body.bg3-player-list-hover #players:hover {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}

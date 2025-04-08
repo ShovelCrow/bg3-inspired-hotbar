@@ -1,4 +1,9 @@
-## [2.0.5] - YYYY-MM-DD
+## [2.0.6] - 2025-04-08
+
+### Added
+- Added setting to control Player List visibility ('Always Visible', 'Show on Hover', 'Hide Completely').
+
+## [2.0.5] - 2025-04-08
 
 ### Fixed
 Related Issue: [#58]
