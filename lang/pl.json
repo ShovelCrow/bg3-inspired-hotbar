@@ -24,6 +24,22 @@
             "ClearAllItems": "Wyczyść wszystkie przedmioty",
             "ImportLayout": "Importuj układ",
             "ExportLayout": "Eksportuj układ"
+        },
+        "Tooltips": {
+            "Action": "Akcja",
+            "Range": "Zasięg",
+            "Target": "Cel",
+            "Duration": "Czas trwania",
+            "Description": "Opis",
+            "LoadingDescription": "Ładowanie opisu...",
+            "NoDescription": "Brak opisu.",
+            "Permanent": "Stały",
+            "RoundsRemaining": "Pozostało rund: {count}",
+            "TurnsRemaining": "Pozostało tur: {count}",
+            "SecondsRemaining": "Pozostało sekund: {count}",
+            "Status": "Status",
+            "Active": "Aktywny",
+            "Disabled": "Wyłączony"
         }
     },
     "BG3.Settings": {

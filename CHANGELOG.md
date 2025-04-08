@@ -1,3 +1,12 @@
+## [2.0.3] - 2025-04-08
+
+### Added
+- Added initial localization files for French (`fr.json`), Dutch (`nl.json`), and Russian (`ru.json`).
+- Added manifest support for French, Dutch, and Russian languages.
+
+### Improved
+- Updated Polish localization (`pl.json`) to include keys for tooltips (Issue [#37]).
+
 ## [2.0.2] - 2025-04-08
 
 ### Fixed
