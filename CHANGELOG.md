@@ -1,3 +1,17 @@
+## [2.0.4] - 2025-04-08
+
+### Fixed
+Revisited Issue: [#62] (oops)
+- Resolved issue where Active Effect tooltips displayed raw `@Embed` strings instead of enriched content by adjusting the context passed to the text enricher.
+Related Issue: [#64]
+- Adjusted tooltip `z-index` to layer correctly below Foundry's core enricher tooltips but above other module elements.
+
+### Improved
+Related Issue: [#104]
+- Refactored tooltip positioning to use CSS variables instead of inline styles, improving consistency.
+- Removed throttling from tooltip `mousemove` updates for smoother tracking.
+- Adjusted tooltip attachment and positioning logic to ensure initial placement occurs relative to the mouse cursor's position *after* the hover delay and content rendering, preventing initial misplacement. Still buggy, but doesn't go off screen.
+
 ## [2.0.3] - 2025-04-08
 
 ### Added

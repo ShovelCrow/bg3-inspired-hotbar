@@ -81,7 +81,7 @@ export class EffectTooltip extends BaseTooltip {
       
       // Use async/await and proper error handling
       try {
-        const cleanedHTML = await enrichHTMLClean(description, rollData, this.item);
+        const cleanedHTML = await enrichHTMLClean(description, rollData);
         descEl.innerHTML = cleanedHTML || game.i18n.localize("BG3.Hotbar.Tooltips.NoDescription");
       } catch (err) {
         console.warn("BG3 Hotbar - Failed to enrich effect description:", err);

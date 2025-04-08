@@ -59,12 +59,22 @@ export class BaseTooltip {
       }
       return null;
     }
+    // Store the initial event for context
+    const initialEvent = event;
     return new Promise((resolve) => {
       const timer = setTimeout(async () => {
+        // Create a new synthetic event object or just capture coords
+        // at the moment the timer fires. Using the initial event's properties
+        // but potentially updated coordinates if we could capture them globally,
+        // but sticking to initial event for simplicity for now.
+        // Let's pass the initialEvent through for context.
+        const triggerEvent = initialEvent; 
+        
         if (!document.body.classList.contains("dragging-active")) {
           const tooltip = await TooltipFactory.create(item);
           if (tooltip) {
-            tooltip.attach(cell, event);
+            // Pass the event captured when timer fired (or initial)
+            tooltip.attach(cell, triggerEvent); 
             resolve(tooltip);
           } else {
             resolve(null);
@@ -93,7 +103,7 @@ export class BaseTooltip {
     this.pinnedTooltips.delete(itemId);
   }
 
-  attach(cell, event) {
+  async attach(cell, event) {
     if (document.body.classList.contains("dragging-active")) return;
     BaseTooltip.cleanup(this.tooltipType);
     if (cell._hotbarTooltips?.get(this.tooltipType)) {
@@ -121,24 +131,43 @@ export class BaseTooltip {
     if (!cell._hotbarTooltips) {
       cell._hotbarTooltips = new Map();
     }
-    this.buildContent();
-    this._setupEventListeners();
+    
     tooltipContainer.appendChild(this.element);
-    this.positionTooltip(event);
+
+    // Build content first
+    await this.buildContent(); 
+    
+    // Store the initial event for positioning
+    const initialEvent = event; 
+    
+    // Position using the *initial* event, after content is built
+    if(this.element && initialEvent) { 
+        this.positionTooltip(initialEvent);
+    }
+    
+    // Setup listeners AFTER initial positioning
+    this._setupEventListeners(); 
     cell._hotbarTooltips.set(this.tooltipType, this);
   }
 
   buildContent() {
-    if (!this.item) return;
-    
-    // Clear any pending content update
-    if (this._contentUpdateTimeout) {
-      clearTimeout(this._contentUpdateTimeout);
-    }
-    // Debounce content update to avoid rapid reflows
-    this._contentUpdateTimeout = setTimeout(() => {
-      this._actuallyBuildContent();
-    }, 100);
+    return new Promise((resolve) => {
+        if (!this.item) {
+            resolve();
+            return;
+        }
+        if (this._contentUpdateTimeout) {
+            clearTimeout(this._contentUpdateTimeout);
+        }
+        this._contentUpdateTimeout = setTimeout(async () => {
+            try {
+                await this._actuallyBuildContent();
+            } catch (err) {
+                console.error("Error building tooltip content:", err);
+            }
+            resolve(); // Resolve after _actuallyBuildContent finishes
+        }, 100); 
+    });
   }
 
   async _actuallyBuildContent() {
@@ -217,20 +246,38 @@ export class BaseTooltip {
   }
 
   positionTooltip(event) {
-    const padding = { right: 15, top: -10 };
-    requestAnimationFrame(() => {
-      if (!this.element) return;
-      const tooltipRect = this.element.getBoundingClientRect();
-      let left = event.clientX + padding.right;
-      let top = event.clientY + padding.top - tooltipRect.height;
-      if (left + tooltipRect.width > window.innerWidth) {
-        left = event.clientX - tooltipRect.width - padding.right;
-      }
-      if (top < 0) top = event.clientY + 20;
-      this.element.style.left = `${left}px`;
-      this.element.style.top = `${top}px`;
-      this.element.classList.add("visible");
-    });
+    if (!this.element || !event) return;
+
+    const padding = { right: 15, bottom: 10 }; 
+    const tooltipRect = this.element.getBoundingClientRect();
+    
+    // Default target: right of cursor
+    let targetLeft = event.clientX + padding.right;
+    // Default target: above cursor
+    let targetTop = event.clientY - padding.bottom - tooltipRect.height;
+
+    // Check screen bounds
+    if (targetLeft + tooltipRect.width > window.innerWidth) {
+        // Flip horizontally if needed
+        targetLeft = event.clientX - padding.right - tooltipRect.width;
+    }
+    if (targetTop < 0) {
+        // Flip vertically if needed (place below cursor)
+        targetTop = event.clientY + 20;
+        // Re-check bottom bound after vertical flip
+        if (targetTop + tooltipRect.height > window.innerHeight) {
+             targetTop = window.innerHeight - tooltipRect.height - 5; // Place at bottom edge
+        }
+    } else if (targetTop + tooltipRect.height > window.innerHeight) {
+         // Ensure it doesn't go off bottom even in default placement
+         targetTop = window.innerHeight - tooltipRect.height - 5;
+    }
+    // Ensure it doesn't go off left edge
+    if (targetLeft < 0) targetLeft = 5;
+    
+    this.element.style.setProperty('--tooltip-left', `${targetLeft}px`);
+    this.element.style.setProperty('--tooltip-top', `${targetTop}px`);
+    this.element.classList.add("visible");
   }
 
   _setupEventListeners() {
@@ -247,14 +294,24 @@ export class BaseTooltip {
       }
     });
 
-    let lastMoveTime = 0;
-    const MOVE_THROTTLE = 50; // update every 50ms
+    // Remove throttling variables
+    // let lastMoveTime = 0; 
+    // const MOVE_THROTTLE = 50; 
+
     const onMouseMove = (evt) => {
+      // Store the latest mouse move event - still potentially useful if needed elsewhere
+      // this._lastMouseMoveEvent = evt; 
+      
+      // Check element validity and state
       if (!this.element || this._pinned || this._isDragging) return;
-      const now = Date.now();
-      if (now - lastMoveTime < MOVE_THROTTLE) return;
-      lastMoveTime = now;
-      this.onCellMouseMove(evt);
+      
+      // Remove throttle check
+      // const now = Date.now();
+      // if (now - lastMoveTime < MOVE_THROTTLE) return;
+      // lastMoveTime = now;
+      
+      // Directly call onCellMouseMove with the current event
+      this.onCellMouseMove(evt); 
     };
     this._cell.addEventListener("mousemove", onMouseMove);
 
@@ -299,8 +356,8 @@ export class BaseTooltip {
         newY = window.innerHeight - tooltipRect.height - 10;
       if (newX < 10) newX = 10;
       if (newY < 10) newY = 10;
-      this.element.style.left = `${newX}px`;
-      this.element.style.top = `${newY}px`;
+      this.element.style.setProperty('--tooltip-left', `${newX}px`);
+      this.element.style.setProperty('--tooltip-top', `${newY}px`);
     };
     const onDragEnd = () => {
       window.removeEventListener("mousemove", onDragMove);
@@ -312,16 +369,33 @@ export class BaseTooltip {
   }
 
   onCellMouseMove(evt) {
+    // Mouse move updates should be immediate, no timeout needed here
     if (!this.element || this._pinned || this._isDragging) return;
-    const padding = { right: 15, top: -10 };
+    
+    const padding = { right: 15, bottom: 10 }; 
     const tooltipRect = this.element.getBoundingClientRect();
-    let left = evt.clientX + padding.right;
-    let top = evt.clientY + padding.top - tooltipRect.height;
-    if (left + tooltipRect.width > window.innerWidth)
-      left = evt.clientX - tooltipRect.width - padding.right;
-    if (top < 0) top = evt.clientY + 20;
-    this.element.style.left = `${left}px`;
-    this.element.style.top = `${top}px`;
+    
+    // Default target: right of cursor
+    let targetLeft = evt.clientX + padding.right;
+    // Default target: above cursor
+    let targetTop = evt.clientY - padding.bottom - tooltipRect.height;
+
+    // Check screen bounds
+    if (targetLeft + tooltipRect.width > window.innerWidth) {
+        targetLeft = evt.clientX - padding.right - tooltipRect.width;
+    }
+    if (targetTop < 0) {
+        targetTop = evt.clientY + 20; // Correctly use evt
+        if (targetTop + tooltipRect.height > window.innerHeight) {
+             targetTop = window.innerHeight - tooltipRect.height - 5;
+        }
+    } else if (targetTop + tooltipRect.height > window.innerHeight) {
+         targetTop = window.innerHeight - tooltipRect.height - 5;
+    }
+    if (targetLeft < 0) targetLeft = 5;
+    
+    this.element.style.setProperty('--tooltip-left', `${targetLeft}px`);
+    this.element.style.setProperty('--tooltip-top', `${targetTop}px`);
   }
 
   pin() {
