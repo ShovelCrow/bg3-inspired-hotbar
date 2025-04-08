@@ -1,10 +1,12 @@
 - Hooks
+    - updateActor
+    - updateEffect
+    - updateItem
 - Hotbar controls lock & settings
 - Drag & Drop cells
 - Cell contextmenu
 - Auto-populating
 - Enriched Tooltip
-- Keybind
 
 - Fade methods + settings
 
@@ -19,6 +21,7 @@
 - Combat switch token on turn flicking
 - Portrait after/before - pointer-events
 - Module Settings
+- Multiselect
 
 
 
@@ -38,4 +41,5 @@
 - Slide down button
 - Foundry Controls Menu Button Toggle
 - Portrait contextmenu & change image
+- Keybind
 

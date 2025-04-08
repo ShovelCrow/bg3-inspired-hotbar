@@ -9,7 +9,7 @@ import { PassiveContainer } from "./PassiveContainer.js";
 export class HotbarContainer extends BG3Component {
     constructor(data) {
         super(data);
-        this.components = [];
+        this.components = {};
     }
 
     get classes() {
@@ -22,6 +22,7 @@ export class HotbarContainer extends BG3Component {
 
     async render() {
         const html = await super.render();
+        this.components = {hotbar:[]};
         const passiveContainer = new PassiveContainer();
         passiveContainer.render();
         this.element.appendChild(passiveContainer.element);
@@ -29,15 +30,18 @@ export class HotbarContainer extends BG3Component {
         activeContainer.render();
         this.element.appendChild(activeContainer.element);
         const filterContainer = new FilterContainer();
+        this.components.filterContainer = filterContainer;
         filterContainer.render();
         this.element.appendChild(filterContainer.element);
         for(let i = 0; i < this.data.length; i++) {
             const gridData = this.data[i],
                 container = new GridContainer(gridData);
+            container.index = i;
+            container.id = 'hotbar';
             this._parent.components.hotbar.push(container);
             container.render();
             this.element.appendChild(container.element);
-            this.addComponent(container);
+            this.components.hotbar.push(container);
             if(i < this.data.length - 1) {
                 const dragBar = new DragBar({index: i});
                 dragBar._parent = this;

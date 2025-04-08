@@ -5,11 +5,10 @@ import { CONFIG, registerKeybinding, updateSettingsDisplay, registerEarly, regis
 Hooks.once('init', () => {
     registerEarly();
     registerHandlebars();
-    // registerKeybinding();
+    registerKeybinding();
 });
 
 Hooks.once('ready', () => {
-    // registerHooks();
     registerSettings();
     updateSettingsDisplay();
     ui.BG3HOTBAR = new BG3Hotbar();

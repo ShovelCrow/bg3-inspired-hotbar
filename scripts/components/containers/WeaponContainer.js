@@ -31,6 +31,7 @@ export class WeaponContainer extends BG3Component {
             combat: [],
             weapon: []
         };
+        combatContainer.id = 'combat';
         this.element.setAttribute('data-active-set', this.activeSet);
         await combatContainer.render();
         combatContainer.element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
@@ -38,6 +39,8 @@ export class WeaponContainer extends BG3Component {
         for(let i = 0; i < this.data.weapon.length; i++) {
             const gridData = this.data.weapon[i],
                 container = new GridContainer(gridData);
+            container.index = i;
+            container.id = 'weapon';
             container.element.setAttribute('data-container-index', i);
             container._parent = this;
             container.render();

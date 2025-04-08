@@ -111,6 +111,12 @@ export class FilterContainer extends BG3Component {
         });
     }
 
+    resetUsedActions() {
+        ui.BG3HOTBAR.element[0].querySelectorAll('.used').forEach(c => {
+            c.classList.remove('used');
+        });
+    }
+
     async clearFilters(current) {
         for(let i=0; i<this.components.length; i++) if(this.components[i] !== current) this.components[i].setState(true);
     }

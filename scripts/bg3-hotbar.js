@@ -17,6 +17,7 @@ export class BG3Hotbar extends Application {
             hotbar: []
         };
         this.macroBarTimeout = null;
+        // this.enabled = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
 
         /** Hooks Event **/
         Hooks.on("createToken", this._onCreateToken.bind(this));
@@ -66,9 +67,14 @@ export class BG3Hotbar extends Application {
     _onControlToken(token, controlled) {
         if (!this.manager) return;
 
-        if ((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) {
+        /* if ((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) {
             setTimeout(() => {
                 if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.generate(null);
+            }, 100);
+        } */
+        if (!controlled && !canvas.tokens.controlled.length) {
+            setTimeout(() => {
+                if (!canvas.tokens.controlled.length) this.generate(null);
             }, 100);
         }
         if (!controlled) return;
@@ -76,20 +82,66 @@ export class BG3Hotbar extends Application {
         if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) this.generate(token);
     }
 
-    _onUpdateToken(token, changes, options, userId) {
-
+    async _onUpdateToken(token, changes, options, userId) {
+        if (!this.manager || game.user.id !== userId) return;
+            
+        // If this is our current token and actor-related data changed
+        if (token.id === this.manager.currentTokenId && 
+            (changes.actorId || changes.actorData || changes.actorLink)) {
+            await this.generate(token);
+        }
     }
 
-    _onUpdateActor(actor, changes, options, userId) {
-
+    async _onUpdateActor(actor, changes, options, userId) {
+        if(!this.manager) return;
+        
+        if(changes?.flags?.[CONFIG.MODULE_NAME] && game.user.id !== userId) this.manager.socketUpdateData(actor, changes);
+        
+        if (game.user.id !== userId) return;
+        
+        // Check if this update affects our current token
+        if (this.actor?.id !== actor.id) return;
+        
+        // Update UI components
+        if (this.manager.element?.[0]) {
+            this.generate(this.token);
+            /* // Update portrait card for any actor changes
+            if (this.manager.ui.portraitCard) {
+                this.manager.ui.portraitCard.update(actor);
+            }
+            
+            // Update filter container for spell slot changes
+            if (changes.system?.spells && this.manager.ui.filterContainer) {
+                this.manager.ui.filterContainer.render();
+            }
+            
+            // Update passives container if items changed
+            if (changes.items && this.manager.ui.passivesContainer) {
+                await this.manager.ui.passivesContainer.update();
+            }
+            
+            // Let ItemUpdateManager handle item changes
+            if (changes.items || changes.system?.spells) {
+                await this.manager.itemManager.cleanupInvalidItems(actor);
+            } */
+        }
     }
 
-    _onUpdateCombat(combat, changed, options, userId) {
+    _onUpdateCombat(combat, updates) {
         this.combat.forEach(e => e.setComponentsVisibility());
+        if (combat === true || (updates && ("round" in updates || "turn" in updates))) this.hide();
+        if (updates && updates.round === 1 && updates.turn === 0) this._onStartCombat(combat);
+    }
+
+    async _onStartCombat(combat) {
+        this.generate(canvas.tokens.controlled[0]);
+        this.hide();
     }
 
     _onDeleteCombat(combat) {
-        this._onUpdateCombat();
+        this.combat.forEach(e => e.setComponentsVisibility());
+        if(!this.components.container?.components?.filterContainer) return;
+        this.components.container.components.filterContainer.resetUsedActions();
     }
 
     _applyMacrobarCollapseSetting() {
@@ -203,6 +255,17 @@ export class BG3Hotbar extends Application {
     toggle(state) {
         game.settings.set(CONFIG.MODULE_NAME, 'uiEnabled', state);
         this.generate(state ? (canvas.tokens?.controlled?.length > 1 ? null : canvas.tokens?.controlled?.[0]) : null);
+    }
+
+    hide() {
+        const autoHideSetting = game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat');
+        let state = false;
+        if (autoHideSetting !== 'false') {
+            const actor = this.manager.actor;
+            if(!actor) return;
+            state = (autoHideSetting == 'true' && !game.combat?.started) || (autoHideSetting == 'init' && (!game.combat?.started || !(game.combat?.started && game.combat?.combatant?.actor === actor)));
+            this.element[0].classList.toggle('slidedown',state);
+        }
     }
 
     async generate(token) {

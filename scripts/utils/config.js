@@ -310,7 +310,8 @@ export function registerKeybinding() {
         hint: "Toggles the BG3 Inspired Hotbar UI visibility",
         editable: [{ key: "KeyH" }],
         onDown: () => {
-            this._toggleUI();
+            ui.BG3HOTBAR.toggle(!game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled'))
+            document.querySelector('[data-tool="toggleBG3UI"]').classList.toggle('active', game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled'))
         },
         restricted: false,
         precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
@@ -328,6 +329,7 @@ export function registerEarly() {
     });
 
     Hooks.on('getSceneControlButtons', (controls) => {
+        console.log(controls)
         const tokenTools = controls.find(c => c.name === "token");
         if (!tokenTools) return;
     
@@ -974,14 +976,6 @@ export function registerSettings() {
         config: false,
         type: Boolean,
         default: false
-    });
-
-    // Storage Settings
-    game.settings.register(CONFIG.MODULE_NAME, 'selectedPassivesByActor', {
-        scope: 'client',
-        config: false,
-        type: Object,
-        default: {}
     });
 }
 

@@ -94,6 +94,10 @@
   border-right-color: var(--bg3-border) !important;
 }
 
+#bg3-hotbar-container .hotbar-cell.has-item {
+    cursor: pointer;
+}
+
 #bg3-hotbar-container .hotbar-cell.used, #bg3-hotbar-container .hotbar-cell[data-highlight="excluded"] {
   opacity: .25;
 }

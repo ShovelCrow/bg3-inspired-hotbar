@@ -74,6 +74,19 @@ export class HotbarManager {
                     });
                 }
             }
+        } else {
+            // No saved data so we create blank ones
+            this._initializeContainers();
+        }
+    }
+
+    async socketUpdateData(actor, changes) {
+        if(this.currentTokenId) {
+            // Check if this update affects our current token to force UI update
+            const token = canvas.tokens.get(this.currentTokenId);
+            if (!!token && this.actor?.id === actor.id && !!ui.BG3HOTBAR.element?.[0]) {
+                await ui.BG3HOTBAR.generate(token);
+            }
         }
     }
 

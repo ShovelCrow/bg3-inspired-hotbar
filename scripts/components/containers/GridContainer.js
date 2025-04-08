@@ -4,6 +4,8 @@ import { GridCell } from "./GridCell.js";
 export class GridContainer extends BG3Component {
     constructor(data) {
         super(data);
+        this.index = 0;
+        this.id = null;
     }
 
     get classes() {
