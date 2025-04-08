@@ -44,8 +44,12 @@ export class WeaponTooltip extends BaseTooltip {
       } else {
         damageText = `${damageData.base.number}d${damageData.base.denomination}`;
       }
-      if (damageData.base.types && damageData.base.types.length > 0) {
-        damageText += ` (${damageData.base.types.join(", ")})`;
+      const damageTypes = damageData.base.types;
+      if (damageTypes && damageTypes.size > 0) {
+        const localizedTypes = Array.from(damageTypes).map(type => 
+          CONFIG.DND5E?.damageTypes?.[type]?.label || type
+        );
+        damageText += ` (${localizedTypes.join(", ")})`;
       }
     }
 
@@ -58,20 +62,26 @@ export class WeaponTooltip extends BaseTooltip {
       } else {
         versatileText = `Versatile: ${damageData.versatile.number}d${damageData.versatile.denomination}`;
       }
+      const versatileDamageTypes = damageData.versatile.types || damageData.base.types;
+      if (versatileDamageTypes && versatileDamageTypes.size > 0) {
+        const localizedTypes = Array.from(versatileDamageTypes).map(type => 
+          CONFIG.DND5E?.damageTypes?.[type]?.label || type
+        );
+        versatileText += ` (${localizedTypes.join(", ")})`;
+      }
     }
 
     detailsEl.innerHTML = `
-      ${details.castingTime ? `<div><strong>Action:</strong> ${details.castingTime}</div>` : ""}
-      ${details.range ? `<div><strong>Range:</strong> ${details.range}</div>` : ""}
+      ${details.castingTime ? `<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Action")}:</strong> ${details.castingTime}</div>` : ""}
+      ${details.range ? `<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Range")}:</strong> ${details.range}</div>` : ""}
       <div><strong>Damage:</strong> ${damageText}</div>
-      ${versatileText ? `<div><strong>${versatileText}</strong></div>` : ""}
-      ${this.item.system?.properties && this.item.system.properties.length ? `<div><strong>Properties:</strong> ${this.item.system.properties.join(', ')}</div>` : ""}
+      ${versatileText ? `<div><strong>Versatile:</strong> ${versatileText}</div>` : ""}
     `;
     content.appendChild(detailsEl);
 
     const descHeader = document.createElement("div");
     descHeader.classList.add("tooltip-description-header");
-    descHeader.textContent = "Description";
+    descHeader.textContent = game.i18n.localize("BG3.Hotbar.Tooltips.Description");
     content.appendChild(descHeader);
 
     const descContainer = document.createElement("div");

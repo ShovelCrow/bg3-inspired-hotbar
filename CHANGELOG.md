@@ -1,3 +1,10 @@
+## [2.0.5] - YYYY-MM-DD
+
+### Fixed
+Related Issue: [#58]
+- Correctly display localized damage type(s) in Weapon tooltips.
+- Fixed check for damage type(s) set using `.size` instead of `.length`.
+
 ## [2.0.4] - 2025-04-08
 
 ### Fixed
