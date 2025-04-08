@@ -181,6 +181,7 @@ class HotbarUI {
     this.render();
 
     // Equip weapons if needed
+    // console.log('loading switchset');
     this.switchSet(this.manager.activeSet);
   }
 
@@ -559,27 +560,37 @@ class HotbarUI {
     // Check if needed
     if(!this.weaponContainer[index]?.data) return;
     if(this.manager?.activeSet === index && this.weaponContainer[index].data?.oldWeapons == this.weaponContainer[index].data?.items) return;
+    
     this.weaponContainer[index].data.oldWeapons = foundry.utils.deepClone(this.weaponContainer[index].data.items);
-
     const token = canvas.tokens.get(BG3Hotbar.manager.currentTokenId),
       weaponsList = token?.actor?.items.filter(w => w.type == 'weapon'),
-      toUpdate = [],
-      weapons = this.weaponContainer.find(wc => wc.index === index);
+      weapons = this.weaponContainer.find(wc => wc.index === index),
+      toUpdate = [];
+
     if(weapons) {
       if(this.manager.activeSet !== index) {
+        // Add previous set to unequip
+        Object.values(this.weaponContainer[this.manager.activeSet].data.items).forEach(w => {
+          toUpdate.push({_id: w.uuid.split('.').pop(), "system.equipped": 0});
+        });
+  
+        // Save new active set
         this.manager.activeSet = index;
         await this.manager.persist();
       }
       if(Object.values(weapons.data.items).length) {
         Object.values(weapons.data.items).forEach(w => {
-          toUpdate.push({_id: w.uuid.split('.').pop(), "system.equipped": 1})
+          const commonItem = toUpdate.findIndex(wu => wu._id == w.id);
+          if(commonItem > -1) console.log('Has common item');
+          if(commonItem > -1) toUpdate[commonItem]["system.equipped"] = 1;
+          else toUpdate.push({_id: w.uuid.split('.').pop(), "system.equipped": 1})
         })
       }
       weaponsList.forEach(w => {
         if(w.system.equipped && !toUpdate.find(wu => wu._id == w.id)) toUpdate.push({_id: w.id, "system.equipped": 0})
       })
-      await token.actor.updateEmbeddedDocuments("Item", toUpdate);
     }
+    if(toUpdate.length) await token.actor.updateEmbeddedDocuments("Item", toUpdate);
   }
 
   toggleUI() {
