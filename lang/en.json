@@ -24,6 +24,22 @@
             "ClearAllItems": "Clear All Items",
             "ImportLayout": "Import Layout",
             "ExportLayout": "Export Layout"
+        },
+        "Tooltips": {
+            "Action": "Action",
+            "Range": "Range",
+            "Target": "Target",
+            "Duration": "Duration",
+            "Description": "Description",
+            "LoadingDescription": "Loading description...",
+            "NoDescription": "No description available.",
+            "Permanent": "Permanent",
+            "RoundsRemaining": "{count} Round(s) Remaining",
+            "TurnsRemaining": "{count} Turn(s) Remaining",
+            "SecondsRemaining": "{count} Seconds Remaining",
+            "Status": "Status",
+            "Active": "Active",
+            "Disabled": "Disabled"
         }
     },
     "BG3.Settings": {
