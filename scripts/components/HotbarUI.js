@@ -580,10 +580,10 @@ class HotbarUI {
       }
       if(Object.values(weapons.data.items).length) {
         Object.values(weapons.data.items).forEach(w => {
-          const commonItem = toUpdate.findIndex(wu => wu._id == w.id);
-          if(commonItem > -1) console.log('Has common item');
+          const itemId =  w.uuid.split('.').pop(),
+            commonItem = toUpdate.findIndex(wu => wu._id == itemId);
           if(commonItem > -1) toUpdate[commonItem]["system.equipped"] = 1;
-          else toUpdate.push({_id: w.uuid.split('.').pop(), "system.equipped": 1})
+          else toUpdate.push({_id: itemId, "system.equipped": 1})
         })
       }
       weaponsList.forEach(w => {
