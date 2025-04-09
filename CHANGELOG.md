@@ -1,3 +1,13 @@
+## [2.0.7] - 2025-04-09
+### Fixed
+- Fixed issue where shields weren't properly unequipped from loadout slots when switching weapon sets (Related Issue: [#107], Merged via PR [#108]).
+
+### Added
+- Added several new portrait customization settings (Shape, Border, Background, Health Overlay, HP Text, Overlay Mode) accessible via a new Portrait Settings submenu (Merged via PR [#108]). Size and other settings to come soon.
+
+### Updated
+- Updated Polish localization - PR [#109] Thanks @Lioheart!
+
 ## [2.0.6] - 2025-04-08
 
 ### Added
