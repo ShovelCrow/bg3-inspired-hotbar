@@ -18,8 +18,8 @@ export class ActiveContainer extends BG3Component {
        return actor.effects?.contents || [];
     }
 
-    async render() {
-        const html = await super.render();
+    async _renderInner() {
+        await super._renderInner();
         const activesList = this.activesList;
         if(activesList.length === 0) this.element.style.visibility = 'hidden';
         for(let i = 0; i < activesList.length; i++) {
@@ -28,6 +28,5 @@ export class ActiveContainer extends BG3Component {
             btn.render();
             this.element.appendChild(btn.element);
         }
-        return this.element;
     }
 }

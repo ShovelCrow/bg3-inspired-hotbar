@@ -19,12 +19,11 @@ export class BaseButton extends BG3Component {
         else return {type: 'simple', content: this.data.title};
     }
 
-    async render() {
-        const html = await super.render();
-        // const btnContainer = document.createElement(this.data.type);
-        // btnContainer.classList.add(...this.data.class);
+    async _renderInner() {
+        await super._renderInner();
         if(!this.visible) this.element.classList.add('hidden');
         if(this.data.attr) Object.entries(this.data.attr).forEach(([value, index]) => this.element.setAttribute(value, index));
+        if(this.data.key) this.element.setAttribute('data-key', this.data.key);
         if(this.data.label) {
             const btnLabel = document.createElement("span");
             btnLabel.classList.add("rest-turn-label");
@@ -36,6 +35,5 @@ export class BaseButton extends BG3Component {
             btnIcon.classList.add("fas", this.data.icon);
             this.element.appendChild(btnIcon);
         }
-        return this.element;
     }
 }

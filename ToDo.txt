@@ -3,12 +3,11 @@
     - updateEffect
     - updateItem
 - Hotbar controls lock & settings
-- Drag & Drop cells
-- Cell contextmenu
 - Auto-populating
 - Enriched Tooltip
 
 - Fade methods + settings
+- DragDrop - Activity activation
 
 /** OPTIMIZE **/
 - Check DeathSavesContainer stabilizing feature
@@ -42,4 +41,7 @@
 - Foundry Controls Menu Button Toggle
 - Portrait contextmenu & change image
 - Keybind
+- Drag & Drop cells
+- Cell contextmenu
+- Auto-equip switch set
 

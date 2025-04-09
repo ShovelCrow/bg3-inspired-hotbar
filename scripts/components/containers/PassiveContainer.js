@@ -78,7 +78,7 @@ export class PassiveContainer extends BG3Component {
                         });
                         // Update our selection and persist it
                         await ui.BG3HOTBAR.manager.actor.setFlag(CONFIG.MODULE_NAME, "selectedPassives", Array.from(newSelection));
-                        this.render();
+                        this._renderInner();
                     }
                 },
                 cancel: {
@@ -108,8 +108,8 @@ export class PassiveContainer extends BG3Component {
         }, 100);
     }
 
-    async render() {
-        const html = await super.render();
+    async _renderInner() {
+        await super._renderInner();
         const passivesList = this.passivesList;
         if(passivesList.length === 0) this.element.style.visibility = 'hidden';
         // console.log(passivesList)
@@ -119,6 +119,5 @@ export class PassiveContainer extends BG3Component {
             btn.render();
             this.element.appendChild(btn.element);
         }
-        return this.element;
     }
 }

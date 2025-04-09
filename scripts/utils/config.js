@@ -32,12 +32,7 @@ export const CONFIG = {
                 delOnly: true,
                 allowDuplicate: true,
                 type: 'label',
-                class: ['bg3-weapon-set'],
-                events: {
-                    'click': function() {
-                        if(this.element.dataset.containerIndex !== this._parent.activeSet) this._parent.activeSet = this.element.dataset.containerIndex;
-                    }
-                }
+                class: ['bg3-weapon-set']
             }
         },
         combat: {
@@ -46,7 +41,7 @@ export const CONFIG = {
                 cols: 2,
                 rows: 3,
                 items: {},
-                class: ['bg3-combat-container']
+                class: ['bg3-combat-container'],
                 // size: 1.5,
                 // locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
             }
@@ -569,7 +564,7 @@ export function registerSettings() {
         onChange: () => {
             // Refresh UI if it exists
             if (ui.BG3HOTBAR.components.portrait) {
-                ui.BG3HOTBAR.components.portrait.render();
+                ui.BG3HOTBAR.components.portrait._renderInner();
             }
         }
     });
@@ -715,7 +710,7 @@ export function registerSettings() {
         default: CONFIG.EXTRAINFOS ?? [],
         onChange: () => {
             if (ui.BG3HOTBAR.components.portrait) {
-                ui.BG3HOTBAR.components.portrait.render();
+                ui.BG3HOTBAR.components.portrait._renderInner();
             }
         },
     });
@@ -796,7 +791,7 @@ export function registerSettings() {
         default: true,
         onChange: () => {
             if (ui.BG3HOTBAR.components.restTurn) {
-                ui.BG3HOTBAR.components.restTurn.render();
+                ui.BG3HOTBAR.components.restTurn._renderInner();
             }
         }
     });
@@ -1002,4 +997,12 @@ export function registerHandlebars() {
             "%": lvalue % rvalue
         }[operator];
     })
+
+    /* Handlebars.registerHelper('check', function(fn, options) {
+        // console.log(v1)
+        if(fn()) {
+          return options.fn(this);
+        }
+        return options.inverse(this);
+    }); */
 }

@@ -70,8 +70,8 @@ export class DragBar extends BG3Component {
           ui.BG3HOTBAR.components.hotbar[this.index + 1].data.cols = newRightCols;
           
           // Render both containers with new column counts
-          ui.BG3HOTBAR.components.hotbar[this.index].render();
-          ui.BG3HOTBAR.components.hotbar[this.index + 1].render();
+          ui.BG3HOTBAR.components.hotbar[this.index]._renderInner();
+          ui.BG3HOTBAR.components.hotbar[this.index + 1]._renderInner();
           
           // Save the changes
           ui.BG3HOTBAR.manager.persist();

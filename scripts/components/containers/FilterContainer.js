@@ -121,8 +121,8 @@ export class FilterContainer extends BG3Component {
         for(let i=0; i<this.components.length; i++) if(this.components[i] !== current) this.components[i].setState(true);
     }
 
-    async render() {
-        const html = await super.render();
+    async _renderInner() {
+        await super._renderInner();
         this.filterData.forEach(async b => {
             const filterBtn = new FilterButton(b);
             filterBtn._parent = this;
@@ -130,8 +130,5 @@ export class FilterContainer extends BG3Component {
             await filterBtn.render();
             this.element.appendChild(filterBtn.element);
         })
-
-        
-        return this.element;
     }
 }

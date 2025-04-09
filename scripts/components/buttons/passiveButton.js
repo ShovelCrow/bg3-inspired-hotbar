@@ -20,9 +20,8 @@ export class PassiveButton extends BG3Component {
         });
     }
 
-    async render() {
-        const html = await super.render();
+    async _renderInner() {
+        await super._renderInner();
         this.element.dataset.uuid = this.data.item.uuid;
-        return this.element;
     }
 }

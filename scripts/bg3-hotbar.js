@@ -4,6 +4,7 @@ import { HotbarContainer } from './components/containers/HotbarContainer.js';
 import { PortraitContainer } from './components/containers/PortraitContainer.js';
 import { RestTurnContainer } from './components/containers/RestTurnContainer.js';
 import { WeaponContainer } from './components/containers/WeaponContainer.js';
+import { DragDropManager } from './managers/DragDropManager.js';
 import { HotbarManager } from './managers/HotbarManager.js';
 import { CONFIG } from './utils/config.js';
 
@@ -12,6 +13,7 @@ export class BG3Hotbar extends Application {
         super();
 
         this._manager = null;
+        this.dragDropManager = null;
         this.combat = [];
         this.components = {
             hotbar: []
@@ -52,6 +54,7 @@ export class BG3Hotbar extends Application {
 
         // Initialize the hotbar manager
         this.manager = new HotbarManager();
+        this.dragDropManager = new DragDropManager();
         console.log(this.manager);
         
         // Apply macrobar collapse setting immediately if it's enabled
@@ -305,23 +308,7 @@ export class BG3Hotbar extends Application {
         html.appendChild(this.components.container.element);
         this.components.container._parent = this;
         html.appendChild(this.components.restTurn.element);
-
-        /* // const portraitContainer = new PortraitContainer();
-        portraitContainer.render();
-        html.appendChild(portraitContainer.element);
-
-        // const weaponContainer = new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat});
-        weaponContainer.render();
-        html.appendChild(weaponContainer.element);
         
-        const container = new HotbarContainer(this.manager.containers.hotbar);
-        container._parent = this;
-        await container.render();
-        html.appendChild(container.element);
-        
-        // const restContainer = new RestTurnContainer();
-        restContainer.render();
-        html.appendChild(restContainer.element); */
         this.combat.push(this.components.restTurn);
 
         const promises = [];

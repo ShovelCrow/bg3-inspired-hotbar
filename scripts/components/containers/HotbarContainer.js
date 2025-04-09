@@ -20,8 +20,8 @@ export class HotbarContainer extends BG3Component {
 
     }
 
-    async render() {
-        const html = await super.render();
+    async _renderInner() {
+        await super._renderInner();
         this.components = {hotbar:[]};
         const passiveContainer = new PassiveContainer();
         passiveContainer.render();
@@ -52,7 +52,5 @@ export class HotbarContainer extends BG3Component {
         const controls = new ControlContainer();
         controls.render();
         this.element.appendChild(controls.element);
-
-        return this.element;
     }
 }

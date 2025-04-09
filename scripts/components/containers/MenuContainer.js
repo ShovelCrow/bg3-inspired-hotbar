@@ -1,9 +1,10 @@
 import { BG3Component } from "../component.js";
 
 export class MenuContainer extends BG3Component {
-    constructor(data, parent) {
+    constructor(data, parent, closeParent) {
         super(data);
         this._parent = parent;
+        this.closeParent = closeParent;
         this._setupClickOutside();
     }
 
@@ -15,21 +16,40 @@ export class MenuContainer extends BG3Component {
         return $(this.element).hasClass('hidden') !== true;
     }
 
+    get parentElement() {
+        return this._parent?.element ?? this._parent;
+    }
+
     async getData() {
         return {buttons: this.data.buttons};
     }
     
     async _registerEvents() {
-        this._parent.addEventListener(this.data.event, (event) => {
+        this.parentElement.addEventListener(this.data.event, (event) => {
             event.preventDefault();
             event.stopPropagation();
+            if(this._parent.locked) return;
+            if(this.data.verify !== undefined && this.data.verify()) return;
+            if(this.data.position === 'mouse') {
+                this.element.style.top = `${event.offsetY}px`;
+                this.element.style.left = `${event.offsetX}px`;
+            }
             this.setVisibility();
+            if(this.data.position === 'target') {
+                const target = event.target;
+                this.element.style.top = `${target.offsetTop}px`;
+                this.element.style.left = `${target.offsetLeft + target.offsetWidth}px`;
+            }
         });
 
         Object.entries(this.data.buttons).forEach(([k,b]) => {
             if(b.click) {
                 const btn = this.element.querySelector(`[data-key="${k}"]`);
-                if(btn) btn.addEventListener('click', b.click);
+                if(btn) btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return b.click()
+                });
             }
         })
     }
@@ -52,17 +72,17 @@ export class MenuContainer extends BG3Component {
             
             // Check if the click is outside both the ability card and the ability button
             const isClickMenu = this.element.contains(e.target);
-            const isClickOnButton = this._parent.contains(e.target);
+            const isClickOnButton = this.closeParent === true ? false : this.parentElement.contains(e.target);
             
             if (!isClickMenu && !isClickOnButton) this.setVisibility();
         });
     }
 
-    async render() {
-        const html = await super.render();
+    async _renderInner() {
+        await super._renderInner();
         this.element.dataset.menuPosition = this.data.position;
         if(this.data.name) this.element.setAttribute('name', this.data.name);
-        this._parent.appendChild(this.element);
+        this.parentElement.appendChild(this.element);
         Object.entries(this.data.buttons).forEach(([k, b]) => {
             if(b?.subMenu?.length) {
                 b.subMenu.forEach(sb => {
@@ -72,6 +92,5 @@ export class MenuContainer extends BG3Component {
             }
         });
         this.element.classList.add('hidden');
-        return this.element;
     }
 }

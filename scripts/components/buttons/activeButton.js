@@ -49,7 +49,7 @@ export class ActiveButton extends BG3Component {
             setTimeout(() => {
             wrapper._isUpdatingTooltip = false;
             }, tooltipDelay + 50); // Add 50ms buffer to the delay */
-            this.render();
+            this._renderInner();
         });
         
         this.element.addEventListener("contextmenu", async (e) => {
@@ -74,10 +74,9 @@ export class ActiveButton extends BG3Component {
         });
     }
 
-    async render() {
-        const html = await super.render();
+    async _renderInner() {
+        await super._renderInner();
         this.element.dataset.uuid = this.data.item.uuid;
         this.element.classList.toggle('disabled', this.data.item.disabled);
-        return this.element;
     }
 }

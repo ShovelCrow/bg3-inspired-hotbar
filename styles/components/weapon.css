@@ -16,6 +16,7 @@
     /* height: 86px; */
     width: calc(2*(var(--bg3-weapon-cell-size) + 1px));
     margin-right: 5px;
+    z-index: 100;
 }
 
 #bg3-hotbar-container .bg3-weapon-set, #bg3-combat-container {

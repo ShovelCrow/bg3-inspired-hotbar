@@ -244,7 +244,7 @@ export class PortraitContainer extends BG3Component {
     async updateImagePreference() {
         this.useTokenImage = !this.useTokenImage;
         await this.actor.setFlag(CONFIG.MODULE_NAME, "useTokenImage", this.useTokenImage);
-        this.render();
+        this._renderInner();
     }
 
     setImgBGColor() {
@@ -274,15 +274,15 @@ export class PortraitContainer extends BG3Component {
 
     getPortraitMenu() {
         return {
-            position: 'center',
+            position: 'mouse',
             event: 'contextmenu',
             name: 'baseMenu',
             buttons: {
                 token: {
-                    label: 'Use Token Image', icon: 'fas fa-chess-pawn', special: this.useTokenImage ? '<i class="fas fa-check"></i>' : '', click: !this.useTokenImage ? this.updateImagePreference.bind(this) : null
+                    label: 'Use Token Image', icon: 'fas fa-chess-pawn', custom: this.useTokenImage ? '<i class="fas fa-check"></i>' : '', click: !this.useTokenImage ? this.updateImagePreference.bind(this) : null
                 },
                 portrait: {
-                    label: 'Use Character Portrait', icon: 'fas fa-user', special: !this.useTokenImage ? '<i class="fas fa-check"></i>' : '', click: this.useTokenImage ? this.updateImagePreference.bind(this) : null
+                    label: 'Use Character Portrait', icon: 'fas fa-user', custom: !this.useTokenImage ? '<i class="fas fa-check"></i>' : '', click: this.useTokenImage ? this.updateImagePreference.bind(this) : null
                 }
             }
         }
@@ -299,9 +299,9 @@ export class PortraitContainer extends BG3Component {
         this.toggleExtraInfos();
     }
     
-    async render() {
+    async _renderInner() {
         this.useTokenImage = await this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;
-        const html = await super.render();
+        await super._renderInner();
         this.applySettings();
         const deathSavesContainer = new DeathSavesContainer();
         deathSavesContainer.render();
@@ -310,6 +310,5 @@ export class PortraitContainer extends BG3Component {
         this.abilityMenu.render();
         this.portraitMenu = new MenuContainer(this.getPortraitMenu(), this.element);
         this.portraitMenu.render();
-        return this.element;
     }
 }

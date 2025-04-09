@@ -26,9 +26,13 @@ export class BG3Component {
         return {};
     }
 
-    get locked() {
+    /* get locked() {
         return this.locked ?? false;
     }
+
+    set locked(value) {
+        // this.locked = value;
+    } */
 
     get visible() {
         return true;
