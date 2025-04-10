@@ -17,12 +17,11 @@ export class PassiveContainer extends BG3Component {
 
     get passivesList() {
         if(!ui.BG3HOTBAR.manager.token && !ui.BG3HOTBAR.manager.actor) return null;
-        const actor = ui.BG3HOTBAR.manager.actor;
 
-        const availablePassives = actor.items.filter(item => 
+        const availablePassives = this.actor.items.filter(item => 
             item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive")
         );
-        const saved = actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
+        const saved = this.actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
         let featuresToShow = [];
         if (this.selectedPassives) {
             featuresToShow = availablePassives.filter(item => this.selectedPassives.has(item.uuid));
@@ -31,8 +30,7 @@ export class PassiveContainer extends BG3Component {
     }
 
     get selectedPassives() {
-        if(!ui.BG3HOTBAR.manager.token && !ui.BG3HOTBAR.manager.actor) return null;
-        const saved = ui.BG3HOTBAR.manager.actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
+        const saved = this.actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
         if (saved && Array.isArray(saved)) return new Set(saved);
         return;
     }

@@ -292,11 +292,6 @@ export class GridCell extends BG3Component {
                     this.element.dataset.level = itemData.system.level;
                 }
                 if(itemData.type === 'feat') this.element.dataset.featType = itemData.system?.type?.value || 'default';
-                if(itemData.uuid) {
-                    this.element.dataset.tooltip = `<section class="loading" data-uuid="${itemData.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
-                    this.element.dataset.tooltipClass = "dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip";
-                    this.element.dataset.tooltipDirection="UP";
-                }
             }
         }
     }

@@ -98,7 +98,10 @@ export class BG3Component {
                     this.element.dataset.tooltipDirection = this.dataTooltip.direction ?? 'UP';
                     break;   
                 case 'advanced':
-                    if(this.data?.uuid || this.data?.item?.uuid) {
+                    const uuid = this.data?.uuid ?? this.data?.item?.uuid;
+                    if(uuid) {
+                        const isActivity = uuid.includes('.Activity.');
+                        if(isActivity) break;
                         this.element.dataset.tooltip = `<section class="loading" data-uuid="${this.data?.uuid ?? this.data?.item?.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
                         this.element.dataset.tooltipClass = "dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip";
                         this.element.dataset.tooltipDirection="UP";

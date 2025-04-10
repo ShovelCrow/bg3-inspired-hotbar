@@ -13,6 +13,14 @@ export class HotbarManager {
         this._initializeContainers();
     }
 
+    get token() {
+        return canvas?.tokens?.get(this.currentTokenId) ?? null;
+    }
+
+    get actor() {
+        return this.token?.actor ?? null;
+    }
+
     _initializeContainers() {
         Object.entries(CONFIG.CONTAINERSDATA).forEach(([index, data]) => {
             this.containers[index] = [];

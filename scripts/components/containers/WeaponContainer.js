@@ -16,7 +16,7 @@ export class WeaponContainer extends BG3Component {
     }
 
     get activeSet() {
-        return ui.BG3HOTBAR.manager.actor.getFlag(CONFIG.MODULE_NAME, 'activeSet') ?? 0;
+        return this.actor.getFlag(CONFIG.MODULE_NAME, 'activeSet') ?? 0;
     }
 
     set activeSet(index) {
