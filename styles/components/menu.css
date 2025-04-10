@@ -29,6 +29,18 @@
   top: 0;
 }
 
+#bg3-hotbar-container .bg3-menu-container[data-menu-position="topright2"] {
+  left: 100%;
+  /* margin-left: 10px; */
+  bottom: 100%;
+}
+
+#bg3-hotbar-container .bg3-menu-container[data-menu-position="bottomright"] {
+  left: 100%;
+  margin-left: 10px;
+  bottom: 0;
+}
+
 #bg3-hotbar-container .bg3-menu-container[data-menu-position="topleft"] {
   right: 100%;
   margin-right: 10px;
@@ -63,7 +75,19 @@
   width: 100%;
   box-sizing: border-box;
   border-radius: 4px;
+  background: #333;
+  border-color: #cc3333;
 }
+
+#bg3-hotbar-container .menu-item:has(> .bg3-menu-container.hidden), #bg3-hotbar-container .menu-item:not(:has(> .bg3-menu-container)) {
+  background: #2a2a2a;
+  border-color: transparent;
+}
+
+/* #bg3-hotbar-container .menu-item.expanded {
+  background: #333;
+  border-color: #cc3333;
+} */
 
 #bg3-hotbar-container .menu-item:hover {
   background-color: #333;
@@ -144,7 +168,40 @@
   margin-left: 10px;
 }
 
+#bg3-hotbar-container .menu-item-checkbox {
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  color: #cc3333;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  border: 2px solid #cc3333;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
 
+#bg3-hotbar-container .menu-item.checked .menu-item-checkbox {
+  background: #cc3333;
+}
+
+#bg3-hotbar-container .menu-item .menu-item-checkbox i {
+  display: none;
+}
+
+#bg3-hotbar-container .menu-item.checked .menu-item-checkbox i {
+  display: inline-block;
+}
+
+#bg3-hotbar-container .menu-item-checkbox i {
+  color: #2a2a2a;
+  font-size: 10px;
+  opacity: 1;
+  position: relative;
+  z-index: 1;
+}
 
 /* ==========================================================================
    Settings Menu

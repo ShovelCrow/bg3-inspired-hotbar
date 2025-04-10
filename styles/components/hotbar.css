@@ -79,7 +79,7 @@
     justify-content: center;
     color: var(--bg3-hotbar-text-color);
     font-size: 0.8em;
-    overflow: hidden;
+    /* overflow: hidden; */
     position: relative;
     transition: all 0.2s ease;
     padding: 0;

@@ -4,8 +4,11 @@ import { HotbarContainer } from './components/containers/HotbarContainer.js';
 import { PortraitContainer } from './components/containers/PortraitContainer.js';
 import { RestTurnContainer } from './components/containers/RestTurnContainer.js';
 import { WeaponContainer } from './components/containers/WeaponContainer.js';
+import { AutoPopulateCreateToken } from './features/AutoPopulateCreateToken.js';
+import { ControlsManager } from './managers/ControlsManager.js';
 import { DragDropManager } from './managers/DragDropManager.js';
 import { HotbarManager } from './managers/HotbarManager.js';
+import { ItemUpdateManager } from './managers/ItemUpdateManager.js';
 import { CONFIG } from './utils/config.js';
 
 export class BG3Hotbar extends Application {
@@ -14,24 +17,31 @@ export class BG3Hotbar extends Application {
 
         this._manager = null;
         this.dragDropManager = null;
+        this.itemUpdateManager = null;
+        this.menuManager = null;
         this.combat = [];
-        this.components = {
-            hotbar: []
-        };
+        this.components = {};
         this.macroBarTimeout = null;
+        this.combatActionsArray = [];
         // this.enabled = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
 
         /** Hooks Event **/
         Hooks.on("createToken", this._onCreateToken.bind(this));
         Hooks.on("controlToken", this._onControlToken.bind(this));
-        // Hooks.on("deleteToken", this._onDeleteToken.bind(this));
+        Hooks.on("deleteToken", this._onDeleteToken.bind(this));
         Hooks.on("updateToken", this._onUpdateToken.bind(this));
         Hooks.on("updateActor", this._onUpdateActor.bind(this));
         // Hooks.on("deleteScene", this._onDeleteScene.bind(this));
         Hooks.on("updateCombat", this._onUpdateCombat.bind(this));
         Hooks.on("deleteCombat", this._onDeleteCombat.bind(this));
+        Hooks.on("createActiveEffect", this._onUpdateActive.bind(this));
+        Hooks.on("deleteActiveEffect", this._onUpdateActive.bind(this));
+        Hooks.on("updateActiveEffect", this._onUpdateActive.bind(this));
 
         this._init();
+
+        // Retrieve Common Combat Actions based
+        this.loadCombatActions();
     }
 
     static get defaultOptions() {
@@ -52,10 +62,12 @@ export class BG3Hotbar extends Application {
 
         this._applyTheme();
 
+        TooltipManager.TOOLTIP_ACTIVATION_MS = game.settings.get(CONFIG.MODULE_NAME, 'tooltipDelay');
+
         // Initialize the hotbar manager
         this.manager = new HotbarManager();
         this.dragDropManager = new DragDropManager();
-        console.log(this.manager);
+        this.itemUpdateManager = new ItemUpdateManager();
         
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
@@ -63,8 +75,10 @@ export class BG3Hotbar extends Application {
         this.updateUIScale();
     }
 
-    _onCreateToken(token) {
+    async _onCreateToken(token) {
+        if (!token?.actor) return;
 
+        await AutoPopulateCreateToken.populateUnlinkedToken(token);
     }
 
     _onControlToken(token, controlled) {
@@ -75,25 +89,62 @@ export class BG3Hotbar extends Application {
                 if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.generate(null);
             }, 100);
         } */
-        if (!controlled && !canvas.tokens.controlled.length) {
+        if (!controlled && !canvas.tokens.controlled.length && !ControlsManager.isSettingLocked('deselect')) {
             setTimeout(() => {
                 if (!canvas.tokens.controlled.length) this.generate(null);
             }, 100);
         }
         if (!controlled) return;
 
-        if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) this.generate(token);
+        if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) {
+            this.generate(token);
+            if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+        }
     }
 
     async _onUpdateToken(token, changes, options, userId) {
         if (!this.manager || game.user.id !== userId) return;
             
         // If this is our current token and actor-related data changed
-        if (token.id === this.manager.currentTokenId && 
-            (changes.actorId || changes.actorData || changes.actorLink)) {
-            await this.generate(token);
+        if (token.id === this.manager.currentTokenId && (changes.actorId || changes.actorData || changes.actorLink)) {
+            this.refresh();
         }
     }
+
+    async _onDeleteToken(tokenData, scene) {
+        if (!this.manager) return;
+
+        // const token = canvas.tokens.get(tokenData._id);
+        const isPlayerCharacter = tokenData?.actor?.hasPlayerOwner;
+        const isCurrentToken = tokenData._id === this.manager.currentTokenId;
+        const isLocked = ControlsManager.isSettingLocked('deselect');
+
+        // Only clean up data if:
+        // 1. It's an unlinked token, OR
+        // 2. It's the current token AND either:
+        //    - It's not a player character, OR
+        //    - It's not locked
+        if (!tokenData?.actorLink || (isCurrentToken && (!isPlayerCharacter || !isLocked))) {
+            await ui.BG3HOTBAR.manager.cleanupTokenData(tokenData._id);
+        }
+
+        // Handle UI cleanup based on token type and current status
+        if (isCurrentToken) {
+            // Only clear currentTokenId if it's not a locked player character
+            if (!isPlayerCharacter || !isLocked) {
+                await this.generate(null);
+            }
+        }
+    }
+
+    /** Hooks Update
+     ** activeContainer 
+     *  'createActiveEffect' / 'deleteActiveEffect' / 'updateActiveEffect' / 'UpdateActor' / 'UpdateToken'
+     *
+     ** portrait
+     *  'updateActor'
+     * 
+    **/
 
     async _onUpdateActor(actor, changes, options, userId) {
         if(!this.manager) return;
@@ -103,30 +154,42 @@ export class BG3Hotbar extends Application {
         if (game.user.id !== userId) return;
         
         // Check if this update affects our current token
-        if (this.actor?.id !== actor.id) return;
+        if (actor?.id !== this.manager.actor?.id) return;
         
         // Update UI components
-        if (this.manager.element?.[0]) {
-            this.generate(this.token);
-            /* // Update portrait card for any actor changes
-            if (this.manager.ui.portraitCard) {
-                this.manager.ui.portraitCard.update(actor);
+        if (this.element?.[0]) {
+            // this.generate(this.token);
+            // Update portrait card for any actor changes
+            if (this.components.portrait) {
+                // changes.system?.attributes?.hp?.value !== undefined
+                await this.components.portrait._renderInner();
             }
             
             // Update filter container for spell slot changes
-            if (changes.system?.spells && this.manager.ui.filterContainer) {
-                this.manager.ui.filterContainer.render();
+            if (changes.system?.spells && this.components.container.components.filterContainer) {
+                await this.components.container.components.filterContainer.render();
             }
             
             // Update passives container if items changed
-            if (changes.items && this.manager.ui.passivesContainer) {
-                await this.manager.ui.passivesContainer.update();
+            if (changes.items && this.components.container.components.passiveContainer) {
+                await this.components.container.components.passiveContainer.render();
             }
+            
+            // Update active container if items changed
+            // if (this.components.container.components.activeContainer) {
+            //     await this.components.container.components.activeContainer.render();
+            // }
             
             // Let ItemUpdateManager handle item changes
             if (changes.items || changes.system?.spells) {
-                await this.manager.itemManager.cleanupInvalidItems(actor);
-            } */
+                await this.itemManager.cleanupInvalidItems(actor);
+            }
+        }
+    }
+
+    async _onUpdateActive(effect) {
+        if (this.components.container.components.activeContainer) {
+            await this.components.container.components.activeContainer.render();
         }
     }
 
@@ -201,58 +264,23 @@ export class BG3Hotbar extends Application {
         }
         // element.style.setProperty('--bg3-scale-ui', scale);
         return scale;
-    }    
-
-    // Update methods that other components can call
-    updateOpacity() {
-        if(!this.element[0]) return;
-        const isFaded = this.element[0].classList.contains('faded');
-        this._updateFadeState(isFaded);
     }
     
-    _updateFadeState(shouldFade) {
-        // Clear any existing timeout
-        if (this._fadeTimeout) {
-            clearTimeout(this._fadeTimeout);
-            this._fadeTimeout = null;
-        }
-
-        // If opacity is locked and master lock is enabled, always use normal opacity
-        if (BG3Hotbar.controlsManager.isLockSettingEnabled('opacity') && 
-            BG3Hotbar.controlsManager.isMasterLockEnabled()) {
-            this.element.classList.remove('faded');
-            this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
-            return;
-        }
-
-        // If we shouldn't fade or mouse is over module
-        if (!shouldFade) {
-            this.element.classList.remove('faded');
-            this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity');
-            return;
-        }
-
-        // Set timeout to fade
-        const delay = game.settings.get(CONFIG.MODULE_NAME, 'fadeOutDelay') * 1000;
-        this._fadeTimeout = setTimeout(() => {
-            if (this.element?.isConnected) {
-            this.element.classList.add('faded');
-            this.element.style.opacity = game.settings.get(CONFIG.MODULE_NAME, 'fadedOpacity');
+    async loadCombatActions() {
+        if (!game.modules.get("chris-premades")?.active) return;
+        let pack = game.packs.get("chris-premades.CPRActions"),
+            promises = [];
+        Object.entries(CONFIG.COMBATACTIONDATA).forEach(([key, value]) => {
+            let macroID = pack.index.find(t =>  t.type == 'feat' && t.name === value.name)._id;
+            if(macroID) {
+                promises.push(new Promise(async (resolve, reject) => {
+                    let item = await pack.getDocument(macroID);
+                    if(item) this.combatActionsArray.push(item)
+                    resolve();
+                }))
             }
-        }, delay);
-    }
-
-    _initializeFadeOut() {
-        // Add mousemove listener to document
-        document.addEventListener('mousemove', this._handleMouseMove);
-        document.addEventListener('dragover', this._handleMouseMove);
-        
-        // Set initial state
-        this._updateFadeState(false);
-    }
-
-    updateFadeDelay() {
-      this._initializeFadeOut();
+        })
+        await Promise.all(promises).then((values) => {})
     }
 
     toggle(state) {
@@ -291,6 +319,10 @@ export class BG3Hotbar extends Application {
         html.dataset.position = game.settings.get(CONFIG.MODULE_NAME, 'uiPosition');
         html.style.setProperty('--position-padding', `${game.settings.get(CONFIG.MODULE_NAME, 'posPadding')}px`);
         html.style.setProperty('--position-bottom', `${game.settings.get(CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
+        html.style.setProperty('--bg3-normal-opacity', game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity'));
+        html.style.setProperty('--bg3-faded-opacity', game.settings.get(CONFIG.MODULE_NAME, 'fadedOpacity'));
+        html.style.setProperty('--bg3-faded-delay', `${game.settings.get(CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
+        // html.style.setProperty('--position-bottom', `${game.settings.get(CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
         html.dataset.itemName = game.settings.get(CONFIG.MODULE_NAME, 'showItemNames');
         html.dataset.itemUse = game.settings.get(CONFIG.MODULE_NAME, 'showItemUses');
         html.dataset.cellHighlight = game.settings.get(CONFIG.MODULE_NAME, 'highlightStyle');
@@ -299,8 +331,7 @@ export class BG3Hotbar extends Application {
             portrait: new PortraitContainer(),
             weapon: new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat}),
             container: new HotbarContainer(this.manager.containers.hotbar),
-            restTurn: new RestTurnContainer(),
-            hotbar: []
+            restTurn: new RestTurnContainer()
         }
 
         html.appendChild(this.components.portrait.element);

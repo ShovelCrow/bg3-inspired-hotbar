@@ -7,23 +7,17 @@ export class HotbarManager {
 
         this.containers = {};
         this.currentTokenId = null;
+
+        this.globalMenu = null;
         
         this._initializeContainers();
-    }
-
-    get token() {
-        return canvas?.tokens?.get(this.currentTokenId) ?? null;
-    }
-
-    get actor() {
-        return this.token?.actor ?? null;
     }
 
     _initializeContainers() {
         Object.entries(CONFIG.CONTAINERSDATA).forEach(([index, data]) => {
             this.containers[index] = [];
             for(let i = 0; i < data.count; i++) {
-                this.containers[index].push({...data.config, ...{id: `${index}-container`, index: i}});
+                this.containers[index].push({...foundry.utils.deepClone(data.config), ...{id: `${index}-container`, index: i}});
             }
         })
     }
@@ -31,12 +25,23 @@ export class HotbarManager {
     convertOldFormat(savedData) {
         return [foundry.utils.deepClone(savedData.containers), foundry.utils.deepClone(savedData.weaponsContainers), foundry.utils.deepClone(savedData.combatContainer)];
     }
+    
+    // Clean up specific token data
+    async cleanupTokenData(tokenId) {
+        const token = canvas.tokens.get(tokenId);
+        if (!token) return;
+
+        // For unlinked tokens, also remove the flag data
+        if (token.actor && !token.actorLink) {
+            await token.actor.unsetFlag(CONFIG.MODULE_NAME, CONFIG.CONTAINERS_NAME);
+        }
+    }
 
     async _loadTokenData() {
         if(!this.token || !this.actor) return;
         const containersData = this.actor.getFlag(CONFIG.MODULE_NAME, CONFIG.CONTAINERS_NAME),
             savedData = this.actor.getFlag(CONFIG.MODULE_NAME, CONFIG.FLAG_NAME);
-
+        
         if(containersData) this.containers = foundry.utils.deepClone(containersData);
         else if(savedData) {
             let hotbarContainersData, weaponsContainersData, combatContainerData;

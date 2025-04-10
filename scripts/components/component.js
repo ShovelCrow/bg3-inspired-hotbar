@@ -1,10 +1,10 @@
 import { CONFIG } from '../utils/config.js';
 
 export class BG3Component {
-    constructor(data) {
+    constructor(data, parent) {
         this.data = data;
         this.components = [];
-        this._parent = null;
+        this._parent = parent ?? null;
         this.element = document.createElement(this.elementType);
         this.element.classList.add(...this.classes);
         // this.element = document.createElement('template');
@@ -20,6 +20,14 @@ export class BG3Component {
 
     get elementType() {
         return this.data?.type ?? "div";
+    }
+    
+    get token() {
+        return ui.BG3HOTBAR.manager.token;
+    }
+    
+    get actor() {
+        return ui.BG3HOTBAR.manager.actor;
     }
 
     async getData() {
@@ -90,7 +98,11 @@ export class BG3Component {
                     this.element.dataset.tooltipDirection = this.dataTooltip.direction ?? 'UP';
                     break;   
                 case 'advanced':
-                    this.element.dataset.title = this.dataTooltip.content;
+                    if(this.data?.uuid || this.data?.item?.uuid) {
+                        this.element.dataset.tooltip = `<section class="loading" data-uuid="${this.data?.uuid ?? this.data?.item?.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
+                        this.element.dataset.tooltipClass = "dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip";
+                        this.element.dataset.tooltipDirection="UP";
+                    }
                     break;        
                 default:
                     break;
@@ -98,15 +110,12 @@ export class BG3Component {
         } else return;
     }
 
+    async update() {}
+
     async render() {
         await this._renderInner();
         await this._registerEvents();
         await this.setTooltip();
-        // await this.activateListeners(this.element);
-        // if (this.hasTooltip) await this.activateTooltipListeners();
-        // const parentClass = Object.getPrototypeOf(this.constructor);
-        // Hooks.callAll(`render${parentClass.name}ArgonComponent`, this, this.element, this.actor);
-        // Hooks.callAll(`render${this.constructor.name}ArgonComponent`, this, this.element, this.actor);
         return this.element;
     }
 
@@ -116,8 +125,6 @@ export class BG3Component {
         const tempElement = document.createElement("div");
         tempElement.innerHTML = rendered;
         this.element.innerHTML = tempElement.firstElementChild.innerHTML;
-        // this.element.innerHTML = rendered;
-        // this.setColorScheme();
         this.setVisibility();
     }
 }

@@ -38,12 +38,13 @@ export class PassiveContainer extends BG3Component {
     }
 
     async _registerEvents() {
-        this.element.addEventListener('contextmenu', this._showPassivesDialog.bind(this));
+        this.element.onmouseup = this._showPassivesDialog.bind(this);
     }
 
     async _showPassivesDialog(event) {
-        console.log('_showPassivesDialog')
-        event.preventDefault();        
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.button !== 2) return;
         let actor = ui.BG3HOTBAR.manager.actor;
                 
         // Get all available passive features from the actor
@@ -78,7 +79,7 @@ export class PassiveContainer extends BG3Component {
                         });
                         // Update our selection and persist it
                         await ui.BG3HOTBAR.manager.actor.setFlag(CONFIG.MODULE_NAME, "selectedPassives", Array.from(newSelection));
-                        this._renderInner();
+                        this.render();
                     }
                 },
                 cancel: {
@@ -108,16 +109,15 @@ export class PassiveContainer extends BG3Component {
         }, 100);
     }
 
-    async _renderInner() {
-        await super._renderInner();
+    async render() {
+        await super.render();
         const passivesList = this.passivesList;
         if(passivesList.length === 0) this.element.style.visibility = 'hidden';
-        // console.log(passivesList)
-        for(let i = 0; i < passivesList.length; i++) {
-            const btn = new PassiveButton({item: passivesList[i]});
-            btn._parent = this;
-            btn.render();
-            this.element.appendChild(btn.element);
-        }
+
+        const passives = passivesList.map((passive) => new PassiveButton({item: passive}, this));
+        for(const passive of passives) this.element.appendChild(passive.element);
+        await Promise.all(passives.map((passive) => passive.render()));
+
+        return this.element;
     }
 }

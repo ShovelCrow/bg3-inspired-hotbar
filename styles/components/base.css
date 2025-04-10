@@ -97,12 +97,14 @@
     padding: 0;
     /* width: 100%; */
     padding-bottom: var(--position-bottom, 10px);
-    transition: transform .3s ease-in-out, opacity .3s ease-in-out;
+    transition: transform .3s ease-in-out, opacity .3s ease-in-out var(--bg3-faded-delay);
     /* --bg3-translate-x: 0%; */
     /* transform: scale(var(--bg3-scale-ui, 1)); */
     width: fit-content;
     left: 0;
     right: 0;
+
+    opacity: var(--bg3-faded-opacity);
 }
 
 #bg3-hotbar-container[data-position="center"] {
@@ -128,7 +130,7 @@
     display: none !important;
 }
 
-aside#tooltip .notes {
+aside[role="tooltip"] .notes {
     flex: 0 0 100%;
     font-size: var(--font-size-12);
     line-height: var(--line-height-16);
@@ -136,7 +138,20 @@ aside#tooltip .notes {
     margin: 3px 0;
 }
   
-aside#tooltip .custom-tooltip i {
+aside[role="tooltip"] .custom-tooltip i {
     margin: 0 1em;
     color: var(--data-color);
+}
+
+#bg3-hotbar-container:hover .bg3-filter-subcontainer {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Opacity Settings Handler
+   ========================================================================== */
+   
+#bg3-hotbar-container:hover {
+    transition-delay: 0s;
+    opacity: var(--bg3-normal-opacity);
 }

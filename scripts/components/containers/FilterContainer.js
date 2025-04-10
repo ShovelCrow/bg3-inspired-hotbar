@@ -98,18 +98,6 @@ export class FilterContainer extends BG3Component {
         const romanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
         return romanNumerals[num - 1] || num.toString();
     }
-    
-    async _registerEvents() {
-        ui.BG3HOTBAR.element[0].addEventListener("mouseenter", () => {
-            this.element.style.opacity = "1";
-        });
-    
-        ui.BG3HOTBAR.element[0].addEventListener("mouseleave", (event) => {
-            if (!this.element.contains(event.relatedTarget)) {
-                this.element.style.opacity = "0";
-            }
-        });
-    }
 
     resetUsedActions() {
         ui.BG3HOTBAR.element[0].querySelectorAll('.used').forEach(c => {
@@ -121,14 +109,13 @@ export class FilterContainer extends BG3Component {
         for(let i=0; i<this.components.length; i++) if(this.components[i] !== current) this.components[i].setState(true);
     }
 
-    async _renderInner() {
-        await super._renderInner();
-        this.filterData.forEach(async b => {
-            const filterBtn = new FilterButton(b);
-            filterBtn._parent = this;
-            this.components.push(filterBtn);
-            await filterBtn.render();
-            this.element.appendChild(filterBtn.element);
-        })
+    async render() {
+        await super.render();
+        
+        this.components = this.filterData.map((filter) => new FilterButton(filter, this));
+        for(const filter of this.components) this.element.appendChild(filter.element);
+        await Promise.all(this.components.map((filter) => filter.render()));
+
+        return this.element;
     }
 }

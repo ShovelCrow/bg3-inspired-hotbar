@@ -10,10 +10,6 @@ export class DeathSavesContainer extends BG3Component {
         return ["bg3-death-saves-container"]
     }
 
-    get actor() {
-        return ui.BG3HOTBAR.manager.actor;
-    }
-
     async getData() {
         return {success: this.actor.system.attributes.death.success || 0, failure: this.actor.system.attributes.death.failure || 0};
     }

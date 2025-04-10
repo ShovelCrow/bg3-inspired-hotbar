@@ -2,8 +2,8 @@ import { BG3Component } from "../component.js";
 
 
 export class ActiveButton extends BG3Component {
-    constructor(data) {
-        super(data);
+    constructor(data, parent) {
+        super(data, parent);
     }
 
     get classes() {
@@ -12,6 +12,10 @@ export class ActiveButton extends BG3Component {
 
     async getData() {
         return this.data.item;
+    }
+
+    get dataTooltip() {
+        return {type: 'advanced'};
     }
 
     async _registerEvents() {
@@ -29,9 +33,7 @@ export class ActiveButton extends BG3Component {
             // wrapper._isUpdatingTooltip = true;
             
             // Update the effect's disabled status
-            console.log(this, this.data.item.disabled)
             await this.data.item.update({ disabled: !this.data.item.disabled });
-            console.log(this, this.data.item.disabled)
             
             /* // If there was a tooltip and it's not being dragged, update its content
             if (currentTooltip && !currentTooltip._isDragging) {
@@ -49,7 +51,7 @@ export class ActiveButton extends BG3Component {
             setTimeout(() => {
             wrapper._isUpdatingTooltip = false;
             }, tooltipDelay + 50); // Add 50ms buffer to the delay */
-            this._renderInner();
+            this.update();
         });
         
         this.element.addEventListener("contextmenu", async (e) => {
@@ -59,9 +61,12 @@ export class ActiveButton extends BG3Component {
               content: `<p>Are you sure you want to delete the effect "${this.data.item.label}"?</p>`,
               buttons: {
                 delete: {
-                  icon: '<i class="fas fa-trash"></i>',
-                  label: "Delete",
-                  callback: () => this.data.item.delete()
+                    icon: '<i class="fas fa-trash"></i>',
+                    label: "Delete",
+                    callback: async () => {
+                        await this.data.item.delete();
+                        this._parent.render();
+                    }
                 },
                 cancel: {
                   icon: '<i class="fas fa-times"></i>',
@@ -74,9 +79,15 @@ export class ActiveButton extends BG3Component {
         });
     }
 
-    async _renderInner() {
-        await super._renderInner();
-        this.element.dataset.uuid = this.data.item.uuid;
+    async update() {
+        await super.update();
         this.element.classList.toggle('disabled', this.data.item.disabled);
+    }
+
+    async render() {
+        await super.render();
+        this.element.dataset.uuid = this.data.item.uuid;
+        await this.update();
+        return this.element;
     }
 }

@@ -1,27 +1,21 @@
-- Hooks
-    - updateActor
-    - updateEffect
-    - updateItem
-- Hotbar controls lock & settings
-- Auto-populating
-- Enriched Tooltip
-
-- Fade methods + settings
 - DragDrop - Activity activation
+- Check DeathSavesContainer stabilizing feature
 
 /** OPTIMIZE **/
-- Check DeathSavesContainer stabilizing feature
 - Update UI rendering (promise)
+    - renderInner => render
+- SwitchSet: check for not re equipping already equipped + Optimize
+
+- Tooltip:
+    - Settings like damage range
+    - CSS
+
 
 - Implement other branches
 
 
 /** BUGS **/
-- Combat switch token on turn flicking
-- Portrait after/before - pointer-events
-- Module Settings
 - Multiselect
-
 
 
 
@@ -44,4 +38,20 @@
 - Drag & Drop cells
 - Cell contextmenu
 - Auto-equip switch set
+- Auto-populating
+- Hotbar controls lock & settings
+- Opacity / Fade methods + settings
+- Enriched Tooltip
+- ItemUpdateManager
+- Hooks
 
+/** OPTIMIZE **/
+- AbilityContainer ?
+- get Actor & get Token to component.js
+
+/** BUGS **/
+- Portrait after/before - pointer-events
+- Combat switch token on turn flicking
+- Module Settings
+- Tooltip when on child show
+- Cell contextmenu without item

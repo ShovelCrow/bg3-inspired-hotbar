@@ -10,6 +10,10 @@ export class PassiveButton extends BG3Component {
         return ['passive-feature-icon'];
     } 
 
+    get dataTooltip() {
+        return {type: 'advanced'};
+    }
+
     async getData() {
         return this.data.item;
     }
@@ -20,8 +24,9 @@ export class PassiveButton extends BG3Component {
         });
     }
 
-    async _renderInner() {
-        await super._renderInner();
+    async render() {
+        await super.render();
         this.element.dataset.uuid = this.data.item.uuid;
+        return this.element;
     }
 }

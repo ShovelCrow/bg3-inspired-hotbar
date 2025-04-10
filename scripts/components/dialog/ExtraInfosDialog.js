@@ -10,7 +10,7 @@ export class PortraitSettingDialog extends FormApplication {
             ...super.defaultOptions,
             title: 'Portrait settings',
             id: "bg3-inspired-hotbar-portrait-settings",
-            template: `modules/bg3-inspired-hotbar/templates/dialog/portrait-dialog.hbs`,
+            template: `modules/${CONFIG.MODULE_NAME}/templates/dialog/portrait-dialog.hbs`,
             height: "auto",
             submitOnClose: false
         };

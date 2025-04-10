@@ -1,6 +1,7 @@
 // Configuration constants for the BG3 Hotbar
 
 // import { AutoPopulateDefaults } from "../components/dialog/AutoPopulateCreateToken.js";
+import { AutoPopulateDefaults } from "../features/AutoPopulateCreateToken.js";
 import { ExtraInfosDialog, PortraitSettingDialog } from "../components/dialog/ExtraInfosDialog.js";
 
 export const CONFIG = {
@@ -220,7 +221,7 @@ export const CONFIG = {
         "0-0": {
             "uuid": null,
             "name": "Grapple",
-            "icon": "icons/magic/control/buff-strength-muscle-damage-red.webp",
+            "img": "icons/magic/control/buff-strength-muscle-damage-red.webp",
             "description": "<p>When you want to grab a creature or wrestle with it, you can use the Attack action to make a special melee attack, a grapple. If you're able to make multiple attacks with the Attack action, this attack replaces one of them. The target of your grapple must be no more than one size larger than you, and it must be within your reach.</p><p>Using at least one free hand, you try to seize the target by making a grapple check, a Strength (Athletics) check contested by the target's Strength (Athletics) or Dexterity (Acrobatics) check (the target chooses the ability to use). You succeed automatically if the target is incapacitated. If you succeed, you subject the target to the grappled condition (see the appendix). The condition specifies the things that end it, and you can release the target whenever you like (no action required).</p>",
             "type": "feat",
             "activation": {
@@ -233,7 +234,7 @@ export const CONFIG = {
         "1-0": {
             "uuid": null,
             "name": "Shove",
-            "icon": "icons/skills/melee/unarmed-punch-fist-white.webp",
+            "img": "icons/skills/melee/unarmed-punch-fist-white.webp",
             "description": "<p>When you want to grab a creature or wrestle with it, you can use the Attack action to make a special melee attack, a grapple. If you're able to make multiple attacks with the Attack action, this attack replaces one of them.</p><p>The target of your grapple must be no more than one size larger than you and must be within your reach. Using at least one free hand, you try to seize the target by making a grapple check instead of an attack roll: a Strength (Athletics) check contested by the target's Strength (Athletics) or Dexterity (Acrobatics) check (the target chooses the ability to use). You succeed automatically if the target is incapacitated. If you succeed, you subject the target to the grappled condition. The condition specifies the things that end it, and you can release the target whenever you like (no action required).</p><p>Escaping a Grapple. A grappled creature can use its action to escape. To do so, it must succeed on a Strength (Athletics) or Dexterity (Acrobatics) check contested by your Strength (Athletics) check.</p><p>Moving a Grappled Creature. When you move, you can drag or carry the grappled creature with you, but your speed is halved, unless the creature is two or more sizes smaller than you.</p><h4 id=\"ShovingaCreature\">Shoving a Creature</h4><p>Using the Attack action, you can make a special melee attack to shove a creature, either to knock it prone or push it away from you. If you're able to make multiple attacks with the Attack action, this attack replaces one of them.</p><p>The target must be no more than one size larger than you and must be within your reach. Instead of making an attack roll, you make a Strength (Athletics) check contested by the target's Strength (Athletics) or Dexterity (Acrobatics) check (the target chooses the ability to use). You succeed automatically if the target is incapacitated. If you succeed, you either knock the target prone or push it 5 feet away from you.</p>",
             "type": "feat",
             "activation": {
@@ -246,7 +247,7 @@ export const CONFIG = {
         "1-2": {
             "uuid": null,
             "name": "Disengage",
-            "icon": "icons/skills/movement/feet-winged-boots-blue.webp",
+            "img": "icons/skills/movement/feet-winged-boots-blue.webp",
             "description": "<p>If you take the Disengage action, your movement doesn't provoke opportunity attacks for the rest of the turn.</p>",
             "type": "feat",
             "activation": {
@@ -259,7 +260,7 @@ export const CONFIG = {
         "0-2": {
             "uuid": null,
             "name": "Dodge",
-            "icon": "icons/equipment/shield/buckler-wooden-boss-lightning.webp",
+            "img": "icons/equipment/shield/buckler-wooden-boss-lightning.webp",
             "description": "<p>When you take the Dodge action, you focus entirely on avoiding attacks. Until the start of your next turn, any attack roll made against you has disadvantage if you can see the attacker, and you make Dexterity saving throws with advantage. You lose this benefit if you are incapacitated or if your speed drops to 0.</p>",
             "type": "feat",
             "activation": {
@@ -272,7 +273,7 @@ export const CONFIG = {
         "1-1": {
             "uuid": null,
             "name": "Dash",
-            "icon": "icons/skills/movement/figure-running-gray.webp",
+            "img": "icons/skills/movement/figure-running-gray.webp",
             "description": "<p>When you take the Dash action, you gain extra movement for the current turn. The increase equals your speed, after applying any modifiers. With a speed of 30 feet, for example, you can move up to 60 feet on your turn if you dash.</p><p>Any increase or decrease to your speed changes this additional movement by the same amount. If your speed of 30 feet is reduced to 15 feet, for instance, you can move up to 30 feet this turn if you dash.</p>",
             "type": "feat",
             "activation": {
@@ -285,7 +286,7 @@ export const CONFIG = {
         "0-1": {
             "uuid": null,
             "name": "Hide",
-            "icon": "icons/containers/barrels/barrel-open-brown-red.webp",
+            "img": "icons/containers/barrels/barrel-open-brown-red.webp",
             "description": "<p>When you take the Hide action, you make a Dexterity (Stealth) check in an attempt to hide, following the rules for hiding. If you succeed, you gain certain benefits.</p><p>Combatants often try to escape their foes' notice by hiding, casting the invisibility spell, or lurking in darkness.</p><p>When you attack a target that you can't see, you have disadvantage on the attack roll. This is true whether you're guessing the target's location or you're targeting a creature you can hear but not see. If the target isn't in the location you targeted, you automatically miss, but the DM typically just says that the attack missed, not whether you guessed the target's location correctly.</p><p>When a creature can't see you, you have advantage on attack rolls against it. If you are hidden--both unseen and unheard--when you make an attack, you give away your location when the attack hits or misses.</p>",
             "type": "feat",
             "activation": {
@@ -324,7 +325,6 @@ export function registerEarly() {
     });
 
     Hooks.on('getSceneControlButtons', (controls) => {
-        console.log(controls)
         const tokenTools = controls.find(c => c.name === "token");
         if (!tokenTools) return;
     
@@ -479,9 +479,7 @@ export function registerSettings() {
         },
         default: 1.0,
         onChange: value => {
-            // if (this.manager?.ui) {
-            //     this.manager.ui.updateOpacity();
-            // }
+            if(ui.BG3HOTBAR.element?.[0]) ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-normal-opacity', value);
         }
     });
 
@@ -498,9 +496,11 @@ export function registerSettings() {
         },
         default: 1,
         onChange: value => {
-            // if (this.manager?.ui) {
-            //     this.manager.ui.updateOpacity();
-            // }
+            if(ui.BG3HOTBAR.element?.[0]) {
+                if(value === 1) ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `0s`);
+                else ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${game.settings.get(CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
+                ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-opacity', value);
+            }
         }
     });
 
@@ -518,9 +518,7 @@ export function registerSettings() {
         default: 5,
         onChange: value => {
             // Update the UI fade delay when the setting changes
-            // if (this.manager?.ui) {
-            //     this.manager.ui.updateFadeDelay();
-            // }
+            if(ui.BG3HOTBAR.element?.[0] && game.settings.get(CONFIG.MODULE_NAME, 'fadedOpacity') !== 1) ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${value}s`);
         }
     });
   
@@ -825,7 +823,7 @@ export function registerSettings() {
         type: Boolean,
         default: true,
         onChange: value => {
-            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) this.manager.ui.combatContainer[0].locked = value;
+            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) ui.BG3HOTBAR.components.weapon.components.combat[0].locked = value;
         }
     });
 
@@ -844,8 +842,9 @@ export function registerSettings() {
         default: 500,
         onChange: value => {
             // Update the tooltip delay in the config
-            CONFIG.TOOLTIP_DELAY = value;
+            // CONFIG.TOOLTIP_DELAY = value;
             // Tooltip delay changed
+            TooltipManager.TOOLTIP_ACTIVATION_MS = value;
         }
     });
 
@@ -942,13 +941,13 @@ export function registerSettings() {
     });
 
     // Register the chip selector menu item
-    /* game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
+    game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
         name: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Name'),
         label: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Configure'),
         icon: 'fas fa-tags',
         type: AutoPopulateDefaults,
         restricted: true
-    }); */
+    });
 
     // Lock System Settings
     game.settings.register(CONFIG.MODULE_NAME, 'lockSettings', {
@@ -1005,4 +1004,50 @@ export function registerHandlebars() {
         }
         return options.inverse(this);
     }); */
+}
+
+/**
+ * Helper function to determine token linkage status
+ * @param {Actor} actor - The actor to check
+ * @param {string} tokenId - The token ID to check
+ * @returns {boolean} - Whether the token is considered linked
+ */
+export function isTokenLinked(actor, tokenId) {
+    // Get the token from the canvas
+    const token = canvas.tokens.get(tokenId);
+    
+    // If we have a token, check its document's actorLink property
+    if (token) {
+        return token.document.actorLink;
+    }
+    
+    // If no token found, assume it's linked if it's not a synthetic token actor
+    return !actor.isToken;
+}
+
+/**
+ * Helper function to determine if spell preparation should be enforced
+ * @param {Actor} actor - The actor to check
+ * @param {string} tokenId - The token ID to check
+ * @returns {boolean} - Whether spell preparation should be enforced
+ */
+export function shouldEnforceSpellPreparation(actor, tokenId) {
+    const isLinked = isTokenLinked(actor, tokenId);
+    
+    // Debug log to help track issues
+    console.debug("BG3 Inspired Hotbar | Spell preparation check:", {
+        actorId: actor.id,
+        actorName: actor.name,
+        tokenId: tokenId,
+        isLinked: isLinked,
+        setting: isLinked ? 'PC' : 'NPC'
+    });
+
+    // If linked token (including PCs) - use PC setting
+    if (isLinked) {
+        return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationPC');
+    }
+    
+    // If unlinked token - use NPC setting
+    return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC');
 }

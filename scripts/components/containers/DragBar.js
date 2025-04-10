@@ -1,8 +1,8 @@
 import { BG3Component } from "../component.js";
 
 export class DragBar extends BG3Component {
-    constructor(data) {
-        super(data);
+    constructor(data, parent) {
+        super(data, parent);
         
         // Track drag state
         this.isDragging = false;
@@ -42,7 +42,7 @@ export class DragBar extends BG3Component {
       // Only proceed if both containers would have at least 1 column
       if (newLeftCols >= 1 && newRightCols >= 1) {
         // Update the drag indicator position
-        const containerRect = ui.BG3HOTBAR.components.hotbar[this.index].element.getBoundingClientRect();
+        const containerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index].element.getBoundingClientRect();
         const containerBounds = this.element.getBoundingClientRect();
         const newX = containerRect.left - containerBounds.left + (newLeftCols * this.cellWidth);
         this.indicator.style.transform = `translateX(${deltaX}px)`;
@@ -66,12 +66,12 @@ export class DragBar extends BG3Component {
           const newRightCols = Math.max(1, this.startRightCols - deltaColsRounded);
           
           // Update both containers' column counts
-          ui.BG3HOTBAR.components.hotbar[this.index].data.cols = newLeftCols;
-          ui.BG3HOTBAR.components.hotbar[this.index + 1].data.cols = newRightCols;
+          ui.BG3HOTBAR.components.container.components.hotbar[this.index].data.cols = newLeftCols;
+          ui.BG3HOTBAR.components.container.components.hotbar[this.index + 1].data.cols = newRightCols;
           
           // Render both containers with new column counts
-          ui.BG3HOTBAR.components.hotbar[this.index]._renderInner();
-          ui.BG3HOTBAR.components.hotbar[this.index + 1]._renderInner();
+          ui.BG3HOTBAR.components.container.components.hotbar[this.index].render();
+          ui.BG3HOTBAR.components.container.components.hotbar[this.index + 1].render();
           
           // Save the changes
           ui.BG3HOTBAR.manager.persist();
@@ -97,12 +97,12 @@ export class DragBar extends BG3Component {
             // Initialize drag state
             this.isDragging = true;
             this.startX = e.clientX;
-            this.startLeftCols = ui.BG3HOTBAR.components.hotbar[this.index].data.cols;
-            this.startRightCols = ui.BG3HOTBAR.components.hotbar[this.index + 1].data.cols;
+            this.startLeftCols = ui.BG3HOTBAR.components.container.components.hotbar[this.index].data.cols;
+            this.startRightCols = ui.BG3HOTBAR.components.container.components.hotbar[this.index + 1].data.cols;
             this.totalCols = this.startLeftCols + this.startRightCols;
             
             // Get the cell width from the container
-            const containerRect = ui.BG3HOTBAR.components.hotbar[this.index].element.getBoundingClientRect();
+            const containerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index].element.getBoundingClientRect();
             this.cellWidth = containerRect.width / this.startLeftCols;
             
             // Add visual feedback classes

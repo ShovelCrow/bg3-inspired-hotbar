@@ -2,6 +2,7 @@ import { BaseButton } from "../buttons/BaseButton.js";
 import { BG3Component } from "../component.js";
 import { CONFIG } from "../../utils/config.js";
 import { MenuContainer } from "./MenuContainer.js";
+import { ControlsManager } from "../../managers/ControlsManager.js";
 
 export class ControlContainer extends BG3Component {
     constructor(data) {
@@ -22,9 +23,9 @@ export class ControlContainer extends BG3Component {
                 title: 'Add Row',
                 events: {
                     'click': () => {
-                        ui.BG3HOTBAR.components.hotbar.forEach(c => {
+                        ui.BG3HOTBAR.components.container.components.hotbar.forEach(c => {
                             c.data.rows++;
-                            c._renderInner();
+                            c.render();
                         });
                         ui.BG3HOTBAR.manager.persist();
                     }
@@ -38,10 +39,10 @@ export class ControlContainer extends BG3Component {
                 title: 'Remove Row',
                 events: {
                     'click': function() {
-                        if(ui.BG3HOTBAR.components.hotbar[0].data.rows > 1) {
-                            ui.BG3HOTBAR.components.hotbar.forEach(c => {
+                        if(ui.BG3HOTBAR.components.container.components.hotbar[0].data.rows > 1) {
+                            ui.BG3HOTBAR.components.container.components.hotbar.forEach(c => {
                                 c.data.rows--;
-                                c._renderInner();
+                                c.render();
                             });
                             ui.BG3HOTBAR.manager.persist();
                         }
@@ -51,12 +52,15 @@ export class ControlContainer extends BG3Component {
             {
                 type: 'div',
                 key: 'controlLock',
-                class: ["hotbar-control-button"], 
+                class: [...["hotbar-control-button"], ...(game.settings.get(CONFIG.MODULE_NAME, 'masterLockEnabled') ? ['locked'] : [])], 
                 icon: 'fa-unlock',
                 title: 'Lock hotbar settings<br>(Right-click for options)',
+                hasChildren: true,
                 events: {
-                    'click': function(e) {
-                        
+                    'click': (e) => {
+                        const settings = game.settings.get(CONFIG.MODULE_NAME, 'lockSettings');
+                        if(!Object.values(settings).filter(s => s === true).length) ui.notifications.warn("Please right-click the lock button to select which settings to lock.");
+                        else ControlsManager.updateMasterLock();
                     }
                 }
             },
@@ -66,6 +70,7 @@ export class ControlContainer extends BG3Component {
                 class: ["hotbar-control-button"], 
                 icon: 'fa-cog',
                 title: 'Settings',
+                hasChildren: true,
                 events: {
                     'click': function(e) {
                         
@@ -77,85 +82,149 @@ export class ControlContainer extends BG3Component {
 
     getSettingsMenu() {
         return {
-            position: 'target',
+            position: 'bottomright',
             event: 'click',
             name: 'baseMenu',
+            closeParent: true,
             buttons: {
                 resetSettings: {
-                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.ResetLayout"),
+                    label: game.i18n.localize("BG3.Hotbar.SettingsMenu.ResetLayout"),
                     icon: 'fas fa-rotate',
-                    click: () => {
-                        
+                    click: async () => {
+                        ui.BG3HOTBAR.components.container.components.hotbar.forEach(container => {
+                            container.data.rows = CONFIG.ROWS;
+                            container.data.cols = CONFIG.INITIAL_COLS;
+                            ui.BG3HOTBAR.manager.containers[container.id][container.index].rows = CONFIG.ROWS;
+                            ui.BG3HOTBAR.manager.containers[container.id][container.index].cols = CONFIG.INITIAL_COLS;
+                            container.render();
+                        });
+                        await ui.BG3HOTBAR.manager.persist();
                     }
                 },
                 clearSettings: {
-                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.ClearAllItems"),
+                    label: game.i18n.localize("BG3.Hotbar.SettingsMenu.ClearAllItems"),
                     icon: 'fas fa-trash',
-                    click: () => {
+                    click: async () => {
+                        ui.BG3HOTBAR.components.container.components.hotbar.forEach(container => {
+                            container.data.items = {};
+                            ui.BG3HOTBAR.manager.containers[container.id][container.index].items = {};
+                            container.render();
+                        });
+                        ui.BG3HOTBAR.components.weapon.components.weapon.forEach(container => {
+                            container.data.items = {};
+                            ui.BG3HOTBAR.manager.containers[container.id][container.index].items = {};
+                            container.render();
+                        });
+                        if(!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')) {
+                            ui.BG3HOTBAR.components.weapon.components.combat.forEach(container => {
+                                container.data.items = {};
+                                ui.BG3HOTBAR.manager.containers[container.id][container.index].items = {};
+                                container.render();
+                            });
+                        };
+                        await ui.BG3HOTBAR.manager.persist();
                         
                     }
                 },
                 divider: {},
                 importSettings: {
-                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.ImportLayout"),
+                    label: game.i18n.localize("BG3.Hotbar.SettingsMenu.ImportLayout"),
                     icon: 'fas fa-file-import',
                     click: () => {
+                        // Create file input
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = '.json';
                         
+                        input.onchange = async (e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = async (e) => {
+                              try {
+                                const layout = JSON.parse(e.target.result);
+                                // Apply the layout
+                                ui.BG3HOTBAR.manager.containers = layout;
+                                await ui.BG3HOTBAR.manager.persist();
+                                // Recreate UI with new layout
+                                // this.destroy();
+                                ui.BG3HOTBAR.refresh();
+                              } catch (error) {
+                                console.error('Failed to import layout:', error);
+                                ui.notifications.error('Failed to import layout');
+                              }
+                            };
+                            reader.readAsText(file);
+                          }
+                        };
+                        
+                        input.click();
                     }
                 },
                 exportSettings: {
-                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.ExportLayout"),
+                    label: game.i18n.localize("BG3.Hotbar.SettingsMenu.ExportLayout"),
                     icon: 'fas fa-file-export',
                     click: () => {
+                        // Export current layout as JSON
+                        const layout = ui.BG3HOTBAR.manager.containers;
+                        const dataStr = JSON.stringify(layout, null, 2);
+                        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
                         
+                        const exportName = 'bg3-hotbar-layout.json';
+                        
+                        const linkElement = document.createElement('a');
+                        linkElement.setAttribute('href', dataUri);
+                        linkElement.setAttribute('download', exportName);
+                        linkElement.click();
                     }
                 }
             }
         }
-    }
+    };
 
     getLockMenu() {
         return {
-            position: 'target',
+            position: 'bottomright',
             event: 'contextmenu',
             name: 'baseMenu',
+            keepOpen: true,
+            closeParent: true,
             buttons: {
-                deselectLock: {
+                deselect: {
                     label: 'Deselecting Token',
                     icon: 'fas fa-user-slash',
-                    click: () => {
-                        
-                    }
+                    class: ControlsManager.getLockSetting('deselect') ? 'checked' : '',
+                    custom: '<div class="menu-item-checkbox "><i class="fas fa-check"></i></div>',
+                    click: () => ControlsManager.updateLockSetting('deselect')
                 },
-                opacityLock: {
+                opacity: {
                     label: 'Opacity',
                     icon: 'fas fa-eye',
-                    click: () => {
-                        
-                    }
+                    class: ControlsManager.getLockSetting('opacity') ? 'checked' : '',
+                    custom: '<div class="menu-item-checkbox "><i class="fas fa-check"></i></div>',
+                    click: () => ControlsManager.updateLockSetting('opacity')
                 },
-                dragDropLock: {
+                dragDrop: {
                     label: 'Drag & Drop',
                     icon: 'fas fa-arrows-alt',
-                    click: () => {
-                        
-                    }
+                    class: ControlsManager.getLockSetting('dragDrop') ? 'checked' : '',
+                    custom: '<div class="menu-item-checkbox "><i class="fas fa-check"></i></div>',
+                    click: () => ControlsManager.updateLockSetting('dragDrop')
                 }
             }
         }
+    };
+
+    _registerEvents() {
+        this.element.querySelector('[data-key="controlSettings"]').addEventListener('click', (event) => MenuContainer.toggle(this.getSettingsMenu(), this.element.querySelector('[data-key="controlSettings"]'), event));
+        this.element.querySelector('[data-key="controlLock"]').addEventListener('contextmenu', (event) => MenuContainer.toggle(this.getLockMenu(), this.element.querySelector('[data-key="controlLock"]'), event));
     }
-    
+
     async _renderInner() {
         await super._renderInner();
         if(game.settings.get(CONFIG.MODULE_NAME, 'fadeControlsMenu')) this.element.classList.add('fade');
-        for(let i = 0; i < this.btnData.length; i++) {
-            const btn = new BaseButton(this.btnData[i]);
-            await btn.render();
-            this.element.appendChild(btn.element);
-        };
-        this.settingsMenu = new MenuContainer(this.getSettingsMenu(), this.element.querySelector('[data-key="controlSettings"]'), true);
-        this.settingsMenu.render();
-        this.lockMenu = new MenuContainer(this.getLockMenu(), this.element.querySelector('[data-key="controlLock"]'), true);
-        this.lockMenu.render();
+        const buttons = this.btnData.map((btn) => new BaseButton(btn));
+        for(const btn of buttons) this.element.appendChild(btn.element);
+        await Promise.all(buttons.map((btn) => btn.render()));
     }
 }

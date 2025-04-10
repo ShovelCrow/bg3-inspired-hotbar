@@ -65,14 +65,12 @@ export class RestTurnContainer extends BG3Component {
         ]];
         return btnData;
     }
-    
-    async _renderInner() {
-        await super._renderInner();
-        for(let i = 0; i < this.btnData.length; i++) {
-            const btn = new BaseButton(this.btnData[i]);
-            this.components.push(btn);
-            btn.render();
-            this.element.appendChild(btn.element);
-        }
-        return this.element;    }
+
+    async render() {
+        await super.render();
+        this.components = this.btnData.map((btn) => new BaseButton(btn));
+        for(const btn of this.components) this.element.appendChild(btn.element);
+        await Promise.all(this.components.map((btn) => btn.render()));
+        return this.element;
+    }
 }

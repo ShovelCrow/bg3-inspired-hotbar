@@ -1,18 +1,17 @@
 import { BG3Component } from "../component.js";
+import { MenuContainer } from "./MenuContainer.js";
 
 export class AbilityContainer extends BG3Component {
     constructor(data) {
         super(data);
-        this.isVisible = false;
-        this._setupClickOutside();
     }
 
     get classes() {
-        return ["bg3-ability-container"]
+        return ["ability-button"]
     }
 
-    get actor() {
-        return ui.BG3HOTBAR.manager.actor;
+    async _registerEvents() {    
+        this.element.addEventListener('click', (event) => MenuContainer.toggle(this.getMenuData(), this, event));
     }
 
     getSkillLabel(key) {
@@ -53,116 +52,114 @@ export class AbilityContainer extends BG3Component {
         const abilityScore = this.actor.system.abilities?.[key] || { value: 10, proficient: false },
             mod = abilityScore.save.value,
             modString = mod >= 0 ? `+${mod}` : mod.toString();
-        return {value: modString, prof: abilityScore.proficient === 1   };
+        return {value: modString, style: abilityScore.proficient === 1 ?  'color: #3498db' : ''  };
     }
+    
+    skillRoll(event) {
+        event.stopPropagation();
+        const parent = event.target.closest('[data-key]');
+        try {
+            this.actor.rollSkill({
+                skill: parent.dataset.key,
+                event: event,
+                advantage: event.altKey,
+                disadvantage: event.ctrlKey,
+                fastForward: event.shiftKey
+            });
+            // this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
+        } catch (error) {
+            ui.notifications.error(`Error rolling ${parent.dataset.key.toUpperCase()} save. See console for details.`);
+        }
+    };
 
     getSkillMod(keys) {
-        const skills = keys.map(k => {
+        const skills = {};
+        keys.forEach(k => {
             const skill = this.actor.system.skills?.[k] || { proficient: false },
                 mod = skill.total,
                 modStr = mod >= 0 ? `+${mod}` : mod.toString();
-            return {key: k, label: this.getSkillLabel(k), value: modStr, prof: skill.proficient === 1   };
-        });
+            skills[k] = {label:  this.getSkillLabel(k), icon: 'fas fa-dice-d20', value: modStr, style: skill.proficient === 1 ?  'color: #3498db' : '', click: this.skillRoll.bind(this)}
+        })
         return skills;
-    }
+    };
 
-    _setupClickOutside() {
-        document.addEventListener('click', (e) => {
-            if (!this.isVisible) return;
-            
-            // Check if the click is outside both the ability card and the ability button
-            const isClickInsideCard = this.element.contains(e.target);
-            const isClickOnButton = this.abilityCard?.contains(e.target);
-            
-            if (!isClickInsideCard && !isClickOnButton) this._closeAbilityContainer();
-        });
-    }
-
-    get abilityCard() {
-        return this.element.querySelector('.ability-card');
-    }
-
-    async getData() {
-        return {abilities: this.abilities};
-    }
-
-    _toggleAbilityCard() {
-        // Toggle the ability card
-        this.abilityCard.toggle();
-        
-        // Update button state
-        this.updateButtonState(this.abilityCard.isVisible);
-
-        // If we're hiding the card, ensure all popups are properly closed
-        if (!this.abilityCard.isVisible) {
-            // Close any open popups
-            this.abilityCard.element.querySelectorAll(".popup-container").forEach(popup => {
-                popup.classList.remove("visible");
-                // Also ensure the popup panels themselves are hidden
-                popup.querySelectorAll(".popup-panel").forEach(panel => {
-                    panel.classList.remove("visible");
-                });
-            });
-            
-            // Reset any expanded abilities
-            this.abilityCard.expandedAbility = null;
-            
-            // Reset any highlighted ability rows
-            this.abilityCard.element.querySelectorAll(".ability-row").forEach(row => {
-                row.classList.remove("expanded");
-            });
-        }
-    }
-
-    _closeAbilityContainer() {
-        this.isVisible = !this.isVisible;
-        this.abilityCard.classList.toggle('visible', this.isVisible);
-        if(!this.isVisible) {
-            this.element.querySelectorAll('.ability-row').forEach(a => a.classList.remove('expanded'));
-        }
-    }
-
-    async _registerEvents() {
-        this.element.addEventListener('click', (event) => {
-            event.preventDefault();
+    getMenuData() {
+        const saveRoll = (event) => {
             event.stopPropagation();
-            this._closeAbilityContainer();
-        });
-        $('.ability-row').each((index, abl) => abl.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            this.element.querySelectorAll('.ability-row').forEach(a => abl !== a && a.classList.remove('expanded'));
-            abl.classList.toggle('expanded');
-        }));
-        $('.save-row').each((index, btn) => btn.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const parent = btn.closest('[data-ability]');
+            const parent = event.target.closest('[data-key]');
             try {
                 this.actor.rollAbilitySave({
-                    ability: parent.dataset.ability,
-                    event: event,  // Pass the original event
+                    ability: parent.dataset.key,
+                    event: event,
                     advantage: event.altKey,
                     disadvantage: event.ctrlKey,
                     fastForward: event.shiftKey
                 });
+                // this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
             } catch (error) {
-                ui.notifications.error(`Error rolling ${parent.dataset.ability.toUpperCase()} save. See console for details.`);
+                ui.notifications.error(`Error rolling ${parent.dataset.key.toUpperCase()} save. See console for details.`);
             }
-        }));
-        $('.check-row').each((index, btn) => btn.addEventListener('click', (event) => {
+        };
+
+        const checkRoll = (event) => {
             event.stopPropagation();
-            const parent = btn.closest('[data-ability]');
+            const parent = event.target.closest('[data-key]');
             try {
                 this.actor.rollAbilityCheck({
-                    ability: parent.dataset.ability,
-                    event: event,  // Pass the original event
+                    ability: parent.dataset.key,
+                    event: event,
                     advantage: event.altKey,
                     disadvantage: event.ctrlKey,
                     fastForward: event.shiftKey
                 });
+                // this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
             } catch (error) {
-                ui.notifications.error(`Error rolling ${parent.dataset.ability.toUpperCase()} check. See console for details.`);
+                ui.notifications.error(`Error rolling ${parent.dataset.key.toUpperCase()} save. See console for details.`);
             }
-        }));
-    }
+        };
+
+        return {
+            position: 'top',
+            event: 'click',
+            name: 'baseMenu',
+            keepOpen: true,
+            closeParent: true,
+            buttons: {
+                str: { ...{label: "Strength", skills: this.getSkillMod(["ath"]), tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('str'),
+                subMenu: [
+                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkSTR: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('str')}, saveSTR: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('str')}}},
+                    {position: 'topleft', name: 'skillMenu', event: 'click', buttons: this.getSkillMod(["ath"])}
+                ] },
+                dex: { ...{label: "Dexterity", skills: this.getSkillMod(["acr", "slt", "ste"]), tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('dex'),
+                subMenu: [
+                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkDEX: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('dex')}, saveDEX: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('dex')}}},
+                    {position: 'topleft', name: 'skillMenu', event: 'click', buttons: this.getSkillMod(["acr", "slt", "ste"])}
+                ] },
+                con: { ...{label: "Constitution", skills: [], tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('con'),
+                subMenu: [
+                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkCON: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('con')}, saveCON: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('con')}}},
+                    {position: 'topleft', name: 'skillMenu', event: 'click', buttons: null}
+                ] },
+                int: { ...{label: "Intelligence", skills: this.getSkillMod(["arc", "his", "inv", "nat", "rel"]), tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('int'),
+                subMenu: [
+                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkINT: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('int')}, saveINT: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('int')}}},
+                    {position: 'topleft', name: 'skillMenu', event: 'click', buttons: this.getSkillMod(["arc", "his", "inv", "nat", "rel"])}
+                ] },
+                wis: { ...{label: "Wisdom", skills: this.getSkillMod(["ani", "ins", "med", "prc", "sur"]), tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('wis'),
+                subMenu: [
+                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkWIS: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('wis')}, saveWIS: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('wis')}}},
+                    {position: 'topleft', name: 'skillMenu', event: 'click', buttons: this.getSkillMod(["ani", "ins", "med", "prc", "sur"])}
+                ] },
+                cha: { ...{label: "Charisma", skills: this.getSkillMod(["dec", "itm", "prf", "per"]), tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('cha'),
+                subMenu: [
+                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkCHA: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('cha')}, saveCHA: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('cha')}}},
+                    {position: 'topleft', name: 'skillMenu', event: 'click', buttons: this.getSkillMod(["dec", "itm", "prf", "per"])}
+                ] }
+            }
+        };
+    };
+
+    // async _renderInner() {
+    //     await super._renderInner();
+    // }
 }

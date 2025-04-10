@@ -7,19 +7,12 @@ import { CONFIG } from "../../utils/config.js";
 export class PortraitContainer extends BG3Component {
     constructor(data) {
         super(data);
-        // this.useTokenImage = false;
+        this.components = {};
+        this.useTokenImage = this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;;
     }
 
     get classes() {
         return ["bg3-portrait-container"]
-    }
-
-    get actor() {
-        return ui.BG3HOTBAR.manager.actor;
-    }
-
-    get token() {
-        return ui.BG3HOTBAR.manager.token;
     }
 
     get img() {
@@ -85,22 +78,22 @@ export class PortraitContainer extends BG3Component {
         const image = this.element.querySelector('.portrait-image-subcontainer');
         if(!image) return;
 
-        image.addEventListener('dblclick', (event) => {
+        this.element.addEventListener('dblclick', (event) => {
             if(game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
-            event.preventDefault();
-            event.stopPropagation();
             this.actor.sheet.render(true);
         });
 
-        image.addEventListener('click', (event) => {
+        this.element.addEventListener('click', (event) => {
             if(!game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
-            event.preventDefault();
-            event.stopPropagation();
             this.actor.sheet.render(true);
         });
+
+        this.element.addEventListener('contextmenu', (event) => MenuContainer.toggle(this.getPortraitMenu(), this.element, event));
+
+        // this.element.querySelector('.ability-button').addEventListener('click', (event) => MenuContainer.toggle(this.getMenuData(), this.element.querySelector('.ability-button'), event));
     }
 
-    getSkillLabel(key) {
+    /* getSkillLabel(key) {
         return {
             "ath": "Athletics",
             "acr": "Acrobatics",
@@ -152,7 +145,7 @@ export class PortraitContainer extends BG3Component {
                 disadvantage: event.ctrlKey,
                 fastForward: event.shiftKey
             });
-            this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
+            // this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
         } catch (error) {
             ui.notifications.error(`Error rolling ${parent.dataset.key.toUpperCase()} save. See console for details.`);
         }
@@ -181,7 +174,7 @@ export class PortraitContainer extends BG3Component {
                     disadvantage: event.ctrlKey,
                     fastForward: event.shiftKey
                 });
-                this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
+                // this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
             } catch (error) {
                 ui.notifications.error(`Error rolling ${parent.dataset.key.toUpperCase()} save. See console for details.`);
             }
@@ -197,7 +190,7 @@ export class PortraitContainer extends BG3Component {
                     disadvantage: event.ctrlKey,
                     fastForward: event.shiftKey
                 });
-                this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
+                // this.element.querySelectorAll('.bg3-menu-container').forEach(e => e.classList.add('hidden'));
             } catch (error) {
                 ui.notifications.error(`Error rolling ${parent.dataset.key.toUpperCase()} save. See console for details.`);
             }
@@ -220,7 +213,8 @@ export class PortraitContainer extends BG3Component {
                 ] },
                 con: { ...{label: "Constitution", skills: [], tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('con'),
                 subMenu: [
-                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkCON: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('con')}, saveCON: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('con')}}}
+                    {position: 'topright', name: 'saveMenu', event: 'click', buttons: {checkCON: {...{label: 'Check', icon: 'fas fa-dice-d20', click: checkRoll}, ...this.getAbilityMod('con')}, saveCON: {...{label: 'Save', icon: 'fas fa-dice-d20', click: saveRoll}, ...this.getAbilityMod('con')}}},
+                    {position: 'topleft', name: 'skillMenu', event: 'click', buttons: null}
                 ] },
                 int: { ...{label: "Intelligence", skills: this.getSkillMod(["arc", "his", "inv", "nat", "rel"]), tooltip: "Click to show ability checks and saving throws"}, ...this.getAbilityMod('int'),
                 subMenu: [
@@ -239,7 +233,7 @@ export class PortraitContainer extends BG3Component {
                 ] }
             }
         };
-    };
+    }; */
 
     async updateImagePreference() {
         this.useTokenImage = !this.useTokenImage;
@@ -298,17 +292,26 @@ export class PortraitContainer extends BG3Component {
         this.toggleHPText();
         this.toggleExtraInfos();
     }
+
+    async render() {
+        await super.render();
+
+        return this.element;
+    }
     
     async _renderInner() {
-        this.useTokenImage = await this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;
+        // this.useTokenImage = await this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;
         await super._renderInner();
         this.applySettings();
-        const deathSavesContainer = new DeathSavesContainer();
-        deathSavesContainer.render();
-        this.element.prepend(deathSavesContainer.element);
-        this.abilityMenu = new MenuContainer(this.getMenuData(), this.element.querySelector('.ability-button'));
-        this.abilityMenu.render();
-        this.portraitMenu = new MenuContainer(this.getPortraitMenu(), this.element);
-        this.portraitMenu.render();
+        this.components.deathSavesContainer = new DeathSavesContainer();
+        this.components.deathSavesContainer.render();
+        this.element.prepend(this.components.deathSavesContainer.element);
+        this.components.abilityContainer = new AbilityContainer();
+        this.components.abilityContainer.render();
+        this.element.appendChild(this.components.abilityContainer.element);
+        // this.abilityMenu = new MenuContainer(this.getMenuData(), this.element.querySelector('.ability-button'));
+        // this.abilityMenu.render();
+        // this.portraitMenu = new MenuContainer(this.getPortraitMenu(), this.element);
+        // this.portraitMenu.render();
     }
 }

@@ -1,19 +1,17 @@
 import { BG3Component } from "../component.js";
 
 export class MenuContainer extends BG3Component {
-    constructor(data, parent, closeParent) {
+    constructor(data, parent, event, standalone) {
         super(data);
         this._parent = parent;
-        this.closeParent = closeParent;
-        this._setupClickOutside();
+        this.rendered = false;
+        this.event = event;
+        this.standalone = standalone ?? false;
+        this.components = [];
     }
 
     get classes() {
         return ['bg3-menu-container'];
-    }
-
-    get visible() {
-        return $(this.element).hasClass('hidden') !== true;
     }
 
     get parentElement() {
@@ -25,72 +23,100 @@ export class MenuContainer extends BG3Component {
     }
     
     async _registerEvents() {
-        this.parentElement.addEventListener(this.data.event, (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if(this._parent.locked) return;
-            if(this.data.verify !== undefined && this.data.verify()) return;
-            if(this.data.position === 'mouse') {
-                this.element.style.top = `${event.offsetY}px`;
-                this.element.style.left = `${event.offsetX}px`;
-            }
-            this.setVisibility();
-            if(this.data.position === 'target') {
-                const target = event.target;
+        if(this.data.buttons) {
+            Object.entries(this.data.buttons).forEach(([k,b]) => {
+                if(b.click || b.subMenu?.length) {
+                    const btn = this.element.querySelector(`[data-key="${k}"]`);
+                    if(btn) btn.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if(!this.data.keepOpen) {
+                            if(ui.BG3HOTBAR.menuManager) ui.BG3HOTBAR.menuManager.destroy();
+                            else this.destroy();
+                        }
+                        if(b.subMenu?.length) {
+                            const oldComponents = this.components;
+                            this.components = [];
+                            b.subMenu.forEach(async sb => {
+                                let newMenu = true;
+                                if(oldComponents.length) {
+                                    oldComponents.forEach(c => {
+                                        if(c.data === sb) newMenu = false;
+                                        if(sb.name && c?.data?.name === sb.name) c.destroy();
+                                    });
+                                }
+                                if(!newMenu) return;
+                                const subMenu = new MenuContainer(sb, btn, event, true);
+                                this.components.push(subMenu);
+                                subMenu.render();
+                            })
+                        }
+                        else return b.click(event)
+                    });
+                }
+            })
+        } else this.element.style.display = 'none';
+
+        this.outside = this._setupClickOutside.bind(this);
+        document.addEventListener('click', this.outside);
+    }
+
+    _setupClickOutside(e) {
+        if (!this.visible) return;
+        
+        // Check if the click is outside both the ability card and the ability button
+        const isClickMenu = this.element.contains(e.target);
+        const isClickOnButton = this.data.closeParent === true ? false : this.parentElement.contains(e.target);
+        
+        if (!isClickMenu && !isClickOnButton) this.destroy();
+    }
+
+    setPosition() {
+        switch (this.data.position) {
+            case 'mouse':
+                this.element.style.top = `${this.event.offsetY}px`;
+                this.element.style.left = `${this.event.offsetX}px`;
+                break;        
+            case 'target':
+                const target = this.event.target;
                 this.element.style.top = `${target.offsetTop}px`;
                 this.element.style.left = `${target.offsetLeft + target.offsetWidth}px`;
-            }
-        });
-
-        Object.entries(this.data.buttons).forEach(([k,b]) => {
-            if(b.click) {
-                const btn = this.element.querySelector(`[data-key="${k}"]`);
-                if(btn) btn.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return b.click()
-                });
-            }
-        })
-    }
-
-    setVisibility() {
-        this.element.classList.toggle("hidden", this.visible);
-        if(this.visible && this.data.name) {
-            document.querySelectorAll(`[name="${this.data.name}"]`).forEach(c => c !== this.element && c.classList.add('hidden'))
-        }
-        if(!this.visible) {
-            this.element.querySelectorAll('.bg3-menu-container').forEach(c => {
-                if($(c).hasClass('hidden') !== true) c.classList.add('hidden');
-            })
+                break;
+            default:
+                break;
         }
     }
 
-    _setupClickOutside() {
-        document.addEventListener('click', (e) => {
-            if (!this.visible) return;
-            
-            // Check if the click is outside both the ability card and the ability button
-            const isClickMenu = this.element.contains(e.target);
-            const isClickOnButton = this.closeParent === true ? false : this.parentElement.contains(e.target);
-            
-            if (!isClickMenu && !isClickOnButton) this.setVisibility();
-        });
+    destroy() {
+        if(this.components.length) {
+            this.components.forEach(c => c.destroy());
+        }
+        document.removeEventListener('click', this.outside);
+        this.element.parentNode.removeChild(this.element);
+        this.rendered = false;
+        if(!this.standalone) ui.BG3HOTBAR.menuManager = null;
+    }
+
+    async render() {
+        if(!this.standalone) ui.BG3HOTBAR.menuManager = this;
+        const html = await super.render();
+        this.parentElement.appendChild(html);
+        this.rendered = true;
+        return html;
     }
 
     async _renderInner() {
         await super._renderInner();
         this.element.dataset.menuPosition = this.data.position;
         if(this.data.name) this.element.setAttribute('name', this.data.name);
-        this.parentElement.appendChild(this.element);
-        Object.entries(this.data.buttons).forEach(([k, b]) => {
-            if(b?.subMenu?.length) {
-                b.subMenu.forEach(sb => {
-                    this.subMenu = new MenuContainer(sb, this.element.querySelector(`[data-key="${k}"]`));
-                    this.subMenu.render();
-                });
-            }
-        });
-        this.element.classList.add('hidden');
+        this.setPosition();
+    }
+
+    static async toggle(data, parent, event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const oldParent = ui.BG3HOTBAR.menuManager?._parent;
+        if(ui.BG3HOTBAR.menuManager) ui.BG3HOTBAR.menuManager.destroy();
+        if(oldParent !== parent && !parent.locked) return new MenuContainer(data, parent, event).render();
     }
 }

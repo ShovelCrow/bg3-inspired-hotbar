@@ -18,15 +18,16 @@ export class ActiveContainer extends BG3Component {
        return actor.effects?.contents || [];
     }
 
-    async _renderInner() {
-        await super._renderInner();
+    async render() {
+        await super.render();
+
         const activesList = this.activesList;
         if(activesList.length === 0) this.element.style.visibility = 'hidden';
-        for(let i = 0; i < activesList.length; i++) {
-            const btn = new ActiveButton({item: activesList[i]});
-            btn._parent = this;
-            btn.render();
-            this.element.appendChild(btn.element);
-        }
+
+        const actives = activesList.map((active) => new ActiveButton({item: active}, this));
+        for(const active of actives) this.element.appendChild(active.element);
+        await Promise.all(actives.map((active) => active.render()));
+        
+        return this.element;
     }
 }

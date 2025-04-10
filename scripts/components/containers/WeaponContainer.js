@@ -55,9 +55,13 @@ export class WeaponContainer extends BG3Component {
           })
         }
         weaponsList.forEach(w => {
-          if(w.system.equipped && !toUpdate.find(wu => wu._id == w.id)) toUpdate.push({_id: w.id, "system.equipped": 0})
+            if(w.system.equipped) {
+                const itemIndex = toUpdate.findIndex(wu => wu._id == w.id);
+                if(itemIndex === -1) toUpdate.push({_id: w.id, "system.equipped": 0});
+                else toUpdate.splice(itemIndex, 1);
+            }
+            // if(w.system.equipped && !toUpdate.find(wu => wu._id == w.id)) toUpdate.push({_id: w.id, "system.equipped": 0})
         })
-    
         if(toUpdate.length) await actor.updateEmbeddedDocuments("Item", toUpdate);
     }
 

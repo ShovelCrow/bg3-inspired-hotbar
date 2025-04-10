@@ -15,12 +15,12 @@ export class BaseButton extends BG3Component {
     }
 
     get dataTooltip() {
-        if(!this.data.title) return null;
+        if(!this.data.title || this.data.hasChildren) return null;
         else return {type: 'simple', content: this.data.title};
     }
 
-    async _renderInner() {
-        await super._renderInner();
+    async render() {
+        await super.render();
         if(!this.visible) this.element.classList.add('hidden');
         if(this.data.attr) Object.entries(this.data.attr).forEach(([value, index]) => this.element.setAttribute(value, index));
         if(this.data.key) this.element.setAttribute('data-key', this.data.key);
@@ -32,8 +32,13 @@ export class BaseButton extends BG3Component {
         }
         if(this.data.icon) {
             const btnIcon = document.createElement("i");
+            if(this.data.hasChildren) {
+                btnIcon.dataset.tooltip = this.data.title;
+                btnIcon.dataset.tooltipDirection = 'UP';
+            }
             btnIcon.classList.add("fas", this.data.icon);
             this.element.appendChild(btnIcon);
         }
+        return this.element;
     }
 }

@@ -3,8 +3,8 @@ import { BG3Component } from "../component.js";
 
 
 export class FilterButton extends BG3Component {
-    constructor(data) {
-        super(data);
+    constructor(data, parent) {
+        super(data, parent);
         this.state = false;
         this.used = false;
     }
@@ -99,8 +99,9 @@ export class FilterButton extends BG3Component {
         });
     }
 
-    async _renderInner() {
-        await super._renderInner();
+    async render() {
+        await super.render();
         this.element.style.color = this.data.color;
+        return this.element;
     }
 }

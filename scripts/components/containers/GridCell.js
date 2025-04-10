@@ -1,18 +1,29 @@
 import { BG3Component } from "../component.js";
 import { fromUuid } from "../../utils/foundryUtils.js";
+import { ControlsManager } from "../../managers/ControlsManager.js";
+import { MenuContainer } from "./MenuContainer.js";
 
 export class GridCell extends BG3Component {
-    constructor(data) {
-        super(data);
+    constructor(data, parent) {
+        super(data, parent);
         this.type = null;
     }
 
     get classes() {
+        // return ['hotbar-cell', 'drag-cursor', 'item-name', 'item-action', 'item-tooltip', 'rollable'];
         return ['hotbar-cell', 'drag-cursor'];
     }
 
     get slotKey() {
         return this.element.dataset.slot;
+    }
+
+    get locked() {
+        return this._parent.locked;
+    }
+
+    get dataTooltip() {
+        return {type: 'advanced'};
     }
 
     async getData() {
@@ -35,9 +46,12 @@ export class GridCell extends BG3Component {
     }
 
     get item() {
-        return (async () => {
-            if(!this.data.item?.uuid) return;
-            return await fromUuid(this.data.item.uuid);
+        return (async () => {            
+            if(!this.data.item) return;
+            if(this.data.item.uuid) return await fromUuid(this.data.item.uuid);
+            else return this.data.item;
+            // if(!this.data.item?.uuid) return;
+            // return await fromUuid(this.data.item.uuid);
         })();
     }
 
@@ -52,6 +66,69 @@ export class GridCell extends BG3Component {
             if (max > 0) return {uses: {value: value, max: max}};
             else return null;
         } else return null;
+    }
+
+    getItemMenu() {
+        return {
+            // position: 'target',
+            position: 'topright2',
+            event: 'contextmenu',
+            name: 'baseMenu',
+            closeParent: true,
+            standalone: true,
+            buttons: {
+                edit: {
+                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.EditItem"),
+                    icon: 'fas fa-edit',
+                    visibility: !this.data.item,
+                    click: () => {
+                        if(!this.data.item) return;
+                        this.menuItemAction('edit');
+                    }
+                },
+                activity: {
+                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.ConfigureActivities"),
+                    icon: 'fas fa-cog',
+                    visibility: !this.data.item,
+                    click: () => {
+                        if(!this.data.item) return;
+                        this.menuItemAction('activity');
+                    }
+                },
+                remove: {
+                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.Remove"),
+                    icon: 'fas fa-trash',
+                    visibility: !this.data.item,
+                    click: async () => {
+                        if(!this.data.item) return;
+                        await this.menuItemAction('remove');
+                        if(this.id === 'weapon') this._parent.switchSet(this);
+                    }
+                },
+                divider: {visibility: !this.data.item},
+                populate: {
+                    label: 'Auto-Populate This Container', icon: 'fas fa-magic',
+                    visibility: this.data.delOnly,
+                    click: () => {
+                        this._parent.menuItemAction('populate');
+                    }
+                },
+                sort: {
+                    label: 'Sort Items In This Container', icon: 'fas fa-sort',
+                    visibility: this.data.delOnly,
+                    click: () => {
+                        this._parent.menuItemAction('sort');
+                    }
+                },
+                clear: {
+                    label: 'Clear Container', icon: 'fas fa-trash-alt',
+                    click: () => {
+                        this._parent.menuItemAction('clear');
+                        if(this.id === 'weapon') this._parent.switchSet(this);
+                    }
+                }
+            }
+        };
     }
 
     async menuItemAction(action) {
@@ -102,6 +179,19 @@ export class GridCell extends BG3Component {
             e.preventDefault();
             // e.stopPropagation();
             const item = await this.item;
+            if(!item) return;
+            if(!item.uuid) {
+                ChatMessage.create({
+                user: game.user,
+                speaker: {
+                    actor: ui.BG3HOTBAR.manager.actor,
+                    token: ui.BG3HOTBAR.manager.actor.token,
+                    alias: ui.BG3HOTBAR.manager.actor.name
+                },
+                content: `\n<div class="dnd5e2 chat-card item-card" data-display-challenge="">\n\n<section class="card-header description collapsible">\n\n<header class="summary">\n<img class="gold-icon" src="${item.img ?? item.icon}">\n<div class="name-stacked border">\n<span class="title">${item.name}</span>\n<span class="subtitle">\nFeature\n</span>\n</div>\n<i class="fas fa-chevron-down fa-fw"></i>\n</header>\n\n<section class="details collapsible-content card-content">\n<div class="wrapper">\n${item.description}\n</div>\n</section>\n</section>\n\n\n</div>\n`
+                });
+                return;
+            }
             if(item) {
                 try {
                     if(item.execute) item.execute();
@@ -125,11 +215,7 @@ export class GridCell extends BG3Component {
             }
         });
         
-        this.element.addEventListener('contextmenu', (e) => {
-            if(this.data.item?.uuid) this._parent.targetItem = this;
-            else this._parent.targetItem = null;
-            this._parent.itemMenu.element.setAttribute('data-item', this.data.item?.uuid ? 'true' : 'false');
-        });
+        this.element.addEventListener('contextmenu', (e) => MenuContainer.toggle(this.getItemMenu(), this, e));
         
         this.element.addEventListener('mouseenter', (e) => {
 
@@ -140,7 +226,7 @@ export class GridCell extends BG3Component {
         });
         
         this.element.addEventListener('dragstart', (e) => {
-            if (this._parent?.locked || !this.data.item) {
+            if (ControlsManager.isSettingLocked('dragDrop') || this._parent?.locked || !this.data.item) {
                 e.preventDefault();
                 return;
             }
@@ -154,7 +240,7 @@ export class GridCell extends BG3Component {
         
         this.element.addEventListener('dragover', (e) => {
             e.preventDefault();
-            if (this._parent?.locked) return;
+            if (ControlsManager.isSettingLocked('dragDrop') || this._parent?.locked) return;
             e.dataTransfer.dropEffect = "move";
             this.element.classList.add("dragover");
         });
@@ -162,7 +248,7 @@ export class GridCell extends BG3Component {
         this.element.addEventListener('drop', async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (this._parent?.locked) return;
+            if (ControlsManager.isSettingLocked('dragDrop') || this._parent?.locked) return;
 
             this.element.classList.remove("dragover");
 
@@ -173,13 +259,13 @@ export class GridCell extends BG3Component {
         
         this.element.addEventListener('dragenter', (e) => {
             e.preventDefault();
-            if (this._parent?.locked) return;
+            if (ControlsManager.isSettingLocked('dragDrop') || this._parent?.locked) return;
             this.element.classList.add("dragover");
         });
         
         this.element.addEventListener('dragleave', (e) => {
             e.preventDefault();
-            if (this._parent?.locked) return;
+            if (ControlsManager.isSettingLocked('dragDrop') || this._parent?.locked) return;
             this.element.classList.remove("dragover");
         });
         
@@ -205,7 +291,12 @@ export class GridCell extends BG3Component {
                     this.element.dataset.isPact = itemData.system.preparation?.mode === "pact";
                     this.element.dataset.level = itemData.system.level;
                 }
-                if(itemData.type === 'feat') this.element.dataset.featType = itemData.system.type?.value || 'default';
+                if(itemData.type === 'feat') this.element.dataset.featType = itemData.system?.type?.value || 'default';
+                if(itemData.uuid) {
+                    this.element.dataset.tooltip = `<section class="loading" data-uuid="${itemData.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
+                    this.element.dataset.tooltipClass = "dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip";
+                    this.element.dataset.tooltipDirection="UP";
+                }
             }
         }
     }

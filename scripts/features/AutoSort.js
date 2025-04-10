@@ -84,8 +84,8 @@ export class AutoSort {
             }
 
             // Render container and persist changes
-            if (container._renderInner) {
-                container._renderInner();
+            if (container.render) {
+                container.render();
             }
             if (ui.BG3HOTBAR?.manager?.persist) {
                 await ui.BG3HOTBAR.manager.persist();
