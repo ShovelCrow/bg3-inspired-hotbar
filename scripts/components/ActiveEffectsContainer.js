@@ -108,8 +108,7 @@ export class ActiveEffectsContainer {
     const img = document.createElement("img");
     img.src = effect.img;
 
-    // Toggle effect status on click.
-    wrapper.addEventListener("click", async (e) => {
+    async function toggleEffect (e) {
       e.preventDefault();
       e.stopPropagation();
       
@@ -141,28 +140,36 @@ export class ActiveEffectsContainer {
       setTimeout(() => {
         wrapper._isUpdatingTooltip = false;
       }, tooltipDelay + 50); // Add 50ms buffer to the delay
-    });
+    }
+
+    // Toggle effect status on click.
+    wrapper.addEventListener("click", toggleEffect);
 
     // Right-click to delete with confirmation.
     wrapper.addEventListener("contextmenu", async (e) => {
       e.preventDefault();
-      const dialog = new Dialog({
-        title: "Delete Effect",
-        content: `<p>Are you sure you want to delete the effect "${effect.label}"?</p>`,
-        buttons: {
-          delete: {
-            icon: '<i class="fas fa-trash"></i>',
-            label: "Delete",
-            callback: () => effect.delete()
+
+      if (effect.duration.duration !== null) {
+        const dialog = new Dialog({
+          title: "Delete Effect",
+          content: `<p>Are you sure you want to delete the effect "${effect.label}"?</p>`,
+          buttons: {
+            delete: {
+              icon: '<i class="fas fa-trash"></i>',
+              label: "Delete",
+              callback: () => effect.delete()
+            },
+            cancel: {
+              icon: '<i class="fas fa-times"></i>',
+              label: "Cancel"
+            }
           },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: "Cancel"
-          }
-        },
-        default: "cancel"
-      });
-      dialog.render(true);
+          default: "cancel"
+        });
+        dialog.render(true);
+      } else { // SHOVEL
+        toggleEffect(e);
+      }
     });
 
     // Store updating flag on the wrapper element
@@ -194,6 +201,7 @@ export class ActiveEffectsContainer {
     return wrapper;
   }
 
+
   _updateEffectsDisplay() {
     let actor = null;
 
@@ -213,7 +221,8 @@ export class ActiveEffectsContainer {
     }
 
     // Get active effects from the actor's sheet.
-    const currentEffects = actor.effects?.contents || [];
+    //const currentEffects = actor.effects?.contents || [];
+    const currentEffects = Array.from(actor?.allApplicableEffects()) || []; // SHOVEL
 
     if (currentEffects.length === 0) {
       this.element.style.display = 'none';

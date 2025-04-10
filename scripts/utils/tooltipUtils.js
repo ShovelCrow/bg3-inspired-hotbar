@@ -71,6 +71,21 @@ export function formatSpellTarget(target, itemType) {
     return `${count}${type}${special}`.trim();
   }
   
+  // SHOVEL
+  if (target?.type) {
+    if (target.type.toLowerCase() === "self") return "Self";
+
+    let type = target.type
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^\s+/, '')
+      .trim();
+    
+    type = type.charAt(0).toUpperCase() + type.slice(1);
+    const units = target.units && target.units.toLowerCase() !== "touch" ? `${target.units} ` : "";
+    const value = target.value ? `${target.value} ` : "";
+    return `${value}${units}${type}`.trim();
+  }
+
   return "N/A";
 }
 

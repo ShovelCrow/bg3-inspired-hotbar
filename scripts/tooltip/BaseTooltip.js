@@ -197,11 +197,11 @@ export class BaseTooltip {
     const details = getItemDetails(this.item);
     const detailsEl = document.createElement("div");
     detailsEl.classList.add("tooltip-details-list");
-    const detailsHTML = [];
-    if (details.castingTime) detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Action")}:</strong> ${details.castingTime}</div>`);
-    if (details.range) detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Range")}:</strong> ${details.range}</div>`);
-    if (details.target) detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Target")}:</strong> ${details.target}</div>`);
-    if (details.duration) detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Duration")}:</strong> ${details.duration}</div>`);
+    const detailsHTML = []; // SHOVEL
+    if (details.castingTime && details.castingTime !== "N/A") detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Action")}:</strong> ${details.castingTime}</div>`);
+    if (details.range && details.range !== "N/A") detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Range")}:</strong> ${details.range}</div>`);
+    if (details.target && details.target !== "N/A") detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Target")}:</strong> ${details.target}</div>`);
+    if (details.duration && details.duration !== "N/A") detailsHTML.push(`<div><strong>${game.i18n.localize("BG3.Hotbar.Tooltips.Duration")}:</strong> ${details.duration}</div>`);
     if (detailsHTML.length > 0) {
       detailsEl.innerHTML = detailsHTML.join("");
       content.appendChild(detailsEl);

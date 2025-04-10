@@ -72,7 +72,7 @@ export class FilterContainer {
                 color = CONFIG.COLORS.DEFAULT;
         }
         
-        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}">${symbol}${type[0].toUpperCase() + type.slice(1)}${symbol}</h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
+        button.dataset.tooltip = `<div class="custom-tooltip"><h4 style="--data-color:${color}">${symbol} ${type[0].toUpperCase() + type.slice(1)} ${symbol}</h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`;
         button.dataset.tooltipDirection = "UP";
 
         button.style.color = color;
@@ -203,7 +203,8 @@ export class FilterContainer {
 
         const levelLabel = document.createElement("div");
         levelLabel.classList.add("spell-level-label");
-        levelLabel.textContent = isPact ? "P" : this._getRomanNumeral(level);
+        //levelLabel.textContent = isPact ? "P" : this._getRomanNumeral(level);
+        levelLabel.textContent = this._getRomanNumeral(level); // SHOVEL
         levelLabel.style.color = color;
 
         button.addEventListener("mouseenter", () => {
@@ -339,7 +340,7 @@ export class FilterContainer {
                         const spellLevel = itemData.system.level;
                         const isPactSpell = itemData.system.preparation?.mode === "pact";
                         
-                        if (spellLevel === this.selectedSpellLevel.level && this.selectedSpellLevel.isPact === isPactSpell) cell.dataset.highlightType = 'spell';
+                        if (spellLevel === this.selectedSpellLevel.level || (this.selectedSpellLevel.isPact && isPactSpell)) cell.dataset.highlightType = 'spell'; // SHOVEL
                         else cell.classList.add('action-excluded');
                     } catch (error) {
                         console.error("Error updating spell level highlights:", error);
