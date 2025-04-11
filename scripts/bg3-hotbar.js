@@ -189,7 +189,7 @@ export class BG3Hotbar extends Application {
             
             // Let ItemUpdateManager handle item changes
             if (changes.items || changes.system?.spells) {
-                await this.itemManager.cleanupInvalidItems(actor);
+                await this.itemUpdateManager.cleanupInvalidItems(actor);
             }
         }
     }
