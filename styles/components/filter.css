@@ -72,7 +72,7 @@
 #bg3-hotbar-container .spell-level-button {
     position: relative;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
     gap: 1px 2px;
@@ -104,9 +104,17 @@
     border-width: 1px;
     border-style: solid;
     box-sizing: border-box;
-    width: 8px;
-    height: 8px;
-    border-radius: unset;
+    width: 11px;
+    height: 11px;
+    background-color: currentColor;
+}
+
+#bg3-hotbar-container .spell-slot-box.is-used, #bg3-hotbar-container .spell-slot-box.spell-pact-box, #bg3-hotbar-container .spell-slot-box.spell-cantrip-box {
+    background-color: transparent;
+}
+
+#bg3-hotbar-container .spell-slot-box.spell-cantrip-box {
+    border-width: 3px;
 }
 
 #bg3-hotbar-container .spell-container {
