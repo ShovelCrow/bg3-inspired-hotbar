@@ -8,7 +8,7 @@ export class PortraitContainer extends BG3Component {
     constructor(data) {
         super(data);
         this.components = {};
-        this.useTokenImage = this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;;
+        this.useTokenImage = this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;
     }
 
     get classes() {
@@ -291,12 +291,6 @@ export class PortraitContainer extends BG3Component {
         this.togglePortraitOverlay();
         this.toggleHPText();
         this.toggleExtraInfos();
-    }
-
-    async render() {
-        await super.render();
-
-        return this.element;
     }
     
     async _renderInner() {

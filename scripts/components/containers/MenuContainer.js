@@ -115,6 +115,7 @@ export class MenuContainer extends BG3Component {
     static async toggle(data, parent, event) {
         event.preventDefault();
         event.stopPropagation();
+        if(game.tooltip) game.tooltip.deactivate()
         const oldParent = ui.BG3HOTBAR.menuManager?._parent;
         if(ui.BG3HOTBAR.menuManager) ui.BG3HOTBAR.menuManager.destroy();
         if(oldParent !== parent && !parent.locked) return new MenuContainer(data, parent, event).render();

@@ -69,38 +69,38 @@ export class ItemUpdateManager {
         
         const token = ui.BG3HOTBAR.manager.token;
         if (!token || token.actor?.items.get(item.id) !== item) return;
+        let needSave = false;
         
         // Check if this is a spell and its preparation state changed
         if (item.type === "spell" && changes.system?.preparation !== undefined) {
             const prep = item.system.preparation;
             // Remove if unprepared and not at-will/innate/etc
             if (!prep.prepared && prep.mode === "prepared") {
-                let removed = false;
                 for (const container of ui.BG3HOTBAR.components.container.components.hotbar) {
+                    let removed = false;
                     for (const [slotKey, slotItem] of Object.entries(container.data.items)) {
                         const itemId = slotItem?.uuid?.split('.').pop();
                         if (itemId === item.id) {
                             delete container.data.items[slotKey];
                             removed = true;
+                            needSave = true;
                         }
                     }
+                    if(removed) container.render();
                 }
                 for (const container of ui.BG3HOTBAR.components.weapon.components.weapon) {
+                    let removed = false;
                     for (const [slotKey, slotItem] of Object.entries(container.data.items)) {
                         const itemId = slotItem?.uuid?.split('.').pop();
                         if (itemId === item.id) {
                             delete container.data.items[slotKey];
                             removed = true;
+                            needSave = true;
                         }
                     }
+                    if(removed) container.render();
                 }
-                if (removed) {
-                    await ui.BG3HOTBAR.manager.persist();
-                    if (ui.BG3HOTBAR.element?.[0]) {
-                        ui.BG3HOTBAR.refresh();
-                    }
-                    ui.notifications.info(`Removed ${item.name} from hotbar as it is no longer prepared.`);
-                }
+                await ui.BG3HOTBAR.manager.persist();
                 return;
             }
             // Add if newly prepared or has other valid casting mode
@@ -117,7 +117,7 @@ export class ItemUpdateManager {
                 if (!exists) {
                     // Find the appropriate container (likely container 2 for spells)
                     const containerIndex = this._findAppropriateContainer(item);
-                    const container =ui.BG3HOTBAR.components.container.components.hotbar[containerIndex];
+                    const container = ui.BG3HOTBAR.components.container.components.hotbar[containerIndex];
                     
                     // Find an available slot
                     const slotKey = this._findNextAvailableSlot(container);
@@ -136,10 +136,8 @@ export class ItemUpdateManager {
                             // }
                         };
                         
-                        await ui.BG3HOTBAR.manager.persist();
-                        if (ui.BG3HOTBAR.element?.[0]) {
-                            ui.BG3HOTBAR.refresh();
-                        }
+                        container.render();
+                        needSave = true;
                         ui.notifications.info(`Added ${item.name} to hotbar as it is now prepared.`);
                         return;
                     }
@@ -147,11 +145,9 @@ export class ItemUpdateManager {
             }
         }
         
-        // Check all containers for the item
-        let updated = false;
-        
         // Find and update the item in all containers
         for (const container of ui.BG3HOTBAR.components.container.components.hotbar) {
+            let updated = false;
             for (const [slotKey, slotItem] of Object.entries(container.data.items)) {
                 // Extract the item ID from the UUID
                 const itemId = slotItem?.uuid?.split('.').pop();
@@ -167,6 +163,7 @@ export class ItemUpdateManager {
                         if (!prep?.prepared && prep?.mode === "prepared") {
                             delete container.data.items[slotKey];
                             updated = true;
+                            needSave = true;
                             continue;
                         }
                     }
@@ -181,12 +178,15 @@ export class ItemUpdateManager {
                         // sortData: slotItem.sortData // Preserve sort data
                     };
                     updated = true;
+                    needSave = true;
                 }
             }
+            if(updated) container.render();
         }        
             
         // Find and update the item in all weapons containers
         for (const container of ui.BG3HOTBAR.components.weapon.components.weapon) {
+            let updated = false;
             for (const [slotKey, slotItem] of Object.entries(container.data.items)) {
                 // Extract the item ID from the UUID
                 const itemId = slotItem?.uuid?.split('.').pop();
@@ -202,6 +202,7 @@ export class ItemUpdateManager {
                         if (!prep?.prepared && prep?.mode === "prepared") {
                             delete container.data.items[slotKey];
                             updated = true;
+                            needSave = true;
                             continue;
                         }
                     }
@@ -216,24 +217,15 @@ export class ItemUpdateManager {
                         // sortData: slotItem.sortData // Preserve sort data
                     };
                     updated = true;
+                    needSave = true;
                 }
             }
+            if(updated) container.render();
         }
         
-        if (updated) {
+        if (needSave) {
             // Save the changes
             await ui.BG3HOTBAR.manager.persist();
-        }
-
-        // Update UI components
-        if (ui.BG3HOTBAR.element?.[0]) {
-            // Update passives if this is a feat with activation changes
-            // if (item.type === "feat" && (changes.system?.activation?.type !== undefined || !item.system.activation?.type)) {
-            //     await this.manager.ui.passivesContainer?.update();
-            // }
-            
-            // Always re-render the UI to reflect changes
-            ui.BG3HOTBAR.refresh();
         }
     }
     
@@ -282,6 +274,8 @@ export class ItemUpdateManager {
                         //     featureType: item.type === "feat" ? item.system.type?.value || "" : ""
                         // }
                     };
+
+                    container.render();
                     
                     // Save changes
                     await ui.BG3HOTBAR.manager.persist();
@@ -293,17 +287,6 @@ export class ItemUpdateManager {
                 }
             }
         }
-        
-        // Update UI components
-        if (ui.BG3HOTBAR.element?.[0]) {
-            // Update passives if this is a passive feat
-            // if (item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive")) {
-            //     await this.manager.ui.passivesContainer?.update();
-            // }
-            
-            // Re-render UI to show new items
-            ui.BG3HOTBAR.refresh();
-        }
     }
 
     async _handleItemDelete(item, options, userId) {
@@ -314,23 +297,13 @@ export class ItemUpdateManager {
         
         // Clean up invalid items and re-render
         await this.cleanupInvalidItems(token.actor);
-        
-        // Update UI components
-        if (ui.BG3HOTBAR.element?.[0]) {
-            // Update passives if this was a passive feat
-            // if (item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive")) {
-            //     await this.manager.ui.passivesContainer?.update();
-            // }
-            
-            ui.BG3HOTBAR.refresh();
-        }
     }
     
     async cleanupInvalidItems(actor) {
-        let hasChanges = false;
         
         // Check each container's items
         for (const container of ui.BG3HOTBAR.components.container.components.hotbar) {
+            let hasChanges = false;
             for (const [slot, item] of Object.entries(container.data.items)) {
                 const itemData = await fromUuid(item.uuid);
                 if(itemData?.documentName == 'Macro') continue;
@@ -341,10 +314,12 @@ export class ItemUpdateManager {
                     hasChanges = true;
                 }
             }
+            if(hasChanges) container.render();
         }
             
         // Check each weapons container's items
         for (const container of ui.BG3HOTBAR.components.weapon.components.weapon) {
+            let hasChanges = false;
             for (const [slot, item] of Object.entries(container.data.items)) {
                 const itemData = await fromUuid(item.uuid);
                 if(itemData?.documentName == 'Macro') continue;
@@ -355,12 +330,9 @@ export class ItemUpdateManager {
                     hasChanges = true;
                 }
             }
-        }
-
-        if (hasChanges) {
-            await ui.BG3HOTBAR.manager.persist();
-            if (ui.BG3HOTBAR.element?.[0]) {
-                ui.BG3HOTBAR.refresh();
+            if(hasChanges) {
+                container.render();
+                await ui.BG3HOTBAR.manager.persist();
             }
         }
     }

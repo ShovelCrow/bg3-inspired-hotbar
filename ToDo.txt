@@ -1,10 +1,11 @@
+/** FEATURES **/
 - DragDrop - Activity activation
 - Check DeathSavesContainer stabilizing feature
 
 /** OPTIMIZE **/
 - Update UI rendering (promise)
     - renderInner => render
-- SwitchSet: check for not re equipping already equipped + Optimize
+- SwitchSet can be even better
 
 - Tooltip:
     - Settings like damage range
@@ -15,22 +16,10 @@
 
 
 /** BUGS **/
-- Multiselect
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-/** Done **/
+/****************** Done ******************/
+/** FEATURES **/
 - Slide down button
 - Foundry Controls Menu Button Toggle
 - Portrait contextmenu & change image
@@ -48,6 +37,7 @@
 /** OPTIMIZE **/
 - AbilityContainer ?
 - get Actor & get Token to component.js
+- SwitchSet: check for not re equipping already equipped + Optimize
 
 /** BUGS **/
 - Portrait after/before - pointer-events
@@ -55,3 +45,4 @@
 - Module Settings
 - Tooltip when on child show
 - Cell contextmenu without item
+- Multiselect

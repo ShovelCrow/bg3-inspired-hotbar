@@ -114,11 +114,11 @@ input[name="weapon-choice"] {
     border-radius: 5px 10px 10px 5px;
 }
 
-#bg3-hotbar-container .bg3-weapon-set .hotbar-cell.has-2h + .hotbar-cell {
+#bg3-hotbar-container .bg3-weapon-set .hotbar-cell.has-2h {
     pointer-events: none !important;
 }
 
-#bg3-hotbar-container .bg3-weapon-set .hotbar-cell.has-2h + .hotbar-cell img {
+#bg3-hotbar-container .bg3-weapon-set .hotbar-cell.has-2h > img {
     opacity: 0.25;
 }
 

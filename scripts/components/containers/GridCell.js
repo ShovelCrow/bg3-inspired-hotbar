@@ -102,7 +102,7 @@ export class GridCell extends BG3Component {
                     click: async () => {
                         if(!this.data.item) return;
                         await this.menuItemAction('remove');
-                        if(this.id === 'weapon') this._parent.switchSet(this);
+                        if(this._parent.id === 'weapon') this._parent._parent.switchSet(this._parent._parent.components.weapon[this._parent._parent.activeSet]);
                     }
                 },
                 divider: {visibility: !this.data.item},
@@ -124,7 +124,7 @@ export class GridCell extends BG3Component {
                     label: 'Clear Container', icon: 'fas fa-trash-alt',
                     click: () => {
                         this._parent.menuItemAction('clear');
-                        if(this.id === 'weapon') this._parent.switchSet(this);
+                        if(this._parent.id === 'weapon') this._parent._parent.switchSet(this._parent._parent.components.weapon[this._parent._parent.activeSet]);
                     }
                 }
             }
@@ -184,9 +184,9 @@ export class GridCell extends BG3Component {
                 ChatMessage.create({
                 user: game.user,
                 speaker: {
-                    actor: ui.BG3HOTBAR.manager.actor,
-                    token: ui.BG3HOTBAR.manager.actor.token,
-                    alias: ui.BG3HOTBAR.manager.actor.name
+                    actor: this.actor,
+                    token: this.actor.token,
+                    alias: this.actor.name
                 },
                 content: `\n<div class="dnd5e2 chat-card item-card" data-display-challenge="">\n\n<section class="card-header description collapsible">\n\n<header class="summary">\n<img class="gold-icon" src="${item.img ?? item.icon}">\n<div class="name-stacked border">\n<span class="title">${item.name}</span>\n<span class="subtitle">\nFeature\n</span>\n</div>\n<i class="fas fa-chevron-down fa-fw"></i>\n</header>\n\n<section class="details collapsible-content card-content">\n<div class="wrapper">\n${item.description}\n</div>\n</section>\n</section>\n\n\n</div>\n`
                 });
@@ -279,7 +279,29 @@ export class GridCell extends BG3Component {
 
     async _renderInner() {
         await super._renderInner();
-        this.element.setAttribute('data-slot', `${this.data.col}-${this.data.row}`);
+        const slotKey = `${this.data.col}-${this.data.row}`;
+        this.element.setAttribute('data-slot', slotKey);
+        if(this._parent.id === 'weapon' && slotKey === '1-0') {
+            const prevEl = this._parent.components[0];
+            if(prevEl?.data?.item) {
+                const prevItem = await prevEl.item;
+                if(prevItem?.labels?.properties?.find(p => p.abbr === 'two')) {
+                    if(this.item) {
+                        this.data.item = null;
+                        delete ui.BG3HOTBAR.manager.containers.weapon[this._parent.index].items[slotKey];
+                        await ui.BG3HOTBAR.manager.persist();
+                    }
+                    this.element.classList.add('has-2h')
+                    this.element.setAttribute('draggable', false);
+                    const img2 = document.createElement("img");
+                    img2.src = prevItem.img;
+                    img2.alt = prevItem.name || "";
+                    img2.classList.add('hotbar-item');
+                    this.element.replaceChildren(img2);
+                    return;
+                }
+            }
+        }
         this.element.setAttribute('draggable', !!this.data.item);
         this.element.classList.toggle('has-item', !!this.data.item);
         if(this.data.item) {
@@ -290,8 +312,7 @@ export class GridCell extends BG3Component {
                 if(itemData.type === "spell") {
                     this.element.dataset.isPact = itemData.system.preparation?.mode === "pact";
                     this.element.dataset.level = itemData.system.level;
-                }
-                if(itemData.type === 'feat') this.element.dataset.featType = itemData.system?.type?.value || 'default';
+                } else if(itemData.type === 'feat') this.element.dataset.featType = itemData.system?.type?.value || 'default';
             }
         }
     }

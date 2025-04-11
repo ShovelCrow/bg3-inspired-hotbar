@@ -20,16 +20,46 @@ export class WeaponContainer extends BG3Component {
     }
 
     set activeSet(index) {
-        // this.activeSet = index;
-        ui.BG3HOTBAR.manager.actor.setFlag(CONFIG.MODULE_NAME, 'activeSet', index);
+        this.actor.setFlag(CONFIG.MODULE_NAME, 'activeSet', index);
         this.element.setAttribute('data-active-set', index);
     }
 
     async switchSet(c) {
         if(c.index === this.activeSet && c.oldWeapons === c.data.items) return;
 
-        const actor = ui.BG3HOTBAR.manager.actor,
-            weaponsList = actor.items.filter(w => w.type == 'weapon'),
+        const weaponsList = this.actor.items.filter(w => w.type == 'weapon'),
+            compareOld = c.index === this.activeSet ? c.oldWeapons : this.components.weapon[this.activeSet].data.items;
+        let toUpdate = [];
+        weaponsList.forEach(w => {
+            if(w.system.equipped && !Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
+                toUpdate.push({_id: w.id, "system.equipped": 0});
+            } else if(!w.system.equipped && Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
+                toUpdate.push({_id: w.id, "system.equipped": 1});
+            }
+        });
+        Object.values(c.data.items).forEach(nw => {
+            const itemId = nw.uuid.split('.').pop(),
+                item = this.actor.items.get(itemId);
+            if(item.type !== 'weapon' && !item.system.equipped) toUpdate.push({_id: itemId, "system.equipped": 1});
+        });
+        if(compareOld) {
+            Object.values(compareOld).forEach(ow => {
+                const itemId = ow.uuid.split('.').pop(),
+                    item = this.actor.items.get(itemId);
+                if(item.type !== 'weapon' && item.system.equipped && !Object.values(c.data.items).find(w => w.uuid === ow.uuid)) toUpdate.push({_id: itemId, "system.equipped": 0});
+            });
+        }
+        
+        // Update active set & equipped items
+        this.activeSet = c.index;
+        c.oldWeapons = foundry.utils.deepClone(c.data.items);
+        if(toUpdate.length) await this.actor.updateEmbeddedDocuments("Item", toUpdate);
+    }
+
+    /* async switchSet2(c) {
+        if(c.index === this.activeSet && c.oldWeapons === c.data.items) return;
+
+        const weaponsList = this.actor.items.filter(w => w.type == 'weapon'),
             toUpdate = [];
         if(this.activeSet !== c.index) {
             // Add previous set to unequip
@@ -62,8 +92,8 @@ export class WeaponContainer extends BG3Component {
             }
             // if(w.system.equipped && !toUpdate.find(wu => wu._id == w.id)) toUpdate.push({_id: w.id, "system.equipped": 0})
         })
-        if(toUpdate.length) await actor.updateEmbeddedDocuments("Item", toUpdate);
-    }
+        if(toUpdate.length) await this.actor.updateEmbeddedDocuments("Item", toUpdate);
+    } */
 
     async render() {
         await super.render();
@@ -84,7 +114,7 @@ export class WeaponContainer extends BG3Component {
             weapon: []
         };
         combatContainer.id = 'combat';
-        this.element.setAttribute('data-active-set', this.activeSet);
+        // this.element.setAttribute('data-active-set', this.activeSet);
         await combatContainer.render();
         combatContainer.element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
         this.components.combat.push(combatContainer);

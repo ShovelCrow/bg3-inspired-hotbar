@@ -3,7 +3,11 @@ import { BG3Component } from "../component.js";
 export class DeathSavesContainer extends BG3Component {
     constructor(data) {
         super(data);
-        this.isStabilizing = false;
+        
+        this.lastHpValue = null;  // Track HP changes
+        
+        this.stabilizationTimer = null;  // Add timer reference
+        this.isStabilizing = false;      // Add stabilization state
     }
 
     get classes() {
@@ -19,13 +23,13 @@ export class DeathSavesContainer extends BG3Component {
         // Get current HP and death saves state
         const currentHP = this.actor.system.attributes?.hp?.value || 0;
 
-        // Always show death saves UI when at 0 HP, even during stabilization
-        if (currentHP <= 0) return true;
-        else if (!this.isStabilizing) return false;
+        return currentHP <= 0
     }
 
     async _registerEvents() {
         this.element.querySelector('.death-saves-skull').addEventListener('click', async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
             // Get current death save count before the roll
             const currentSuccesses = this.actor.system.attributes.death.success || 0;
 
@@ -45,37 +49,7 @@ export class DeathSavesContainer extends BG3Component {
                 });
                 
                 if(!roll) return;
-                
-                // Only handle our UI updates after system processes are complete
-                if (roll.total >= 10 && currentSuccesses === 2) {  // This would be the third success
-                    this.isStabilizing = true;
-                    
-                    const successBoxes = this.element.querySelectorAll('.death-save-box.success');
-                    const failureBoxes = this.element.querySelectorAll('.death-save-box.failure');
-
-                    // Force all success boxes to be marked
-                    successBoxes.forEach(box => box.classList.add('marked'));
-                    
-                    // Keep any existing failure marks
-                    const currentFailures = this.actor.system.attributes.death.failure || 0;
-                    failureBoxes.forEach((box, index) => {
-                        box.classList.toggle('marked', index + 1 <= currentFailures);
-                    });
-
-                    // Clear any existing timer
-                    if (this.stabilizationTimer) {
-                        clearTimeout(this.stabilizationTimer);
-                    }
-
-                    // Set new timer
-                    this.stabilizationTimer = setTimeout(() => {
-                        this.isStabilizing = false;
-                        // Check current HP state when timer completes
-                        if (this.actor.system.attributes.hp.value > 0) {
-                            this.element.style.display = 'none';
-                        }
-                    }, 5000);
-                }
+                this.setVisibility();
             } catch (error) {
                 console.error("Error during death save roll:", error);
             }

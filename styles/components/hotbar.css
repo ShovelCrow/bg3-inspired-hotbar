@@ -174,7 +174,7 @@
     padding: 0;
     border-radius: 2px;
     transition: filter 0.2s ease;
-    pointer-events: none;
+    /* pointer-events: none; */
 }
 
 #bg3-hotbar-container .hotbar-item.depleted {

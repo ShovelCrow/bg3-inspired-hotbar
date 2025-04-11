@@ -24,6 +24,7 @@ export class BG3Hotbar extends Application {
         this.macroBarTimeout = null;
         this.combatActionsArray = [];
         // this.enabled = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
+        this.generateTimeout = null;
 
         /** Hooks Event **/
         Hooks.on("createToken", this._onCreateToken.bind(this));
@@ -81,15 +82,10 @@ export class BG3Hotbar extends Application {
         await AutoPopulateCreateToken.populateUnlinkedToken(token);
     }
 
-    _onControlToken(token, controlled) {
+    /* _onControlToken2(token, controlled) {
         if (!this.manager) return;
-
-        /* if ((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) {
-            setTimeout(() => {
-                if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.generate(null);
-            }, 100);
-        } */
-        if (!controlled && !canvas.tokens.controlled.length && !ControlsManager.isSettingLocked('deselect')) {
+        
+        if (((!controlled && !canvas.tokens.controlled.length)) && !ControlsManager.isSettingLocked('deselect')) {
             setTimeout(() => {
                 if (!canvas.tokens.controlled.length) this.generate(null);
             }, 100);
@@ -100,6 +96,27 @@ export class BG3Hotbar extends Application {
             this.generate(token);
             if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
         }
+    } */
+
+    _onControlToken(token, controlled) {
+        if (!this.manager) return;
+        
+        if(this.generateTimeout) {
+            clearTimeout(this.generateTimeout);
+            this.generateTimeout = null;
+        }
+
+        this.generateTimeout = setTimeout(() => {
+            if (((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) && !ControlsManager.isSettingLocked('deselect')) {
+                if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.generate(null);
+            }
+            if (!controlled || !canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) return;
+
+            if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) {
+                    this.generate(token);
+                    if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+            }
+        })
     }
 
     async _onUpdateToken(token, changes, options, userId) {
@@ -137,15 +154,6 @@ export class BG3Hotbar extends Application {
         }
     }
 
-    /** Hooks Update
-     ** activeContainer 
-     *  'createActiveEffect' / 'deleteActiveEffect' / 'updateActiveEffect' / 'UpdateActor' / 'UpdateToken'
-     *
-     ** portrait
-     *  'updateActor'
-     * 
-    **/
-
     async _onUpdateActor(actor, changes, options, userId) {
         if(!this.manager) return;
         
@@ -158,7 +166,6 @@ export class BG3Hotbar extends Application {
         
         // Update UI components
         if (this.element?.[0]) {
-            // this.generate(this.token);
             // Update portrait card for any actor changes
             if (this.components.portrait) {
                 // changes.system?.attributes?.hp?.value !== undefined

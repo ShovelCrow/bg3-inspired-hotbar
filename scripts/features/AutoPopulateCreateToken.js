@@ -243,6 +243,7 @@ export class AutoPopulateCreateToken {
     static async _populateCommonActions(actor, manager) {
         if(actor.type == 'vehicule') return;
         try {
+            console.log('autoPopulateCombatContainer', game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateCombatContainer'))
             const tmpArray = [],
                 actionsClone = foundry.utils.deepClone(CONFIG.COMBATACTIONDATA);
             Object.entries(actionsClone).forEach(([key, value]) => {
@@ -257,6 +258,7 @@ export class AutoPopulateCreateToken {
               let tmpDoc = await actor.createEmbeddedDocuments('Item', tmpArray);
               tmpDoc.forEach(doc => Object.values(actionsClone).find(value => value.name == doc.name).uuid = doc.uuid)
             }
+            console.log('autoPopulateCombatContainer2', game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateCombatContainer'))
             manager.containers.combat[0].items = actionsClone;
         } catch (error) {
             console.error("BG3 Inspired Hotbar | Error auto-populating common actions token hotbar:", error);

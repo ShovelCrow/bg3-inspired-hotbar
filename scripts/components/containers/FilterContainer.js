@@ -45,7 +45,7 @@ export class FilterContainer extends BG3Component {
         ]
 
         // Add pact magic first if it exists
-        const pactMagic = ui.BG3HOTBAR.manager.actor.system.spells?.pact;
+        const pactMagic = this.actor.system.spells?.pact;
         if (pactMagic?.max > 0) {
             filterData.push({
                 id: 'spell',
@@ -62,7 +62,7 @@ export class FilterContainer extends BG3Component {
         // Then add regular spell levels
         for (let level = 1; level <= 9; level++) {
             const spellLevelKey = `spell${level}`;
-            const spellLevel = ui.BG3HOTBAR.manager.actor.system.spells?.[spellLevelKey];
+            const spellLevel = this.actor.system.spells?.[spellLevelKey];
             
             if (spellLevel?.max > 0) {
                 filterData.push({
@@ -79,7 +79,7 @@ export class FilterContainer extends BG3Component {
         }
 
         // Then add cantrip spell
-        let cantrips = ui.BG3HOTBAR.manager.actor.items.filter(i => i.type==="spell" && i.system.level===0)
+        let cantrips = this.actor.items.filter(i => i.type==="spell" && i.system.level===0)
         if(cantrips.length) {
           filterData.push({
               id: 'spell',

@@ -16,7 +16,7 @@ export class PassiveContainer extends BG3Component {
     }
 
     get passivesList() {
-        if(!ui.BG3HOTBAR.manager.token && !ui.BG3HOTBAR.manager.actor) return null;
+        if(!this.token && !this.actor) return null;
 
         const availablePassives = this.actor.items.filter(item => 
             item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive")
@@ -43,10 +43,9 @@ export class PassiveContainer extends BG3Component {
         event.preventDefault();
         event.stopPropagation();
         if (event.button !== 2) return;
-        let actor = ui.BG3HOTBAR.manager.actor;
                 
         // Get all available passive features from the actor
-        const availableFeatures = actor.items
+        const availableFeatures = this.actor.items
             .filter(item => item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive"))
             .map(item => ({
                 uuid: item.uuid,
@@ -76,7 +75,7 @@ export class PassiveContainer extends BG3Component {
                             }
                         });
                         // Update our selection and persist it
-                        await ui.BG3HOTBAR.manager.actor.setFlag(CONFIG.MODULE_NAME, "selectedPassives", Array.from(newSelection));
+                        await this.actor.setFlag(CONFIG.MODULE_NAME, "selectedPassives", Array.from(newSelection));
                         this.render();
                     }
                 },

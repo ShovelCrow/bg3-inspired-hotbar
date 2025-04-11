@@ -1,7 +1,7 @@
 <div>
     <div class="death-saves-group">
         {{#times 3}}
-            <div class="death-save-box success clickable{{#if (lt success @index)}} marked{{/if}}" data-index="{{@index}}" data-tooltip="Set {{math 3 '-' @index}} success{{#if (gt (math 3 '-' @index) 1)}}es{{/if}}" data-tooltip-direction="UP"></div>
+            <div class="death-save-box success clickable{{#if (lte (math 3 '-' @index) success)}} marked{{/if}}" data-index="{{@index}}" data-tooltip="Set {{math 3 '-' @index}} success{{#if (gt (math 3 '-' @index) 1)}}es{{/if}}" data-tooltip-direction="UP"></div>
         {{/times}}
     </div>
     <div class="death-saves-skull clickable" data-tooltip="Left Click: Roll Death Save (Alt: Advantage, Ctrl: Disadvantage, Shift: Fast Forward)<br>Right Click: Reset death saves" data-tooltip-direction="UP"><i class="fas fa-skull"></i></div>

@@ -21,7 +21,7 @@ export class RestTurnContainer extends BG3Component {
                     class: ["rest-turn-button", "turn-button"], 
                     label: 'End Turn',
                     icon: 'fa-clock-rotate-left',
-                    visible: () => !!game.combat?.started && game.combat?.combatant?.actor === ui.BG3HOTBAR.manager.actor,
+                    visible: () => !!game.combat?.started && game.combat?.combatant?.actor === this.actor,
                     events: {
                         'click': function() {
                             game.combat.nextTurn.bind(game.combat)()
@@ -35,7 +35,7 @@ export class RestTurnContainer extends BG3Component {
                     icon: "fa-campfire",
                     visible: () => !game.combat?.started,
                     events: {
-                        'click': ui.BG3HOTBAR.manager.actor.shortRest.bind(ui.BG3HOTBAR.manager.actor)
+                        'click': this.actor.shortRest.bind(this.actor)
                     }
                 },
                 {
@@ -45,7 +45,7 @@ export class RestTurnContainer extends BG3Component {
                     icon: "fa-tent",
                     visible: () => !game.combat?.started,
                     events: {
-                        'click': ui.BG3HOTBAR.manager.actor.longRest.bind(ui.BG3HOTBAR.manager.actor)
+                        'click': this.actor.longRest.bind(this.actor)
                     }
                 }
             ]]

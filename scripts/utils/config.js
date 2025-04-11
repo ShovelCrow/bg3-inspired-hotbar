@@ -809,7 +809,7 @@ export function registerSettings() {
     game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateCombatContainer', {
         name: 'Autopopulate the basic actions container',
         hint: 'Auto-populate the basic actions with dodge, dash, etc (Compatible with CPR). Disable this will unlock the container.',
-        scope: 'client',
+        scope: 'world',
         config: true,
         type: Boolean,
         default: true

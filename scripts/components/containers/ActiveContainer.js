@@ -11,11 +11,10 @@ export class ActiveContainer extends BG3Component {
     }
 
     get activesList() {
-        if(!ui.BG3HOTBAR.manager.token && !ui.BG3HOTBAR.manager.actor) return null;
-        const actor = ui.BG3HOTBAR.manager.actor;
+        if(!this.token && !this.actor) return null;
 
         // Get active effects from the actor's sheet.
-       return actor.effects?.contents || [];
+       return this.actor.effects?.contents || [];
     }
 
     async render() {

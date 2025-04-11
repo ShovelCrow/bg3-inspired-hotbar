@@ -27,8 +27,7 @@ export class AutoPopulateContainer {
     
     try {
       // Check if we have permission to modify the actor
-      const actor = ui.BG3HOTBAR.manager.actor;
-      if (!actor?.canUserModify(game.user, "update")) {
+      if (!this.actor?.canUserModify(game.user, "update")) {
         console.debug("BG3 Inspired Hotbar | User lacks permission to modify token actor");
         return 0;
       }
@@ -39,7 +38,7 @@ export class AutoPopulateContainer {
       if (container.render) {
         container.render();
       }
-      if (ui.BG3HOTBAR?.manager?.persist && actor?.canUserModify(game.user, "update")) {
+      if (ui.BG3HOTBAR?.manager?.persist && this.actor?.canUserModify(game.user, "update")) {
         await ui.BG3HOTBAR.manager.persist();
       }
       

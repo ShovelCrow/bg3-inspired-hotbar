@@ -102,9 +102,10 @@ export class BG3Component {
                     if(uuid) {
                         const isActivity = uuid.includes('.Activity.');
                         if(isActivity) break;
-                        this.element.dataset.tooltip = `<section class="loading" data-uuid="${this.data?.uuid ?? this.data?.item?.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
-                        this.element.dataset.tooltipClass = "dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip";
-                        this.element.dataset.tooltipDirection="UP";
+                        const targetElement = this.element.firstElementChild ?? this.element;
+                        targetElement.dataset.tooltip = `<section class="loading" data-uuid="${this.data?.uuid ?? this.data?.item?.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
+                        targetElement.dataset.tooltipClass = "dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip";
+                        targetElement.dataset.tooltipDirection="UP";
                     }
                     break;        
                 default:
