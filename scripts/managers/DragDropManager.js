@@ -70,6 +70,20 @@ export class DragDropManager {
                 }
             }
             if(newItem) {
+                // Handle 2 Handed weapon specific case
+                if(target._parent.id === 'weapon') {
+                    const item = ui.BG3HOTBAR.manager.actor?.items?.get(newItem.uuid.split('.').pop());
+                    if(target.slotKey === '0-0' && ui.BG3HOTBAR.manager.containers[target._parent.id][target._parent.index].items['1-0']) {
+                        if(item && item?.labels?.properties?.find(p => p.abbr === 'two')) {
+                            delete ui.BG3HOTBAR.manager.containers[target._parent.id][target._parent.index].items['1-0'];
+                            await target._parent.components[1]._renderInner();
+                        }
+                    } else if(target.slotKey === '1-0' && item && item?.labels?.properties?.find(p => p.abbr === 'two')) {
+                        ui.notifications.warn('You can\'t assign a 2-handed weapon to an offhand slot.')
+                        return;
+                    }
+                }
+
                 target.data.item = newItem;
     
                 // Update manager stored data

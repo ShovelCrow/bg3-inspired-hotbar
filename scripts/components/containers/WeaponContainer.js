@@ -106,30 +106,29 @@ export class WeaponContainer extends BG3Component {
 
     async _renderInner() {
         await super._renderInner();
-        // Combat Container
-        const combatContainer = new GridContainer(this.data.combat[0]);
-        combatContainer.locked = game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer');
         this.components = {
             combat: [],
             weapon: []
         };
-        combatContainer.id = 'combat';
-        // this.element.setAttribute('data-active-set', this.activeSet);
-        await combatContainer.render();
-        combatContainer.element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
-        this.components.combat.push(combatContainer);
         // Weapons Containers
-        for(let i = 0; i < this.data.weapon.length; i++) {
-            const gridData = this.data.weapon[i],
-                container = new GridContainer(gridData);
+        this.components.weapon = this.data.weapon.map((gridData, i) => {
+            const container = new GridContainer(gridData);
             container.index = i;
             container.id = 'weapon';
             container.element.setAttribute('data-container-index', i);
             container._parent = this;
-            container.render();
-            this.element.appendChild(container.element);
-            this.components.weapon.push(container);
-        }
+            return container;
+        });
+        for(const cell of this.components.weapon) this.element.appendChild(cell.element);
+        await Promise.all(this.components.weapon.map((cell) => cell.render()));
+
+        // Combat Container
+        const combatContainer = new GridContainer(this.data.combat[0]);
+        combatContainer.locked = game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer');
+        combatContainer.id = 'combat';
+        combatContainer.element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
+        this.components.combat.push(combatContainer);
         this.element.appendChild(combatContainer.element);
+        await combatContainer.render();
     }
 }

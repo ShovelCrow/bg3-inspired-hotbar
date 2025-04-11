@@ -26,6 +26,10 @@ export class GridCell extends BG3Component {
         return {type: 'advanced'};
     }
 
+    check2Handed(item) {
+        return this._parent.id === 'weapon' && this.data.col === 0 && this.data.row === 0 && !!item?.labels?.properties?.find(p => p.abbr === 'two');
+    }
+
     async getData() {
         let itemData = await this.item,
             data = super.getData();
@@ -165,8 +169,8 @@ export class GridCell extends BG3Component {
                 break;
             case 'remove':
                 delete this.data.item;
-                await this._renderInner();
                 delete ui.BG3HOTBAR.manager.containers[this._parent.id][this._parent.index].items[this.slotKey];
+                await this._renderInner();
                 await ui.BG3HOTBAR.manager.persist();
                 break;
             default:
@@ -281,27 +285,6 @@ export class GridCell extends BG3Component {
         await super._renderInner();
         const slotKey = `${this.data.col}-${this.data.row}`;
         this.element.setAttribute('data-slot', slotKey);
-        if(this._parent.id === 'weapon' && slotKey === '1-0') {
-            const prevEl = this._parent.components[0];
-            if(prevEl?.data?.item) {
-                const prevItem = await prevEl.item;
-                if(prevItem?.labels?.properties?.find(p => p.abbr === 'two')) {
-                    if(this.item) {
-                        this.data.item = null;
-                        delete ui.BG3HOTBAR.manager.containers.weapon[this._parent.index].items[slotKey];
-                        await ui.BG3HOTBAR.manager.persist();
-                    }
-                    this.element.classList.add('has-2h')
-                    this.element.setAttribute('draggable', false);
-                    const img2 = document.createElement("img");
-                    img2.src = prevItem.img;
-                    img2.alt = prevItem.name || "";
-                    img2.classList.add('hotbar-item');
-                    this.element.replaceChildren(img2);
-                    return;
-                }
-            }
-        }
         this.element.setAttribute('draggable', !!this.data.item);
         this.element.classList.toggle('has-item', !!this.data.item);
         if(this.data.item) {
@@ -309,11 +292,27 @@ export class GridCell extends BG3Component {
             if(itemData) {
                 if(itemData.system?.activation?.type) this.element.dataset.actionType = itemData.system.activation.type.toLowerCase();
                 this.element.dataset.itemType = itemData.type;
-                if(itemData.type === "spell") {
-                    this.element.dataset.isPact = itemData.system.preparation?.mode === "pact";
-                    this.element.dataset.level = itemData.system.level;
-                } else if(itemData.type === 'feat') this.element.dataset.featType = itemData.system?.type?.value || 'default';
+                switch (itemData.type) {
+                    case 'spell':
+                        this.element.dataset.isPact = itemData.system.preparation?.mode === "pact";
+                        this.element.dataset.level = itemData.system.level;
+                        break;
+                    case 'feat':
+                        this.element.dataset.featType = itemData.system?.type?.value || 'default';
+                        break;
+                    case 'weapon':
+                        const is2h = this.check2Handed(itemData);
+                        this.element.classList.toggle('has-2h', is2h);
+                        if(is2h) this._parent.element.style.setProperty('--bg-2h', `url(${itemData.img})`);
+                        else this._parent.element.style.removeProperty('--bg-2h');
+                        break;
+                    default:
+                        break;
+                }
             }
+        } else if($(this.element).hasClass('has-2h')) {
+            this.element.classList.remove('has-2h');
+            this._parent.element.style.removeProperty('--bg-2h');
         }
     }
 }
