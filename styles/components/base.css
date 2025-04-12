@@ -1,5 +1,5 @@
 :root {
-    --bg3-border-color: #444444;
+    /* --bg3-border-color: #444444;
     --bg3-border-color-hover: #666666;
     --bg3-background-color: #222222;
     --bg3-background-color-hover: #3a3a3a;
@@ -70,12 +70,44 @@
     --bg3-tooltip-text-color: var(--bg3-text-color);
     --bg3-tooltip-text-secondary-color: var(--bg3-text-secondary-color);
     --bg3-tooltip-component-color: #aaaaaa;
-    --bg3-tooltip-border-size: var(--bg3-border-size);
+    --bg3-tooltip-border-size: var(--bg3-border-size); */
+    
+    /* Colors */
+    --bg3-background: #222222f2;
+    --bg3-border: #161616;
+    --bg3-border-width: 1px;
+    --primary-border-width: 2px;
+    --primary-border-color: #444;
+    --bg3-text: #ddd;
+    --bg3-background-highlight: #3a3a3a;
+    --shadow-text-stroke: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+
+    /* Cells */
+    --bg3-cell-border-width: 2px;
+    
+    /* Action Colors */
+    --bg3-action: var(--color-action, #2ecc71);
+    --bg3-bonus: var(--color-bonus, #e67e22);
+    --bg3-reaction: var(--color-reaction, #fe85f6);
+    --bg3-spell: var(--color-spell, #3498db);
+    --bg3-pact: var(--color-pact, #8e44ad);
+    --bg3-feature-default: var(--color-feature, #808080);
+    --bg3-feature-class: var(--color-feature, #7b68ee);
+    --bg3-feature-race: var(--color-feature, #20b2aa);
+    --bg3-feature-feat: var(--color-feature, #ff6347);
+    --bg3-feature-monster: var(--color-feature, #4682b4);
+    --bg3-feature-subclass: var(--color-feature, #808080);
     
     /* Z-indices */
     --bg3-z-base: 70;
     --bg3-z-grid: 20;
     --bg3-z-filter-container: 100;
+    
+    /* Sizing */
+    --bg3-cell-size: 50px;
+    --bg3-filter-button-size: 32px;
+    --bg3-portrait-size: 175px;
+    --portrait-right: calc(2*(var(--bg3-weapon-cell-size) + 11px));
 }
 
 
@@ -174,4 +206,26 @@ body[data-player-list="hover"] #players {
 body[data-player-list="hover"] #players:hover {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* ==========================================================================
+   Color Picker
+   ========================================================================== */
+
+.color-picker-container {
+  position: relative;
+  width: fit-content;
+  /* padding-right: 1px; */
+}
+
+.color-picker-container .picker_wrapper {
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+  z-index: 1;
+  /* box-shadow: 0 0 0 1px black; */
+}
+
+.color-picker-container input[is="colorpicker-input"] {
+  text-align: center;
 }
