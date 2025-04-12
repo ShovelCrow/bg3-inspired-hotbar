@@ -191,6 +191,15 @@
             "AutoPopulating": "Auto-Populating",
             "FoundryUI": "Foundry UI Tweaks"
         },
+        "MenuTheme": {
+            "Name": "Theme configuration",
+            "Hint": "Choose between available themes or create a custom one.",
+            "Label": "Configure Theme"
+        },
+        "scopeTheme": {
+            "Name": "Theme Scope",
+            "Hint": "If checked every player will be able to choose it's own theme. Otherwise the theme selected by the GM will be the same for everyone."
+        },
         "PlayerListVisibility": {
             "Name": "Player List Visibility",
             "Hint": "Control the visibility of the default Foundry player list in the bottom-left.",
