@@ -378,6 +378,24 @@ export function registerSettings() {
             ui.BG3HOTBAR._applyMacrobarCollapseSetting();
         }
     });
+
+    // New setting for Player List Visibility
+    game.settings.register(CONFIG.MODULE_NAME, 'playerListVisibility', {
+        name: 'BG3.Settings.PlayerListVisibility.Name',
+        hint: 'BG3.Settings.PlayerListVisibility.Hint',
+        scope: 'client',
+        config: true,
+        type: String,
+        choices: {
+            "always": "BG3.Settings.PlayerListVisibility.Choices.always",
+            "hover": "BG3.Settings.PlayerListVisibility.Choices.hover",
+            "hidden": "BG3.Settings.PlayerListVisibility.Choices.hidden"
+        },
+        default: "always",
+        onChange: value => {
+            document.body.dataset.playerList = value;
+        }
+    });
     
     // Visual Settings - Appearance
     game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
@@ -750,14 +768,14 @@ export function registerSettings() {
     });
 
     game.settings.register(CONFIG.MODULE_NAME, 'highlightStyle', {
-        name: game.i18n.localize('BG3.Settings.HighlightStyle.Name'),
-        hint: game.i18n.localize('BG3.Settings.HighlightStyle.Hint'),
+        name: 'BG3.Settings.HighlightStyle.Name',
+        hint: 'BG3.Settings.HighlightStyle.Hint',
         scope: 'client',
         config: true,
         type: String,
         choices: {
-            'bottom': game.i18n.localize('BG3.Settings.HighlightStyle.Bottom'),
-            'border': game.i18n.localize('BG3.Settings.HighlightStyle.Border')
+            'bottom': 'BG3.Settings.HighlightStyle.Bottom',
+            'border': 'BG3.Settings.HighlightStyle.Border'
         },
         default: 'border',
         onChange: value => {
@@ -942,8 +960,8 @@ export function registerSettings() {
 
     // Register the chip selector menu item
     game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
-        name: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Name'),
-        label: game.i18n.localize('BG3.Settings.ContainerAutoPopulate.Configure'),
+        name: 'BG3.Settings.ContainerAutoPopulate.Name',
+        label: 'BG3.Settings.ContainerAutoPopulate.Configure',
         icon: 'fas fa-tags',
         type: AutoPopulateDefaults,
         restricted: true
@@ -971,6 +989,9 @@ export function registerSettings() {
         type: Boolean,
         default: false
     });
+    
+    // Make sure settings are registered before hooks that might need them
+    console.log(`${CONFIG.MODULE_NAME} | Settings Registered`);
 }
 
 export function registerHandlebars() {

@@ -155,3 +155,23 @@ aside[role="tooltip"] .custom-tooltip i {
     transition-delay: 0s;
     opacity: var(--bg3-normal-opacity);
 }
+
+/* ==========================================================================
+   Player List Visibility
+   ========================================================================== */
+
+body[data-player-list="hidden"] #players {
+    display: none !important;
+}
+
+body[data-player-list="hover"] #players {
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Add transitions for smoothness */
+    transform-origin: bottom left;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+body[data-player-list="hover"] #players:hover {
+    opacity: 1;
+    transform: translateY(0);
+}

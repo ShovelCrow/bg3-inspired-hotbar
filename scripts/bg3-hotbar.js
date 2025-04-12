@@ -72,6 +72,7 @@ export class BG3Hotbar extends Application {
         
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
+        document.body.dataset.playerList = game.settings.get(CONFIG.MODULE_NAME, 'playerListVisibility');
 
         this.updateUIScale();
     }
@@ -212,6 +213,7 @@ export class BG3Hotbar extends Application {
     }
 
     _onDeleteCombat(combat) {
+        if(ui.BG3HOTBAR.element?.[0]) return;
         this.combat.forEach(e => e.setComponentsVisibility());
         if(!this.components.container?.components?.filterContainer) return;
         this.components.container.components.filterContainer.resetUsedActions();

@@ -21,7 +21,7 @@ export class ActiveContainer extends BG3Component {
         await super.render();
 
         const activesList = this.activesList;
-        if(activesList.length === 0) this.element.style.visibility = 'hidden';
+        if(activesList?.length === 0) this.element.style.visibility = 'hidden';
 
         const actives = activesList.map((active) => new ActiveButton({item: active}, this));
         for(const active of actives) this.element.appendChild(active.element);

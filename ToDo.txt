@@ -12,8 +12,6 @@
     - CSS
 
 
-- Implement other branches
-
 
 /** BUGS **/
 
@@ -33,6 +31,8 @@
 - Enriched Tooltip
 - ItemUpdateManager
 - Hooks
+
+- Implement other branches
 
 /** OPTIMIZE **/
 - AbilityContainer ?

@@ -303,7 +303,7 @@ export class GridCell extends BG3Component {
                     case 'weapon':
                         const is2h = this.check2Handed(itemData);
                         this.element.classList.toggle('has-2h', is2h);
-                        if(is2h) this._parent.element.style.setProperty('--bg-2h', `url(${itemData.img})`);
+                        if(is2h) this._parent.element.style.setProperty('--bg-2h', `url(${itemData.img.startsWith('http') ? '' : '/'}${itemData.img})`);
                         else this._parent.element.style.removeProperty('--bg-2h');
                         break;
                     default:
