@@ -1,6 +1,7 @@
 /** FEATURES **/
 - DragDrop - Activity activation
 - Check DeathSavesContainer stabilizing feature
+- Spell Points
 
 /** OPTIMIZE **/
 - Update UI rendering (promise)

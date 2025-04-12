@@ -1,10 +1,10 @@
 #bg3-hotbar-container .bg3-filter-subcontainer {
     position: absolute;
-    bottom: calc(100% - 10px);
+    bottom: calc(100% - 5px);
     left: 50%;
     transform: translateX(-50%);
     background: var(--bg3-filter-background-color);
-    border: var(--bg3-filter-border-size) solid var(--bg3-filter-border-colo);
+    border: var(--bg3-filter-border-size) solid var(--bg3-filter-border-color);
     border-radius: 4px;
     z-index: var(--bg3-z-filter-container);
     padding: 1px;
@@ -35,12 +35,13 @@
     justify-content: center;
     cursor: pointer;
     border-radius: 4px;
-    border: 2px solid transparent;
+    border: var(--bg3-hotbar-border-size) solid transparent;
     transition: all 0.2s ease;
     font-size: 14px;
     box-sizing: border-box;
     background: transparent;
     filter: saturate(1);
+    box-shadow: 0px 0px 5px black;
 }
 
 #bg3-hotbar-container .action-type-button:hover,
@@ -65,8 +66,8 @@
 
 #bg3-hotbar-container .spell-level-wrapper {
     position: relative;
-    width: 32px;
-    height: 32px;
+    width: var(--bg3-filter-cell-size);
+    height: var(--bg3-filter-cell-size);
 }
 
 #bg3-hotbar-container .spell-level-button {
@@ -90,6 +91,7 @@
     font-weight: bold;
     background: transparent;
     z-index: 1;
+    text-shadow: var(--shadow-text-stroke);
 }
 
 #bg3-hotbar-container .spell-slot-row {
@@ -101,7 +103,7 @@
 
 #bg3-hotbar-container .spell-slot-box {
     border-radius: 2px;
-    border-width: 1px;
+    border-width: var(--bg3-filter-border-size);
     border-style: solid;
     box-sizing: border-box;
     width: 11px;

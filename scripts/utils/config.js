@@ -845,7 +845,7 @@ export function registerSettings() {
       type: Boolean,
       default: false,
       onChange: () => {
-        if(BG3Hotbar.manager.ui.portraitCard) {
+        if(ui.BG3HOTBAR.components.portrait) {
             ui.BG3HOTBAR.components.portrait.toggleExtraInfos.bind(ui.BG3HOTBAR.components.portrait)();
         }
       }

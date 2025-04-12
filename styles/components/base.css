@@ -110,7 +110,6 @@
     --portrait-right: calc(2*(var(--bg3-weapon-cell-size) + 11px));
 }
 
-
 /* ==========================================================================
    Base Container Styles
    ========================================================================== */
@@ -127,11 +126,8 @@
     scale: var(--bg3-scale-ui, 1);
     gap: 0.25rem;
     padding: 0;
-    /* width: 100%; */
     padding-bottom: var(--position-bottom, 10px);
     transition: transform .3s ease-in-out, opacity .3s ease-in-out var(--bg3-faded-delay);
-    /* --bg3-translate-x: 0%; */
-    /* transform: scale(var(--bg3-scale-ui, 1)); */
     width: fit-content;
     left: 0;
     right: 0;
@@ -160,6 +156,10 @@
 
 #bg3-hotbar-container .hidden {
     display: none !important;
+}
+
+#bg3-hotbar-container img {
+    border: unset;
 }
 
 aside[role="tooltip"] .notes {

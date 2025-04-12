@@ -1,20 +1,17 @@
 #bg3-hotbar-container .bg3-actives-container {
     position: absolute;
-    bottom: 100%;
+    bottom: calc(100% + var(--bg3-hotbar-border-size));
     right: 0;
     min-width: var(--bg3-active-cell-size);
-    max-width: 300px;
-    background: var(--bg3-active-background-color);
-    border: var(--bg3-active-border-size) solid var(--bg3-active-border-color);
-    border-radius: 3px;
+    max-width: calc(var(--bg3-active-cell-size) * 10);
     display: flex;
     align-items: center;
-    padding: 2px 4px;
+    padding: 0;
     box-sizing: border-box;
     z-index: var(--bg3-z-base);
     cursor: pointer;
     flex-wrap: wrap;
-    gap: 2px;
+    gap: 0;
     flex-direction: row-reverse;
     margin-bottom: 0; /* Add some space between the container and the hotbar */
 }
@@ -29,11 +26,13 @@
 }
 
 #bg3-hotbar-container .active-effect-icon img {
-    width: calc(var(--bg3-active-cell-size) - 4px);
-    height: calc(var(--bg3-active-cell-size) - 4px);
+    width: var(--bg3-active-cell-size);
+    height: var(--bg3-active-cell-size);
     display: block;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    border: var(--bg3-active-border-size) solid var(--bg3-active-border-color);
+    background-color: var(--bg3-active-background-color);
 }
 
 #bg3-hotbar-container .active-effect-icon.disabled img {

@@ -1,35 +1,19 @@
 #bg3-hotbar-container .bg3-passives-container {
     position: absolute;
-    bottom: 100%;
+    bottom: calc(100% + var(--bg3-hotbar-border-size));
     left: 0;
-    min-width: 20px;
-    max-width: 300px;
-    background: var(--bg3-passive-background-color);
-    border: var(--bg3-passive-border-size) solid var(--bg3-passive-border-color);
-    border-radius: 3px;
+    min-width: var(--bg3-passive-cell-size);
+    min-height: var(--bg3-passive-cell-size);
+    max-width: calc(var(--bg3-passive-cell-size) * 10);
     display: flex;
     align-items: center;
-    padding: 2px 4px;
+    padding: 0;
     box-sizing: border-box;
     z-index: var(--bg3-z-base);
     cursor: pointer;
     flex-wrap: wrap;
-    gap: 2px;
+    gap: 0;
     margin-bottom: 0; /* Add some space between the container and the hotbar */
-}
-
-/* Empty container state */
-#bg3-hotbar-container .bg3-passives-container:empty {
-    width: var(--bg3-passive-cell-size);
-    height: var(--bg3-passive-cell-size);
-    min-width: var(--bg3-passive-cell-size);
-}
-
-/* Populated container state */
-#bg3-hotbar-container .bg3-passives-container:not(:empty) {
-    width: auto;
-    height: auto;
-    min-width: var(--bg3-passive-cell-size);
 }
 
 #bg3-hotbar-container .passive-feature-icon {
@@ -42,11 +26,13 @@
 }
 
 #bg3-hotbar-container .passive-feature-icon img {
-    width: calc(var(--bg3-passive-cell-size) - 4px);
-    height: calc(var(--bg3-passive-cell-size) - 4 px);
+    width: var(--bg3-passive-cell-size);
+    height: var(--bg3-passive-cell-size);
     display: block;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    border: var(--bg3-passive-border-size) solid var(--bg3-passive-border-color);
+    background-color: var(--bg3-passive-background-color);
 }
 
 #bg3-hotbar-container .passive-feature-icon:hover img {

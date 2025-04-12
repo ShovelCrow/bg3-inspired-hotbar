@@ -5,10 +5,10 @@
    #bg3-hotbar-container .bg3-control-container {
     position: absolute;
     bottom: 0;
-    left: calc(100% + 8px);
+    left: calc(100% - 7px);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     z-index: 100;
     transition: opacity 0.3s ease-in-out 0s;
   }
@@ -18,10 +18,10 @@
      ========================================================================== */
   
   #bg3-hotbar-container .hotbar-control-button {
-    width: 24px;
-    height: 24px;
+    width: calc(var(--bg3-hotbar-cell-size) / 2);
+    height: calc(var(--bg3-hotbar-cell-size) / 2);
     background: var(--bg3-hotbar-background-color);
-    border-radius: 4px;
+    border-radius: 50%;
     color: #cc3333;
     display: flex;
     align-items: center;
@@ -31,6 +31,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     position: relative;  /* Add this to make it the positioning context for menus */ 
     transition: opacity 0.3s ease-in-out 0s;
+    border: var(--bg3-border-size) solid var(--bg3-border-color);
   }
   
   #bg3-hotbar-container .bg3-control-container.fade {
@@ -52,7 +53,7 @@
   }
   
   #bg3-hotbar-container .hotbar-control-button.disabled:hover {
-    background: #2a2a2a;
+    background: var(--bg3-background-color-hover);
   }
   
   #bg3-hotbar-container .hotbar-control-button i {
@@ -61,5 +62,5 @@
   
   #bg3-hotbar-container .hotbar-control-button.locked {
     background: #cc3333;
-    color: #fff;
+    color: var(--bg3-text-color);
   }

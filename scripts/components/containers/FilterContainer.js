@@ -105,6 +105,10 @@ export class FilterContainer extends BG3Component {
         });
     }
 
+    checkSpellPoint() {
+        return game.modules.get("dnd5e-spellpoints")?.active && this.actor.items.find(i => i.system.identifier == "spell-points");
+    }
+
     async clearFilters(current) {
         for(let i=0; i<this.components.length; i++) if(this.components[i] !== current) this.components[i].setState(true);
     }
