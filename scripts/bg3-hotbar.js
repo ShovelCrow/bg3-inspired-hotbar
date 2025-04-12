@@ -4,6 +4,7 @@ import { HotbarContainer } from './components/containers/HotbarContainer.js';
 import { PortraitContainer } from './components/containers/PortraitContainer.js';
 import { RestTurnContainer } from './components/containers/RestTurnContainer.js';
 import { WeaponContainer } from './components/containers/WeaponContainer.js';
+import { ThemeSettingDialog } from './components/dialog/ThemeSettingDialog.js';
 import { AutoPopulateCreateToken } from './features/AutoPopulateCreateToken.js';
 import { ControlsManager } from './managers/ControlsManager.js';
 import { DragDropManager } from './managers/DragDropManager.js';
@@ -253,20 +254,21 @@ export class BG3Hotbar extends Application {
             } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
     }
 
-    _applyTheme() {
-        const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption');
-        if(theme !== 'default') {
-        const themeConfig = CONFIG.THEME[theme];
+    async _applyTheme() {
+        const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption'),
+            currentTheme = document.head.querySelector('[custom-theme]'),
+            themeFile = game.settings.get(CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ? await ThemeSettingDialog.loadThemeFile(game.settings.get(CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(CONFIG.MODULE_NAME, 'themeCustom'),
+            themeConfig = {...CONFIG.BASE_THEME, ...themeFile};
         if(themeConfig) {
-            const style = document.createElement('style');
-            style.setAttribute('type', 'text/css');
-            style.setAttribute('custom-theme', theme)
-            style.textContent = Object.entries(themeConfig).map(([k, v]) => `${k} {\n${Object.entries(v).map(([k2, v2]) => `${k2}:${v2};`).join('\n')}\n}`).join('\n');
-            document.head.appendChild(style);
-        }
-        } else if(document.head.querySelector('[custom-theme]')) {
-            const currentTheme = document.head.querySelector('[custom-theme]');
-            currentTheme.parentNode.removeChild(currentTheme);
+            const styleContent = `:root{${Object.entries(themeConfig).map(([k, v]) => `${k}:${v};`).join('\n')}}`;
+            if(currentTheme) currentTheme.innerHTML = styleContent;
+            else {
+                const style = document.createElement('style');
+                style.setAttribute('type', 'text/css');
+                style.setAttribute('custom-theme', theme)
+                style.textContent = styleContent;
+                document.head.appendChild(style);
+            }
         }
     }
     
@@ -338,6 +340,7 @@ export class BG3Hotbar extends Application {
         html.style.setProperty('--bg3-normal-opacity', game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity'));
         html.style.setProperty('--bg3-faded-opacity', game.settings.get(CONFIG.MODULE_NAME, 'fadedOpacity'));
         html.style.setProperty('--bg3-faded-delay', `${game.settings.get(CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
+        html.setAttribute('theme-option', game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
         // html.style.setProperty('--position-bottom', `${game.settings.get(CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
         html.dataset.itemName = game.settings.get(CONFIG.MODULE_NAME, 'showItemNames');
         html.dataset.itemUse = game.settings.get(CONFIG.MODULE_NAME, 'showItemUses');
