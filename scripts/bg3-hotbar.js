@@ -39,6 +39,8 @@ export class BG3Hotbar extends Application {
         Hooks.on("deleteActiveEffect", this._onUpdateActive.bind(this));
         Hooks.on("updateActiveEffect", this._onUpdateActive.bind(this));
 
+        Hooks.on("pickerDone", this._onPickerDone.bind(this));
+
         this._init();
 
         // Retrieve Common Combat Actions based
@@ -217,6 +219,11 @@ export class BG3Hotbar extends Application {
         this.combat.forEach(e => e.setComponentsVisibility());
         if(!this.components.container?.components?.filterContainer) return;
         this.components.container.components.filterContainer.resetUsedActions();
+    }
+
+    _onPickerDone(element, done) {
+        const $input =  $(element).parent().find('input[is="colorpicker-input"]');
+        $input.trigger('change');
     }
 
     _applyMacrobarCollapseSetting() {

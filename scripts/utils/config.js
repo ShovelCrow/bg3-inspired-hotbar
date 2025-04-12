@@ -3,6 +3,7 @@
 // import { AutoPopulateDefaults } from "../components/dialog/AutoPopulateCreateToken.js";
 import { AutoPopulateDefaults } from "../features/AutoPopulateCreateToken.js";
 import { ExtraInfosDialog, PortraitSettingDialog } from "../components/dialog/ExtraInfosDialog.js";
+import { ThemeSettingDialog } from "../components/dialog/ThemeSettingDialog.js";
 
 export const CONFIG = {
     // UI Constants
@@ -344,7 +345,7 @@ export function registerEarly() {
 export function updateSettingsDisplay() {
     // Add Categories to module settings
     Hooks.on("renderSettingsConfig", (app, html, data) => {
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.tooltipDelay"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
@@ -398,21 +399,56 @@ export function registerSettings() {
     });
     
     // Visual Settings - Appearance
+    game.settings.register(CONFIG.MODULE_NAME, 'scopeTheme', {
+        name: 'BG3.Settings.scopeTheme.Name',
+        hint: 'BG3.Settings.scopeTheme.Hint',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        requiresReload: true,
+        default: true
+    });
+
+    const scopeTheme = game.settings.get(CONFIG.MODULE_NAME, "scopeTheme");
+
+    game.settings.registerMenu(CONFIG.MODULE_NAME, "menuTheme", {
+        name: 'BG3.Settings.MenuTheme.Name',
+        label: 'BG3.Settings.MenuTheme.Label',
+        hint: 'BG3.Settings.MenuTheme.Hint',
+        icon: "fas fa-cogs",
+        type: ThemeSettingDialog,
+        restricted: !scopeTheme,
+    });
+
     game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
         name: 'Theme options',
         hint: 'Choose between available themes',
-        scope: 'client',
-        config: true,
+        scope: scopeTheme ? 'client' : 'world',
+        config: false,
         type: String,
-        choices: {
+        /* choices: {
             'default': 'Default',
             'gold': 'Gold',
+            'old': '(Old)',
             'custom': 'Custom (Coming soon !)'
-        },
+        }, */
         default: 'default',
+        // onChange: value => {
+            // if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+            // this._applyTheme();
+        // }
+    });
+
+    game.settings.register(CONFIG.MODULE_NAME, 'themeCustom', {
+        name: 'Theme custom',
+        hint: '',
+        scope: scopeTheme ? 'client' : 'world',
+        config: false,
+        type: Object,
+        default: {},
         onChange: value => {
-            if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
-            ui.BG3HOTBAR._applyTheme()
+            // if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+            // this._applyTheme();
         }
     });
     
@@ -1016,7 +1052,31 @@ export function registerHandlebars() {
             "/": lvalue / rvalue,
             "%": lvalue % rvalue
         }[operator];
-    })
+    });
+
+    /* {{#switch 'a'}} 
+        {{#case 'a'}} A {{/case}} 
+        {{#case 'b'}} B {{/case}} 
+        {{#default '188'}} {{/default}}
+    {{/switch}} */
+    Handlebars.registerHelper('switch', function(value, options) {
+        this.switch_value = value;
+        this.switch_break = false;
+        return options.fn(this);
+    });
+        
+    Handlebars.registerHelper('case', function(value, options) {
+        if (value == this.switch_value) {
+            this.switch_break = true;
+            return options.fn(this);
+        }
+    });
+        
+    Handlebars.registerHelper('default', function(value, options) {
+        if (this.switch_break == false) {
+            return value;
+        }
+    });
 
     /* Handlebars.registerHelper('check', function(fn, options) {
         // console.log(v1)
