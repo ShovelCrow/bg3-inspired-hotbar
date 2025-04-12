@@ -132,10 +132,6 @@
     align-items: center;
 }
 
-#bg3-hotbar-container .bg3-filter-subcontainer .spell-level-button[data-level="0"] .spell-slot-box {
-    border-width: 3px;
-}
-
 /** Spell Points **/
 
 #bg3-hotbar-container .filter-spell-point .spell-level-wrapper {
@@ -144,7 +140,7 @@
     justify-content: center;
 }
 
-#bg3-hotbar-container .filter-spell-point .spell-level-button:not([data-level="0"]) .spell-slot-box {
+#bg3-hotbar-container .filter-spell-point .spell-level-button .spell-slot-box:not(.spell-cantrip-box) {
     display: none;
 }
 

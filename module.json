@@ -61,14 +61,15 @@
           "compatibility": {}
         },
         {
-            "id": "colorsettings",
-            "type": "module",
-            "compatibility": {}
+          "id": "colorsettings",
+          "type": "module",
+          "compatibility": {}
         }
       ],
       "recommends": [],
       "systems": []
   },
+  "persistentStorage": true,
   "url": "https://github.com/BragginRites/bg3-inspired-hotbar",
   "manifest": "https://github.com/BragginRites/bg3-inspired-hotbar/releases/download/v3.0.0/module.json",
   "download": "https://github.com/BragginRites/bg3-inspired-hotbar/releases/download/v3.0.0/bg3-inspired-hotbar.zip",

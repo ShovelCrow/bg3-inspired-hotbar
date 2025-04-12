@@ -9,7 +9,7 @@ export class FilterContainer extends BG3Component {
     }
 
     get classes() {
-        return ['bg3-filter-subcontainer'];
+        return [...['bg3-filter-subcontainer'], ...(this.checkSpellPoint() ? ["filter-spell-point"] : [])];
     }
 
     get filterData() {
@@ -104,7 +104,6 @@ export class FilterContainer extends BG3Component {
             c.classList.remove('used');
         });
     }
-
     checkSpellPoint() {
         return game.modules.get("dnd5e-spellpoints")?.active && this.actor.items.find(i => i.system.identifier == "spell-points");
     }
