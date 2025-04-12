@@ -26,6 +26,7 @@ export class BG3Hotbar extends Application {
         this.combatActionsArray = [];
         // this.enabled = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
         this.generateTimeout = null;
+        this.colorPicker = null;
 
         /** Hooks Event **/
         Hooks.on("createToken", this._onCreateToken.bind(this));

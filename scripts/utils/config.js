@@ -4,6 +4,9 @@
 import { AutoPopulateDefaults } from "../features/AutoPopulateCreateToken.js";
 import { ExtraInfosDialog, PortraitSettingDialog } from "../components/dialog/ExtraInfosDialog.js";
 import { ThemeSettingDialog } from "../components/dialog/ThemeSettingDialog.js";
+// import ColorSetting from "/modules/colorsettings/colorSetting.js";
+import Picker from "/modules/colorsettings/lib/vanilla-picker.min.mjs";
+import API from "/modules/colorsettings/api.js";
 
 export const CONFIG = {
     // UI Constants
@@ -299,6 +302,111 @@ export function registerKeybinding() {
     });
 }
 
+export function registerLibWrapper() {}
+
+// Copy Lib Color Setting picker due to the lack of focusout event.....
+class colorPickerInput2 extends HTMLInputElement {
+    constructor(...args) {
+        super(...args);
+        this.picker = undefined;
+        // this._getEyeDropper = this._getEyeDropper.bind(this);
+        this._makePicker = this._makePicker.bind(this);
+        this.visible = false;
+        // check if picker should be always shown.
+        if (/** @deprecated */this.id === "permanent" || this.dataset.permanent !== undefined) {
+            this._makePicker("picker_inline");
+        }
+        else {
+            // on focus
+            this.addEventListener("focusin", () => {
+                if (!this.visible) {
+                    this.visible = true;
+                    this._makePicker("picker_popin");
+                }
+            });
+            // on focus
+            this.addEventListener("focusout", () => {
+                if (this.visible) {
+                    this.picker.destroy();
+                    this.visible = false;
+                }
+            });
+        }
+
+        if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.style.backgroundColor = this.value;
+            this.style.color = API.getTextColor(this.value);
+        }
+    }
+
+    _makePicker(pickerClass) {
+        /** @type {import('vanilla-picker').default} */
+        this.picker = new Picker();
+        
+        // check if an actual value
+        if (this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.picker.setColor(this.value.padEnd(9, "f").slice(0, 9), true);
+        } else if(this.getAttribute("placeholder") != undefined && this.getAttribute("placeholder").length != 0 && this.getAttribute("placeholder").startsWith("#") && this.getAttribute("placeholder").match(/[^A-Fa-f0-9#]+/g) == null) {
+            this.picker.setColor(this.getAttribute("placeholder").padEnd(9, "f").slice(0, 9), true);
+        }
+        
+        this.picker.setOptions({
+            popup: false,
+            parent: this.parentElement,
+            cancelButton: false,
+            onDone: (color) => {
+                this.picker.destroy();
+                this.visible = false;
+                Hooks.call('pickerDone',
+                    this.parentElement,
+                    color.hex,
+                    this
+                );
+                this.dispatchEvent(new CustomEvent("pickerDone", {detail: color}), {bubbles: true });
+            },
+            onChange: (color) => {
+                if (this.dataset.responsiveColor !== undefined) {
+                    this.style.backgroundColor = color.rgbaString;
+                    this.style.color = API.getTextColor(color.hex);
+                }
+                this.value = color.hex;
+
+                // Allow Watching of Color Change
+                if (this.dataset.watchPickerChange !== undefined) {
+                    this.timer = setTimeout(() => {
+                        this.dispatchEvent(new CustomEvent("pickerChange", { detail: color }), { bubbles: true });
+                    }, 300);
+                }
+            }
+        });
+        /* if (this.picker._domCancel) {
+            this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
+            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
+            this.picker._domCancel.style.paddingBottom = 0;
+            this.picker._domCancel.style.paddingTop = 0;
+            this.picker._domCancel.onclick = () => {
+                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
+                document.addEventListener("click", this._getEyeDropper, true);
+            };
+        }
+
+
+        jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
+
+        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
+            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
+                let faIcon = document.createElement("i");
+                faIcon.className = "fas fa-eye-dropper";
+                this.firstChild.prepend(faIcon);
+            }
+        }); */
+    }
+
+    // async _getEyeDropper(event) {
+    //     getEyeDropper(event, this);
+    // }
+};
+
 export function registerEarly() {
     // UI Toggle Setting (hidden from settings menu)
     game.settings.register(CONFIG.MODULE_NAME, 'uiEnabled', {
@@ -323,6 +431,10 @@ export function registerEarly() {
             active: isActive,
             onClick: value => ui.BG3HOTBAR.toggle(value)
         });
+    });
+    
+    customElements.define('colorpicker-input2', colorPickerInput2, {
+        extends: 'input'
     });
 }
 
@@ -1115,4 +1227,22 @@ export function shouldEnforceSpellPreparation(actor, tokenId) {
     
     // If unlinked token - use NPC setting
     return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC');
+}
+
+export let patchFunc = (prop, func, type = "WRAPPER") => {
+    let nonLibWrapper = () => {
+        const oldFunc = eval(prop);
+        eval(`${prop} = function (event) {
+            return func.call(this, ${type != "OVERRIDE" ? "oldFunc.bind(this)," : ""} ...arguments);
+        }`);
+    }
+    if (game.modules.get("lib-wrapper")?.active) {
+        try {
+            libWrapper.register("po0lp-personal-module", prop, func, type);
+        } catch (e) {
+            nonLibWrapper();
+        }
+    } else {
+        nonLibWrapper();
+    }
 }

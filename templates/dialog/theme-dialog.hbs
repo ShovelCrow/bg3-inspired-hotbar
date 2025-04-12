@@ -25,9 +25,9 @@
                             <div class="form-fields">
                                 {{#switch field.type}}
                                     {{#case 'color'}}
-                                        <div class="color-picker-container"><input type="text" class="css-var" name="{{id}}" is="colorpicker-input" data-responsive-color value="{{field.value}}" style="background-color: {{field.value}};"></div>
+                                        <div class="color-picker-container"><input type="text" class="css-var" name="{{id}}" is="colorpicker-input2" data-responsive-color value="{{field.value}}" style="background-color: {{field.value}};"></div>
                                         {{#if hasHover}}
-                                            <div class="color-picker-container"><input type="text" class="css-var" name="{{id}}-hover" is="colorpicker-input" data-responsive-color value="{{field.value2}}" style="background-color: {{field.value}};"></div>
+                                            <div class="color-picker-container"><input type="text" class="css-var" name="{{id}}-hover" is="colorpicker-input2" data-responsive-color value="{{field.value2}}" style="background-color: {{field.value}};"></div>
                                         {{/if}}
                                     {{/case}}
                                     {{#case 'select'}}
