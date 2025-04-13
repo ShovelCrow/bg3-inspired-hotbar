@@ -939,7 +939,7 @@ export function registerSettings() {
         default: true,
         onChange: () => {
             if (ui.BG3HOTBAR.components.restTurn) {
-                ui.BG3HOTBAR.components.restTurn._renderInner();
+                ui.BG3HOTBAR.components.restTurn.render();
             }
         }
     });
