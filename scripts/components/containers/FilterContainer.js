@@ -1,5 +1,5 @@
 import { BG3Component } from "../component.js";
-import { CONFIG } from "../../utils/config.js";
+import { BG3CONFIG } from "../../utils/config.js";
 import { FilterButton } from "../buttons/filterButton.js";
 
 export class FilterContainer extends BG3Component {
@@ -19,28 +19,28 @@ export class FilterContainer extends BG3Component {
                 label: 'Action',
                 symbol: 'fa-circle',
                 class: ['action-type-button'],
-                color: CONFIG.COLORS.ACTION
+                color: BG3CONFIG.COLORS.ACTION
             },
             {
                 id: 'bonus',
                 label: 'Bonus Action',
                 symbol: 'fa-triangle',
                 class: ['action-type-button'],
-                color: CONFIG.COLORS.BONUS
+                color: BG3CONFIG.COLORS.BONUS
             },
             {
                 id: 'reaction',
                 label: 'Reaction',
                 symbol: 'fa-sparkle',
                 class: ['action-type-button'],
-                color: CONFIG.COLORS.REACTION
+                color: BG3CONFIG.COLORS.REACTION
             },
             {
                 id: 'feature',
                 label: 'Feature',
                 symbol: 'fa-star',
                 class: ['action-type-button'],
-                color: CONFIG.COLORS.FEATURE_HIGHLIGHT
+                color: BG3CONFIG.COLORS.FEATURE_HIGHLIGHT
             }
         ]
 
@@ -55,7 +55,7 @@ export class FilterContainer extends BG3Component {
                 max: 1,
                 value: 1,
                 class: ['spell-level-button'],
-                color: CONFIG.COLORS.PACT_MAGIC
+                color: BG3CONFIG.COLORS.PACT_MAGIC
             });
         }
 
@@ -73,7 +73,7 @@ export class FilterContainer extends BG3Component {
                     max: spellLevel.max,
                     short: this._getRomanNumeral(level),
                     class: ['spell-level-button'],
-                    color: CONFIG.COLORS.SPELL_SLOT
+                    color: BG3CONFIG.COLORS.SPELL_SLOT
                 });
             }
         }
@@ -88,7 +88,7 @@ export class FilterContainer extends BG3Component {
               max: 1,
               value: 1,
               class: ['spell-level-button'],
-              color: CONFIG.COLORS.SPELL_SLOT
+              color: BG3CONFIG.COLORS.SPELL_SLOT
           });
         }
         return filterData;

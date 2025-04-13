@@ -1,4 +1,4 @@
-import { CONFIG } from "../../utils/config.js";
+import { BG3CONFIG } from "../../utils/config.js";
 import { BG3Component } from "../component.js";
 import { GridContainer } from "./GridContainer.js";
 
@@ -16,11 +16,11 @@ export class WeaponContainer extends BG3Component {
     }
 
     get activeSet() {
-        return this.actor.getFlag(CONFIG.MODULE_NAME, 'activeSet') ?? 0;
+        return this.actor.getFlag(BG3CONFIG.MODULE_NAME, 'activeSet') ?? 0;
     }
 
     set activeSet(index) {
-        this.actor.setFlag(CONFIG.MODULE_NAME, 'activeSet', index);
+        this.actor.setFlag(BG3CONFIG.MODULE_NAME, 'activeSet', index);
         this.element.setAttribute('data-active-set', index);
     }
 
@@ -124,9 +124,9 @@ export class WeaponContainer extends BG3Component {
 
         // Combat Container
         const combatContainer = new GridContainer(this.data.combat[0]);
-        combatContainer.locked = game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer');
+        combatContainer.locked = game.settings.get(BG3CONFIG.MODULE_NAME, 'lockCombatContainer');
         combatContainer.id = 'combat';
-        combatContainer.element.classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showCombatContainer'));
+        combatContainer.element.classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showCombatContainer'));
         this.components.combat.push(combatContainer);
         this.element.appendChild(combatContainer.element);
         await combatContainer.render();

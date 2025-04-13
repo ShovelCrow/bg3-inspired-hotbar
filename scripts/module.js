@@ -1,6 +1,6 @@
 // Module Lifecycle Management
 import { BG3Hotbar } from './bg3-hotbar.js';
-import { CONFIG, registerKeybinding, updateSettingsDisplay, registerEarly, registerSettings, registerHandlebars, registerLibWrapper } from './utils/config.js';
+import { BG3CONFIG, registerKeybinding, updateSettingsDisplay, registerEarly, registerSettings, registerHandlebars, registerLibWrapper } from './utils/config.js';
 
 Hooks.once('init', () => {
     registerEarly();
@@ -10,14 +10,14 @@ Hooks.once('init', () => {
 });
 
 Hooks.once('ready', () => {
-    console.log(`${CONFIG.MODULE_NAME} | Ready`);
+    console.log(`${BG3CONFIG.MODULE_NAME} | Ready`);
     if (!game.modules.get('lib-wrapper')?.active && game.user.isGM) {
         ui.notifications.error("BG3 Inspired Hotbar requires the 'libWrapper' module. Please install and activate it.");
     }
-    console.log(`${CONFIG.MODULE_NAME} | Registering Settings`);
+    console.log(`${BG3CONFIG.MODULE_NAME} | Registering Settings`);
     registerSettings();
     updateSettingsDisplay();
     ui.BG3HOTBAR = new BG3Hotbar();
 });
 
-// CONFIG.debug.hooks = true;
+// BG3CONFIG.debug.hooks = true;

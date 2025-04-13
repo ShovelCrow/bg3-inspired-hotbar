@@ -8,7 +8,7 @@ import { ThemeSettingDialog } from "../components/dialog/ThemeSettingDialog.js";
 import Picker from "/modules/colorsettings/lib/vanilla-picker.min.mjs";
 import API from "/modules/colorsettings/api.js";
 
-export const CONFIG = {
+export const BG3CONFIG = {
     // UI Constants
     CELL_SIZE: 50,
     INITIAL_COLS: 5,
@@ -20,8 +20,8 @@ export const CONFIG = {
         hotbar: {
             count: 3,
             config: {
-                get cols() { return CONFIG.INITIAL_COLS},
-                get rows() { return CONFIG.ROWS},
+                get cols() { return BG3CONFIG.INITIAL_COLS},
+                get rows() { return BG3CONFIG.ROWS},
                 items: {}
             }
         },
@@ -48,7 +48,7 @@ export const CONFIG = {
                 items: {},
                 class: ['bg3-combat-container'],
                 // size: 1.5,
-                // locked: !!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')
+                // locked: !!game.settings.get(BG3CONFIG.MODULE_NAME, 'lockCombatContainer')
             }
         }
     },
@@ -87,7 +87,7 @@ export const CONFIG = {
     CONTAINERS_NAME: "containersConfig",
     MODULE_NAME: "bg3-inspired-hotbar",
     // PATHs
-    get COMPONENTS_PATH() { return `modules/${CONFIG.MODULE_NAME}/templates/components/`},
+    get COMPONENTS_PATH() { return `modules/${BG3CONFIG.MODULE_NAME}/templates/components/`},
     
     // Styling
     COLORS: {
@@ -289,13 +289,13 @@ export const CONFIG = {
 
 export function registerKeybinding() {
     // Register keybinding for toggling UI
-    game.keybindings.register(CONFIG.MODULE_NAME, "toggleUI", {
+    game.keybindings.register(BG3CONFIG.MODULE_NAME, "toggleUI", {
         name: "Toggle BG3 Hotbar",
         hint: "Toggles the BG3 Inspired Hotbar UI visibility",
         editable: [{ key: "KeyH" }],
         onDown: () => {
-            ui.BG3HOTBAR.toggle(!game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled'))
-            document.querySelector('[data-tool="toggleBG3UI"]').classList.toggle('active', game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled'))
+            ui.BG3HOTBAR.toggle(!game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled'))
+            document.querySelector('[data-tool="toggleBG3UI"]').classList.toggle('active', game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled'))
         },
         restricted: false,
         precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
@@ -409,7 +409,7 @@ class colorPickerInput2 extends HTMLInputElement {
 
 export function registerEarly() {
     // UI Toggle Setting (hidden from settings menu)
-    game.settings.register(CONFIG.MODULE_NAME, 'uiEnabled', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'uiEnabled', {
         name: "UI Enabled",
         scope: 'client',
         config: false,
@@ -421,7 +421,7 @@ export function registerEarly() {
         const tokenTools = controls.find(c => c.name === "token");
         if (!tokenTools) return;
     
-        const isActive = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled') ?? true;
+        const isActive = game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled') ?? true;
         
         tokenTools.tools.push({
             name: "toggleBG3UI",
@@ -457,7 +457,7 @@ export function updateSettingsDisplay() {
 
 export function registerSettings() {
     // Core UI Settings
-    game.settings.register(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
         name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
         hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
         scope: 'client',
@@ -477,7 +477,7 @@ export function registerSettings() {
     });
 
     // New setting for Player List Visibility
-    game.settings.register(CONFIG.MODULE_NAME, 'playerListVisibility', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'playerListVisibility', {
         name: 'BG3.Settings.PlayerListVisibility.Name',
         hint: 'BG3.Settings.PlayerListVisibility.Hint',
         scope: 'client',
@@ -495,7 +495,7 @@ export function registerSettings() {
     });
     
     // Visual Settings - Appearance
-    game.settings.register(CONFIG.MODULE_NAME, 'scopeTheme', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'scopeTheme', {
         name: 'BG3.Settings.scopeTheme.Name',
         hint: 'BG3.Settings.scopeTheme.Hint',
         scope: 'world',
@@ -505,9 +505,9 @@ export function registerSettings() {
         default: true
     });
 
-    const scopeTheme = game.settings.get(CONFIG.MODULE_NAME, "scopeTheme");
+    const scopeTheme = game.settings.get(BG3CONFIG.MODULE_NAME, "scopeTheme");
 
-    game.settings.registerMenu(CONFIG.MODULE_NAME, "menuTheme", {
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuTheme", {
         name: 'BG3.Settings.MenuTheme.Name',
         label: 'BG3.Settings.MenuTheme.Label',
         hint: 'BG3.Settings.MenuTheme.Hint',
@@ -516,7 +516,7 @@ export function registerSettings() {
         restricted: !scopeTheme,
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'themeOption', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'themeOption', {
         name: 'Theme options',
         hint: 'Choose between available themes',
         scope: scopeTheme ? 'client' : 'world',
@@ -530,12 +530,12 @@ export function registerSettings() {
         }, */
         default: 'default',
         // onChange: value => {
-            // if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+            // if(value == 'custom') game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
             // this._applyTheme();
         // }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'themeCustom', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'themeCustom', {
         name: 'Theme custom',
         hint: '',
         scope: scopeTheme ? 'client' : 'world',
@@ -543,12 +543,12 @@ export function registerSettings() {
         type: Object,
         default: {},
         onChange: value => {
-            // if(value == 'custom') game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
+            // if(value == 'custom') game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
             // this._applyTheme();
         }
     });
     
-    game.settings.register(CONFIG.MODULE_NAME, 'autoScale', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoScale', {
         name: 'Auto UI scale',
         hint: 'Auto scale the UI based on your browser. Disable the UI scale parameter below.',
         scope: 'client',
@@ -558,7 +558,7 @@ export function registerSettings() {
         onChange: () => ui.BG3HOTBAR.updateUIScale()
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'uiScale', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'uiScale', {
         name: 'UI Scale',
         hint: 'Change the UI scale (50% to 300%) according to your preferences and settings.',
         scope: 'client',
@@ -575,7 +575,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'uiPosition', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'uiPosition', {
         name: 'UI Position',
         hint: 'Choose where the hotbar should be placed.',
         scope: 'client',
@@ -592,7 +592,7 @@ export function registerSettings() {
         }
     });
      
-    game.settings.register(CONFIG.MODULE_NAME, "posPadding", {
+    game.settings.register(BG3CONFIG.MODULE_NAME, "posPadding", {
         name: "UI Position - Padding",
         hint: "Space from the screen border. From the left if UI Position -> Left, From the right if UI Position -> Right",
         scope: "client",
@@ -604,7 +604,7 @@ export function registerSettings() {
         },
     });
      
-    game.settings.register(CONFIG.MODULE_NAME, "posPaddingBottom", {
+    game.settings.register(BG3CONFIG.MODULE_NAME, "posPaddingBottom", {
         name: "UI Position - Bottom",
         hint: "Space from the bottom of the screen.",
         scope: "client",
@@ -616,7 +616,7 @@ export function registerSettings() {
         },
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'normalOpacity', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'normalOpacity', {
         name: 'BG3.Settings.NormalOpacity.Name',
         hint: 'BG3.Settings.NormalOpacity.Hint',
         scope: 'client',
@@ -633,7 +633,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'fadedOpacity', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'fadedOpacity', {
         name: 'BG3.Settings.FadedOpacity.Name',
         hint: 'BG3.Settings.FadedOpacity.Hint',
         scope: 'client',
@@ -648,13 +648,13 @@ export function registerSettings() {
         onChange: value => {
             if(ui.BG3HOTBAR.element?.[0]) {
                 if(value === 1) ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `0s`);
-                else ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${game.settings.get(CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
+                else ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${game.settings.get(BG3CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
                 ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-opacity', value);
             }
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'fadeOutDelay', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'fadeOutDelay', {
         name: 'BG3.Settings.FadeOutDelay.Name',
         hint: 'BG3.Settings.FadeOutDelay.Hint',
         scope: 'client',
@@ -668,11 +668,11 @@ export function registerSettings() {
         default: 5,
         onChange: value => {
             // Update the UI fade delay when the setting changes
-            if(ui.BG3HOTBAR.element?.[0] && game.settings.get(CONFIG.MODULE_NAME, 'fadedOpacity') !== 1) ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${value}s`);
+            if(ui.BG3HOTBAR.element?.[0] && game.settings.get(BG3CONFIG.MODULE_NAME, 'fadedOpacity') !== 1) ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${value}s`);
         }
     });
   
-    game.settings.register(CONFIG.MODULE_NAME, 'autoHideCombat', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoHideCombat', {
       name: 'Auto Hide UI',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
@@ -690,7 +690,7 @@ export function registerSettings() {
     });
 
     // Portrait Settings        
-    game.settings.registerMenu(CONFIG.MODULE_NAME, "menuPortrait", {
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuPortrait", {
         name: 'Portrait settings',
         label: 'Configure Portrait',
         hint: 'Advanced settings for character portrait.',
@@ -698,7 +698,7 @@ export function registerSettings() {
         type: PortraitSettingDialog,
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'defaultPortraitPreferences', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'defaultPortraitPreferences', {
         name: 'BG3.Settings.DefaultPortraitPreferences.Name',
         hint: 'BG3.Settings.DefaultPortraitPreferences.Hint',
         scope: 'client',
@@ -717,7 +717,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'shapePortraitPreferences', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'shapePortraitPreferences', {
         name: 'BG3.Settings.ShapePortraitPreferences.Name',
         hint: 'BG3.Settings.ShapePortraitPreferences.Hint',
         scope: 'client',
@@ -736,7 +736,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'borderPortraitPreferences', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'borderPortraitPreferences', {
         name: 'BG3.Settings.BorderPortraitPreferences.Name',
         hint: 'BG3.Settings.BorderPortraitPreferences.Hint',
         scope: 'client',
@@ -756,7 +756,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'backgroundPortraitPreferences', {
         name: 'BG3.Settings.BackgroundPortraitPreferences.Name',
         hint: 'BG3.Settings.BackgroundPortraitPreferences.Hint',
         scope: 'client',
@@ -771,7 +771,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'hidePortraitImage', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'hidePortraitImage', {
         name: 'Hide Portrait Image',
         hint: 'Also hide health overlay and text.',
         scope: 'client',
@@ -785,7 +785,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'overlayModePortrait', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'overlayModePortrait', {
         name: 'BG3.Settings.OverlayModePortrait.Name',
         hint: 'BG3.Settings.OverlayModePortrait.Hint',
         scope: 'client',
@@ -800,7 +800,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showSheetSimpleClick', {
         name: 'Open character sheet on click',
         hint: 'Open the character sheet with a single click on portrait instead of double click.',
         scope: 'client',
@@ -809,7 +809,7 @@ export function registerSettings() {
         default: false
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showHealthOverlay', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showHealthOverlay', {
       name: 'Show health overlay on character portrait.',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
@@ -823,7 +823,7 @@ export function registerSettings() {
       }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showHPText', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showHPText', {
       name: 'Show HP text on character portrait.',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
@@ -837,7 +837,7 @@ export function registerSettings() {
       }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showExtraInfo', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showExtraInfo', {
       name: 'Show extra datas on character portrait.',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
@@ -851,11 +851,11 @@ export function registerSettings() {
       }
     });
     
-    game.settings.register(CONFIG.MODULE_NAME, "dataExtraInfo", {
+    game.settings.register(BG3CONFIG.MODULE_NAME, "dataExtraInfo", {
         scope: "client",
         config: false,
         type: Array,
-        default: CONFIG.EXTRAINFOS ?? [],
+        default: BG3CONFIG.EXTRAINFOS ?? [],
         onChange: () => {
             if (ui.BG3HOTBAR.components.portrait) {
                 ui.BG3HOTBAR.components.portrait._renderInner();
@@ -863,7 +863,7 @@ export function registerSettings() {
         },
     });
     
-    game.settings.registerMenu(CONFIG.MODULE_NAME, "menuExtraInfo", {
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuExtraInfo", {
         name: 'Portrait extra datas settings',
         label: 'Configure Portait Extra Datas',
         hint: 'Extra datas to show on character portrait.',
@@ -871,7 +871,7 @@ export function registerSettings() {
         type: ExtraInfosDialog,
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showItemNames', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showItemNames', {
         name: 'Show Item Names',
         hint: 'Display item names below each hotbar item',
         scope: 'client',
@@ -885,7 +885,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showItemUses', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showItemUses', {
         name: 'Show Item Uses',
         hint: 'Display remaining uses in the top-right corner of items',
         scope: 'client',
@@ -899,7 +899,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'highlightStyle', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'highlightStyle', {
         name: 'BG3.Settings.HighlightStyle.Name',
         hint: 'BG3.Settings.HighlightStyle.Hint',
         scope: 'client',
@@ -917,7 +917,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'fadeControlsMenu', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'fadeControlsMenu', {
         name: 'Hide/Show hotbar controls menu on hover',
         // hint: 'Display remaining uses in the top-right corner of items',
         scope: 'client',
@@ -930,7 +930,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showRestTurnButton', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showRestTurnButton', {
         name: 'BG3.Settings.ShowRestTurnButton.Name',
         hint: 'BG3.Settings.ShowRestTurnButton.Hint',
         scope: 'client',
@@ -944,7 +944,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showCombatContainer', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showCombatContainer', {
         name: 'Add a basic actions container',
         hint: 'Display a extra container for basic actions like dodge, dash, etc (Compatible with CPR)',
         scope: 'client',
@@ -956,7 +956,7 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateCombatContainer', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer', {
         name: 'Autopopulate the basic actions container',
         hint: 'Auto-populate the basic actions with dodge, dash, etc (Compatible with CPR). Disable this will unlock the container.',
         scope: 'world',
@@ -965,7 +965,7 @@ export function registerSettings() {
         default: true
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'lockCombatContainer', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'lockCombatContainer', {
         name: 'Lock the basic actions container',
         hint: 'Prevent users for removing the basic actions for the container.',
         scope: 'world',
@@ -978,7 +978,7 @@ export function registerSettings() {
     });
 
     // Tooltip Settings
-    game.settings.register(CONFIG.MODULE_NAME, 'tooltipDelay', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'tooltipDelay', {
         name: 'BG3.Settings.TooltipDelay.Name',
         hint: 'BG3.Settings.TooltipDelay.Hint',
         scope: 'client',
@@ -992,13 +992,13 @@ export function registerSettings() {
         default: 500,
         onChange: value => {
             // Update the tooltip delay in the config
-            // CONFIG.TOOLTIP_DELAY = value;
+            // BG3CONFIG.TOOLTIP_DELAY = value;
             // Tooltip delay changed
             TooltipManager.TOOLTIP_ACTIVATION_MS = value;
         }
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showMaterialDescription', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showMaterialDescription', {
         name: 'BG3.Settings.ShowMaterialDescription.Name',
         hint: 'BG3.Settings.ShowMaterialDescription.Hint',
         scope: 'client',
@@ -1007,7 +1007,7 @@ export function registerSettings() {
         default: false
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'showDamageRanges', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showDamageRanges', {
         name: 'BG3.Settings.ShowDamageRanges.Name',
         hint: 'BG3.Settings.ShowDamageRanges.Hint',
         scope: 'client',
@@ -1017,7 +1017,7 @@ export function registerSettings() {
     });
 
     // Spell Preparation Settings
-    game.settings.register(CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {
         name: 'BG3.Settings.EnforceSpellPreparationPC.Name',
         hint: 'BG3.Settings.EnforceSpellPreparationPC.Hint',
         scope: 'client',
@@ -1026,7 +1026,7 @@ export function registerSettings() {
         default: true
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC', {
         name: 'BG3.Settings.EnforceSpellPreparationNPC.Name',
         hint: 'BG3.Settings.EnforceSpellPreparationNPC.Hint',
         scope: 'client',
@@ -1036,7 +1036,7 @@ export function registerSettings() {
     });
 
     // Auto-Population Settings
-    game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens', {
         name: 'Auto-Populate Linked Tokens',
         hint: 'Automatically populate the hotbar for newly created linked tokens based on the settings below',
         scope: 'world',
@@ -1045,7 +1045,7 @@ export function registerSettings() {
         default: true
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
         name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
         hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
         scope: 'world',
@@ -1054,7 +1054,7 @@ export function registerSettings() {
         default: true
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'container1AutoPopulate', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate', {
         name: 'BG3.Settings.Container1AutoPopulate.Name',
         hint: 'BG3.Settings.Container1AutoPopulate.Hint',
         scope: 'world',
@@ -1063,7 +1063,7 @@ export function registerSettings() {
         default: ["weapon", "feat"],
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'container2AutoPopulate', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate', {
         name: 'BG3.Settings.Container2AutoPopulate.Name',
         hint: 'BG3.Settings.Container2AutoPopulate.Hint',
         scope: 'world',
@@ -1072,7 +1072,7 @@ export function registerSettings() {
         default: ["spell"],
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'container3AutoPopulate', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate', {
         name: 'BG3.Settings.Container3AutoPopulate.Name',
         hint: 'BG3.Settings.Container3AutoPopulate.Hint',
         scope: 'world',
@@ -1081,7 +1081,7 @@ export function registerSettings() {
         default: ["consumable"],
     });
 
-    game.settings.register(CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
         name: 'Allow passives for auto-populate',
         hint: 'If activated, passives will be also added to hotbars.',
         scope: 'world',
@@ -1091,7 +1091,7 @@ export function registerSettings() {
     });
 
     // Register the chip selector menu item
-    game.settings.registerMenu(CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
         name: 'BG3.Settings.ContainerAutoPopulate.Name',
         label: 'BG3.Settings.ContainerAutoPopulate.Configure',
         icon: 'fas fa-tags',
@@ -1100,7 +1100,7 @@ export function registerSettings() {
     });
 
     // Lock System Settings
-    game.settings.register(CONFIG.MODULE_NAME, 'lockSettings', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'lockSettings', {
         name: 'BG3.Settings.LockSettings.Name',
         hint: 'BG3.Settings.LockSettings.Hint',
         scope: 'client',
@@ -1113,7 +1113,7 @@ export function registerSettings() {
         }
     });
     
-    game.settings.register(CONFIG.MODULE_NAME, 'masterLockEnabled', {
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'masterLockEnabled', {
         name: 'Master Lock State',
         hint: 'Whether the master lock is enabled',
         scope: 'client',
@@ -1123,7 +1123,7 @@ export function registerSettings() {
     });
     
     // Make sure settings are registered before hooks that might need them
-    console.log(`${CONFIG.MODULE_NAME} | Settings Registered`);
+    console.log(`${BG3CONFIG.MODULE_NAME} | Settings Registered`);
 }
 
 export function registerHandlebars() {
@@ -1222,11 +1222,11 @@ export function shouldEnforceSpellPreparation(actor, tokenId) {
 
     // If linked token (including PCs) - use PC setting
     if (isLinked) {
-        return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationPC');
+        return game.settings.get(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationPC');
     }
     
     // If unlinked token - use NPC setting
-    return game.settings.get(CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC');
+    return game.settings.get(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC');
 }
 
 export let patchFunc = (prop, func, type = "WRAPPER") => {

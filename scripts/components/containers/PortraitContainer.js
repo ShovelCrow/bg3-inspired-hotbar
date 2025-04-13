@@ -2,13 +2,13 @@ import { BG3Component } from "../component.js";
 import { AbilityContainer } from "./AbilityContainer.js";
 import { DeathSavesContainer } from "./DeathSavesContainer.js";
 import { MenuContainer } from "./MenuContainer.js";
-import { CONFIG } from "../../utils/config.js";
+import { BG3CONFIG } from "../../utils/config.js";
 
 export class PortraitContainer extends BG3Component {
     constructor(data) {
         super(data);
         this.components = {};
-        this.useTokenImage = this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;
+        this.useTokenImage = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "useTokenImage") ?? false;
     }
 
     get classes() {
@@ -17,10 +17,10 @@ export class PortraitContainer extends BG3Component {
 
     get img() {
         return (async () => {
-            const saved = await this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage");
+            const saved = await this.actor.getFlag(BG3CONFIG.MODULE_NAME, "useTokenImage");
             if (saved !== undefined) this.useTokenImage = saved;
             else {
-                const defaultPref = game.settings.get(CONFIG.MODULE_NAME, 'defaultPortraitPreferences');
+                const defaultPref = game.settings.get(BG3CONFIG.MODULE_NAME, 'defaultPortraitPreferences');
                 this.useTokenImage = defaultPref === 'token';
             }
             return this.useTokenImage ? this.token.document.texture.src : this.actor.img;
@@ -44,7 +44,7 @@ export class PortraitContainer extends BG3Component {
 
     get extraInfos() {
         return (async () => {
-            const savedData = await game.settings.get(CONFIG.MODULE_NAME, 'dataExtraInfo'),
+            const savedData = await game.settings.get(BG3CONFIG.MODULE_NAME, 'dataExtraInfo'),
                 extraInfos = [];
             for(let i = 0; i < savedData.length; i++) {
                 if(!savedData[i].attr || savedData[i].attr == '') continue;
@@ -79,12 +79,12 @@ export class PortraitContainer extends BG3Component {
         if(!image) return;
 
         this.element.addEventListener('dblclick', (event) => {
-            if(game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
+            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
             this.actor.sheet.render(true);
         });
 
         this.element.addEventListener('click', (event) => {
-            if(!game.settings.get(CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
+            if(!game.settings.get(BG3CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
             this.actor.sheet.render(true);
         });
 
@@ -237,33 +237,33 @@ export class PortraitContainer extends BG3Component {
 
     async updateImagePreference() {
         this.useTokenImage = !this.useTokenImage;
-        await this.actor.setFlag(CONFIG.MODULE_NAME, "useTokenImage", this.useTokenImage);
+        await this.actor.setFlag(BG3CONFIG.MODULE_NAME, "useTokenImage", this.useTokenImage);
         this._renderInner();
     }
 
     setImgBGColor() {
-        const value = game.settings.get(CONFIG.MODULE_NAME, 'backgroundPortraitPreferences');
+        const value = game.settings.get(BG3CONFIG.MODULE_NAME, 'backgroundPortraitPreferences');
         this.element.style.setProperty('--img-background-color', (value && value != '' ? value : 'transparent'));
     }
 
     setPortraitBendMode() {
         const imageContainer = this.element.getElementsByClassName('portrait-image-subcontainer');
-        if(imageContainer[0]) imageContainer[0].setAttribute('data-bend-mode', game.settings.get(CONFIG.MODULE_NAME, 'overlayModePortrait'));
+        if(imageContainer[0]) imageContainer[0].setAttribute('data-bend-mode', game.settings.get(BG3CONFIG.MODULE_NAME, 'overlayModePortrait'));
     }
 
     togglePortraitOverlay() {
         const overlay = this.element.getElementsByClassName('health-overlay');
-        if(overlay && overlay[0]) overlay[0].classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showHealthOverlay'));
+        if(overlay && overlay[0]) overlay[0].classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showHealthOverlay'));
     }
 
     toggleHPText() {
         const text = this.element.getElementsByClassName('hp-text');
-        if(text && text[0]) text[0].classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showHPText'));
+        if(text && text[0]) text[0].classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showHPText'));
     }
 
     toggleExtraInfos() {
         const text = this.element.getElementsByClassName('extra-infos-container');
-        if(text && text[0]) text[0].classList.toggle('hidden', !game.settings.get(CONFIG.MODULE_NAME, 'showExtraInfo'));
+        if(text && text[0]) text[0].classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showExtraInfo'));
     }
 
     getPortraitMenu() {
@@ -283,10 +283,10 @@ export class PortraitContainer extends BG3Component {
     }
 
     applySettings() {
-        this.element.setAttribute("data-shape", game.settings.get(CONFIG.MODULE_NAME, 'shapePortraitPreferences'));
-        this.element.setAttribute("data-border", game.settings.get(CONFIG.MODULE_NAME, 'borderPortraitPreferences'));
+        this.element.setAttribute("data-shape", game.settings.get(BG3CONFIG.MODULE_NAME, 'shapePortraitPreferences'));
+        this.element.setAttribute("data-border", game.settings.get(BG3CONFIG.MODULE_NAME, 'borderPortraitPreferences'));
         this.setImgBGColor();
-        this.element.classList.toggle('portrait-hidden', !game.settings.get(CONFIG.MODULE_NAME, 'hidePortraitImage'));
+        this.element.classList.toggle('portrait-hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'hidePortraitImage'));
         this.setPortraitBendMode();
         this.togglePortraitOverlay();
         this.toggleHPText();
@@ -294,7 +294,7 @@ export class PortraitContainer extends BG3Component {
     }
     
     async _renderInner() {
-        // this.useTokenImage = await this.actor.getFlag(CONFIG.MODULE_NAME, "useTokenImage") ?? false;
+        // this.useTokenImage = await this.actor.getFlag(BG3CONFIG.MODULE_NAME, "useTokenImage") ?? false;
         await super._renderInner();
         this.applySettings();
         this.components.deathSavesContainer = new DeathSavesContainer();

@@ -1,6 +1,6 @@
 import { BaseButton } from "../buttons/BaseButton.js";
 import { BG3Component } from "../component.js";
-import { CONFIG } from "../../utils/config.js";
+import { BG3CONFIG } from "../../utils/config.js";
 import { MenuContainer } from "./MenuContainer.js";
 import { ControlsManager } from "../../managers/ControlsManager.js";
 
@@ -52,13 +52,13 @@ export class ControlContainer extends BG3Component {
             {
                 type: 'div',
                 key: 'controlLock',
-                class: [...["hotbar-control-button"], ...(game.settings.get(CONFIG.MODULE_NAME, 'masterLockEnabled') ? ['locked'] : [])], 
+                class: [...["hotbar-control-button"], ...(game.settings.get(BG3CONFIG.MODULE_NAME, 'masterLockEnabled') ? ['locked'] : [])], 
                 icon: 'fa-unlock',
                 title: 'Lock hotbar settings<br>(Right-click for options)',
                 hasChildren: true,
                 events: {
                     'click': (e) => {
-                        const settings = game.settings.get(CONFIG.MODULE_NAME, 'lockSettings');
+                        const settings = game.settings.get(BG3CONFIG.MODULE_NAME, 'lockSettings');
                         if(!Object.values(settings).filter(s => s === true).length) ui.notifications.warn("Please right-click the lock button to select which settings to lock.");
                         else ControlsManager.updateMasterLock();
                     }
@@ -92,10 +92,10 @@ export class ControlContainer extends BG3Component {
                     icon: 'fas fa-rotate',
                     click: async () => {
                         ui.BG3HOTBAR.components.container.components.hotbar.forEach(container => {
-                            container.data.rows = CONFIG.ROWS;
-                            container.data.cols = CONFIG.INITIAL_COLS;
-                            ui.BG3HOTBAR.manager.containers[container.id][container.index].rows = CONFIG.ROWS;
-                            ui.BG3HOTBAR.manager.containers[container.id][container.index].cols = CONFIG.INITIAL_COLS;
+                            container.data.rows = BG3CONFIG.ROWS;
+                            container.data.cols = BG3CONFIG.INITIAL_COLS;
+                            ui.BG3HOTBAR.manager.containers[container.id][container.index].rows = BG3CONFIG.ROWS;
+                            ui.BG3HOTBAR.manager.containers[container.id][container.index].cols = BG3CONFIG.INITIAL_COLS;
                             container.render();
                         });
                         await ui.BG3HOTBAR.manager.persist();
@@ -115,7 +115,7 @@ export class ControlContainer extends BG3Component {
                             ui.BG3HOTBAR.manager.containers[container.id][container.index].items = {};
                             container.render();
                         });
-                        if(!game.settings.get(CONFIG.MODULE_NAME, 'lockCombatContainer')) {
+                        if(!game.settings.get(BG3CONFIG.MODULE_NAME, 'lockCombatContainer')) {
                             ui.BG3HOTBAR.components.weapon.components.combat.forEach(container => {
                                 container.data.items = {};
                                 ui.BG3HOTBAR.manager.containers[container.id][container.index].items = {};
@@ -222,7 +222,7 @@ export class ControlContainer extends BG3Component {
 
     async _renderInner() {
         await super._renderInner();
-        if(game.settings.get(CONFIG.MODULE_NAME, 'fadeControlsMenu')) this.element.classList.add('fade');
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'fadeControlsMenu')) this.element.classList.add('fade');
         const buttons = this.btnData.map((btn) => new BaseButton(btn));
         for(const btn of buttons) this.element.appendChild(btn.element);
         await Promise.all(buttons.map((btn) => btn.render()));

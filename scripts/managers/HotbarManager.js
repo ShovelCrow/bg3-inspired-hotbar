@@ -1,6 +1,6 @@
 // Hotbar Manager Component
 
-import { CONFIG } from '../utils/config.js';
+import { BG3CONFIG } from '../utils/config.js';
 
 export class HotbarManager {
     constructor() {
@@ -22,7 +22,7 @@ export class HotbarManager {
     }
 
     _initializeContainers() {
-        Object.entries(CONFIG.CONTAINERSDATA).forEach(([index, data]) => {
+        Object.entries(BG3CONFIG.CONTAINERSDATA).forEach(([index, data]) => {
             this.containers[index] = [];
             for(let i = 0; i < data.count; i++) {
                 this.containers[index].push({...foundry.utils.deepClone(data.config), ...{id: `${index}-container`, index: i}});
@@ -41,14 +41,14 @@ export class HotbarManager {
 
         // For unlinked tokens, also remove the flag data
         if (token.actor && !token.actorLink) {
-            await token.actor.unsetFlag(CONFIG.MODULE_NAME, CONFIG.CONTAINERS_NAME);
+            await token.actor.unsetFlag(BG3CONFIG.MODULE_NAME, BG3CONFIG.CONTAINERS_NAME);
         }
     }
 
     async _loadTokenData() {
         if(!this.token || !this.actor) return;
-        const containersData = this.actor.getFlag(CONFIG.MODULE_NAME, CONFIG.CONTAINERS_NAME),
-            savedData = this.actor.getFlag(CONFIG.MODULE_NAME, CONFIG.FLAG_NAME);
+        const containersData = this.actor.getFlag(BG3CONFIG.MODULE_NAME, BG3CONFIG.CONTAINERS_NAME),
+            savedData = this.actor.getFlag(BG3CONFIG.MODULE_NAME, BG3CONFIG.FLAG_NAME);
         
         if(containersData) this.containers = foundry.utils.deepClone(containersData);
         else if(savedData) {
@@ -104,6 +104,6 @@ export class HotbarManager {
     }
 
     async persist() {
-        this.actor.setFlag(CONFIG.MODULE_NAME, CONFIG.CONTAINERS_NAME, this.containers)
+        this.actor.setFlag(BG3CONFIG.MODULE_NAME, BG3CONFIG.CONTAINERS_NAME, this.containers)
     }
 } 

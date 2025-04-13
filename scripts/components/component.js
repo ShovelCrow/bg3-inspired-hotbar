@@ -1,4 +1,4 @@
-import { CONFIG } from '../utils/config.js';
+import { BG3CONFIG } from '../utils/config.js';
 
 export class BG3Component {
     constructor(data, parent) {
@@ -11,7 +11,7 @@ export class BG3Component {
     }
     
     get template() {
-        return `${CONFIG.COMPONENTS_PATH}${this.constructor.name}.hbs`;
+        return `${BG3CONFIG.COMPONENTS_PATH}${this.constructor.name}.hbs`;
     }
 
     get classes() {
