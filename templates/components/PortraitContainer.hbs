@@ -1,7 +1,7 @@
 <div>
     <div class="extra-infos-container">
         {{#each extraInfos}}
-            <div class="extra-info extra-info-{{@index}} {{icon}}" style="--icon-color: {{color}}"><span>{{value}}</span></div>
+            {{#if value}}<div class="extra-info extra-info-{{@index}} {{icon}}" style="--icon-color: {{color}}"><span>{{value}}</span></div>{{/if}}
         {{/each}}
     </div>
     <div class="portrait-image-container">

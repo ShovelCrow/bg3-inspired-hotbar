@@ -47,10 +47,12 @@ export class PortraitContainer extends BG3Component {
             const savedData = await game.settings.get(BG3CONFIG.MODULE_NAME, 'dataExtraInfo'),
                 extraInfos = [];
             for(let i = 0; i < savedData.length; i++) {
-                if(!savedData[i].attr || savedData[i].attr == '') continue;
-                const attr = foundry.utils.getProperty(this.actor.system, savedData[i].attr) ?? foundry.utils.getProperty(this.actor.system, savedData[i].attr + ".value") ?? this._getInfoFromSettings(savedData[i].attr);
-                if(!attr) continue;
-                extraInfos.push({icon: savedData[i].icon, value: attr, color: savedData[i].color});
+                let extraData = {};
+                if(savedData[i].attr && savedData[i].attr !== '') {
+                    const attr = foundry.utils.getProperty(this.actor.system, savedData[i].attr) ?? foundry.utils.getProperty(this.actor.system, savedData[i].attr + ".value") ?? this._getInfoFromSettings(savedData[i].attr);
+                    if(attr) extraData = {icon: savedData[i].icon, value: attr, color: savedData[i].color};
+                }
+                extraInfos.push(extraData);
             }
             return extraInfos;
         })();
