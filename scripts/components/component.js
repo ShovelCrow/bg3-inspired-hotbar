@@ -1,4 +1,4 @@
-import { CONFIG } from '../utils/config.js';
+import { BG3CONFIG } from '../utils/config.js';
 
 export class BG3Component {
     constructor(data, parent) {
@@ -11,7 +11,7 @@ export class BG3Component {
     }
     
     get template() {
-        return `${CONFIG.COMPONENTS_PATH}${this.constructor.name}.hbs`;
+        return `${BG3CONFIG.COMPONENTS_PATH}${this.constructor.name}.hbs`;
     }
 
     get classes() {
@@ -104,7 +104,7 @@ export class BG3Component {
                         if(isActivity) break;
                         const targetElement = this.element.firstElementChild ?? this.element;
                         targetElement.dataset.tooltip = `<section class="loading" data-uuid="${this.data?.uuid ?? this.data?.item?.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
-                        targetElement.dataset.tooltipClass = "dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip";
+                        targetElement.dataset.tooltipClass = `dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip`;
                         targetElement.dataset.tooltipDirection="UP";
                     }
                     break;        

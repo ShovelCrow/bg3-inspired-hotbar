@@ -1,4 +1,4 @@
-import { CONFIG } from '../../utils/config.js';
+import { BG3CONFIG } from '../../utils/config.js';
 import { PassiveButton } from '../buttons/passiveButton.js';
 import { BG3Component } from "../component.js";
 
@@ -21,7 +21,7 @@ export class PassiveContainer extends BG3Component {
         const availablePassives = this.actor.items.filter(item => 
             item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive")
         );
-        const saved = this.actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
+        const saved = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "selectedPassives");
         let featuresToShow = [];
         if (this.selectedPassives) {
             featuresToShow = availablePassives.filter(item => this.selectedPassives.has(item.uuid));
@@ -30,7 +30,7 @@ export class PassiveContainer extends BG3Component {
     }
 
     get selectedPassives() {
-        const saved = this.actor.getFlag(CONFIG.MODULE_NAME, "selectedPassives");
+        const saved = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "selectedPassives");
         if (saved && Array.isArray(saved)) return new Set(saved);
         return;
     }
@@ -57,7 +57,7 @@ export class PassiveContainer extends BG3Component {
         // Create and show dialog using the template
         const dialog = new Dialog({
             title: "Configure Passive Features",
-            content: await renderTemplate(`modules/${CONFIG.MODULE_NAME}/templates/dialog/passives-dialog.hbs`, {
+            content: await renderTemplate(`modules/${BG3CONFIG.MODULE_NAME}/templates/dialog/passives-dialog.hbs`, {
                 features: availableFeatures
             }),
             buttons: {
@@ -75,7 +75,7 @@ export class PassiveContainer extends BG3Component {
                             }
                         });
                         // Update our selection and persist it
-                        await this.actor.setFlag(CONFIG.MODULE_NAME, "selectedPassives", Array.from(newSelection));
+                        await this.actor.setFlag(BG3CONFIG.MODULE_NAME, "selectedPassives", Array.from(newSelection));
                         this.render();
                     }
                 },

@@ -1,6 +1,6 @@
 import { BaseButton } from "../buttons/BaseButton.js";
 import { BG3Component } from "../component.js";
-import { CONFIG } from "../../utils/config.js";
+import { BG3CONFIG } from "../../utils/config.js";
 
 export class RestTurnContainer extends BG3Component {
     constructor(data) {
@@ -14,7 +14,7 @@ export class RestTurnContainer extends BG3Component {
 
     get btnData() {
         let btnData = [];
-        if(game.settings.get(CONFIG.MODULE_NAME, 'showRestTurnButton')) {
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'showRestTurnButton')) {
             btnData = [...btnData, ...[
                 {
                     type: 'div',

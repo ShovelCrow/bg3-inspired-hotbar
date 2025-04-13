@@ -10,7 +10,9 @@ import { ControlsManager } from './managers/ControlsManager.js';
 import { DragDropManager } from './managers/DragDropManager.js';
 import { HotbarManager } from './managers/HotbarManager.js';
 import { ItemUpdateManager } from './managers/ItemUpdateManager.js';
-import { CONFIG } from './utils/config.js';
+import { BG3CONFIG } from './utils/config.js';
+import { DND5E, Filter, applications, dataModels, dice, documents, enrichers, migrations, registry, utils } from '../../../systems/dnd5e/dnd5e.mjs';
+import { TooltipManager } from './managers/TooltipManager.js';
 
 export class BG3Hotbar extends Application {
     constructor() {
@@ -20,11 +22,12 @@ export class BG3Hotbar extends Application {
         this.dragDropManager = null;
         this.itemUpdateManager = null;
         this.menuManager = null;
+        this.tooltipManager = null;
         this.combat = [];
         this.components = {};
         this.macroBarTimeout = null;
         this.combatActionsArray = [];
-        // this.enabled = game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled');
+        // this.enabled = game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled');
         this.generateTimeout = null;
         this.colorPicker = null;
 
@@ -47,13 +50,16 @@ export class BG3Hotbar extends Application {
 
         // Retrieve Common Combat Actions based
         this.loadCombatActions();
+
+        // Preload Handlebars templates
+        this.preloadHandlebarsTemplates();
     }
 
     static get defaultOptions() {
         return {
             ...super.defaultOptions,
-            id: CONFIG.MODULE_NAME,
-            template: `modules/${CONFIG.MODULE_NAME}/templates/bg3-hud.hbs`,
+            id: BG3CONFIG.MODULE_NAME,
+            template: `modules/${BG3CONFIG.MODULE_NAME}/templates/bg3-hud.hbs`,
             popOut: false,
             dragDrop: [{ dragSelector: null, dropSelector: null }],
         };
@@ -67,18 +73,33 @@ export class BG3Hotbar extends Application {
 
         this._applyTheme();
 
-        TooltipManager.TOOLTIP_ACTIVATION_MS = game.settings.get(CONFIG.MODULE_NAME, 'tooltipDelay');
+        TooltipManager.TOOLTIP_ACTIVATION_MS = game.settings.get(BG3CONFIG.MODULE_NAME, 'tooltipDelay');
 
         // Initialize the hotbar manager
         this.manager = new HotbarManager();
         this.dragDropManager = new DragDropManager();
         this.itemUpdateManager = new ItemUpdateManager();
+        this.tooltipManager = new TooltipManager();
         
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
-        document.body.dataset.playerList = game.settings.get(CONFIG.MODULE_NAME, 'playerListVisibility');
+        document.body.dataset.playerList = game.settings.get(BG3CONFIG.MODULE_NAME, 'playerListVisibility');
 
         this.updateUIScale();
+    }
+
+    async preloadHandlebarsTemplates() {
+        const partials = [
+            `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/weapon-block.hbs`,
+        ];
+
+        const paths = {};
+        for ( const path of partials ) {
+          paths[path.replace(".hbs", ".html")] = path;
+          paths[`bg3hotbar.${path.split("/").pop().replace(".hbs", "")}`] = path;
+        }
+      
+        return loadTemplates(paths);
     }
 
     async _onCreateToken(token) {
@@ -97,9 +118,9 @@ export class BG3Hotbar extends Application {
         }
         if (!controlled) return;
 
-        if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) {
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) {
             this.generate(token);
-            if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
         }
     } */
 
@@ -117,9 +138,9 @@ export class BG3Hotbar extends Application {
             }
             if (!controlled || !canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) return;
 
-            if(game.settings.get(CONFIG.MODULE_NAME, 'uiEnabled')) {
+            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) {
                     this.generate(token);
-                    if(game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+                    if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
             }
         })
     }
@@ -162,7 +183,7 @@ export class BG3Hotbar extends Application {
     async _onUpdateActor(actor, changes, options, userId) {
         if(!this.manager) return;
         
-        if(changes?.flags?.[CONFIG.MODULE_NAME] && game.user.id !== userId) this.manager.socketUpdateData(actor, changes);
+        if(changes?.flags?.[BG3CONFIG.MODULE_NAME] && game.user.id !== userId) this.manager.socketUpdateData(actor, changes);
         
         if (game.user.id !== userId) return;
         
@@ -236,7 +257,7 @@ export class BG3Hotbar extends Application {
                 return;
             }
             
-            const collapseMacrobar = game.settings.get(CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
+            const collapseMacrobar = game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
             if(collapseMacrobar !== 'full' && document.querySelector("#hotbar").style.display != 'flex') document.querySelector("#hotbar").style.display = 'flex';
             // Applying macrobar collapse setting
             if (collapseMacrobar === 'always' || collapseMacrobar === 'true') {
@@ -256,10 +277,10 @@ export class BG3Hotbar extends Application {
     }
 
     async _applyTheme() {
-        const theme = game.settings.get(CONFIG.MODULE_NAME, 'themeOption'),
+        const theme = game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption'),
             currentTheme = document.head.querySelector('[custom-theme]'),
-            themeFile = game.settings.get(CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ? await ThemeSettingDialog.loadThemeFile(game.settings.get(CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(CONFIG.MODULE_NAME, 'themeCustom'),
-            themeConfig = {...CONFIG.BASE_THEME, ...themeFile};
+            themeFile = game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ? await ThemeSettingDialog.loadThemeFile(game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(BG3CONFIG.MODULE_NAME, 'themeCustom'),
+            themeConfig = {...BG3CONFIG.BASE_THEME, ...themeFile};
         if(themeConfig) {
             const styleContent = `:root{${Object.entries(themeConfig).map(([k, v]) => `${k}:${v};`).join('\n')}}`;
             if(currentTheme) currentTheme.innerHTML = styleContent;
@@ -276,10 +297,10 @@ export class BG3Hotbar extends Application {
     updateUIScale() {
         // const element = document.body;
         let scale = 1;
-        if(game.settings.get(CONFIG.MODULE_NAME, 'autoScale')) {
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'autoScale')) {
             scale = window.innerHeight / 1500;
         } else {
-            scale = game.settings.get(CONFIG.MODULE_NAME, 'uiScale') / 100;
+            scale = game.settings.get(BG3CONFIG.MODULE_NAME, 'uiScale') / 100;
         }
         // element.style.setProperty('--bg3-scale-ui', scale);
         return scale;
@@ -289,7 +310,7 @@ export class BG3Hotbar extends Application {
         if (!game.modules.get("chris-premades")?.active) return;
         let pack = game.packs.get("chris-premades.CPRActions"),
             promises = [];
-        Object.entries(CONFIG.COMBATACTIONDATA).forEach(([key, value]) => {
+        Object.entries(BG3CONFIG.COMBATACTIONDATA).forEach(([key, value]) => {
             let macroID = pack.index.find(t =>  t.type == 'feat' && t.name === value.name)._id;
             if(macroID) {
                 promises.push(new Promise(async (resolve, reject) => {
@@ -303,12 +324,12 @@ export class BG3Hotbar extends Application {
     }
 
     toggle(state) {
-        game.settings.set(CONFIG.MODULE_NAME, 'uiEnabled', state);
+        game.settings.set(BG3CONFIG.MODULE_NAME, 'uiEnabled', state);
         this.generate(state ? (canvas.tokens?.controlled?.length > 1 ? null : canvas.tokens?.controlled?.[0]) : null);
     }
 
     hide() {
-        const autoHideSetting = game.settings.get(CONFIG.MODULE_NAME, 'autoHideCombat');
+        const autoHideSetting = game.settings.get(BG3CONFIG.MODULE_NAME, 'autoHideCombat');
         let state = false;
         if (autoHideSetting !== 'false') {
             const actor = this.manager.actor;
@@ -335,17 +356,18 @@ export class BG3Hotbar extends Application {
 
         // Apply setting
         html.style.setProperty('--bg3-scale-ui', this.updateUIScale());
-        html.dataset.position = game.settings.get(CONFIG.MODULE_NAME, 'uiPosition');
-        html.style.setProperty('--position-padding', `${game.settings.get(CONFIG.MODULE_NAME, 'posPadding')}px`);
-        html.style.setProperty('--position-bottom', `${game.settings.get(CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
-        html.style.setProperty('--bg3-normal-opacity', game.settings.get(CONFIG.MODULE_NAME, 'normalOpacity'));
-        html.style.setProperty('--bg3-faded-opacity', game.settings.get(CONFIG.MODULE_NAME, 'fadedOpacity'));
-        html.style.setProperty('--bg3-faded-delay', `${game.settings.get(CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
-        html.setAttribute('theme-option', game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
-        // html.style.setProperty('--position-bottom', `${game.settings.get(CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
-        html.dataset.itemName = game.settings.get(CONFIG.MODULE_NAME, 'showItemNames');
-        html.dataset.itemUse = game.settings.get(CONFIG.MODULE_NAME, 'showItemUses');
-        html.dataset.cellHighlight = game.settings.get(CONFIG.MODULE_NAME, 'highlightStyle');
+        html.dataset.position = game.settings.get(BG3CONFIG.MODULE_NAME, 'uiPosition');
+        html.style.setProperty('--position-padding', `${game.settings.get(BG3CONFIG.MODULE_NAME, 'posPadding')}px`);
+        html.style.setProperty('--position-bottom', `${game.settings.get(BG3CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
+        html.style.setProperty('--bg3-normal-opacity', game.settings.get(BG3CONFIG.MODULE_NAME, 'normalOpacity'));
+        html.style.setProperty('--bg3-faded-opacity', game.settings.get(BG3CONFIG.MODULE_NAME, 'fadedOpacity'));
+        html.style.setProperty('--bg3-faded-delay', `${game.settings.get(BG3CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
+        html.setAttribute('theme-option', game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption'));
+        // html.style.setProperty('--position-bottom', `${game.settings.get(BG3CONFIG.MODULE_NAME, 'posPaddingBottom')}px`);
+        html.dataset.itemName = game.settings.get(BG3CONFIG.MODULE_NAME, 'showItemNames');
+        html.dataset.itemUse = game.settings.get(BG3CONFIG.MODULE_NAME, 'showItemUses');
+        html.dataset.cellHighlight = game.settings.get(BG3CONFIG.MODULE_NAME, 'highlightStyle');
+        document.body.dataset.showMaterials = game.settings.get(BG3CONFIG.MODULE_NAME, 'showMaterialDescription');
 
         this.components = {
             portrait: new PortraitContainer(),

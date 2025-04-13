@@ -1,7 +1,7 @@
 // Auto Populate Create Token Feature
 // Handles populating hotbar when creating unlinked tokens
 
-import { CONFIG, shouldEnforceSpellPreparation } from '../utils/config.js';
+import { BG3CONFIG, shouldEnforceSpellPreparation } from '../utils/config.js';
 import { HotbarManager } from '../managers/HotbarManager.js';
 import { AutoSort } from './AutoSort.js';
 
@@ -10,7 +10,7 @@ export class AutoPopulateDefaults extends FormApplication {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "bg3-hotbar-auto-populate-defaults",
             title: game.i18n.localize("BG3.Settings.ContainerAutoPopulate.DefaultsTitle"),
-            template: `modules/${CONFIG.MODULE_NAME}/templates/dialog/auto-populate-defaults.html`,
+            template: `modules/${BG3CONFIG.MODULE_NAME}/templates/dialog/auto-populate-defaults.html`,
             width: 800,
             height: "auto",
             closeOnSubmit: true,
@@ -21,10 +21,10 @@ export class AutoPopulateDefaults extends FormApplication {
     getData() {
         // Get current settings for each container
         const containerSettings = {
-            container1: game.settings.get(CONFIG.MODULE_NAME, 'container1AutoPopulate'),
-            container2: game.settings.get(CONFIG.MODULE_NAME, 'container2AutoPopulate'),
-            container3: game.settings.get(CONFIG.MODULE_NAME, 'container3AutoPopulate'),
-            allowPassive: game.settings.get(CONFIG.MODULE_NAME, 'noActivityAutoPopulate')
+            container1: game.settings.get(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate'),
+            container2: game.settings.get(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate'),
+            container3: game.settings.get(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate'),
+            allowPassive: game.settings.get(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate')
         };
 
         // Define available choices
@@ -59,9 +59,9 @@ export class AutoPopulateDefaults extends FormApplication {
                 const selectedTypes = Array.from(this.element[0].querySelectorAll(`.container-chips[data-container="${container}"] .chip.active`))
                     .map(chip => chip.dataset.value);
                 
-                await game.settings.set(CONFIG.MODULE_NAME, `${container}AutoPopulate`, selectedTypes);
+                await game.settings.set(BG3CONFIG.MODULE_NAME, `${container}AutoPopulate`, selectedTypes);
             }
-            await game.settings.set(CONFIG.MODULE_NAME, `noActivityAutoPopulate`, this.element[0].querySelector("#passive-populate-checkbox").checked);
+            await game.settings.set(BG3CONFIG.MODULE_NAME, `noActivityAutoPopulate`, this.element[0].querySelector("#passive-populate-checkbox").checked);
             ui.notifications.info(game.i18n.localize("BG3.Settings.ContainerAutoPopulate.SaveSuccess"));
         } catch (error) {
             console.error("Error saving container settings:", error);
@@ -101,14 +101,14 @@ export class AutoPopulateCreateToken {
             
             // Auto-populate combat container if setting on true
             if(!(!tempManager.containers.combat[0]?.items || Object.values(tempManager.containers.combat[0].items).length > 0)) {
-                if(game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateCombatContainer') && token.actor.type !== 'vehicle') await this._populateCommonActions(token.actor, tempManager);
+                if(game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer') && token.actor.type !== 'vehicle') await this._populateCommonActions(token.actor, tempManager);
             }
 
-            if(token.actor.type !== 'character' && ((!token.actorLink && game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens')) || (token.actorLink && game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens')))) {
+            if(token.actor.type !== 'character' && ((!token.actorLink && game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens')) || (token.actorLink && game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens')))) {
                 // Get settings for each container
-                const container1Setting = game.settings.get(CONFIG.MODULE_NAME, 'container1AutoPopulate');
-                const container2Setting = game.settings.get(CONFIG.MODULE_NAME, 'container2AutoPopulate');
-                const container3Setting = game.settings.get(CONFIG.MODULE_NAME, 'container3AutoPopulate');
+                const container1Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate');
+                const container2Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate');
+                const container3Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate');
       
                 // Process each weapon & combat containers
                 await this._populateWeaponsToken(token.actor, tempManager);
@@ -140,7 +140,7 @@ export class AutoPopulateCreateToken {
             // Process all items from the actor
             for (const item of actor.items) {
                 // Skip if item type is not in the selected types
-                if (!itemTypes.includes(item.type) || Object.values(CONFIG.COMBATACTIONDATA).find(d => d.name === item.name)) continue;
+                if (!itemTypes.includes(item.type) || Object.values(BG3CONFIG.COMBATACTIONDATA).find(d => d.name === item.name)) continue;
                 // Skip if item already in weapons containers
                 let isInSet = false;
                 for(let i = 0; i < manager.containers.weapon.length; i++) {
@@ -165,7 +165,7 @@ export class AutoPopulateCreateToken {
                 const hasActivities = item.system?.activities?.length > 0 ||
                                     (item.system?.activation?.type && item.system?.activation?.type !== "none");
                 
-                if (hasActivities || game.settings.get(CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {
+                if (hasActivities || game.settings.get(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {
                     const itemData = {
                         uuid: item.uuid,
                         // name: item.name,
@@ -243,9 +243,9 @@ export class AutoPopulateCreateToken {
     static async _populateCommonActions(actor, manager) {
         if(actor.type == 'vehicule') return;
         try {
-            console.log('autoPopulateCombatContainer', game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateCombatContainer'))
+            console.log('autoPopulateCombatContainer', game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer'))
             const tmpArray = [],
-                actionsClone = foundry.utils.deepClone(CONFIG.COMBATACTIONDATA);
+                actionsClone = foundry.utils.deepClone(BG3CONFIG.COMBATACTIONDATA);
             Object.entries(actionsClone).forEach(([key, value]) => {
               const hasItem = actor.items.find(item => item.type == 'feat' && item.name == value.name)
               if(hasItem) value.uuid = hasItem.uuid;
@@ -258,7 +258,7 @@ export class AutoPopulateCreateToken {
               let tmpDoc = await actor.createEmbeddedDocuments('Item', tmpArray);
               tmpDoc.forEach(doc => Object.values(actionsClone).find(value => value.name == doc.name).uuid = doc.uuid)
             }
-            console.log('autoPopulateCombatContainer2', game.settings.get(CONFIG.MODULE_NAME, 'autoPopulateCombatContainer'))
+            console.log('autoPopulateCombatContainer2', game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer'))
             manager.containers.combat[0].items = actionsClone;
         } catch (error) {
             console.error("BG3 Inspired Hotbar | Error auto-populating common actions token hotbar:", error);

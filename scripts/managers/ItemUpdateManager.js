@@ -1,4 +1,4 @@
-import { CONFIG } from "../utils/config.js";
+import { BG3CONFIG } from "../utils/config.js";
 import { fromUuid } from "../utils/foundryUtils.js";
 
 export class ItemUpdateManager {
@@ -45,9 +45,9 @@ export class ItemUpdateManager {
      */
     _findAppropriateContainer(item) {
         // Get container auto-populate settings
-        const container1Types = game.settings.get(CONFIG.MODULE_NAME, 'container1AutoPopulate');
-        const container2Types = game.settings.get(CONFIG.MODULE_NAME, 'container2AutoPopulate');
-        const container3Types = game.settings.get(CONFIG.MODULE_NAME, 'container3AutoPopulate');
+        const container1Types = game.settings.get(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate');
+        const container2Types = game.settings.get(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate');
+        const container3Types = game.settings.get(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate');
 
         // Check each container's preferred types
         if (container1Types.includes(item.type)) return 0;
@@ -233,7 +233,7 @@ export class ItemUpdateManager {
         if (!ui.BG3HOTBAR.manager || game.user.id !== userId) return;
 
         // Check if not already in combat container
-        if(Object.values(CONFIG.COMBATACTIONDATA).find(d => d.name === item.name)) return;
+        if(Object.values(BG3CONFIG.COMBATACTIONDATA).find(d => d.name === item.name)) return;
         
         const token = ui.BG3HOTBAR.manager.token;
         if (!token) return;

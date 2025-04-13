@@ -1,4 +1,4 @@
-import { CONFIG } from "../../utils/config.js";
+import { BG3CONFIG } from "../../utils/config.js";
 
 export class ThemeSettingDialog extends FormApplication {
     constructor () {
@@ -10,7 +10,7 @@ export class ThemeSettingDialog extends FormApplication {
             ...super.defaultOptions,
             title: 'Theme settings',
             id: "bg3-inspired-hotbar-theme-settings",
-            template: `modules/${CONFIG.MODULE_NAME}/templates/dialog/theme-dialog.hbs`,
+            template: `modules/${BG3CONFIG.MODULE_NAME}/templates/dialog/theme-dialog.hbs`,
             height: "auto",
             submitOnClose: false
         };
@@ -20,10 +20,10 @@ export class ThemeSettingDialog extends FormApplication {
         const dataKeys = ['themeOption'],
             configData = {};
         for(let i = 0; i < dataKeys.length; i++) {
-            const setting = game.settings.settings.get(`${CONFIG.MODULE_NAME}.${dataKeys[i]}`);
-            if(setting.scope === 'client' || game.user.isGM) configData[dataKeys[i]] = game.settings.get(CONFIG.MODULE_NAME, dataKeys[i]);
+            const setting = game.settings.settings.get(`${BG3CONFIG.MODULE_NAME}.${dataKeys[i]}`);
+            if(setting.scope === 'client' || game.user.isGM) configData[dataKeys[i]] = game.settings.get(BG3CONFIG.MODULE_NAME, dataKeys[i]);
         }
-        const themeList = await this.generateThemeList(game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
+        const themeList = await this.generateThemeList(game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption'));
 
         const dataInput = [
             {
@@ -206,9 +206,9 @@ export class ThemeSettingDialog extends FormApplication {
 
     async _render(force, options) {
         await super._render(force, options);
-        const themeFile = game.settings.get(CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ? await ThemeSettingDialog.loadThemeFile(game.settings.get(CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(CONFIG.MODULE_NAME, 'themeCustom'),
-            themeData = {...CONFIG.BASE_THEME, ...themeFile};
-        $('[name="bg3-inspired-hotbar.themeOption"]').val(game.settings.get(CONFIG.MODULE_NAME, 'themeOption'));
+        const themeFile = game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ? await ThemeSettingDialog.loadThemeFile(game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(BG3CONFIG.MODULE_NAME, 'themeCustom'),
+            themeData = {...BG3CONFIG.BASE_THEME, ...themeFile};
+        $('[name="bg3-inspired-hotbar.themeOption"]').val(game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption'));
         this.loadThemeData(themeData);
     }
 
@@ -247,14 +247,14 @@ export class ThemeSettingDialog extends FormApplication {
             if(!themeInput) return;
             if(themeInput.value !== 'custom') themeInput.value = 'custom';
             if(themeInput.value === 'custom') {
-                const themeData = {...CONFIG.BASE_THEME, ...this.generateThemeData()};
+                const themeData = {...BG3CONFIG.BASE_THEME, ...this.generateThemeData()};
                 this.loadThemeData(themeData);
             }
         });
         html.find('[name="bg3-inspired-hotbar.themeOption"]').on('change', async (event) => {
             if(event.target.value !== 'custom') {
                 const themeFile = await ThemeSettingDialog.loadThemeFile(event.target.value),
-                    themeData = {...CONFIG.BASE_THEME, ...themeFile};
+                    themeData = {...BG3CONFIG.BASE_THEME, ...themeFile};
                 this.loadThemeData(themeData);
             }
         });
@@ -262,24 +262,24 @@ export class ThemeSettingDialog extends FormApplication {
 
     static async loadThemeFile(theme) {
         let file;
-        file = await fetch(`modules/${CONFIG.MODULE_NAME}/scripts/themes/${theme}.json`);
-        if (!file.ok) file = await fetch(`modules/${CONFIG.MODULE_NAME}/storage/themes/${theme}.json`);
+        file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/scripts/themes/${theme}.json`);
+        if (!file.ok) file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/storage/themes/${theme}.json`);
         if (!file.ok) {
             ui.notifications.error("BG3 HUD Inspired: Theme not found");
-            game.settings.set(CONFIG.MODULE_NAME, 'themeOption', 'default');
-            file = await fetch(`modules/${CONFIG.MODULE_NAME}/scripts/themes/default.json`);
+            game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
+            file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/scripts/themes/default.json`);
         }
         const json = await file.json();
         return json;
     }
 
     async generateThemeList(current) {
-        if(current === undefined) current = game.settings.get(CONFIG.MODULE_NAME, 'themeOption');
+        if(current === undefined) current = game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption');
         current = current.toLowerCase();
 
-        let coreThemes = (await FilePicker.browse("user", `modules/${CONFIG.MODULE_NAME}/scripts/themes`, { extensions: [".json"] })).files;
+        let coreThemes = (await FilePicker.browse("user", `modules/${BG3CONFIG.MODULE_NAME}/scripts/themes`, { extensions: [".json"] })).files;
         if(coreThemes.length) coreThemes = coreThemes.map(t => t.split("/")[t.split("/").length - 1].replace(/\.json/gi, ""));
-        let customThemes = (await FilePicker.browse("user", `modules/${CONFIG.MODULE_NAME}/storage/themes`, { extensions: [".json"] })).files;
+        let customThemes = (await FilePicker.browse("user", `modules/${BG3CONFIG.MODULE_NAME}/storage/themes`, { extensions: [".json"] })).files;
         if(customThemes.length) customThemes = customThemes.map(t => t.split("/")[t.split("/").length - 1].replace(/\.json/gi, ""));
 
         let html = `<option value="custom">Custom</option><optgroup label="Core">${coreThemes.map(t => `<option data-folder="scripts" value="${t}">${t}</option>`).join('')}</optgroup><optgroup label="Custom">${customThemes.map(t => `<option data-folder="storage" value="${t}">${t}</option>`).join('')}</optgroup>`;
@@ -305,13 +305,13 @@ export class ThemeSettingDialog extends FormApplication {
                 break;
             default:
                 const themeInput = this.element[0].querySelector('[name="bg3-inspired-hotbar.themeOption"]');
-                if(themeInput?.value) await game.settings.set(CONFIG.MODULE_NAME, 'themeOption', themeInput.value);
+                if(themeInput?.value) await game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', themeInput.value);
                 /* const themeScope = this.element[0].querySelector('[name="bg3-inspired-hotbar.themeScope"]');
-                if(themeScope?.value) game.settings.set(CONFIG.MODULE_NAME, 'themeScope', themeScope.value); */
+                if(themeScope?.value) game.settings.set(BG3CONFIG.MODULE_NAME, 'themeScope', themeScope.value); */
                 if(themeInput.value === 'custom') {
                     const form = this.element[0].querySelectorAll('.css-var'),
                         cssVars = this.generateThemeData();
-                    await game.settings.set(CONFIG.MODULE_NAME, 'themeCustom', cssVars);
+                    await game.settings.set(BG3CONFIG.MODULE_NAME, 'themeCustom', cssVars);
                     console.log(cssVars);
                 }
                 ui.BG3HOTBAR._applyTheme();
@@ -343,8 +343,8 @@ export class ThemeSettingDialog extends FormApplication {
                         const themeData = this.generateThemeData(),
                             themeName = $(event).find('input[name="bg3ThemeName"]').val();
                         const theme = new File([new Blob([JSON.stringify(themeData)], { type: "application/json" })], `${themeName}.json`);
-                        FilePicker.uploadPersistent(CONFIG.MODULE_NAME, "themes", theme).then(async (response) => {
-                            // game.settings.set(CONFIG.MODULE_NAME, 'themeOption', themeName);
+                        FilePicker.uploadPersistent(BG3CONFIG.MODULE_NAME, "themes", theme).then(async (response) => {
+                            // game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', themeName);
                             const themeList = await this.generateThemeList(themeName);
                             $('[name="bg3-inspired-hotbar.themeOption"]').empty();
                             $('[name="bg3-inspired-hotbar.themeOption"]').append(themeList);

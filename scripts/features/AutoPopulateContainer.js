@@ -1,4 +1,4 @@
-import { CONFIG, shouldEnforceSpellPreparation } from "../utils/config.js";
+import { BG3CONFIG, shouldEnforceSpellPreparation } from "../utils/config.js";
 import { AutoSort } from "./AutoSort.js";
 
 export class AutoPopulateContainer {
@@ -125,7 +125,7 @@ export class AutoPopulateDialog extends Dialog {
             width: 800,
             height: "auto",
             jQuery: true,
-            template: `modules/${CONFIG.MODULE_NAME}/templates/dialog/auto-populate-container.html`
+            template: `modules/${BG3CONFIG.MODULE_NAME}/templates/dialog/auto-populate-container.html`
         };
 
         super(dialogData, options);
@@ -185,7 +185,7 @@ export class AutoPopulateDialog extends Dialog {
             const hasActivities = item.system?.activities?.length > 0 ||
                                 (item.system?.activation?.type && item.system?.activation?.type !== "none");
             
-            if (hasActivities || game.settings.get(CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {
+            if (hasActivities || game.settings.get(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {
               itemsWithActivities.push({
                 uuid: item.uuid,
                 name: item.name,

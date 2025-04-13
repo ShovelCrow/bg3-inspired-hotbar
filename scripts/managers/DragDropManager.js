@@ -1,4 +1,4 @@
-import { CONFIG } from '../utils/config.js';
+import { BG3CONFIG } from '../utils/config.js';
 import { fromUuid } from '../utils/foundryUtils.js';
 
 export class DragDropManager {
