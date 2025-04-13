@@ -5,6 +5,7 @@ export class TooltipManager {
         this.savedEnrichers = {};
         this._saveEnrichers();
         this._init();
+        globalThis.dnd5e.dataModels.ItemDataModel.ITEM_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/item-tooltip.hbs`;
     }
 
     _init() {

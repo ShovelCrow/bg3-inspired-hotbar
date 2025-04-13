@@ -1004,7 +1004,10 @@ export function registerSettings() {
         scope: 'client',
         config: true,
         type: Boolean,
-        default: false
+        default: false,
+        onChange: value => {
+            document.body.dataset.showMaterials = value;
+        }
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showDamageRanges', {

@@ -4,3 +4,7 @@
     border-color: var(--bg3-border-color);
     border-width: var(--bg3-border-size); */
 }
+
+body[data-show-materials="false"] :is(#tooltip, .locked-tooltip).dnd5e-tooltip.bg3-tooltip .spell-block .materials {
+    display: none;
+}

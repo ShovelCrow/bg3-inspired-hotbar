@@ -50,6 +50,9 @@ export class BG3Hotbar extends Application {
 
         // Retrieve Common Combat Actions based
         this.loadCombatActions();
+
+        // Preload Handlebars templates
+        this.preloadHandlebarsTemplates();
     }
 
     static get defaultOptions() {
@@ -83,6 +86,20 @@ export class BG3Hotbar extends Application {
         document.body.dataset.playerList = game.settings.get(BG3CONFIG.MODULE_NAME, 'playerListVisibility');
 
         this.updateUIScale();
+    }
+
+    async preloadHandlebarsTemplates() {
+        const partials = [
+            `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/weapon-block.hbs`,
+        ];
+
+        const paths = {};
+        for ( const path of partials ) {
+          paths[path.replace(".hbs", ".html")] = path;
+          paths[`bg3hotbar.${path.split("/").pop().replace(".hbs", "")}`] = path;
+        }
+      
+        return loadTemplates(paths);
     }
 
     async _onCreateToken(token) {
@@ -350,6 +367,7 @@ export class BG3Hotbar extends Application {
         html.dataset.itemName = game.settings.get(BG3CONFIG.MODULE_NAME, 'showItemNames');
         html.dataset.itemUse = game.settings.get(BG3CONFIG.MODULE_NAME, 'showItemUses');
         html.dataset.cellHighlight = game.settings.get(BG3CONFIG.MODULE_NAME, 'highlightStyle');
+        document.body.dataset.showMaterials = game.settings.get(BG3CONFIG.MODULE_NAME, 'showMaterialDescription');
 
         this.components = {
             portrait: new PortraitContainer(),
