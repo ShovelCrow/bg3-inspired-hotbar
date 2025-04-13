@@ -11,6 +11,8 @@ import { DragDropManager } from './managers/DragDropManager.js';
 import { HotbarManager } from './managers/HotbarManager.js';
 import { ItemUpdateManager } from './managers/ItemUpdateManager.js';
 import { BG3CONFIG } from './utils/config.js';
+import { DND5E, Filter, applications, dataModels, dice, documents, enrichers, migrations, registry, utils } from '../../../systems/dnd5e/dnd5e.mjs';
+import { TooltipManager } from './managers/TooltipManager.js';
 
 export class BG3Hotbar extends Application {
     constructor() {
@@ -20,6 +22,7 @@ export class BG3Hotbar extends Application {
         this.dragDropManager = null;
         this.itemUpdateManager = null;
         this.menuManager = null;
+        this.tooltipManager = null;
         this.combat = [];
         this.components = {};
         this.macroBarTimeout = null;
@@ -73,6 +76,7 @@ export class BG3Hotbar extends Application {
         this.manager = new HotbarManager();
         this.dragDropManager = new DragDropManager();
         this.itemUpdateManager = new ItemUpdateManager();
+        this.tooltipManager = new TooltipManager();
         
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();

@@ -1013,7 +1013,11 @@ export function registerSettings() {
         scope: 'client',
         config: true,
         type: Boolean,
-        default: false
+        default: false,
+        onChange: value => {
+            if(value === true) ui.BG3HOTBAR.tooltipManager._tooltipRangeDamage();
+            else ui.BG3HOTBAR.tooltipManager._resetEnrichers(['damage']);
+        }
     });
 
     // Spell Preparation Settings
