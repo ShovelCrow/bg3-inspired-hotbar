@@ -143,7 +143,7 @@
 
 #bg3-hotbar-container[data-position="left"] {
   transform-origin: bottom left;
-  margin: 0 auto 0 0 auto 0 calc(var(--bg3-portrait-size) + 40px + var(--position-padding));
+  margin: 0 auto 0 calc(var(--bg3-portrait-size) + 35px + var(--position-padding));
   /* padding-left: calc(var(--bg3-portrait-size) + 15px + var(--position-padding)); */
 }
 
