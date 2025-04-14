@@ -27,7 +27,7 @@ export class AutoPopulateContainer {
     
     try {
       // Check if we have permission to modify the actor
-      if (!this.actor?.canUserModify(game.user, "update")) {
+      if (!ui.BG3HOTBAR.manager.actor?.canUserModify(game.user, "update")) {
         console.debug("BG3 Inspired Hotbar | User lacks permission to modify token actor");
         return 0;
       }
@@ -38,7 +38,7 @@ export class AutoPopulateContainer {
       if (container.render) {
         container.render();
       }
-      if (ui.BG3HOTBAR?.manager?.persist && this.actor?.canUserModify(game.user, "update")) {
+      if (ui.BG3HOTBAR?.manager?.persist && ui.BG3HOTBAR.manager.actor?.canUserModify(game.user, "update")) {
         await ui.BG3HOTBAR.manager.persist();
       }
       
@@ -166,7 +166,10 @@ export class AutoPopulateDialog extends Dialog {
           // Process all items from the actor
           for (const item of this.actor.items) {
             // Skip if item type is not in the selected types
-            if (selectedTypes.length > 0 && !selectedTypes.includes(item.type)) continue;
+            if ((selectedTypes.length > 0 && !selectedTypes.includes(item.type))
+              || Object.values(ui.BG3HOTBAR.components.weapon.components.combat[0].data.items).find(i => i.uuid === item.uuid)
+              || ui.BG3HOTBAR.components.weapon?.components?.weapon?.reduce((acc, curr) => acc.concat(Object.values(curr.data.items)), []).find(i => i.uuid === item.uuid)
+            ) continue;
             
             // For spells, check preparation state unless bypassed by setting
             if (item.type === "spell") {
@@ -188,15 +191,15 @@ export class AutoPopulateDialog extends Dialog {
             if (hasActivities || game.settings.get(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {
               itemsWithActivities.push({
                 uuid: item.uuid,
-                name: item.name,
-                icon: item.img,
-                type: item.type,
-                activation: item.system?.activation?.type || "action",
-                sortData: {
-                  spellLevel: item.type === "spell" ? item.system?.level ?? 99 : 99,
-                  featureType: item.type === "feat" ? item.system?.type?.value ?? "" : "",
-                  name: item.name
-                }
+                // name: item.name,
+                // icon: item.img,
+                // type: item.type,
+                // activation: item.system?.activation?.type || "action",
+                // sortData: {
+                //   spellLevel: item.type === "spell" ? item.system?.level ?? 99 : 99,
+                //   featureType: item.type === "feat" ? item.system?.type?.value ?? "" : "",
+                //   name: item.name
+                // }
               });
             }
           }
