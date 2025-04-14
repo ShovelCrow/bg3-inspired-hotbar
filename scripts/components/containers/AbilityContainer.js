@@ -52,7 +52,7 @@ export class AbilityContainer extends BG3Component {
             if(v.ability !== key) return;
             count++;
             const skill = this.actor.system.skills?.[k] || { proficient: false },
-                mod = skill.total,
+                mod = skill.total ?? 0,
                 modStr = mod >= 0 ? `+${mod}` : mod.toString();
             skills[k] = {label:  v.label, icon: 'fas fa-dice-d20', value: modStr, style: skill.proficient === 1 ?  'color: #3498db' : '', click: this.skillRoll.bind(this)}
         });
