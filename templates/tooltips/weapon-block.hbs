@@ -3,6 +3,7 @@
         <strong>{{ localize "DND5E.ItemActionType" }}:</strong>
         <span class="value">{{ labels.activation }}</span>
     </li>
+    {{#if labels.attacks.length}}
     <li>
         <strong>{{ localize "DND5E.Attack" }}:</strong>
         <span class="value">
@@ -12,15 +13,19 @@
             {{/each}}
         </span>
     </li>
+    {{/if}}
+    {{#if enrichDamage}}
     <li>
         <strong>{{ localize "DND5E.Damage" }}:</strong>
         <span class="value">
-            {{#each labels.damages as | damage |}}
-                {{ damage.label }}
+            {{{enrichDamage.value}}}
+            {{!-- {{#each labels.damages as | damage |}}
+                [[/damage {{damage.formula}}{{#if damage.damageType}} type={{damage.damageType}}{{/if}}]]
                 {{#unless @last}}|{{/unless}}
-            {{/each}}
+            {{/each}} --}}
         </span>
     </li>
+    {{/if}}
     {{#if labels.reach}}
         <li>
             <strong>{{ localize "DND5E.Item.Property.Reach" }}:</strong>

@@ -302,7 +302,42 @@ export function registerKeybinding() {
     });
 }
 
-export function registerLibWrapper() {}
+export function registerLibWrapper() {
+    patchFunc("game.dnd5e.dataModels.ItemDataModel.prototype.getCardData", async function (wrapped, { activity, ...enrichmentOptions }={}) {
+        const context = await wrapped.call(this);
+        if(context.labels?.damages?.length) {
+            let textDamage = '';
+            const rollData = (activity ?? this.parent).getRollData();
+            for(let i = 0; i < context.labels.damages.length; i++) {
+                // [[/damage {{damage.formula}}{{#if damage.damageType}} type={{damage.damageType}}{{/if}}]]
+                textDamage += `[[/damage ${context.labels.damages[i].formula}${context.labels.damages[i].damageType ? ` type=${context.labels.damages[i].damageType}` : ''}]]`;
+                if(i < context.labels.damages.length - 1) textDamage += ' | ';
+            }
+            context.enrichDamage = {
+                value: await TextEditor.enrichHTML(textDamage ?? "", {
+                  rollData, relativeTo: this.parent, ...enrichmentOptions
+                })
+            }
+        }
+        return context;
+    }, "MIXED");
+}
+
+export async function preloadHandlebarsTemplates() {
+    const partials = [
+        `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/weapon-block.hbs`,
+        `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/activity-tooltip.hbs`,
+        `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/macro-tooltip.hbs`,
+    ];
+
+    const paths = {};
+    for ( const path of partials ) {
+        paths[path.replace(".hbs", ".html")] = path;
+        paths[`bg3hotbar.${path.split("/").pop().replace(".hbs", "")}`] = path;
+    }
+    
+    return loadTemplates(paths);
+}
 
 // Copy Lib Color Setting picker due to the lack of focusout event.....
 class colorPickerInput2 extends HTMLInputElement {
@@ -1154,6 +1189,16 @@ export function registerSettings() {
 }
 
 export function registerHandlebars() {
+    Handlebars.registerHelper('rangedmg', async function(formula, type) {
+        let textContent = formula;
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'showDamageRanges')) {
+            const minRoll = Roll.create(formula).evaluate({ minimize: true }),
+                maxRoll = Roll.create(formula).evaluate({ maximize: true });
+            textContent = `${Math.floor((await minRoll).total)}-${Math.ceil((await maxRoll).total)}`;
+        }
+        return `${textContent}${type && type !== '' ? ` ${type}` : ''}`;
+    });
+
     Handlebars.registerHelper('times', function(n, block) {
         var accum = '';
         for(var i = 0; i < n; ++i) {

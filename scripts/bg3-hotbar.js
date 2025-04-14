@@ -10,7 +10,7 @@ import { ControlsManager } from './managers/ControlsManager.js';
 import { DragDropManager } from './managers/DragDropManager.js';
 import { HotbarManager } from './managers/HotbarManager.js';
 import { ItemUpdateManager } from './managers/ItemUpdateManager.js';
-import { BG3CONFIG } from './utils/config.js';
+import { BG3CONFIG, preloadHandlebarsTemplates } from './utils/config.js';
 import { DND5E, Filter, applications, dataModels, dice, documents, enrichers, migrations, registry, utils } from '../../../systems/dnd5e/dnd5e.mjs';
 import { TooltipManager } from './managers/TooltipManager.js';
 
@@ -52,7 +52,7 @@ export class BG3Hotbar extends Application {
         this.loadCombatActions();
 
         // Preload Handlebars templates
-        this.preloadHandlebarsTemplates();
+        preloadHandlebarsTemplates();
     }
 
     static get defaultOptions() {
@@ -86,20 +86,6 @@ export class BG3Hotbar extends Application {
         document.body.dataset.playerList = game.settings.get(BG3CONFIG.MODULE_NAME, 'playerListVisibility');
 
         this.updateUIScale();
-    }
-
-    async preloadHandlebarsTemplates() {
-        const partials = [
-            `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/weapon-block.hbs`,
-        ];
-
-        const paths = {};
-        for ( const path of partials ) {
-          paths[path.replace(".hbs", ".html")] = path;
-          paths[`bg3hotbar.${path.split("/").pop().replace(".hbs", "")}`] = path;
-        }
-      
-        return loadTemplates(paths);
     }
 
     async _onCreateToken(token) {

@@ -100,7 +100,8 @@ export class BG3Component {
                 case 'advanced':
                     const uuid = this.data?.uuid ?? this.data?.item?.uuid;
                     if(uuid) {
-                        const exclude = uuid.includes('.Activity.') || uuid.includes('Macro.');
+                        // const exclude = uuid.includes('.Activity.') || uuid.includes('Macro.');
+                        const exclude = false;
                         if(exclude) break;
                         const targetElement = this.element.firstElementChild ?? this.element;
                         targetElement.dataset.tooltip = `<section class="loading" data-uuid="${this.data?.uuid ?? this.data?.item?.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
@@ -119,7 +120,6 @@ export class BG3Component {
     async render() {
         await this._renderInner();
         await this._registerEvents();
-        await this.setTooltip();
         return this.element;
     }
 
@@ -130,5 +130,6 @@ export class BG3Component {
         tempElement.innerHTML = rendered;
         this.element.innerHTML = tempElement.firstElementChild.innerHTML;
         this.setVisibility();
+        await this.setTooltip();
     }
 }
