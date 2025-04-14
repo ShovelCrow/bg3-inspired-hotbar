@@ -140,13 +140,10 @@ export class AutoPopulateCreateToken {
             // Process all items from the actor
             for (const item of actor.items) {
                 // Skip if item type is not in the selected types
-                if (!itemTypes.includes(item.type) || Object.values(BG3CONFIG.COMBATACTIONDATA).find(d => d.name === item.name)) continue;
-                // Skip if item already in weapons containers
-                let isInSet = false;
-                for(let i = 0; i < manager.containers.weapon.length; i++) {
-                    if(Object.values(manager.containers.weapon[i].items).find(w => w.uuid === item.uuid)) isInSet = true;
-                }
-                if(isInSet) continue;
+                if (!itemTypes.includes(item.type)
+                    || Object.values(BG3CONFIG.COMBATACTIONDATA).find(d => d.name === item.name)
+                    || manager.containers.weapon.reduce((acc, curr) => acc.concat(Object.values(curr.items)), []).find(i => i.uuid === item.uuid)
+                ) continue;
                 
                 // For spells, check preparation state unless bypassed by setting
                 if (item.type === "spell") {
