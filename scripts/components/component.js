@@ -100,8 +100,8 @@ export class BG3Component {
                 case 'advanced':
                     const uuid = this.data?.uuid ?? this.data?.item?.uuid;
                     if(uuid) {
-                        const isActivity = uuid.includes('.Activity.');
-                        if(isActivity) break;
+                        const exclude = uuid.includes('.Activity.') || uuid.includes('Macro.');
+                        if(exclude) break;
                         const targetElement = this.element.firstElementChild ?? this.element;
                         targetElement.dataset.tooltip = `<section class="loading" data-uuid="${this.data?.uuid ?? this.data?.item?.uuid}"><i class="fas fa-spinner fa-spin-pulse"></i></section>`;
                         targetElement.dataset.tooltipClass = `dnd5e2 dnd5e-tooltip item-tooltip bg3-tooltip`;
