@@ -17,7 +17,7 @@ export class PortraitSettingDialog extends FormApplication {
     }
 
     getData() {
-        const dataKeys = ['hidePortraitImage', 'showExtraInfo', 'defaultPortraitPreferences', 'shapePortraitPreferences', 'borderPortraitPreferences', 'showSheetSimpleClick', 'backgroundPortraitPreferences', 'showHealthOverlay', 'showHPText', 'overlayModePortrait'],
+        const dataKeys = ['hidePortraitImage', 'showExtraInfo', 'defaultPortraitPreferences', 'shapePortraitPreferences', 'borderPortraitPreferences', 'showSheetSimpleClick', 'backgroundPortraitPreferences', 'showHealthOverlay', 'showHPText', 'overlayModePortrait', 'showDeathSavingThrow'],
             configData = {},
             configAdv = {};
         for(let i = 0; i < dataKeys.length; i++) {

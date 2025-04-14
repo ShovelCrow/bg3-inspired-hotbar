@@ -1,3 +1,4 @@
+import { BG3CONFIG } from "../../utils/config.js";
 import { BG3Component } from "../component.js";
 
 export class DeathSavesContainer extends BG3Component {
@@ -11,15 +12,15 @@ export class DeathSavesContainer extends BG3Component {
     }
 
     get classes() {
-        return ["bg3-death-saves-container"]
+        return [...["bg3-death-saves-container"], ...(game.settings.get(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow') === 'only' ? ['death-only-skull'] : [])]
     }
 
     async getData() {
-        return {success: this.actor.system.attributes.death.success || 0, failure: this.actor.system.attributes.death.failure || 0};
+        return {display: game.settings.get(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow'), success: this.actor.system.attributes.death.success || 0, failure: this.actor.system.attributes.death.failure || 0};
     }
 
     get visible() {
-        if (!this.actor || this.actor.type !== 'character') return false;
+        if (!this.actor || this.actor.type !== 'character' || game.settings.get(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow') === 'hide') return false;
         // Get current HP and death saves state
         const currentHP = this.actor.system.attributes?.hp?.value || 0;
 

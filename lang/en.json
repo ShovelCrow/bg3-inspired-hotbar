@@ -209,6 +209,15 @@
                 "hover": "Show on Hover",
                 "hidden": "Hide Completely"
             }
+        },
+        "ShowDeathSavingThrow": {
+            "Name": "Display Death Saving Throw",
+            "Hint": "Control how the Death Saving Throw should be displayed.",
+            "Choices": {
+                "show": "Default",
+                "hide": "Never",
+                "only": "Only display a clickable skull on portrait"
+            }
         }
     }
 } 

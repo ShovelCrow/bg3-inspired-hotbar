@@ -90,7 +90,6 @@
    Death Saves Container
    ========================================================================== */
 
-/* Death Saves Container */
 #bg3-hotbar-container .bg3-death-saves-container {
   position: absolute;
   left: -30px;
@@ -172,6 +171,23 @@
   transform: scale(0.95);
 }
 
+#bg3-hotbar-container .bg3-death-saves-container.death-only-skull {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#bg3-hotbar-container .bg3-death-saves-container.death-only-skull .death-saves-group {
+  display: none;
+}
+
+#bg3-hotbar-container .bg3-death-saves-container.death-only-skull .death-saves-skull {
+  color: rgba(255, 255, 255, .8);
+}
+
+#bg3-hotbar-container .bg3-death-saves-container.death-only-skull .death-saves-skull i {
+  font-size: xx-large;
+}
+
 
 /* ==========================================================================
    Extra Infos
@@ -184,6 +200,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    pointer-events: none;
   }
 
 #bg3-hotbar-container .extra-info {
@@ -197,7 +214,6 @@
   color: #fff;
   font-size: 1.5em;
   font-weight: bold;
-  pointer-events: none;
   transform: unset;
 }
 

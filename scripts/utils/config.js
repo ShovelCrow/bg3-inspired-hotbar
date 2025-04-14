@@ -850,6 +850,26 @@ export function registerSettings() {
         }
       }
     });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow', {
+        name: 'BG3.Settings.ShowDeathSavingThrow.Name',
+        hint: 'BG3.Settings.ShowDeathSavingThrow.Hint',
+        scope: 'world',
+        config: false,
+        type: String,
+        choices: {
+            'show': 'BG3.Settings.ShowDeathSavingThrow.Choices.show',
+            'hide': 'BG3.Settings.ShowDeathSavingThrow.Choices.hide',
+            'only': 'BG3.Settings.ShowDeathSavingThrow.Choices.only'
+        },
+        default: 'show',
+        onChange: async value => {
+            if(ui.BG3HOTBAR.components.portrait?.components?.deathSavesContainer) {
+                await ui.BG3HOTBAR.components.portrait.components.deathSavesContainer.render();
+                ui.BG3HOTBAR.components.portrait.components.deathSavesContainer.element.classList.toggle('death-only-skull', value === 'only');
+            }
+        }
+    });
     
     game.settings.register(BG3CONFIG.MODULE_NAME, "dataExtraInfo", {
         scope: "client",

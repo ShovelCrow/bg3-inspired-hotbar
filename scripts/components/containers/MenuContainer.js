@@ -92,7 +92,7 @@ export class MenuContainer extends BG3Component {
             this.components.forEach(c => c.destroy());
         }
         document.removeEventListener('click', this.outside);
-        this.element.parentNode.removeChild(this.element);
+        if(this.element?.parentNode) this.element.parentNode.removeChild(this.element);
         this.rendered = false;
         if(!this.standalone) ui.BG3HOTBAR.menuManager = null;
     }

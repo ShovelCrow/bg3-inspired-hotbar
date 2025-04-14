@@ -90,7 +90,7 @@ export class PortraitContainer extends BG3Component {
             this.actor.sheet.render(true);
         });
 
-        this.element.addEventListener('contextmenu', (event) => MenuContainer.toggle(this.getPortraitMenu(), this.element, event));
+        this.element.querySelector('.portrait-image-container').addEventListener('contextmenu', (event) => MenuContainer.toggle(this.getPortraitMenu(), this.element, event));
 
         // this.element.querySelector('.ability-button').addEventListener('click', (event) => MenuContainer.toggle(this.getMenuData(), this.element.querySelector('.ability-button'), event));
     }
@@ -299,12 +299,15 @@ export class PortraitContainer extends BG3Component {
         // this.useTokenImage = await this.actor.getFlag(BG3CONFIG.MODULE_NAME, "useTokenImage") ?? false;
         await super._renderInner();
         this.applySettings();
+        // Death Save
         this.components.deathSavesContainer = new DeathSavesContainer();
         this.components.deathSavesContainer.render();
-        this.element.prepend(this.components.deathSavesContainer.element);
+        this.element.appendChild(this.components.deathSavesContainer.element);
+        // Ability Container 
         this.components.abilityContainer = new AbilityContainer();
         this.components.abilityContainer.render();
         this.element.appendChild(this.components.abilityContainer.element);
+
         // this.abilityMenu = new MenuContainer(this.getMenuData(), this.element.querySelector('.ability-button'));
         // this.abilityMenu.render();
         // this.portraitMenu = new MenuContainer(this.getPortraitMenu(), this.element);
