@@ -111,11 +111,11 @@
     background-color: currentColor;
 }
 
-#bg3-hotbar-container .spell-slot-box.is-used, #bg3-hotbar-container .spell-slot-box.spell-pact-box, #bg3-hotbar-container .spell-slot-box.spell-cantrip-box {
+#bg3-hotbar-container .spell-slot-box.is-used, #bg3-hotbar-container .spell-cantrip-box .spell-slot-box {
     background-color: transparent;
 }
 
-#bg3-hotbar-container .spell-slot-box.spell-cantrip-box {
+#bg3-hotbar-container .spell-cantrip-box .spell-slot-box {
     border-width: 3px;
 }
 
@@ -140,7 +140,7 @@
     justify-content: center;
 }
 
-#bg3-hotbar-container .filter-spell-point .spell-level-button .spell-slot-box:not(.spell-cantrip-box) {
+#bg3-hotbar-container .filter-spell-point .spell-level-button:not(.spell-cantrip-box) .spell-slot-box {
     display: none;
 }
 

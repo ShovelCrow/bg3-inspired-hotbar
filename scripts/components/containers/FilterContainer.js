@@ -44,19 +44,18 @@ export class FilterContainer extends BG3Component {
             }
         ]
 
-        // Add pact magic first if it exists
-        const pactMagic = this.actor.system.spells?.pact;
-        if (pactMagic?.max > 0) {
-            filterData.push({
-                id: 'spell',
-                isPact: true,
-                label: 'Pact Magic',
-                short: 'P',
-                max: 1,
-                value: 1,
-                class: ['spell-level-button'],
-                color: BG3CONFIG.COLORS.PACT_MAGIC
-            });
+        // Add cantrip spell
+        let cantrips = this.actor.items.filter(i => i.type==="spell" && i.system.level===0)
+        if(cantrips.length) {
+          filterData.push({
+              id: 'spell',
+              label: 'Cantrip',
+              level: 0,
+              max: 1,
+              value: 1,
+              class: ['spell-level-button', 'spell-cantrip-box'],
+              color: BG3CONFIG.COLORS.SPELL_SLOT
+          });
         }
 
         // Then add regular spell levels
@@ -78,19 +77,21 @@ export class FilterContainer extends BG3Component {
             }
         }
 
-        // Then add cantrip spell
-        let cantrips = this.actor.items.filter(i => i.type==="spell" && i.system.level===0)
-        if(cantrips.length) {
-          filterData.push({
-              id: 'spell',
-              label: 'Cantrip',
-              level: 0,
-              max: 1,
-              value: 1,
-              class: ['spell-level-button'],
-              color: BG3CONFIG.COLORS.SPELL_SLOT
-          });
+        // Add pact magic first if it exists
+        const pactMagic = this.actor.system.spells?.pact;
+        if (pactMagic?.max > 0) {
+            filterData.push({
+                id: 'spell',
+                isPact: true,
+                label: 'Pact Magic',
+                short: 'P',
+                max: pactMagic.max,
+                value: pactMagic.value,
+                class: ['spell-level-button', 'spell-pact-box'],
+                color: BG3CONFIG.COLORS.PACT_MAGIC
+            });
         }
+        
         return filterData;
     }
 
