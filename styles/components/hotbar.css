@@ -138,12 +138,16 @@
     border-color: var(--bg3-feature-subclass);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-is-pact="false"][data-highlight="highlight"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="spell"]:not([data-preparation-mode="pact"]):not([data-preparation-mode="apothecary"])[data-highlight="highlight"] {
     border-color: var(--bg3-spell);
 }
 
-#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-is-pact="true"][data-highlight="highlight"] {
+#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-preparation-mode="pact"][data-highlight="highlight"] {
     border-color: var(--bg3-pact);
+}
+
+#bg3-hotbar-container .hotbar-cell[data-item-type="spell"][data-preparation-mode="apothecary"][data-highlight="highlight"] {
+    border-color: var(--bg3-apothecary);
 }
 
 #bg3-hotbar-container .hotbar-cell:hover {

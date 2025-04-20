@@ -77,7 +77,7 @@ export class FilterContainer extends BG3Component {
             }
         }
 
-        // Add pact magic first if it exists
+        // Add pact magic if it exists
         const pactMagic = this.actor.system.spells?.pact;
         if (pactMagic?.max > 0) {
             filterData.push({
@@ -91,7 +91,22 @@ export class FilterContainer extends BG3Component {
                 color: BG3CONFIG.COLORS.PACT_MAGIC
             });
         }
-        
+
+        // Add apothecary magic from SCGD if it exists
+        const apothecaryMagic = this.actor.system.spells?.apothecary;
+        if (apothecaryMagic?.max > 0) {
+            filterData.push({
+                id: 'spell',
+                isApothecary: true,
+                label: 'Apothecary Magic',
+                short: 'A',
+                max: apothecaryMagic.max,
+                value: apothecaryMagic.value,
+                class: ['spell-level-button', 'spell-apothecary-box'],
+                color: BG3CONFIG.COLORS.APOTHECARY_MAGIC
+            });
+        }
+
         return filterData;
     }
 

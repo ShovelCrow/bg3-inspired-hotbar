@@ -17,6 +17,10 @@ export class FilterButton extends BG3Component {
         return false;
     }
 
+    get isApothecary() {
+        return false;
+    }
+
     get level() {
         return 1;
     }
@@ -42,7 +46,7 @@ export class FilterButton extends BG3Component {
                 desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}"><i class="fas ${this.data.symbol}"></i>Feature<i class="fas ${this.data.symbol}"></i></h4><p class="notes"><i>Left Click to highlight items of type feature.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
                 break;
             case 'spell':
-                const label = !this.data.isPact && this.data.level > 0 ? `${this.data.label} ${this.data.level}` : this.data.label;
+                const label = !this.data.isPact && !this.data.isApothecary && this.data.level > 0 ? `${this.data.label} ${this.data.level}` : this.data.label;
                 desc = `<div class="custom-tooltip"><h4 style="--data-color:${this.data.color}">${label}</h4><p class="notes"><i>Left Click to highlight items using this slot.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
                 break;
             default:
@@ -54,7 +58,8 @@ export class FilterButton extends BG3Component {
     getDataToCompare(cell) {
         switch (this.data.id) {
             case 'spell':
-                if(this.data.isPact) return cell.dataset.isPact === 'true';
+                if(this.data.isPact) return cell.dataset.preparationMode === 'pact';
+                else if(this.data.isApothecary) return cell.dataset.preparationMode === 'apothecary';
                 else return parseInt(cell.dataset.level) === this.data.level;
             case 'feature':
                 return cell.dataset.itemType === 'feat';

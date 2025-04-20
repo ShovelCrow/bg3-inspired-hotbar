@@ -104,7 +104,7 @@ export class ItemUpdateManager {
                 return;
             }
             // Add if newly prepared or has other valid casting mode
-            else if (prep.prepared || ["pact", "atwill", "innate"].includes(prep.mode)) {
+            else if (prep.prepared || ["pact", "apothecary", "atwill", "innate"].includes(prep.mode)) {
                 // Check if it's already in any container
                 let exists = false;
                 for (const container of ui.BG3HOTBAR.components.container.components.hotbar) {

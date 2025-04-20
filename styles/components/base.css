@@ -91,6 +91,7 @@
     --bg3-reaction: var(--color-reaction, #fe85f6);
     --bg3-spell: var(--color-spell, #3498db);
     --bg3-pact: var(--color-pact, #8e44ad);
+    --bg3-apothecary: var(--color-apothecary, #285348);
     --bg3-feature-default: var(--color-feature, #808080);
     --bg3-feature-class: var(--color-feature, #7b68ee);
     --bg3-feature-race: var(--color-feature, #20b2aa);

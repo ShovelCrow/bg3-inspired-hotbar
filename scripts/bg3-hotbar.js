@@ -86,6 +86,16 @@ export class BG3Hotbar extends Application {
         document.body.dataset.playerList = game.settings.get(BG3CONFIG.MODULE_NAME, 'playerListVisibility');
 
         this.updateUIScale();
+
+        /** TO REMOVE */
+        if(!CONFIG.DND5E.spellcastingTypes.apothecary) {
+            const apo = {
+                "label": "Apothecary Magic",
+                "img": "icons/consumables/potions/bottle-round-corked-orante-red.webp"
+            };
+            CONFIG.DND5E.spellcastingTypes.apothecary = apo;
+        }
+        /** TO REMOVE */
     }
 
     async _onCreateToken(token) {
@@ -125,8 +135,13 @@ export class BG3Hotbar extends Application {
             if (!controlled || !canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) return;
 
             if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) {
-                    this.generate(token);
-                    if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+                /** TO REMOVE */
+                canvas.tokens.controlled[0].actor.system.spells.apothecary = {label: "Apothecary Magic", level: 1, max: 2, override: null, type: "apothecary", value: 1};
+                const item = canvas.tokens.controlled[0].actor.items.get("hTyWYTBOI1fy3dAW");
+                if(item) item.system.preparation.mode = "apothecary";
+                /** TO REMOVE */
+                this.generate(token);
+                if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
             }
         })
     }

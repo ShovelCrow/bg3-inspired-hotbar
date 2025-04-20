@@ -154,7 +154,7 @@ export class AutoPopulateCreateToken {
                         // Skip if it's an unprepared "prepared" spell
                         if (!prep?.prepared && prep?.mode === "prepared") continue;
                         // Include if it's prepared or has a valid casting mode
-                        if (!prep?.prepared && !["pact", "atwill", "innate", "ritual", "always"].includes(prep?.mode)) continue;
+                        if (!prep?.prepared && !["pact", "apothecary", "atwill", "innate", "ritual", "always"].includes(prep?.mode)) continue;
                     }
                 }
                 

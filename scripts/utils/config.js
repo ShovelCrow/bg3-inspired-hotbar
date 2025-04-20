@@ -96,6 +96,7 @@ export const BG3CONFIG = {
         REACTION: "#fe85f6",   // vibrant lavender
         DEFAULT: "#cccccc",
         PACT_MAGIC: "#8e44ad", // deep purple
+        APOTHECARY_MAGIC: "#285348", // deep green
         SPELL_SLOT: "#3498db",
         CANTRIP: "#27ae60",    // deep green
         PROFICIENT: "#4da6ff", // blue (same as spell slot)
