@@ -6,6 +6,8 @@ export class FilterContainer extends BG3Component {
     constructor(data) {
         super(data);
         this.components = [];
+        this._used = [];
+        this._highlighted = null;
     }
 
     get classes() {
@@ -110,22 +112,89 @@ export class FilterContainer extends BG3Component {
         return filterData;
     }
 
+    get highlighted() {
+        return this._highlighted;
+    }
+    
+    set highlighted(value) {
+        this._highlighted = this._highlighted === value ? null : value;
+        this.updateCellFilterState();
+    }
+    
+    get used() {
+        return this._used;
+    }
+    
+    set used(value) {
+        if(this._used.includes(value)) this._used.splice(this._used.indexOf(value), 1);
+        else {
+            this._used.push(value);
+            if(this._highlighted === value) this._highlighted = null;
+        }
+        this.updateCellFilterState();
+    }
+
     _getRomanNumeral(num) {
         const romanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
         return romanNumerals[num - 1] || num.toString();
     }
 
     resetUsedActions() {
-        ui.BG3HOTBAR.element[0].querySelectorAll('.used').forEach(c => {
-            c.classList.remove('used');
-        });
+        this._used = [];
+        this.updateCellFilterState();
     }
+
     checkSpellPoint() {
         return game.modules.get("dnd5e-spellpoints")?.active && this.actor.items.find(i => i.system.identifier == "spell-points");
     }
 
-    async clearFilters(current) {
-        for(let i=0; i<this.components.length; i++) if(this.components[i] !== current) this.components[i].setState(true);
+    getDataToCompare(filter, cell) {
+        if(!filter) return false;
+        switch (filter.data.id) {
+            case 'spell':
+                if(filter.data.isPact) return cell.dataset.preparationMode === 'pact';
+                else if(filter.data.isApothecary) return cell.dataset.preparationMode === 'apothecary';
+                else return parseInt(cell.dataset.level) === filter.data.level;
+            case 'feature':
+                return cell.dataset.itemType === 'feat';
+            default:
+                return filter.data.id === cell.dataset.actionType;
+        }
+    }
+        
+    updateCellFilterState() {
+        for(const filter of this.components) {
+            const isUsed = this.used.includes(filter);
+            filter.element.style.borderColor = this._highlighted === filter && !isUsed ? filter.data.color : 'transparent';
+            filter.element.classList.toggle('used', isUsed);
+        }
+        $('.bg3-hotbar-container .bg3-hotbar-subcontainer .has-item').each(async (index, cell) => {
+            try {
+                const isUsed = !!this._used.filter(f => this.getDataToCompare(f, cell) === true).length,
+                    isHighlighted = this.getDataToCompare(this._highlighted, cell);
+                cell.classList.toggle('used', isUsed);
+                if(!this.highlighted) {
+                    cell.dataset.highlight = false;
+                    return;
+                }
+                cell.dataset.highlight = isHighlighted && !isUsed ? 'highlight' : 'excluded';
+            } catch (error) {
+                console.error("Error updating highlights:", error);
+            }
+        })
+    }
+        
+    _checkBonusReactionUsed() {
+        // effect._id === "dnd5ebonusaction"
+        // effect._id === "dnd5ereaction000"
+        if(!game.settings.get(BG3CONFIG.MODULE_NAME,'synchroBRMidiQoL') || !ui.BG3HOTBAR.components.container.components.activeContainer) return;
+
+        const bonusFilter = this.components.find(f => f.data.id === 'bonus'),
+            reactionFilter = this.components.find(f => f.data.id === 'reaction');
+
+        if((ui.BG3HOTBAR.components.container.components.activeContainer.activesList.find(a => a._id === 'dnd5ebonusaction') && !this.used.includes(bonusFilter)) || (!ui.BG3HOTBAR.components.container.components.activeContainer.activesList.find(a => a._id === 'dnd5ebonusaction') && this.used.includes(bonusFilter))) this.used = bonusFilter;
+
+        if((ui.BG3HOTBAR.components.container.components.activeContainer.activesList.find(a => a._id === 'dnd5ereaction000') && !this.used.includes(reactionFilter)) || (!ui.BG3HOTBAR.components.container.components.activeContainer.activesList.find(a => a._id === 'dnd5ereaction000') && this.used.includes(reactionFilter))) this.used = reactionFilter;
     }
 
     async render() {

@@ -190,7 +190,8 @@
             "Portrait": "Character Portrait",
             "Tooltip": "Tooltip",
             "AutoPopulating": "Auto-Populating",
-            "FoundryUI": "Foundry UI Tweaks"
+            "FoundryUI": "Foundry UI Tweaks",
+            "MidiQoL": "Synchro MidiQoL"
         },
         "MenuTheme": {
             "Name": "Theme configuration",
@@ -217,6 +218,12 @@
                 "show": "Default",
                 "hide": "Never",
                 "only": "Only display a clickable skull on portrait"
+            }
+        },
+        "synchroMidiQoL": {
+            "BR": {
+                "Name": "Bonus & Reaction active effects",
+                "Hint": "Set Bonus Action and Reaction as used based on MidiQoL active effects."
             }
         }
     }

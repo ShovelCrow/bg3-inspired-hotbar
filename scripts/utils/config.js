@@ -482,6 +482,7 @@ export function updateSettingsDisplay() {
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.tooltipDelay"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.HotbarContainer")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.MidiQoL")).insertBefore($('[name="bg3-inspired-hotbar.synchroBRMidiQoL"]').parents('div.form-group:first'));
 
         $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
         $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
@@ -1076,6 +1077,19 @@ export function registerSettings() {
         onChange: value => {
             if(value === true) ui.BG3HOTBAR.tooltipManager._tooltipRangeDamage();
             else ui.BG3HOTBAR.tooltipManager._resetEnrichers(['damage']);
+        }
+    });
+
+    // Midi QoL
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'synchroBRMidiQoL', {
+        name: 'BG3.Settings.synchroMidiQoL.BR.Name',
+        hint: 'BG3.Settings.synchroMidiQoL.BR.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: () => {
+            if(ui.BG3HOTBAR.components?.container?.components?.filterContainer) ui.BG3HOTBAR.components.container.components.filterContainer._checkBonusReactionUsed();
         }
     });
 

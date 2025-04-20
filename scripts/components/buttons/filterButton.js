@@ -5,8 +5,6 @@ import { BG3Component } from "../component.js";
 export class FilterButton extends BG3Component {
     constructor(data, parent) {
         super(data, parent);
-        this.state = false;
-        this.used = false;
     }
 
     get classes() {
@@ -27,11 +25,6 @@ export class FilterButton extends BG3Component {
 
     async getData() {
         return this.data;
-    }
-
-    setState(force) {
-        this.state = force ? false : !this.state;
-        this.element.style.borderColor = this.state ? this.data.color : 'transparent';
     }
 
     get dataTooltip() {
@@ -55,52 +48,16 @@ export class FilterButton extends BG3Component {
         return {type: 'simple', content: desc};
     }
 
-    getDataToCompare(cell) {
-        switch (this.data.id) {
-            case 'spell':
-                if(this.data.isPact) return cell.dataset.preparationMode === 'pact';
-                else if(this.data.isApothecary) return cell.dataset.preparationMode === 'apothecary';
-                else return parseInt(cell.dataset.level) === this.data.level;
-            case 'feature':
-                return cell.dataset.itemType === 'feat';
-            default:
-                return this.data.id === cell.dataset.actionType;
-        }
-    }
-
-    async updateHighlight() {
-        this.setState();
-        $('.bg3-hotbar-container .bg3-hotbar-subcontainer .has-item').each(async (index, cell) => {
-            try {
-                const activation = this.getDataToCompare(cell);
-                cell.setAttribute('data-highlight', this.state ? (activation ? 'highlight' : 'excluded') : false);
-            } catch (error) {
-                console.error("Error updating highlights:", error);
-            }
-        })
-    }
-
     async _registerEvents() {
-        this.element.addEventListener("click", async (e) => {
+        this.element.addEventListener("click", (e) => {
             e.preventDefault();
-            if(this.used) return;
-            await this._parent.clearFilters(this);
-            this.updateHighlight();
+            if(this._parent.used.includes(this)) return;
+            this._parent.highlighted = this;
         });
 
-        this.element.addEventListener("contextmenu", async (e) => {
+        this.element.addEventListener("contextmenu", (e) => {
             e.preventDefault();
-            if(this.state) this.updateHighlight();
-            this.used = !this.used;
-            this.element.classList.toggle('used', this.used);
-            $('.bg3-hotbar-container .bg3-hotbar-subcontainer .has-item').each(async (index, cell) => {
-                try {
-                    const activation = this.getDataToCompare(cell);
-                    if(activation) cell.classList.toggle('used', this.used);
-                } catch (error) {
-                    console.error("Error updating used:", error);
-                }
-            })
+            this._parent.used = this;
         });
     }
 

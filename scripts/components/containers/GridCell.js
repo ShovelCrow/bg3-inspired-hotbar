@@ -34,15 +34,17 @@ export class GridCell extends BG3Component {
         let itemData = await this.item,
             data = super.getData();
         if(itemData) {
+            if(itemData.type == 'heal') console.log(itemData)
             data = {...data, ...{
                     uuid: itemData.uuid,
                     name: itemData.name,
                     icon: itemData.img,
-                    actionType: itemData.system?.activation?.type?.toLowerCase(),
+                    actionType: itemData.system?.activation?.type?.toLowerCase() ?? itemData.activation?.type?.toLowerCase() ?? null,
                     itemType: itemData.type
                 },
                 ...await this.getItemUses()
-            };        
+            };
+            if(itemData.type == 'heal') console.log(data)  
             if(itemData.type === "spell") data = {...data, ...{preparationMode: itemData.system?.preparation?.mode, level: itemData.system?.level}};
             if(itemData.type === 'feat') data = {...data, ...{featType: itemData.system?.type?.value || 'default'}};
         }
@@ -290,7 +292,7 @@ export class GridCell extends BG3Component {
         if(this.data.item) {
             const itemData = await this.item;
             if(itemData) {
-                if(itemData.system?.activation?.type) this.element.dataset.actionType = itemData.system.activation.type.toLowerCase();
+                this.element.dataset.actionType = itemData.system?.activation?.type?.toLowerCase() ?? itemData.activation?.type?.toLowerCase() ?? null;
                 this.element.dataset.itemType = itemData.type;
                 switch (itemData.type) {
                     case 'spell':
