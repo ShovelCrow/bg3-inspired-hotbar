@@ -55,6 +55,15 @@
             "Name": "Show Material Components Description",
             "Hint": "Display the full description of material components in spell tooltips (e.g. 'diamonds worth 300gp, which the spell consumes')"
         },
+        "EnableLightTooltip": {
+            "Name": "Configure Tooltip display",
+            "Hint": "Choose what should be displayed in item tooltip",
+            "Choices": {
+                "Full": "Full",
+                "Light": "Show only item name & type",
+                "NoDesc": "Hide description only"
+            }
+        },
         "BypassSpellPreparationCheck": {
             "Name": "Include Unprepared Spells",
             "Hint": "When enabled, all spells will be included in the hotbar regardless of their preparation state"

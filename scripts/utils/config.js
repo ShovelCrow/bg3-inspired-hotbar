@@ -479,7 +479,7 @@ export function updateSettingsDisplay() {
     Hooks.on("renderSettingsConfig", (app, html, data) => {
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.tooltipDelay"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.enableLightTooltip"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.HotbarContainer")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.MidiQoL")).insertBefore($('[name="bg3-inspired-hotbar.synchroBRMidiQoL"]').parents('div.form-group:first'));
@@ -1035,6 +1035,23 @@ export function registerSettings() {
     });
 
     // Tooltip Settings
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableLightTooltip', {
+        name: 'BG3.Settings.EnableLightTooltip.Name',
+        hint: 'BG3.Settings.EnableLightTooltip.Hint',
+        scope: 'client',
+        config: true,
+        type: String,
+        choices: {
+            'full': 'BG3.Settings.EnableLightTooltip.Choices.Full',
+            'light': 'BG3.Settings.EnableLightTooltip.Choices.Light',
+            'nodesc': 'BG3.Settings.EnableLightTooltip.Choices.NoDesc'
+        },
+        default: 'full',
+        onChange: value => {
+            document.body.dataset.lightTooltip = value;
+        }
+    });
+
     game.settings.register(BG3CONFIG.MODULE_NAME, 'tooltipDelay', {
         name: 'BG3.Settings.TooltipDelay.Name',
         hint: 'BG3.Settings.TooltipDelay.Hint',

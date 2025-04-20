@@ -361,6 +361,7 @@ export class BG3Hotbar extends Application {
         html.dataset.itemUse = game.settings.get(BG3CONFIG.MODULE_NAME, 'showItemUses');
         html.dataset.cellHighlight = game.settings.get(BG3CONFIG.MODULE_NAME, 'highlightStyle');
         document.body.dataset.showMaterials = game.settings.get(BG3CONFIG.MODULE_NAME, 'showMaterialDescription');
+        document.body.dataset.lightTooltip = game.settings.get(BG3CONFIG.MODULE_NAME, 'enableLightTooltip');
 
         this.components = {
             portrait: new PortraitContainer(),
