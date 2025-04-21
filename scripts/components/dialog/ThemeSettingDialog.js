@@ -65,7 +65,7 @@ export class ThemeSettingDialog extends FormApplication {
                     {
                         headers: ['Sub-Container', 'Normal', 'Hover'],
                         fields: [{ id:'bg3-hotbar-sub-background-color', label: 'Background Color', field: {type: 'color', value: '', value2: ''}},
-                        { id:'bg3-hotbar-drag-color', label: 'Dragbar Color', hasHover: true, field: {type: 'color', value: '', value2: ''}}]
+                        { id:'bg3-hotbar-drag-color', label: 'Dragbar/Controls Color', hasHover: true, field: {type: 'color', value: '', value2: ''}}]
                     },
                     {
                         headers: ['Cell', 'Normal', 'Hover'],
@@ -181,7 +181,7 @@ export class ThemeSettingDialog extends FormApplication {
                         fields: [{ id:'bg3-rest-border-size', label: 'Border size', field: {type: 'number', value: '', min: 0, max: 10, unit:'px'}}]
                     }
                 ]
-            },
+            }/* ,
             {
                 name: 'Tooltip',
                 hint: '',
@@ -198,7 +198,7 @@ export class ThemeSettingDialog extends FormApplication {
                         fields: [{ id:'bg3-tooltip-border-size', label: 'Border size', field: {type: 'number', value: '', min: 0, max: 10, unit:'px'}}]
                     }
                 ]
-            }
+            } */
         ];
 
         return {configData, dataInput, themeList};

@@ -1,3 +1,26 @@
+## [3.0.0] - 2025-04-21
+### Disclaimer
+- BG3 Inspired Hotbar got a huge update ! We did a deep refactor of the module to make it more optimized, less laggy and easier for us to maintain. It includes a lot of bug fixes too. Let us know if you find new ones.
+
+### New Features
+- New setting: Customize Theme. Allows to change colors, grid size, etc. The theme can be set by the GM to be the same for every players or customizable for each of them. You can also export your theme and share it! (Related Issue: [#4])
+- New setting: Customize Portrait. Allows to hide/show portrait elements, add border, display health overlay as mask for portrait with transparency, how death saving throws are displayed. (Related Issues: [#12], [#114])
+- New setting: Customize Tooltip. Add a setting to display more or less informations in item's tooltip. (Related Issue: [#119])
+- Added support for Custom Abilities & Skills and non-standard modifier. (Related Issues: [#51], [#67], [#117])
+- Added support for Sebastian Crowe's Guide Apothecary spell slots. (Related Issue: [#56])
+- MidiQoL Synchro: Auto set Bonus Action & Reaction as used when the token get the related Active Effect.
+
+### Fixed
+- Remove unnecessary inline css. (Related Issue: [#34])
+- Use native 5e Tooltip. (Related Issues: [#41], [#59])
+- Add "native" Activity/Macro Tooltip. Let us know if you want more informations inside. (Related Issue: [#54])
+- Fix HUD not disapearing after combat. (Related Issue: [#101])
+- Optimize weapons set auto-equip when a token is selected. (Related Issue: [#110])
+- Fix filter right-click grey out feature. (Related Issue: [#115])
+- Fix dragbar weird behaviors.
+
+### And some other stuffs...
+
 ## [2.0.7] - 2025-04-09
 ### Fixed
 - Fixed issue where shields weren't properly unequipped from loadout slots when switching weapon sets (Related Issue: [#107], Merged via PR [#108]).

@@ -22,7 +22,7 @@
     height: calc(var(--bg3-hotbar-cell-size) / 2);
     background: var(--bg3-hotbar-background-color);
     border-radius: 50%;
-    color: #cc3333;
+    color: var(--bg3-hotbar-drag-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,7 +44,8 @@
   
   #bg3-hotbar-container .hotbar-control-button:hover {
     background: var(--bg3-hotbar-background-color-hover);
-    border-color: #cc3333;
+    border-color: var(--bg3-hotbar-drag-color-hover);
+    color: var(--bg3-hotbar-drag-color-hover);
   }
   
   #bg3-hotbar-container .hotbar-control-button.disabled {
@@ -61,6 +62,6 @@
   }
   
   #bg3-hotbar-container .hotbar-control-button.locked {
-    background: #cc3333;
-    color: var(--bg3-text-color);
+    background: var(--bg3-hotbar-drag-color-hover);
+    color: var(--bg3-hotbar-drag-color-hover);
   }
