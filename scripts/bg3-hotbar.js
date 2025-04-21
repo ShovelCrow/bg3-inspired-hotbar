@@ -232,8 +232,8 @@ export class BG3Hotbar extends Application {
     }
 
     _onPickerDone(element, done) {
-        const $input =  $(element).parent().find('input[is="colorpicker-input"]');
-        $input.trigger('change');
+        const $input =  $(element).parent().find('input[is="colorpicker-input2"]');
+        if($input) $input.trigger('change');
     }
 
     _applyMacrobarCollapseSetting() {

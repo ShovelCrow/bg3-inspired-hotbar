@@ -360,13 +360,6 @@ class colorPickerInput2 extends HTMLInputElement {
                     this._makePicker("picker_popin");
                 }
             });
-            // on focus
-            this.addEventListener("focusout", () => {
-                if (this.visible) {
-                    this.picker.destroy();
-                    this.visible = false;
-                }
-            });
         }
 
         if (this.dataset.responsiveColor !== undefined && this.value != undefined && this.value.length != 0 && this.value.startsWith("#") && this.value.match(/[^A-Fa-f0-9#]+/g) == null) {
@@ -387,7 +380,7 @@ class colorPickerInput2 extends HTMLInputElement {
         }
         
         this.picker.setOptions({
-            popup: false,
+            popup: true,
             parent: this.parentElement,
             cancelButton: false,
             onDone: (color) => {
@@ -415,32 +408,7 @@ class colorPickerInput2 extends HTMLInputElement {
                 }
             }
         });
-        /* if (this.picker._domCancel) {
-            this.picker._domCancel.textContent = " " + compatLocalize("colorSettings.dropper", "Eye Dropper");
-            this.picker._domCancel.setAttribute("title", compatLocalize("colorSettings.delay", "It might take a bit for the color to show after clicking."))
-            this.picker._domCancel.style.paddingBottom = 0;
-            this.picker._domCancel.style.paddingTop = 0;
-            this.picker._domCancel.onclick = () => {
-                this.picker._domCancel.style.boxShadow = "0 0 6px 7px silver"
-                document.addEventListener("click", this._getEyeDropper, true);
-            };
-        }
-
-
-        jQuery(this.picker.domElement).insertAfter(this).addClass(pickerClass);
-
-        jQuery(this.picker.domElement).find("div.picker_cancel").each(function () {
-            if (this.firstChild.firstChild.textContent === " " + compatLocalize("colorSettings.dropper", "Eye Dropper")) {
-                let faIcon = document.createElement("i");
-                faIcon.className = "fas fa-eye-dropper";
-                this.firstChild.prepend(faIcon);
-            }
-        }); */
     }
-
-    // async _getEyeDropper(event) {
-    //     getEyeDropper(event, this);
-    // }
 };
 
 export function registerEarly() {
