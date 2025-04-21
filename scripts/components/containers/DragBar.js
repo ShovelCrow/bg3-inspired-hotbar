@@ -11,6 +11,7 @@ export class DragBar extends BG3Component {
         this.startRightCols = 0;
         this.totalCols = 0;
         this.cellWidth = 0;
+        this.deltaX = 0;
     }
 
     get classes() {
@@ -33,19 +34,17 @@ export class DragBar extends BG3Component {
       const deltaX = e.clientX - this.startX;
       
       // Calculate the delta in columns (can be fractional)
-      const deltaColsFractional = deltaX / this.cellWidth;
+      const deltaColsFractional = this.deltaX / this.cellWidth;
       
       // Calculate potential new column counts
-      const newLeftCols = Math.max(1, Math.min(this.totalCols - 1, this.startLeftCols + deltaColsFractional));
-      const newRightCols = Math.max(1, this.startRightCols - deltaColsFractional);
+      const newLeftCols = this.startLeftCols + deltaColsFractional;
+      const newRightCols = this.startRightCols - deltaColsFractional;
       
       // Only proceed if both containers would have at least 1 column
-      if (newLeftCols >= 1 && newRightCols >= 1) {
+      if (newLeftCols >= 0 && newRightCols >= 0) {
+        this.deltaX = deltaX;
         // Update the drag indicator position
-        /* const containerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index].element.getBoundingClientRect();
-        const containerBounds = this.element.getBoundingClientRect();
-        const newX = containerRect.left - containerBounds.left + (newLeftCols * this.cellWidth); */
-        this.indicator.style.transform = `translateX(${deltaX}px)`;
+        this.indicator.style.transform = `translateX(${this.deltaX}px)`;
       }
     };
 
@@ -53,12 +52,11 @@ export class DragBar extends BG3Component {
         if (!this.isDragging) return;
         
         // Calculate the final delta
-        const deltaX = e.clientX - this.startX;
-        const deltaColsFractional = deltaX / this.cellWidth;
+        // const deltaX = e.clientX - this.startX;
+        const deltaColsFractional = this.deltaX / this.cellWidth;
         
         // Round to the nearest column
         const deltaColsRounded = Math.round(deltaColsFractional);
-        console.log(this.cellWidth, deltaX, deltaColsFractional, deltaColsRounded)
         
         // Only apply changes if we've moved at least half a column
         if (Math.abs(deltaColsFractional) >= 0.5) {
@@ -98,6 +96,7 @@ export class DragBar extends BG3Component {
             // Initialize drag state
             this.isDragging = true;
             this.startX = e.clientX;
+            this.deltaX = 0;
             this.startLeftCols = ui.BG3HOTBAR.components.container.components.hotbar[this.index].data.cols;
             this.startRightCols = ui.BG3HOTBAR.components.container.components.hotbar[this.index + 1].data.cols;
             this.totalCols = this.startLeftCols + this.startRightCols;
