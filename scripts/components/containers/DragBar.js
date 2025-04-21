@@ -42,9 +42,9 @@ export class DragBar extends BG3Component {
       // Only proceed if both containers would have at least 1 column
       if (newLeftCols >= 1 && newRightCols >= 1) {
         // Update the drag indicator position
-        const containerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index].element.getBoundingClientRect();
+        /* const containerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index].element.getBoundingClientRect();
         const containerBounds = this.element.getBoundingClientRect();
-        const newX = containerRect.left - containerBounds.left + (newLeftCols * this.cellWidth);
+        const newX = containerRect.left - containerBounds.left + (newLeftCols * this.cellWidth); */
         this.indicator.style.transform = `translateX(${deltaX}px)`;
       }
     };
@@ -58,12 +58,13 @@ export class DragBar extends BG3Component {
         
         // Round to the nearest column
         const deltaColsRounded = Math.round(deltaColsFractional);
+        console.log(this.cellWidth, deltaX, deltaColsFractional, deltaColsRounded)
         
         // Only apply changes if we've moved at least half a column
         if (Math.abs(deltaColsFractional) >= 0.5) {
           // Calculate new column counts
-          const newLeftCols = Math.max(1, Math.min(this.totalCols - 1, this.startLeftCols + deltaColsRounded));
-          const newRightCols = Math.max(1, this.startRightCols - deltaColsRounded);
+          const newLeftCols = Math.max(0, this.startLeftCols + deltaColsRounded);
+          const newRightCols = Math.max(0, this.startRightCols - deltaColsRounded);
           
           // Update both containers' column counts
           ui.BG3HOTBAR.components.container.components.hotbar[this.index].data.cols = newLeftCols;
@@ -102,8 +103,9 @@ export class DragBar extends BG3Component {
             this.totalCols = this.startLeftCols + this.startRightCols;
             
             // Get the cell width from the container
-            const containerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index].element.getBoundingClientRect();
-            this.cellWidth = containerRect.width / this.startLeftCols;
+            const leftContainerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index].element.getBoundingClientRect(),
+                rightContainerRect = ui.BG3HOTBAR.components.container.components.hotbar[this.index + 1].element.getBoundingClientRect();
+            this.cellWidth = Math.max(leftContainerRect.width / Math.max(this.startLeftCols, 1), rightContainerRect.width / Math.max(this.startRightCols, 1));
             
             // Add visual feedback classes
             this.element.classList.add('dragging');

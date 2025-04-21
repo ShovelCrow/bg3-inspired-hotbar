@@ -34,7 +34,6 @@ export class GridCell extends BG3Component {
         let itemData = await this.item,
             data = super.getData();
         if(itemData) {
-            if(itemData.type == 'heal') console.log(itemData)
             data = {...data, ...{
                     uuid: itemData.uuid,
                     name: itemData.name,
@@ -44,7 +43,6 @@ export class GridCell extends BG3Component {
                 },
                 ...await this.getItemUses()
             };
-            if(itemData.type == 'heal') console.log(data)  
             if(itemData.type === "spell") data = {...data, ...{preparationMode: itemData.system?.preparation?.mode, level: itemData.system?.level}};
             if(itemData.type === 'feat') data = {...data, ...{featType: itemData.system?.type?.value || 'default'}};
         }
