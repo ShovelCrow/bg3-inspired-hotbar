@@ -1,3 +1,10 @@
+## [3.0.1] - 2025-04-24
+### Fixed
+- Fix CSS for control button locked state.
+- Fix Opacity Lock Menu not working.
+- Fix Basic Actions Container not hiding sometimes. (Related Issue: [#122])
+- Fix players lacking "Use File Browser" permission not being able to customize their theme. (Related Issue: [#121])
+
 ## [3.0.0] - 2025-04-21
 ### Disclaimer
 - BG3 Inspired Hotbar got a huge update ! We did a deep refactor of the module to make it more optimized, less laggy and easier for us to maintain. It includes a lot of bug fixes too. Let us know if you find new ones.
