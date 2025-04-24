@@ -652,9 +652,14 @@ export function registerSettings() {
         default: 1,
         onChange: value => {
             if(ui.BG3HOTBAR.element?.[0]) {
-                if(value === 1) ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `0s`);
-                else ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${game.settings.get(BG3CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
-                ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-opacity', value);
+                if(value === 1) {
+                    ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `0s`);
+                    ui.BG3HOTBAR.element?.[0].style.removeProperty('--bg3-faded-opacity');
+                }
+                else {
+                    ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-delay', `${game.settings.get(BG3CONFIG.MODULE_NAME, 'fadeOutDelay')}s`);
+                    ui.BG3HOTBAR.element?.[0].style.setProperty('--bg3-faded-opacity', value);
+                }
             }
         }
     });
