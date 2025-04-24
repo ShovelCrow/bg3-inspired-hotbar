@@ -461,6 +461,17 @@ export function updateSettingsDisplay() {
 }
 
 export function registerSettings() {
+    // Theme settings
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'scopeTheme', {
+        name: 'BG3.Settings.scopeTheme.Name',
+        hint: 'BG3.Settings.scopeTheme.Hint',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        requiresReload: true,
+        default: true
+    });
+
     // Core UI Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
         name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
@@ -500,15 +511,6 @@ export function registerSettings() {
     });
     
     // Visual Settings - Appearance
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'scopeTheme', {
-        name: 'BG3.Settings.scopeTheme.Name',
-        hint: 'BG3.Settings.scopeTheme.Hint',
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        requiresReload: true,
-        default: true
-    });
 
     const scopeTheme = game.settings.get(BG3CONFIG.MODULE_NAME, "scopeTheme");
 
