@@ -47,7 +47,7 @@ export class MenuContainer extends BG3Component {
                                 subMenu.render();
                             })
                         }
-                        else return b.click(event);
+                        else b.click(event);
                         if(!this.data.keepOpen) {
                             if(ui.BG3HOTBAR.menuManager) ui.BG3HOTBAR.menuManager.destroy();
                             else this.destroy();

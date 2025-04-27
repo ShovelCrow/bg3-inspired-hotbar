@@ -233,6 +233,10 @@
             "BR": {
                 "Name": "Bonus & Reaction active effects",
                 "Hint": "Set Bonus Action and Reaction as used based on MidiQoL active effects."
+            },
+            "ADV": {
+                "Name": "Add Advantage/Disadvantage buttons",
+                "Hint": "Add an advantage or disadvantage source. Need MidiQoL fast forward to be enable."
             }
         },
         "GamePause": {
