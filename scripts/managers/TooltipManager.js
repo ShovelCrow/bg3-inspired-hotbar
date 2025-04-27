@@ -8,6 +8,10 @@ export class BG3TooltipManager {
         game.dnd5e.dataModels.ItemDataModel.ITEM_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/item-tooltip.hbs`;
     }
 
+    get enrichers() {
+        return CONFIG.TextEditor.enrichers ?? CONFIG.TextEditor
+    }
+
     _init() {
         if(game.settings.get(BG3CONFIG.MODULE_NAME, 'showDamageRanges')) this._tooltipRangeDamage();
         
@@ -137,7 +141,7 @@ export class BG3TooltipManager {
             "attack", "award", "check", "concentration", "damage", "heal", "healing", "item", "save", "skill", "tool"
         ],
         pattern = new RegExp(`\\[\\[/(?<type>${stringNames.join("|")})(?<config> .*?)?]](?!])(?:{(?<label>[^}]+)})?`, "gi");
-        this.savedEnrichers.damage = CONFIG.TextEditor.enrichers.find(e => e.pattern.toString() == pattern.toString()).enricher;
+        this.savedEnrichers.damage = this.enrichers.find(e => e.pattern.toString() == pattern.toString()).enricher;
     }
     
     _tooltipRangeDamage() {        
@@ -145,7 +149,7 @@ export class BG3TooltipManager {
             "attack", "award", "check", "concentration", "damage", "heal", "healing", "item", "save", "skill", "tool"
         ],
         pattern = new RegExp(`\\[\\[/(?<type>${stringNames.join("|")})(?<config> .*?)?]](?!])(?:{(?<label>[^}]+)})?`, "gi"),
-        damageEnricher = CONFIG.TextEditor.enrichers.find(e => e.pattern.toString() == pattern.toString());
+        damageEnricher = this.enrichers.find(e => e.pattern.toString() == pattern.toString());
         if(damageEnricher) {
             const prevEnricher = damageEnricher.enricher;
             damageEnricher.id = 'damageEnricher';
@@ -172,7 +176,7 @@ export class BG3TooltipManager {
     _resetEnrichers(enrichers) {
         for(const enricher of enrichers) {
             if(this.savedEnrichers[enricher]) {
-                const enr = CONFIG.TextEditor.enrichers.find(e => e.id == `${enricher}Enricher`);
+                const enr = this.enrichers.find(e => e.id == `${enricher}Enricher`);
                 if(enr) enr.enricher = this.savedEnrichers[enricher];
             }
         }
