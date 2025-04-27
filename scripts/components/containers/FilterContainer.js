@@ -86,7 +86,7 @@ export class FilterContainer extends BG3Component {
                 id: 'spell',
                 isPact: true,
                 label: 'Pact Magic',
-                short: 'P',
+                short: this._getRomanNumeral(pactMagic.level),
                 max: pactMagic.max,
                 value: pactMagic.value,
                 class: ['spell-level-button', 'spell-pact-box'],
