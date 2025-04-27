@@ -56,26 +56,32 @@ export class ActiveButton extends BG3Component {
         
         this.element.addEventListener("contextmenu", async (e) => {
             e.preventDefault();
-            const dialog = new Dialog({
-              title: "Delete Effect",
-              content: `<p>Are you sure you want to delete the effect "${this.data.item.label}"?</p>`,
-              buttons: {
-                delete: {
-                    icon: '<i class="fas fa-trash"></i>',
-                    label: "Delete",
-                    callback: async () => {
-                        await this.data.item.delete();
-                        this._parent.render();
+            if (this.data.item.duration.duration !== null) {
+                const dialog = new Dialog({
+                title: "Delete Effect",
+                content: `<p>Are you sure you want to delete the effect "${this.data.item.label}"?</p>`,
+                buttons: {
+                    delete: {
+                        icon: '<i class="fas fa-trash"></i>',
+                        label: "Delete",
+                        callback: async () => {
+                            await this.data.item.delete();
+                            this._parent.render();
+                        }
+                    },
+                    cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel"
                     }
                 },
-                cancel: {
-                  icon: '<i class="fas fa-times"></i>',
-                  label: "Cancel"
-                }
-              },
-              default: "cancel"
-            });
-            dialog.render(true);
+                default: "cancel"
+                });
+                dialog.render(true);
+            } else { // SHOVEL
+                e.stopPropagation();
+                await this.data.item.update({ disabled: !this.data.item.disabled });
+                this.update();
+            }
         });
     }
 

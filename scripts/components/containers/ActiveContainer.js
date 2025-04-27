@@ -14,7 +14,8 @@ export class ActiveContainer extends BG3Component {
         if(!this.token && !this.actor) return null;
 
         // Get active effects from the actor's sheet.
-       return this.actor.effects?.contents || [];
+    //    return this.actor.effects?.contents || [];
+        return Array.from(this.actor?.allApplicableEffects()) || []; // SHOVEL
     }
 
     async render() {
