@@ -437,6 +437,9 @@ export function registerEarly() {
         });
     });
     
+    if (customElements.get('colorpicker-input2') != undefined) {
+        return;
+    }
     customElements.define('colorpicker-input2', colorPickerInput2, {
         extends: 'input'
     });
@@ -555,9 +558,21 @@ export function registerSettings() {
         }
     });
     
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'underPause', {
+        name: 'BG3.Settings.GamePause.Name',
+        hint: 'BG3.Settings.GamePause.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: value => {
+            if(ui.BG3HOTBAR.element?.[0]) ui.BG3HOTBAR.element?.[0].setAttribute('data-under-pause', value);
+        }
+    });
+    
     game.settings.register(BG3CONFIG.MODULE_NAME, 'autoScale', {
-        name: 'Auto UI scale',
-        hint: 'Auto scale the UI based on your browser. Disable the UI scale parameter below.',
+        name: 'BG3.Settings.NormalOpacity.Name',
+        hint: 'BG3.Settings.NormalOpacity.Hint',
         scope: 'client',
         config: true,
         type: Boolean,

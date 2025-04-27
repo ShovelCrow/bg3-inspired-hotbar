@@ -135,6 +135,10 @@
     opacity: var(--bg3-faded-opacity, var(--bg3-normal-opacity));
 }
 
+#bg3-hotbar-container[data-under-pause="true"] {
+    z-index: var(--z-index-canvas);
+}
+
 #bg3-hotbar-container[data-position="center"] {
     transform-origin: bottom;
     margin: 0 auto;

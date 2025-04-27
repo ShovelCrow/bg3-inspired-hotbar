@@ -1,6 +1,6 @@
-import { BG3CONFIG } from "../utils/config.js";
+import { BG3CONFIG, patchFunc } from "../utils/config.js";
 
-export class TooltipManager {
+export class BG3TooltipManager {
     constructor() {
         this.savedEnrichers = {};
         this._saveEnrichers();
@@ -91,6 +91,45 @@ export class TooltipManager {
             }
             return context;
         }
+
+        TooltipManager.prototype.dismissLockedTooltips = async function() {}
+        
+        function handle_mousedown(e){
+            e.preventDefault();
+            // window.tooltip = {};
+            tooltip.pageX0 = e.pageX;
+            tooltip.pageY0 = e.pageY;
+            tooltip.elem = this;
+            tooltip.offset0 = $(this).offset();
+            tooltip.moved = false;
+        
+            function handle_dragging(e){
+                console.log('handle_dragging')
+                e.preventDefault();
+                var left = tooltip.offset0.left + (e.pageX - tooltip.pageX0);
+                var top = tooltip.offset0.top + (e.pageY - tooltip.pageY0);
+                if(!tooltip.moved) {
+                    tooltip.elem.style.removeProperty('bottom');
+                    tooltip.moved = true;
+                }
+                $(tooltip.elem)
+                .offset({top: top, left: left});
+            }
+        
+            function handle_mouseup(e){
+                console.log('handle_mouseup')
+                e.preventDefault();
+                $('body')
+                .off('mousemove', handle_dragging)
+                .off('mouseup', handle_mouseup);
+            }
+        
+            $('body')
+            .on('mouseup', handle_mouseup)
+            .on('mousemove', handle_dragging);
+        }
+        
+        $('body').on('mousedown', '.locked-tooltip.bg3-tooltip', handle_mousedown);
     }
 
     _saveEnrichers() {
