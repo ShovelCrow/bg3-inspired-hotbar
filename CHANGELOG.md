@@ -4,12 +4,14 @@
 - Fix Opacity Lock Menu not working.
 - Fix Basic Actions Container not hiding sometimes. (Related Issue: [#122])
 - Fix players lacking "Use File Browser" permission not being able to customize their theme. (Related Issue: [#121])
-- Add an option to display the UI below the "Game Paused" label. (Related Issue: [#129])
 - Fix a bug with Forge-vtt.com. (Related Issue: [#128])
 - Fix a bug with Ability Check & Save roll. (Related Issue: [#127])
 - Passives container will now be shown on hover even if empty. (Related Issue: [#126])
 - Fix a css bug with cells border. (Related Issue: [#125])
-- Lockec Tooltips will now be movable and only dismissed with a right-click on it.
+
+### Features
+- Locked Tooltips will now be movable and only dismissed with a right-click on it.
+- Add an option to display the UI below the "Game Paused" label. (Related Issue: [#129])
 
 ## [3.0.0] - 2025-04-21
 ### Disclaimer
