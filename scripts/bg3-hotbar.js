@@ -11,7 +11,6 @@ import { DragDropManager } from './managers/DragDropManager.js';
 import { HotbarManager } from './managers/HotbarManager.js';
 import { ItemUpdateManager } from './managers/ItemUpdateManager.js';
 import { BG3CONFIG, preloadHandlebarsTemplates } from './utils/config.js';
-import { DND5E, Filter, applications, dataModels, dice, documents, enrichers, migrations, registry, utils } from '../../../systems/dnd5e/dnd5e.mjs';
 import { BG3TooltipManager } from './managers/TooltipManager.js';
 
 export class BG3Hotbar extends Application {
