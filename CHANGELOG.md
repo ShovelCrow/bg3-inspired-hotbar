@@ -1,3 +1,7 @@
+## [3.0.2] - 2025-04-27
+### Fixed
+- Optimize movable locked tooltip.
+
 ## [3.0.1] - 2025-04-24
 ### Fixed
 - Fix CSS for control button locked state.
