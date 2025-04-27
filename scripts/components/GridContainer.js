@@ -3,6 +3,7 @@
 import { CONFIG } from '../utils/config.js';
 import { TooltipFactory } from '../tooltip/TooltipFactory.js';
 import { fromUuid } from '../utils/foundryUtils.js';
+import { getConsumeData } from '../utils/tooltipUtils.js';
 
 class GridContainer {
   constructor(ui, data, index) {
@@ -133,6 +134,23 @@ class GridContainer {
                 const usesDiv = document.createElement("div");
                 usesDiv.classList.add("bg3-hud", "hotbar-item-uses");
                 usesDiv.textContent = `${value}/${max}`;
+                usesDiv.style.pointerEvents = "none"; // Prevent interference with drag
+                if (value <= 0) {
+                  usesDiv.classList.add("bg3-hud", "depleted");
+                }
+                cell.appendChild(usesDiv);
+              }
+            } else if (itemData?.system?.consume.type) {
+              const consume = getConsumeData(itemData);
+              const value = consume.value ?? 0;
+              const max = consume.max ?? 0;
+              if (value <= 0) {
+                img.classList.add("bg3-hud", "depleted");
+              }
+              if (game.settings.get(CONFIG.MODULE_NAME, 'showItemUses')) {
+                const usesDiv = document.createElement("div");
+                usesDiv.classList.add("bg3-hud", "hotbar-item-uses");
+                usesDiv.textContent = consume?.text;
                 usesDiv.style.pointerEvents = "none"; // Prevent interference with drag
                 if (value <= 0) {
                   usesDiv.classList.add("bg3-hud", "depleted");

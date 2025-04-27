@@ -85,13 +85,16 @@ export class FeatureTooltip extends BaseTooltip {
         }
       }
 
+      let useText = ""
       // Only show uses for active features
-      if (this.item.system?.uses) {
-        detailsHTML.push(
-          `<div><strong>Uses:</strong> ${this.item.system.uses.value || 0}/${
-            this.item.system.uses.max || 0
-          }</div>`
-        );
+      if (this.item.system?.uses && this.item.system.uses.max > 0) {
+        useText += ` ${this.item.system.uses.value || 0}/${this.item.system.uses.max || 0}`;
+      }
+      if (details.consume?.value) {
+        useText += ` ${details.consume.title}`;
+      }
+      if (useText) {
+        detailsHTML.push(`<div><strong>Uses:</strong>${useText}</div>`);
       }
 
       if (detailsHTML.length > 0) {

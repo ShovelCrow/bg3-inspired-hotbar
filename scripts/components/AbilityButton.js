@@ -193,12 +193,13 @@ class AbilityCard {
                 // Get the clicked row's position relative to the popups wrapper
                 const rowRect = abilityRow.getBoundingClientRect();
                 const wrapperRect = popupsWrapper.getBoundingClientRect();
+                const scale = window.getComputedStyle(abilityRow).getPropertyValue("--bg3-scale-ui");
                 
                 // Position and show the popup
                 const targetPopups = popupsWrapper.querySelector(`.popup-container[data-ability="${key}"]`);
                 if (targetPopups) {
                     // Position the popup container at the same height as the ability row
-                    targetPopups.style.top = `${rowRect.top - wrapperRect.top}px`;
+                    targetPopups.style.top = `${(rowRect.top - wrapperRect.top) * (1 / scale)}px`;
                     targetPopups.classList.add("visible");
                     targetPopups.querySelectorAll('.popup-panel').forEach(panel => {
                         panel.classList.add("visible");

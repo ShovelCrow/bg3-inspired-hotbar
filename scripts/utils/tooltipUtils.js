@@ -149,6 +149,61 @@ export function getSpellPreparationMode(preparation) {
 }
 
 /**
+ * Get consume
+ */
+export function getConsumeData(item) {
+  // Get consume target and type
+  const firstActivity = item?.system?.activities?.contents[0] ?? item?.system;
+  const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
+  const consumeId = firstTarget?.target;
+  const consumeType = firstTarget?.type;
+  const consumeAmount = firstTarget?.value ?? firstTarget?.amount;
+
+  if (!consumeId || !consumeType || consumeId === item.id) return {};
+
+  // Return resources
+  if (consumeType === "attribute") {
+    const parentId = consumeId.substr(0, consumeId.lastIndexOf("."));
+    const target = foundry.utils.getProperty(item.actor.system, parentId);
+
+    if (target) {
+      const text = `${target.value ?? "0"}${target.max ? `/${target.max}` : ""}`;
+      return {
+        text: text,
+        title: `${text} (${target.label ?? ''})`,
+        value: target.value ?? 0,
+        max: target.max ?? 0
+      };
+    }
+  } else {
+    const target = item.actor.items?.get(consumeId);
+
+    // Return charges
+    if (target && (consumeType === "charges" || consumeType === "itemUses")) {
+      const text = `${target.system.uses.value ?? "0"}${target.system.uses.max ? `/${target.system.uses.max}` : ""}`;
+      return {
+        text: text,
+        title: `${text} (${target.name})`,
+        value: target.system.uses.value ?? 0,
+        max: target.system.uses.max ?? 0
+      }
+    }
+
+    // Return quantity
+    if (target?.system?.quantity) {
+      const text = `${consumeAmount > 1 ? `${consumeAmount} ${game.i18n.localize("DND5E.of")} ` : ""}${target.system.quantity}`;
+      return {
+        text: text,
+        title: `${text} (${target.name})`,
+        value: target.system.quantity ?? 0
+      }
+    }
+  }
+
+  return {};
+}
+
+/**
  * Extracts common details for an item (spell, weapon, feature, etc.) by looking
  * through its activities first (as per dnd5e 4.0) and then falling back to legacy system data.
  */
@@ -158,7 +213,8 @@ export function getItemDetails(itemData) {
     range: "N/A",
     target: "N/A",
     duration: "N/A",
-    preparation: ""
+    preparation: "",
+    consume: {}
   };
 
   const preparation = itemData.type === "spell" ? getSpellPreparationMode(itemData.system?.preparation) : "";
@@ -231,6 +287,9 @@ export function getItemDetails(itemData) {
     duration = itemData.system?.duration || {};
   }
 
+  let consume = {};
+  consume = getConsumeData(itemData);
+
   return {
     castingTime: formatCastingTime(activation, itemData.type),
     range: formatSpellProperty(range, itemData.type),
@@ -238,7 +297,8 @@ export function getItemDetails(itemData) {
     duration: formatSpellProperty(duration, itemData.type),
     activityId: actionActivity?._id,
     activity: actionActivity,
-    preparation
+    preparation,
+    consume
   };
 }
 
