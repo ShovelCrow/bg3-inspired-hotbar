@@ -100,7 +100,7 @@ export class BG3TooltipManager {
         
         function handle_mousedown(e){
             e.preventDefault();
-            // window.tooltip = {};
+            const tooltip = {};
             tooltip.pageX0 = e.pageX;
             tooltip.pageY0 = e.pageY;
             tooltip.elem = this;
@@ -108,7 +108,6 @@ export class BG3TooltipManager {
             tooltip.moved = false;
         
             function handle_dragging(e){
-                console.log('handle_dragging')
                 e.preventDefault();
                 var left = tooltip.offset0.left + (e.pageX - tooltip.pageX0);
                 var top = tooltip.offset0.top + (e.pageY - tooltip.pageY0);
@@ -121,14 +120,13 @@ export class BG3TooltipManager {
             }
         
             function handle_mouseup(e){
-                console.log('handle_mouseup')
                 e.preventDefault();
-                $('body')
+                $(this)
                 .off('mousemove', handle_dragging)
                 .off('mouseup', handle_mouseup);
             }
         
-            $('body')
+            $(this)
             .on('mouseup', handle_mouseup)
             .on('mousemove', handle_dragging);
         }
