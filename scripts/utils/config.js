@@ -451,18 +451,6 @@ export function updateSettingsDisplay() {
     Hooks.on("renderSettingsConfig", (app, html, data) => {
         $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').remove();
         $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').remove();
-        /* $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first'));
-        // $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.enableLightTooltip"]').parents('div.form-group:first'));
-        // $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
-        // $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.HotbarContainer")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
-        // $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.MidiQoL")).insertBefore($('[name="bg3-inspired-hotbar.synchroBRMidiQoL"]').parents('div.form-group:first'));
-
-        // $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
-        // $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
-        // $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
-        
-        // $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first')); */
     });
 }
 
@@ -594,8 +582,6 @@ export function registerSettings() {
     });
     
     // Visual Settings - Appearance
-
-
     game.settings.register(BG3CONFIG.MODULE_NAME, 'themeOption', {
         name: 'Theme options',
         hint: 'Choose between available themes',

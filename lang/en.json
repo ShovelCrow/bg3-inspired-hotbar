@@ -281,7 +281,7 @@
             },
             "Midi": {
                 "Name": "Synchro MidiQoL setting",
-                "Hint": "Synchonization with MidiQoL features.",
+                "Hint": "Synchonization with MidiQoL features. Must have MidiQoL module installed.",
                 "Label": "Configure Synchro MidiQoL"
             }
         }
