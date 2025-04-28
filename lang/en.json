@@ -239,6 +239,10 @@
             "Name": "Keep \"Game Paused\" on top",
             "Hint": "If checked UI will be displayed under the \"Game Paused\" label."
         },
+        "AutoScale": {
+            "Name": "Auto UI scale",
+            "Hint": "Auto scale the UI based on your browser. Disable the UI scale parameter below."
+        },
         "Menu": {
             "Global": {
                 "Name": "Global settings",

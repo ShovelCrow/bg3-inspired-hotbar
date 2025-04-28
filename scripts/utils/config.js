@@ -641,8 +641,8 @@ export function registerSettings() {
     });
     
     game.settings.register(BG3CONFIG.MODULE_NAME, 'autoScale', {
-        name: 'BG3.Settings.NormalOpacity.Name',
-        hint: 'BG3.Settings.NormalOpacity.Hint',
+        name: 'BG3.Settings.AutoScale.Name',
+        hint: 'BG3.Settings.AutoScale.Hint',
         scope: 'client',
         config: false,
         type: Boolean,
