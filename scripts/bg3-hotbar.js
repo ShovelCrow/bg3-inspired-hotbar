@@ -120,12 +120,13 @@ export class BG3Hotbar extends Application {
         this.generateTimeout = setTimeout(() => {
             if (((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) && !ControlsManager.isSettingLocked('deselect')) {
                 if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.generate(null);
+                if (game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
             }
             if (!controlled || !canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) return;
 
             if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) {
                 this.generate(token);
-                if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+                if (game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
             }
         })
     }
@@ -252,7 +253,7 @@ export class BG3Hotbar extends Application {
                 ui.hotbar.expand();
             } else if(collapseMacrobar === 'select') {
                 if(this.macroBarTimeout) clearTimeout(this.macroBarTimeout);
-                if(!!this.manager.ui) {
+                if(!!this.manager?.actor) {
                     ui.hotbar.collapse();
                 } else {
                     this.macroBarTimeout = setTimeout(() => {
