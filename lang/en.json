@@ -185,7 +185,7 @@
             "Hint": ""
         },
         "ShowRestTurnButton": {
-            "Name": "Show Rest/Turns button",
+            "Name": "Show Rest/Turns buttons",
             "Hint": ""
         },
         "OverlayModePortrait": {
@@ -238,6 +238,48 @@
         "GamePause": {
             "Name": "Keep \"Game Paused\" on top",
             "Hint": "If checked UI will be displayed under the \"Game Paused\" label."
+        },
+        "Menu": {
+            "Global": {
+                "Name": "Global settings",
+                "Hint": "Native Foundry elements or global BG3 UI settings.",
+                "Label": "Configure Global"
+            },
+            "Theme": {
+                "Name": "Theme settings",
+                "Hint": "Choose between available themes or create a custom one.",
+                "Label": "Configure Theme"
+            },
+            "Portrait": {
+                "Name": "Portrait settings",
+                "Hint": "Advanced settings for character portrait.",
+                "Label": "Configure Portrait"
+            },
+            "Hotbar": {
+                "Name": "Hotbars settings",
+                "Hint": "Advanced settings for Hotbars.",
+                "Label": "Configure Hotbars"
+            },
+            "Combat": {
+                "Name": "Common Actions settings",
+                "Hint": "Advanced settings for common actions.",
+                "Label": "Configure Common Actions"
+            },
+            "Populate": {
+                "Name": "Auto-Populating settings",
+                "Hint": "Advanced settings for auto-populating feature.",
+                "Label": "Configure Auto-Populating"
+            },
+            "Tooltip": {
+                "Name": "Tooltip settings",
+                "Hint": "Advanced settings for Tooltip.",
+                "Label": "Configure Tooltip"
+            },
+            "Midi": {
+                "Name": "Synchro MidiQoL setting",
+                "Hint": "Synchonization with MidiQoL features.",
+                "Label": "Configure Synchro MidiQoL"
+            }
         }
     }
 } 
