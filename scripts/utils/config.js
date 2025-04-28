@@ -1142,6 +1142,18 @@ export function registerSettings() {
         }
     });
 
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'addAdvBtnsMidiQoL', {
+        name: 'BG3.Settings.synchroMidiQoL.ADV.Name',
+        hint: 'BG3.Settings.synchroMidiQoL.ADV.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: value => {
+            if(ui.BG3HOTBAR.components?.container?.components?.advantage) {ui.BG3HOTBAR.components.container.components.advantage.setVisibility();}
+        }
+    });
+
     // Spell Preparation Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {
         name: 'BG3.Settings.EnforceSpellPreparationPC.Name',

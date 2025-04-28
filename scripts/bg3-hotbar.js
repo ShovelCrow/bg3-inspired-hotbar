@@ -12,6 +12,7 @@ import { HotbarManager } from './managers/HotbarManager.js';
 import { ItemUpdateManager } from './managers/ItemUpdateManager.js';
 import { BG3CONFIG, preloadHandlebarsTemplates } from './utils/config.js';
 import { BG3TooltipManager } from './managers/TooltipManager.js';
+import { AdvContainer } from './components/containers/AdvContainer.js';
 
 export class BG3Hotbar extends Application {
     constructor() {
@@ -367,16 +368,15 @@ export class BG3Hotbar extends Application {
         this.components = {
             portrait: new PortraitContainer(),
             weapon: new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat}),
+            advantage: new AdvContainer(),
             container: new HotbarContainer(this.manager.containers.hotbar),
             restTurn: new RestTurnContainer()
         }
 
-        html.appendChild(this.components.portrait.element);
-        html.appendChild(this.components.weapon.element);
-        html.appendChild(this.components.container.element);
+        Object.values(this.components).forEach((component) => {
+            if (component && !Array.isArray(component)) html.appendChild(component.element);
+        });
         this.components.container._parent = this;
-        html.appendChild(this.components.restTurn.element);
-        
         this.combat.push(this.components.restTurn);
 
         const promises = [];
