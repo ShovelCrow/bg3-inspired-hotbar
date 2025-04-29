@@ -8,6 +8,7 @@ import { AutoPopulateSettingDialog, CombatSettingDialog, GlobalSettingDialog, Ho
 // import ColorSetting from "/modules/colorsettings/colorSetting.js";
 import Picker from "/modules/colorsettings/lib/vanilla-picker.min.mjs";
 import API from "/modules/colorsettings/api.js";
+import { CPRActionsDialog } from "../components/dialog/CPRActionsDialog.js";
 
 export const BG3CONFIG = {
     // UI Constants
@@ -466,6 +467,7 @@ export function updateSettingsDisplay() {
     Hooks.on("renderSettingsConfig", (app, html, data) => {
         $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').remove();
         $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').remove();
+        $('button[data-key="bg3-inspired-hotbar.chooseCPRActions"]').parents('div.form-group:first').remove();
     });
 }
 
@@ -1069,6 +1071,21 @@ export function registerSettings() {
         default: true
     });
 
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "chooseCPRActions", {
+        name: 'BG3.Settings.Menu.CPR.Name',
+        label: 'BG3.Settings.Menu.CPR.Label',
+        hint: 'BG3.Settings.Menu.CPR.Hint',
+        icon: "fas fa-cog",
+        type: CPRActionsDialog
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'choosenCPRActions', {
+        scope: 'client',
+        config: false,
+        type: Array,
+        default: ["9wbU6kYxfAaRFrbI", "ga6foNaesV3UJFKm", "eqOOv3smPuxTq7Xm", "pmn1iLabeps5aPtW", "nmkcJWUba7hyi5m5", "34jFXjMOseErle3M"]
+    });
+
     game.settings.register(BG3CONFIG.MODULE_NAME, 'lockCombatContainer', {
         name: 'Lock the basic actions container',
         hint: 'Prevent users for removing the basic actions for the container.',
@@ -1342,7 +1359,14 @@ export function registerHandlebars() {
 
     Handlebars.registerHelper('isdefined', function (value) {
         return value !== undefined;
-    });      
+    });
+    
+    Handlebars.registerHelper('ifIn', function(elem, list, options) {
+        if(list.indexOf(elem) > -1) {
+          return options.fn(this);
+        }
+        return options.inverse(this);
+    });
 
     /* Handlebars.registerHelper('check', function(fn, options) {
         // console.log(v1)

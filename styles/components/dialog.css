@@ -302,3 +302,9 @@ details[open] summary::marker {
 #bg3-inspired-hotbar-setting-dialog .form-group > label {
   flex: 3;
 }
+
+#bg3-inspired-hotbar-setting-dialog .form-group > img {
+  height: 50px;
+  flex: unset !important;
+  margin-right: 1rem;
+}

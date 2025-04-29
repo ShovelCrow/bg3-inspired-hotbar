@@ -110,7 +110,7 @@ export class HotbarSettingDialog extends ThemeSettingDialog {
             {label: 'General',
             fields: ['showItemNames', 'showItemUses', 'highlightStyle']},
             {label: 'Common Actions',
-            fields: ['showCombatContainer', 'autoPopulateCombatContainer', 'lockCombatContainer']},
+            fields: ['showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer']},
             {label: 'Others',
             fields: ['fadeControlsMenu', 'showRestTurnButton']}
         ]
