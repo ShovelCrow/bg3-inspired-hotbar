@@ -1,3 +1,2 @@
-
-packs/*/*
-!packs/*/*.ldb
+packs/*/lost
+packs/*/LOCK
