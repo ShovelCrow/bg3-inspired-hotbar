@@ -96,8 +96,6 @@ export class AutoPopulateCreateToken {
             const tempManager = new HotbarManager();
             tempManager.currentTokenId = token.id;
             await tempManager._loadTokenData();
-
-            // if(!tempManager.combatContainer[0]?.items || Object.values(tempManager.combatContainer[0].items).length > 0) return;
             
             // Auto-populate combat container if setting on true
             if(!(!tempManager.containers.combat[0]?.items || Object.values(tempManager.containers.combat[0].items).length > 0)) {
@@ -136,12 +134,12 @@ export class AutoPopulateCreateToken {
         try {
             // Get all items from the actor that match the selected types
             const itemsWithActivities = [];
-            
+            console.log(actor.items, manager.containers.combat[0].items)
             // Process all items from the actor
             for (const item of actor.items) {
                 // Skip if item type is not in the selected types
                 if (!itemTypes.includes(item.type)
-                    || Object.values(BG3CONFIG.COMBATACTIONDATA).find(d => d.name === item.name)
+                    || Object.values(manager.containers.combat[0].items).find(d => d.uuid === item.uuid)
                     || manager.containers.weapon.reduce((acc, curr) => acc.concat(Object.values(curr.items)), []).find(i => i.uuid === item.uuid)
                 ) continue;
                 
@@ -179,7 +177,7 @@ export class AutoPopulateCreateToken {
                     itemsWithActivities.push(itemData);
                 }
             }
-            // console.log(itemsWithActivities)
+            
             if (itemsWithActivities.length === 0) return;
 
             // Sort items
@@ -188,9 +186,6 @@ export class AutoPopulateCreateToken {
             // Place items in grid format (rows first: left to right, then down)
             let x = 0;
             let y = 0;
-
-            // container.items = {};
-            // container.data.items = {};
 
             for (const item of itemsWithActivities) {
                 if (y >= container.rows) break; // Stop if we exceed container rows

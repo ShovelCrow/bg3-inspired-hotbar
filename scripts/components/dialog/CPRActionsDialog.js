@@ -10,7 +10,7 @@ export class CPRActionsDialog extends FormApplication {
             ...super.defaultOptions,
             id: "bg3-inspired-hotbar-setting-dialog",
             template: `modules/${BG3CONFIG.MODULE_NAME}/templates/dialog/cpr-actions-dialog.hbs`,
-            title: "BG3.Settings.Menu.CPR.Label",
+            title: "BG3.Settings.Menu.CPR.UpTo6",
             height: "auto",
             submitOnClose: false
         };
@@ -28,15 +28,7 @@ export class CPRActionsDialog extends FormApplication {
     async _onSubmit(event) {
         event.preventDefault();
         const inputs = this.element[0].querySelectorAll('input.cpr-actions:checked');
-        // game.settings.set(BG3CONFIG.MODULE_NAME, 'choosenCPRActions', inputs.map(i => i.id));
-        console.log(inputs)
-        console.log(inputs.map(i => i.id))
-        /* for (let i = 0; i < form.length; i++) {
-            const input = form[i].querySelector("input") ?? form[i].querySelector("select");
-            if(!input) continue;
-            const value = input.type == 'checkbox' ? input.checked : input.value;
-            game.settings.set(BG3CONFIG.MODULE_NAME, input.name, value);
-        }
-        this.close(); */
+        game.settings.set(BG3CONFIG.MODULE_NAME, 'choosenCPRActions', [...inputs].map(i => i.id));
+        this.close();
     }
 }

@@ -90,8 +90,9 @@ export class BG3Hotbar extends Application {
 
     async _onCreateToken(token) {
         if (!token?.actor) return;
-
-        await AutoPopulateCreateToken.populateUnlinkedToken(token);
+        setTimeout(async () => {
+            await AutoPopulateCreateToken.populateUnlinkedToken(token);
+        }, 100)
     }
 
     _onControlToken(token, controlled) {

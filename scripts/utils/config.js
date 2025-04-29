@@ -1077,7 +1077,10 @@ export function registerSettings() {
         label: 'BG3.Settings.Menu.CPR.Label',
         hint: 'BG3.Settings.Menu.CPR.Hint',
         icon: "fas fa-cog",
-        type: CPRActionsDialog
+        type: CPRActionsDialog,
+        visible: () => {
+            return game.modules.get("chris-premades")?.active;
+        }
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'choosenCPRActions', {

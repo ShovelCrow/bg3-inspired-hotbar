@@ -308,3 +308,22 @@ details[open] summary::marker {
   flex: unset !important;
   margin-right: 1rem;
 }
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 1rem;
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 .form-group {
+  cursor: pointer;
+  padding: 0;
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 .form-group > * {
+  cursor: pointer;
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 .form-group:hover {
+  background-color: rgba(0,0,0,.1);
+}

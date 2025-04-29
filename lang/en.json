@@ -294,7 +294,8 @@
             "CPR": {
                 "Name": "Choose CPR Actions",
                 "Hint": "Select which CPR actions to auto-populate in common actions container.",
-                "Label": "Select CPR Actions"
+                "Label": "Select CPR Actions",
+                "UpTo6": "Select which CPR actions to auto-populate in common actions container. Up to 6."
             }
         }
     }
