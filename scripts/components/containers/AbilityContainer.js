@@ -30,8 +30,8 @@ export class AbilityContainer extends BG3Component {
     }
 
     getSaveMod(key) {
-        const abilityScore = this.actor.system.abilities?.[key] || { value: 10, proficient: false },
-            mod = abilityScore.save.value,
+        const abilityScore = this.actor.system.abilities?.[key] || { value: 10, proficient: false, save: {value: 0} },
+            mod = abilityScore.save.value ?? 0,
             modString = mod >= 0 ? `+${mod}` : mod.toString();
         return {value: modString, style: abilityScore.proficient === 1 ?  'color: #3498db' : ''  };
     }

@@ -1,3 +1,7 @@
+## [3.0.5] - 2025-04-29
+### Fixed
+- Fix bug with Ability Container. (Related Issue: [#138])
+
 ## [3.0.4] - 2025-04-29
 ### Fixed
 - Fix Configure Portrait Extra Datas not shown for players.
