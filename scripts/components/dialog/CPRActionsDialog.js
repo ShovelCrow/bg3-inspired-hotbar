@@ -23,6 +23,11 @@ export class CPRActionsDialog extends FormApplication {
 
     activateListeners(html) {
         super.activateListeners(html);
+        html[0].querySelectorAll("input.cpr-actions").forEach((input) => {
+            input.addEventListener("change", (event) => {
+                this.element[0].querySelector('.grid-2').dataset.selected = this.element[0].querySelectorAll('input.cpr-actions:checked').length;
+            });
+        });
     }
 
     async _onSubmit(event) {

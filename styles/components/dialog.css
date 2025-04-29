@@ -304,7 +304,7 @@ details[open] summary::marker {
 }
 
 #bg3-inspired-hotbar-setting-dialog .form-group > img {
-  height: 50px;
+  height: 35px;
   flex: unset !important;
   margin-right: 1rem;
 }
@@ -326,4 +326,9 @@ details[open] summary::marker {
 
 #bg3-inspired-hotbar-setting-dialog .grid-2 .form-group:hover {
   background-color: rgba(0,0,0,.1);
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2[data-selected="6"] .form-group:not(:has(input:checked)) {
+  pointer-events: none;
+  opacity: .5;
 }
