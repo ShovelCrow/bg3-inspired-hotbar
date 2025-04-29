@@ -438,12 +438,27 @@ export function registerEarly() {
         });
     });
     
+    const rollEvents = ["dnd5e.preRollAttackV2", "dnd5e.preRollSavingThrowV2", "dnd5e.preRollSkillV2", "dnd5e.preRollAbilityCheckV2", "dnd5e.preRollConcentrationV2", "dnd5e.preRollDeathSaveV2", "dnd5e.preRollToolV2"];
+    for(const event of rollEvents) Hooks.on(event, hookRollEvent);
+    
     if (customElements.get('colorpicker-input2') != undefined) {
         return;
     }
     customElements.define('colorpicker-input2', colorPickerInput2, {
         extends: 'input'
     });
+}
+
+const hookRollEvent = (rollConfig, dialogConfig, messageConfig) => {
+    console.log(rollConfig)
+    if(!game.modules.get("midi-qol")?.active || !game.settings.get(BG3CONFIG.MODULE_NAME, 'addAdvBtnsMidiQoL') || !ui.BG3HOTBAR.manager?.actor || ui.BG3HOTBAR.manager?.actor !== rollConfig.workflow?.actor) return;
+    const state = ui.BG3HOTBAR.manager.actor.getFlag(BG3CONFIG.MODULE_NAME, "advState"),
+        once = ui.BG3HOTBAR.manager.actor.getFlag(BG3CONFIG.MODULE_NAME, "advOnce");
+    if(state !== undefined) {
+        if(state === 'advBtn') rollConfig.advantage = true;
+        else if(state === 'disBtn') rollConfig.disadvantage = true;
+        if(once && !!ui.BG3HOTBAR.components.advantage) ui.BG3HOTBAR.components.advantage.setState(null);
+    }
 }
 
 export function updateSettingsDisplay() {
@@ -981,7 +996,7 @@ export function registerSettings() {
         config: false,
         type: Boolean,
         default: true,
-        onChange: () => {
+        onChange: value => {
             if (ui.BG3HOTBAR.element[0]) {
                 ui.BG3HOTBAR.element[0].dataset.itemUse = value;
             }
@@ -1146,11 +1161,14 @@ export function registerSettings() {
         name: 'BG3.Settings.synchroMidiQoL.ADV.Name',
         hint: 'BG3.Settings.synchroMidiQoL.ADV.Hint',
         scope: 'client',
-        config: true,
+        config: false,
         type: Boolean,
         default: false,
         onChange: value => {
-            if(ui.BG3HOTBAR.components?.container?.components?.advantage) {ui.BG3HOTBAR.components.container.components.advantage.setVisibility();}
+            if(ui.BG3HOTBAR.components?.advantage) {
+                if(value) ui.BG3HOTBAR.components.advantage._renderInner();
+                else ui.BG3HOTBAR.components.advantage.destroy();
+            }
         }
     });
 

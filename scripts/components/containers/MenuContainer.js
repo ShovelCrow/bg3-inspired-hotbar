@@ -21,6 +21,10 @@ export class MenuContainer extends BG3Component {
     async getData() {
         return {buttons: this.data.buttons};
     }
+
+    // get dataTooltip() {
+    //     return this.data.tooltip ?? null;
+    // }
     
     async _registerEvents() {
         if(this.data.buttons) {

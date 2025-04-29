@@ -29,7 +29,6 @@ export class ThemeSettingDialog extends FormApplication {
             const cFields = {};
             for(let j = 0; j < this.keys[i].fields.length; j++) {
                 const setting = game.settings.settings.get(`${BG3CONFIG.MODULE_NAME}.${this.keys[i].fields[j]}`) ?? null;
-                // console.log(setting)
                 if(setting) {
                     if(setting?.scope === 'client' || game.user.isGM) {
                         cFields[this.keys[i].fields[j]] = {
@@ -41,7 +40,6 @@ export class ThemeSettingDialog extends FormApplication {
                     }
                 } else {
                     const menu = game.settings.menus.get(`${BG3CONFIG.MODULE_NAME}.${this.keys[i].fields[j]}`);
-                    console.log(menu);
                     if(menu?.scope === 'client' || game.user.isGM) {
                         cFields[this.keys[i].fields[j]] = {
                             name: menu.name,
@@ -55,7 +53,6 @@ export class ThemeSettingDialog extends FormApplication {
             }
             fields[this.keys[i].label] = cFields;
         }
-        console.log(fields)
         return {fields};
     }
 
@@ -76,9 +73,10 @@ export class ThemeSettingDialog extends FormApplication {
         event.preventDefault();
         const form = this.element[0].querySelectorAll('div.form-fields:not([data-exclude="true"])');
         for (let i = 0; i < form.length; i++) {
-            const input = form[i].querySelector("input") ?? form[i].querySelector("select"),
-                value = input.type == 'checkbox' ? input.checked : input.value;
-            game.settings.set(BG3CONFIG.MODULE_NAME, input.name.split('.')[1], value);
+            const input = form[i].querySelector("input") ?? form[i].querySelector("select");
+            if(!input) continue;
+            const value = input.type == 'checkbox' ? input.checked : input.value;
+            game.settings.set(BG3CONFIG.MODULE_NAME, input.name, value);
         }
         this.close();
     }
@@ -165,7 +163,7 @@ export class MidiQoLSettingDialog extends ThemeSettingDialog {
         super();
         this.keys = [
             {label: 'none',
-            fields: ['synchroBRMidiQoL']}
+            fields: ['synchroBRMidiQoL', 'addAdvBtnsMidiQoL']}
         ]
     }
 

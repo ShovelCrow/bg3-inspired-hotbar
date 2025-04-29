@@ -5,10 +5,6 @@ import { BG3CONFIG } from "../../utils/config.js";
 export class AdvContainer extends BG3Component {
     constructor(data) {
         super(data);
-        this._enabled = false;
-        this._state = null;
-        this._once = true;
-        this._init();
     }
 
     get classes() {
@@ -27,71 +23,57 @@ export class AdvContainer extends BG3Component {
                 title: 'Left-click to set Advantage to roll only.<br>Right-click to toggle.',
                 label: 'ADV',
                 events: {
-                    'mouseup': this.setState,
+                    'mouseup': this.setState.bind(this),
                 }
             },
             {
                 type: 'div',
                 key: 'disBtn',
-                title: 'Left-click to set Disadvantage to roll only.<br>>Right-click to toggle.',
+                title: 'Left-click to set Disadvantage to roll only.<br>Right-click to toggle.',
                 label: 'DIS',
                 events: {
-                    'mouseup': this.setState,
+                    'mouseup': this.setState.bind(this),
                 }
             }
         ];
     }
 
-    // get enabled() {
-    //     return this._enabled;
-    // }
-
-    // set enabled(value) {
-    //     this._enabled = value;
-    //     this.element.style.setProperty('display', this.enabled ? 'flex': 'none');
-    // }
-
-    get state() {
-        return this._state;
-    }
-
-    set state(state) {
-        this._state = state;
-        this.element.dataset.state = this.state;
-        this.element.dataset.once = this._once;
-    }
-
-    _init() {
-        Hooks.on("dnd5e.preRollAttackV2", this.hookRollEvent.bind(this));
-        Hooks.on("dnd5e.preRollSavingThrowV2", this.hookRollEvent.bind(this));
-        Hooks.on("dnd5e.preRollSkillV2", this.hookRollEvent.bind(this));
-        Hooks.on("dnd5e.preRollAbilityCheckV2", this.hookRollEvent.bind(this));
-        Hooks.on("dnd5e.preRollConcentrationV2", this.hookRollEvent.bind(this));
-        Hooks.on("dnd5e.preRollDeathSaveV2", this.hookRollEvent.bind(this));
-        Hooks.on("dnd5e.preRollToolV2", this.hookRollEvent.bind(this));
-    }
-
-    hookRollEvent(rollConfig, dialogConfig, messageConfig) {
-        if(this.state !== null) {
-            if(this.state === 'advBtn') rollConfig.advantage = true;
-            else if(this.state === 'disBtn') rollConfig.disadvantage = true;
-            if(this._once) this.state = this._once = null;
+    async setState(event) {
+        const once = event?.button === 2 ? false : true,
+            key = event?.target?.closest('[data-key]')?.dataset.key;
+        if(event === null || (this.actor.getFlag(BG3CONFIG.MODULE_NAME, "advOnce") === once && this.actor.getFlag(BG3CONFIG.MODULE_NAME, "advState") === key)) {
+            await this.actor.unsetFlag(BG3CONFIG.MODULE_NAME, "advState");
+            await this.actor.unsetFlag(BG3CONFIG.MODULE_NAME, "advOnce");
+        } else {
+            await this.actor.setFlag(BG3CONFIG.MODULE_NAME, "advOnce", once);
+            await this.actor.setFlag(BG3CONFIG.MODULE_NAME, "advState", key);
         }
+        this.updateButtons();
     }
 
-    setState(event) {
-        const once = event.button === 2 ? false : true;
-        if(this._parent._once === once && this._parent.state === this.data.key) this._parent.state = null;
-        else {
-            this._parent._once = once;
-            this._parent.state = this.data.key;
-        }
+    updateButtons() {
+        const state = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "advState"),
+            once = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "advOnce");
+        if(state !== undefined) this.element.dataset.state = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "advState");
+        else this.element.removeAttribute('data-state');
+        if(once !== undefined) this.element.dataset.once = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "advOnce");
+        else this.element.removeAttribute('data-once');
     }
     
     async _renderInner() {
         await super._renderInner();
+        if(!game.settings.get(BG3CONFIG.MODULE_NAME, 'addAdvBtnsMidiQoL')) return;
         const buttons = this.btnData.map((btn) => new BaseButton(btn, this));
         for(const btn of buttons) this.element.appendChild(btn.element);
         await Promise.all(buttons.map((btn) => btn.render()));
+        this.updateButtons();
+        // this.registerHooks() ;
+    }
+
+    destroy() {
+        while (this.element.firstChild) {
+            this.element.removeChild(this.element.lastChild);
+        }
+        // this.unRegisterHooks();
     }
 }
