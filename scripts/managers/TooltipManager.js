@@ -96,7 +96,10 @@ export class BG3TooltipManager {
             return context;
         }
 
-        TooltipManager.prototype.dismissLockedTooltips = async function() {}
+        const oldDismiss = TooltipManager.prototype.dismissLockedTooltips;
+        TooltipManager.prototype.dismissLockedTooltips = function() {
+            if(!this.tooltip.classList.contains('bg3-tooltip')) oldDismiss.bind(this)();
+        }
         
         function handle_mousedown(e){
             e.preventDefault();
