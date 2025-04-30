@@ -234,8 +234,10 @@ export class AutoPopulateCreateToken {
 
     static async _getCombatActionsList(actor) {
         let ids = [];
+        console.log(game.modules.get("chris-premades")?.active, game.packs.get("chris-premades.CPRActions")?.index?.size)
         if(game.modules.get("chris-premades")?.active && game.packs.get("chris-premades.CPRActions")?.index?.size) ids = game.settings.get(BG3CONFIG.MODULE_NAME, 'choosenCPRActions').map(id => actor.items.getName(game.packs.get("chris-premades.CPRActions").index.get(id).name).uuid)
         else ids = await game.packs.get("bg3-inspired-hotbar.bg3-inspired-hud").folders.find(f => f.name === 'Common Actions').contents.map(m => m.uuid);
+        console.log(ids)
         return ids;
     }
 

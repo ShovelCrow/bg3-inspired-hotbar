@@ -894,8 +894,7 @@ export function registerSettings() {
                 ui.BG3HOTBAR.components.portrait._renderInner();
             }
         },
-    });
-    
+    });    
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showItemNames', {
         name: 'Show Item Names',
@@ -997,6 +996,7 @@ export function registerSettings() {
         hint: 'BG3.Settings.Menu.CPR.Hint',
         icon: "fas fa-cog",
         type: CPRActionsDialog,
+        scope: 'world',
         visible: () => {
             return game.modules.get("chris-premades")?.active;
         }
