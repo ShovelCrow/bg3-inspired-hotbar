@@ -290,6 +290,12 @@
                 "Name": "Synchro MidiQoL setting",
                 "Hint": "Synchonization with MidiQoL features. Must have MidiQoL module installed.",
                 "Label": "Configure Synchro MidiQoL"
+            },
+            "CPR": {
+                "Name": "Choose CPR Actions",
+                "Hint": "Select which CPR actions to auto-populate in common actions container.",
+                "Label": "Select CPR Actions",
+                "UpTo6": "Select which CPR actions to auto-populate in common actions container. Up to 6."
             }
         }
     }
