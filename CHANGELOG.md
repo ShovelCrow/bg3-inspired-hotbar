@@ -1,6 +1,6 @@
 ## [3.0.5] - 2025-04-30
 ### Fixed
-- Fix bug with Ability Container. (Related Issue: [#138])
+- Fix bug with Ability Container for D&D 3.3.1. (Related Issue: [#138])
 
 ### Features
 - Add Right-Click on Portrait Dice to roll initiative. (Related Issue: [#118])

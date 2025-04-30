@@ -139,7 +139,8 @@ export class BG3TooltipManager {
             "attack", "award", "check", "concentration", "damage", "heal", "healing", "item", "save", "skill", "tool"
         ],
         pattern = new RegExp(`\\[\\[/(?<type>${stringNames.join("|")})(?<config> .*?)?]](?!])(?:{(?<label>[^}]+)})?`, "gi");
-        this.savedEnrichers.damage = this.enrichers.find(e => e.pattern.toString() == pattern.toString()).enricher;
+        this.savedEnrichers.damage = this.enrichers.find(e => e.pattern.toString() == pattern.toString());
+        if(this.savedEnrichers.damage) this.savedEnrichers.damage.enricher;
     }
     
     _tooltipRangeDamage() {        
