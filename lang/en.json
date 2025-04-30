@@ -42,7 +42,7 @@
             "Disabled": "Disabled"
         },
         "Ability": {
-            "Tooltip": "Click to show ability checks and saving throws"
+            "Tooltip": "Left-Click to show ability checks and saving throws.<br>Right-click to roll Initiative."
         }
     },
     "BG3.Settings": {

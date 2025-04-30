@@ -138,4 +138,8 @@ export class AbilityContainer extends BG3Component {
             })()
         };
     };
+
+    async _registerEvents() {
+        this.element.querySelector('.fa-dice-d20').addEventListener('contextmenu', (event) => this.actor.rollInitiative({ rerollInitiative: true, createCombatants: true }));
+    }
 }
