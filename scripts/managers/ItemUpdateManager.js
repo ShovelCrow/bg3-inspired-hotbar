@@ -306,7 +306,7 @@ export class ItemUpdateManager {
             let hasChanges = false;
             for (const [slot, item] of Object.entries(container.data.items)) {
                 const itemData = await fromUuid(item.uuid);
-                if(itemData?.documentName == 'Macro') continue;
+                if(itemData?.documentName == 'Macro' || itemData?.documentName == 'Activity') continue;
                 
                 if (!itemData || !actor.items.has(itemData.id)) {
                     // Removing invalid item
@@ -322,7 +322,7 @@ export class ItemUpdateManager {
             let hasChanges = false;
             for (const [slot, item] of Object.entries(container.data.items)) {
                 const itemData = await fromUuid(item.uuid);
-                if(itemData?.documentName == 'Macro') continue;
+                if(itemData?.documentName == 'Macro' || itemData?.documentName == 'Activity') continue;
                 
                 if (!itemData || !actor.items.has(itemData.id)) {
                     // Removing invalid item
