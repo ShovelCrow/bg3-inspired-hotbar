@@ -56,7 +56,7 @@ export class ActiveButton extends BG3Component {
         
         this.element.addEventListener("contextmenu", async (e) => {
             e.preventDefault();
-            if (this.data.item.duration.duration !== null) {
+            if (!this.data.item.transfer) {
                 const dialog = new Dialog({
                 title: "Delete Effect",
                 content: `<p>Are you sure you want to delete the effect "${this.data.item.label}"?</p>`,
