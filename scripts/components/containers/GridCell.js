@@ -76,15 +76,36 @@ export class GridCell extends BG3Component {
     // SHOVEL
     async getConsumeData() {
         const itemData = await this.item;
+        if (!itemData) return null;
 
         // Get consume target and type
-        const firstActivity = itemData?.system?.activities?.contents[0] ?? itemData?.system;
+        const firstActivity = itemData?.system?.activities?.contents[0] ?? itemData;
         const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
         const consumeId = firstTarget?.target;
         const consumeType = firstTarget?.type;
         const consumeAmount = firstTarget?.value ?? firstTarget?.amount;
     
-        if (!consumeId || !consumeType || consumeId === itemData.id) return {};
+        const cachedForId = itemData?.flags?.dnd5e?.cachedFor;
+        if (!consumeId && cachedForId) {
+            const cachedFor = fromUuidSync(cachedForId, {
+                relative: itemData.actor,
+                strict: false
+            });
+            const cacheItem = cachedFor.item;
+            if (cacheItem?.system?.uses) {
+                const uses = cacheItem.system.uses;
+                const value = uses.value ?? 0;
+                const max = uses.max ?? 0;
+                if (max > 0) return {uses: {value: value, max: max}};
+                else return null;
+            } else return null;
+        }
+        if (!consumeId || !consumeType || consumeId === itemData.id) {
+            if (itemData?.type == "consumable" && itemData?.system?.quantity > 1) {
+                return { consume: { value: itemData.system.quantity ?? 0} };
+            }
+            else return null;
+        }
     
         // Return resources
         if (consumeType === "attribute") {
@@ -101,31 +122,31 @@ export class GridCell extends BG3Component {
             }};
         }
         } else {
-        const target = itemData.actor.items?.get(consumeId);
-    
-        // Return charges
-        if (target && (consumeType === "charges" || consumeType === "itemUses")) {
-            const text = `${target.system.uses.value ?? "0"}${target.system.uses.max ? `/${target.system.uses.max}` : ""}`;
-            return {consume: {
-                text: text,
-                title: `${text} (${target.name})`,
-                value: target.system.uses.value ?? 0,
-                max: target.system.uses.max ?? 0
-            }};
+            const target = itemData.actor.items?.get(consumeId);
+        
+            // Return charges
+            if (target && (consumeType === "charges" || consumeType === "itemUses")) {
+                const text = `${target.system.uses.value ?? "0"}${target.system.uses.max ? `/${target.system.uses.max}` : ""}`;
+                return {consume: {
+                    text: text,
+                    title: `${text} (${target.name})`,
+                    value: target.system.uses.value ?? 0,
+                    max: target.system.uses.max ?? 0
+                }};
+            }
+        
+            // Return quantity
+            if (target?.system?.quantity) {
+                const text = `${consumeAmount > 1 ? `${consumeAmount} ${game.i18n.localize("DND5E.of")} ` : ""}${target.system.quantity}`;
+                return {consume: {
+                    text: text,
+                    title: `${text} (${target.name})`,
+                    value: target.system.quantity ?? 0
+                }};
+            }
         }
     
-        // Return quantity
-        if (target?.system?.quantity) {
-            const text = `${consumeAmount > 1 ? `${consumeAmount} ${game.i18n.localize("DND5E.of")} ` : ""}${target.system.quantity}`;
-            return {consume: {
-                text: text,
-                title: `${text} (${target.name})`,
-                value: target.system.quantity ?? 0
-            }};
-        }
-        }
-    
-        return {};
+        return null;
     }
 
     getItemMenu() {

@@ -86,6 +86,7 @@
     box-sizing: border-box;
     user-select: none;
     opacity: 1;
+    text-shadow: 1px 1px 2px black;
 }
 
 #bg3-hotbar-container[data-cell-highlight="bottom"] .bg3-hotbar-container .hotbar-cell {
@@ -222,7 +223,15 @@
     pointer-events: none;
 }
 
-#bg3-hotbar-container .hotbar-item-uses.depleted {
+#bg3-hotbar-container .hotbar-item-uses + .hotbar-item-uses {
+    position: absolute;
+    top: 2px;
+    right: default;
+    left: 2px;
+} 
+
+#bg3-hotbar-container .hotbar-item-uses.depleted,
+#bg3-hotbar-container .hotbar-item-consume.depleted {
     color: #ff4444;
 } 
 
