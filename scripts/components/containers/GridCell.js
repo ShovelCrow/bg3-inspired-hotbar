@@ -277,15 +277,19 @@ export class GridCell extends BG3Component {
                 try {
                     if(item.execute) item.execute();
                     else if(item.use) {
-                        const options = {
-                            configureDialog: false,
-                            legacy: false,
-                            event: e
-                        };
-                        if (e.ctrlKey) options.disadvantage = true;
-                        if (e.altKey) options.advantage = true;
-                        const used = await item.use(options, { event: e });
-                        if (used) this._renderInner();
+                        if(item.type === "container") {
+                            item.sheet.render(true);
+                        } else {
+                            const options = {
+                                configureDialog: false,
+                                legacy: false,
+                                event: e
+                            };
+                            if (e.ctrlKey) options.disadvantage = true;
+                            if (e.altKey) options.advantage = true;
+                            const used = await item.use(options, { event: e });
+                            if (used) this._renderInner();
+                        }
                     }
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error using item:", error);
