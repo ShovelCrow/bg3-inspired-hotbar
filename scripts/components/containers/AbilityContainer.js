@@ -12,6 +12,7 @@ export class AbilityContainer extends BG3Component {
 
     async _registerEvents() {    
         this.element.addEventListener('click', (event) => MenuContainer.toggle(this.getMenuData(), this, event));
+        this.element.querySelector('.fa-dice-d20').addEventListener('contextmenu', () => this.actor.rollInitiative({ rerollInitiative: true, createCombatants: true }));
     }
 
     get abilities() {
@@ -24,14 +25,14 @@ export class AbilityContainer extends BG3Component {
 
     getAbilityMod(key) {
         const abilityScore = this.actor.system.abilities?.[key] || { value: 10, proficient: false },
-            mod = abilityScore.mod,
+            mod = abilityScore.mod ?? 0,
             modString = mod >= 0 ? `+${mod}` : mod.toString();
         return {value: modString, style: abilityScore.proficient === 1 ?  'color: #3498db' : ''  };
     }
 
     getSaveMod(key) {
-        const abilityScore = this.actor.system.abilities?.[key] || { value: 10, proficient: false },
-            mod = abilityScore.save.value,
+        const abilityScore = this.actor.system.abilities?.[key] || { value: 10, proficient: false, save: {value: 0} },
+            mod = abilityScore.save?.value ?? abilityScore.save ?? 0,
             modString = mod >= 0 ? `+${mod}` : mod.toString();
         return {value: modString, style: abilityScore.proficient === 1 ?  'color: #3498db' : ''  };
     }
@@ -101,7 +102,7 @@ export class AbilityContainer extends BG3Component {
             }
         };
 
-        const tooltip = "Click to show ability checks and saving throws";
+        const tooltip = "BG3.Hotbar.Ability.Tooltip";
 
         return {
             position: 'top',
@@ -116,7 +117,6 @@ export class AbilityContainer extends BG3Component {
                     btns[abl] = {
                         ...{
                             label: this.abilities[abl].label,
-                            tooltip: tooltip,
                             class: 'ability-container'
                         },
                         ...abilityMod,

@@ -281,6 +281,18 @@
   transition: all 0.2s ease;
 }
 
+#bg3-hotbar-container .ability-button i {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#bg3-hotbar-container .ability-button i:hover {
+  font-size: large;
+}
+
 /** Portrait Hidden **/
 
 #bg3-hotbar-container .bg3-portrait-container.portrait-hidden {

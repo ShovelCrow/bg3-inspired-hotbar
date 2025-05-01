@@ -12,6 +12,7 @@ import { HotbarManager } from './managers/HotbarManager.js';
 import { ItemUpdateManager } from './managers/ItemUpdateManager.js';
 import { BG3CONFIG, preloadHandlebarsTemplates } from './utils/config.js';
 import { BG3TooltipManager } from './managers/TooltipManager.js';
+import { AdvContainer } from './components/containers/AdvContainer.js';
 
 export class BG3Hotbar extends Application {
     constructor() {
@@ -46,9 +47,6 @@ export class BG3Hotbar extends Application {
         Hooks.on("pickerDone", this._onPickerDone.bind(this));
 
         this._init();
-
-        // Retrieve Common Combat Actions based
-        this.loadCombatActions();
 
         // Preload Handlebars templates
         preloadHandlebarsTemplates();
@@ -89,25 +87,10 @@ export class BG3Hotbar extends Application {
 
     async _onCreateToken(token) {
         if (!token?.actor) return;
-
-        await AutoPopulateCreateToken.populateUnlinkedToken(token);
+        setTimeout(async () => {
+            await AutoPopulateCreateToken.populateUnlinkedToken(token);
+        }, 100)
     }
-
-    /* _onControlToken2(token, controlled) {
-        if (!this.manager) return;
-        
-        if (((!controlled && !canvas.tokens.controlled.length)) && !ControlsManager.isSettingLocked('deselect')) {
-            setTimeout(() => {
-                if (!canvas.tokens.controlled.length) this.generate(null);
-            }, 100);
-        }
-        if (!controlled) return;
-
-        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) {
-            this.generate(token);
-            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
-        }
-    } */
 
     _onControlToken(token, controlled) {
         if (!this.manager) return;
@@ -314,23 +297,6 @@ export class BG3Hotbar extends Application {
         // element.style.setProperty('--bg3-scale-ui', scale);
         return scale;
     }
-    
-    async loadCombatActions() {
-        if (!game.modules.get("chris-premades")?.active) return;
-        let pack = game.packs.get("chris-premades.CPRActions"),
-            promises = [];
-        Object.entries(BG3CONFIG.COMBATACTIONDATA).forEach(([key, value]) => {
-            let macroID = pack.index.find(t =>  t.type == 'feat' && t.name === value.name)._id;
-            if(macroID) {
-                promises.push(new Promise(async (resolve, reject) => {
-                    let item = await pack.getDocument(macroID);
-                    if(item) this.combatActionsArray.push(item)
-                    resolve();
-                }))
-            }
-        })
-        await Promise.all(promises).then((values) => {})
-    }
 
     toggle(state) {
         game.settings.set(BG3CONFIG.MODULE_NAME, 'uiEnabled', state);
@@ -390,16 +356,15 @@ export class BG3Hotbar extends Application {
         this.components = {
             portrait: new PortraitContainer(),
             weapon: new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat}),
+            advantage: new AdvContainer(),
             container: new HotbarContainer(this.manager.containers.hotbar),
             restTurn: new RestTurnContainer()
         }
 
-        html.appendChild(this.components.portrait.element);
-        html.appendChild(this.components.weapon.element);
-        html.appendChild(this.components.container.element);
+        Object.values(this.components).forEach((component) => {
+            if (component && !Array.isArray(component)) html.appendChild(component.element);
+        });
         this.components.container._parent = this;
-        html.appendChild(this.components.restTurn.element);
-        
         this.combat.push(this.components.restTurn);
 
         const promises = [];

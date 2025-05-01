@@ -267,18 +267,68 @@ details[open] summary::marker {
   /* content: "- "; */
 }
 
-#bg3-inspired-hotbar-theme-settings ::placeholder {
+#bg3-inspired-hotbar-theme-settings ::placeholder, #bg3-inspired-hotbar-setting-dialog ::placeholder {
   opacity: 0.5 !important;
 }
 
-#bg3-inspired-hotbar-theme-settings ::-ms-input-placeholder {
+#bg3-inspired-hotbar-theme-settings ::-ms-input-placeholder, #bg3-inspired-hotbar-setting-dialog ::-ms-input-placeholder {
   opacity: 0.5 !important;
 }
 
-#bg3-inspired-hotbar-theme-settings .window-content {
+#bg3-inspired-hotbar-theme-settings .window-content, #bg3-inspired-hotbar-setting-dialog .window-content {
   overflow: visible;
 }
 
-#bg3-inspired-hotbar-theme-settings select {
+#bg3-inspired-hotbar-theme-settings select, #bg3-inspired-hotbar-setting-dialog select {
   text-transform: capitalize;
+}
+
+#bg3-inspired-hotbar-setting-dialog .package-configuration {
+  padding: 0 .5rem;
+}
+
+#bg3-inspired-hotbar-setting-dialog .dialog-container {
+  width: 650px;
+}
+
+#bg3-inspired-hotbar-setting-dialog .form-group:not(.group-header) {
+  padding: 0 .25rem;
+}
+
+#bg3-inspired-hotbar-setting-dialog .form-group > *:not(.notes):not(.hint), #bg3-inspired-hotbar-setting-dialog .submenu button {
+  flex: 2;
+}
+
+#bg3-inspired-hotbar-setting-dialog .form-group > label {
+  flex: 3;
+}
+
+#bg3-inspired-hotbar-setting-dialog .form-group > img {
+  height: 35px;
+  flex: unset !important;
+  margin-right: 1rem;
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 1rem;
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 .form-group {
+  cursor: pointer;
+  padding: 0;
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 .form-group > * {
+  cursor: pointer;
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2 .form-group:hover {
+  background-color: rgba(0,0,0,.1);
+}
+
+#bg3-inspired-hotbar-setting-dialog .grid-2[data-selected="6"] .form-group:not(:has(input:checked)) {
+  pointer-events: none;
+  opacity: .5;
 }

@@ -1,3 +1,66 @@
+## [3.0.5] - 2025-04-30
+### Fixed
+- Fix bug with Ability Container for D&D 3.3.1. (Related Issue: [#138])
+
+### Features
+- Add Right-Click on Portrait Dice to roll initiative. (Related Issue: [#118])
+- Add setting submenu to choose which CPR Actions used when auto-populating Basic Actions Container.  (Related Issue: [#132])
+
+## [3.0.4] - 2025-04-29
+### Fixed
+- Fix Configure Portrait Extra Datas not shown for players.
+
+## [3.0.3] - 2025-04-27
+### Fixed
+- Fix Auto UI Scale wrong localization text. (Related Issue: [#134])
+
+### Features
+- Add on setting to add Advantage/Disadvantage buttons to add a source when using MidiQoL fast-forward. (Related Issue: [#124])
+- Move settings to submenu to make it easier to read.
+- Common Actions from CPR will be in Actions category. (Related Issue: [#133])
+
+## [3.0.2] - 2025-04-27
+### Fixed
+- Optimize movable locked tooltip.
+
+## [3.0.1] - 2025-04-24
+### Fixed
+- Fix CSS for control button locked state.
+- Fix Opacity Lock Menu not working.
+- Fix Basic Actions Container not hiding sometimes. (Related Issue: [#122])
+- Fix players lacking "Use File Browser" permission not being able to customize their theme. (Related Issue: [#121])
+- Fix a bug with Forge-vtt.com. (Related Issue: [#128])
+- Fix a bug with Ability Check & Save roll. (Related Issue: [#127])
+- Passives container will now be shown on hover even if empty. (Related Issue: [#126])
+- Fix a css bug with cells border. (Related Issue: [#125])
+
+### Features
+- Locked Tooltips will now be movable and only dismissed with a right-click on it.
+- Add an option to display the UI below the "Game Paused" label. (Related Issue: [#129])
+
+## [3.0.0] - 2025-04-21
+### Disclaimer
+- BG3 Inspired Hotbar got a huge update ! We did a deep refactor of the module to make it more optimized, less laggy and easier for us to maintain. It includes a lot of bug fixes too. Let us know if you find new ones.
+
+### New Features
+- New setting: Customize Theme. Allows to change colors, grid size, etc. The theme can be set by the GM to be the same for every players or customizable for each of them. You can also export your theme and share it! (Related Issue: [#4])
+- New setting: Customize Portrait. Allows to hide/show portrait elements, add border, display health overlay as mask for portrait with transparency, how death saving throws are displayed. (Related Issues: [#12], [#114])
+- New setting: Customize Tooltip. Add a setting to display more or less informations in item's tooltip. (Related Issue: [#119])
+- Added support for Custom Abilities & Skills and non-standard modifier. (Related Issues: [#51], [#67], [#117])
+- Added support for Sebastian Crowe's Guide Apothecary spell slots. (Related Issue: [#56])
+- MidiQoL Synchro: Auto set Bonus Action & Reaction as used when the token get the related Active Effect.
+
+### Fixed
+- Remove unnecessary inline css. (Related Issue: [#34])
+- Use native 5e Tooltip. (Related Issues: [#41], [#59])
+- Add "native" Activity/Macro Tooltip. Let us know if you want more informations inside. (Related Issue: [#54])
+- Fix HUD not disapearing after combat. (Related Issue: [#101])
+- Optimize weapons set auto-equip when a token is selected. (Related Issue: [#110])
+- Fix filter right-click grey out feature. (Related Issue: [#115])
+- Fix dragbar weird behaviors.
+
+### And some other stuffs...
+
 ## [2.0.7] - 2025-04-09
 ### Fixed
 - Fixed issue where shields weren't properly unequipped from loadout slots when switching weapon sets (Related Issue: [#107], Merged via PR [#108]).
