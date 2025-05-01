@@ -42,7 +42,7 @@
             "Disabled": "Wyłączony"
         },
         "Ability": {
-            "Tooltip": "Kliknij, aby wyświetlić testy atrybutów i rzuty obronne"
+            "Tooltip": "Kliknij lewym przyciskiem myszy, aby wyświetlić testy umiejętności i rzuty obronne.<br>Kliknij prawym przyciskiem myszy, aby rzucić inicjatywę."
         }
     },
     "BG3.Settings": {
@@ -290,6 +290,12 @@
                 "Name": "Synchronizacja ustawień MidiQoL",
                 "Hint": "Synchronizacja z funkcjami MidiQoL. Wymagany moduł MidiQoL.",
                 "Label": "Konfiguracja synchronizacji MidiQoL"
+            },
+            "CPR": {
+                "Name": "Wybierz czynności RKO",
+                "Hint": "Wybierz czynności RKO, które mają być automatycznie wypełniane w kontenerze czynności typowych.",
+                "Label": "Wybierz czynności RKO",
+                "UpTo6": "Wybierz czynności RKO, które mają być automatycznie wypełniane w kontenerze czynności typowych. Maksymalnie 6."
             }
         }
     }
