@@ -32,6 +32,7 @@ export class BG3Hotbar extends Application {
         this.colorPicker = null;
 
         /** Hooks Event **/
+        // Hooks.once("canvasReady", this._onCanvasReady.bind(this));
         Hooks.on("createToken", this._onCreateToken.bind(this));
         Hooks.on("controlToken", this._onControlToken.bind(this));
         Hooks.on("deleteToken", this._onDeleteToken.bind(this));
@@ -83,6 +84,14 @@ export class BG3Hotbar extends Application {
         document.body.dataset.playerList = game.settings.get(BG3CONFIG.MODULE_NAME, 'playerListVisibility');
 
         this.updateUIScale();
+
+        this._onCanvasReady.bind(this)();
+    }
+
+    _onCanvasReady() {
+        const token = canvas.tokens.controlled?.[0];
+        console.log(token, canvas.tokens.controlled)
+        if(token) this._onControlToken(token, canvas.tokens.controlled);
     }
 
     async _onCreateToken(token) {
