@@ -1,3 +1,7 @@
+## [3.0.6] - 2025-05-02
+### Fixed
+- Fix CSS details conflicts. (Related Issue: [#141])
+
 ## [3.0.5] - 2025-04-30
 ### Fixed
 - Fix bug with Ability Container for D&D 3.3.1. (Related Issue: [#138])
