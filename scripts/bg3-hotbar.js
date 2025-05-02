@@ -90,7 +90,6 @@ export class BG3Hotbar extends Application {
 
     _onCanvasReady() {
         const token = canvas.tokens.controlled?.[0];
-        console.log(token, canvas.tokens.controlled)
         if(token) this._onControlToken(token, canvas.tokens.controlled);
     }
 
