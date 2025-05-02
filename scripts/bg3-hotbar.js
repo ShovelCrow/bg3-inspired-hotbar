@@ -151,9 +151,9 @@ export class BG3Hotbar extends Application {
     async _onUpdateActor(actor, changes, options, userId) {
         if(!this.manager) return;
         
-        if(changes?.flags?.[BG3CONFIG.MODULE_NAME] && game.user.id !== userId) this.manager.socketUpdateData(actor, changes);
+        if(changes?.flags?.[BG3CONFIG.MODULE_NAME] && game.user.id !== userId) return this.manager.socketUpdateData(actor, changes);
         
-        if (game.user.id !== userId) return;
+        // if (game.user.id !== userId) return;
         
         // Check if this update affects our current token
         if (actor?.id !== this.manager.actor?.id) return;
