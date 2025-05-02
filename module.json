@@ -65,6 +65,13 @@
         "type": "module",
         "compatibility": {}
       }
+    ],
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {}
+      }
     ]
   },
   "persistentStorage": true,
@@ -82,7 +89,8 @@
       "ownership": {
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OWNER"
-      }
+      },
+      "system": "dnd5e"
     }
   ]
 }
