@@ -2,6 +2,7 @@
 ### Fixed
 - Fix CSS details conflicts. (Related Issue: [#141])
 - Update socket synchro logic. (Related Issue: [#141])
+- Fix UI not showing on load if a token was selected.
 
 ## [3.0.5] - 2025-04-30
 ### Fixed
