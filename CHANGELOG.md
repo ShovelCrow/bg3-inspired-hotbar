@@ -9,9 +9,6 @@
 ### Features
 - Add tooltip on non-active weapon sets. (Related Issue: [#145])
 
-### Features
-- Add a tooltip on non-active weapon sets. (Related Issue: [#145])
-
 ## [3.0.5] - 2025-04-30
 ### Fixed
 - Fix bug with Ability Container for D&D 3.3.1. (Related Issue: [#138])
