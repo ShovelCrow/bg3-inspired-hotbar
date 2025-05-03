@@ -83,8 +83,6 @@ export class BG3Hotbar extends Application {
         this._applyMacrobarCollapseSetting();
         document.body.dataset.playerList = game.settings.get(BG3CONFIG.MODULE_NAME, 'playerListVisibility');
 
-        this.updateUIScale();
-
         this._onCanvasReady.bind(this)();
     }
 
@@ -272,14 +270,9 @@ export class BG3Hotbar extends Application {
     }
     
     updateUIScale() {
-        // const element = document.body;
         let scale = 1;
-        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'autoScale')) {
-            scale = window.innerHeight / 1500;
-        } else {
-            scale = game.settings.get(BG3CONFIG.MODULE_NAME, 'uiScale') / 100;
-        }
-        // element.style.setProperty('--bg3-scale-ui', scale);
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'autoScale')) scale = window.innerHeight / 1500;
+        else scale = game.settings.get(BG3CONFIG.MODULE_NAME, 'uiScale') / 100;
         return scale;
     }
 
