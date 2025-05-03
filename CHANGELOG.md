@@ -3,7 +3,7 @@
 - Fix CSS details conflicts. (Related Issue: [#141])
 - Update socket synchro logic.
 - Fix UI not showing on load if a token was selected.
-- Fix CPR actions auto-populating. You may have to repopulate it. (Related Issue: [#147])
+- Fix CPR actions auto-populating for the common actions container. You may have to repopulate it. (Related Issue: [#147])
 - Add compatibility with Monks Player Settings. (Related Issue: [#146])
 
 ### Features
