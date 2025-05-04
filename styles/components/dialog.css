@@ -230,13 +230,14 @@
 }
 
 section[data-tab="bg3-inspired-hotbar"] details > div {
-  padding: 0 0.5rem;
+  padding: 3px 0.5rem;
   border: 1px solid var(--color-text-dark-primary);
   border-top-width: 0;
+  margin: 0 1px;
 }
 
 section[data-tab="bg3-inspired-hotbar"] details div.form-group.group-header {
-  margin: 0 -0.5rem;
+  margin: 0 -0.5rem 0.5rem;;
 }
 
 #bg3-inspired-hotbar-theme-settings details summary, section[data-tab="bg3-inspired-hotbar"] details summary {
@@ -248,6 +249,7 @@ section[data-tab="bg3-inspired-hotbar"] details div.form-group.group-header {
 
 .package-configuration section[data-tab="bg3-inspired-hotbar"] .form-group {
   margin-bottom: 0.5rem;
+  margin-top: 0;
 }
 
 section[data-tab="bg3-inspired-hotbar"] p.notes:empty {
@@ -255,11 +257,24 @@ section[data-tab="bg3-inspired-hotbar"] p.notes:empty {
 }
 
 section[data-tab="bg3-inspired-hotbar"] details summary {
-  border: 1px solid var(--color-text-dark-primary);
+  border-radius: 3px;
+  font-size: var(--font-size-14);
+  font-family: var(--font-primary);
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px groove var(--color-border-light-highlight);
 }
 
+/* section[data-tab="bg3-inspired-hotbar"] :nth-child(odd) summary {
+  background-color: rgba(0, 0, 0, 0.4);
+} */
+
 #bg3-inspired-hotbar-theme-settings details summary:hover, section[data-tab="bg3-inspired-hotbar"] details summary:hover, #bg3-inspired-hotbar-theme-settings details[open] summary, section[data-tab="bg3-inspired-hotbar"] details[open] summary {
-  background-color: rgba(0, 0, 0, .1);
+  background-color: rgba(0, 0, 0, .2);
+}
+
+#bg3-inspired-hotbar-theme-settings details[open] summary, section[data-tab="bg3-inspired-hotbar"] details[open] summary {
+  border-bottom-color: var(--color-text-dark-primary);
 }
 
 #bg3-inspired-hotbar-theme-settings details summary::after, section[data-tab="bg3-inspired-hotbar"] details summary::after {
