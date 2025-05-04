@@ -254,7 +254,12 @@
             "Global": {
                 "Name": "General settings",
                 "Hint": "Native Foundry elements or general BG3 UI settings.",
-                "Label": "Configure General"
+                "Label": "Configure General",
+                "Sub": {
+                    "Foundry": "Foundry UI",
+                    "Scale": "Scale & Position",
+                    "Opacity": "Opacity & Hide"
+                }
             },
             "Theme": {
                 "Name": "Theme settings",
@@ -264,12 +269,22 @@
             "Portrait": {
                 "Name": "Portrait settings",
                 "Hint": "Advanced settings for character portrait.",
-                "Label": "Configure Portrait"
+                "Label": "Configure Portrait",
+                "Sub": {
+                    "Show": "Show/Hide settings",
+                    "Portrait": "Portrait settings",
+                    "Other": "Other settings"
+                }
             },
             "Hotbar": {
                 "Name": "Hotbars settings",
                 "Hint": "Advanced settings for Hotbars.",
-                "Label": "Configure Hotbars"
+                "Label": "Configure Hotbars",
+                "Sub": {
+                    "General": "General",
+                    "Common": "Common Actions",
+                    "Other": "Other"
+                }
             },
             "Combat": {
                 "Name": "Common Actions settings",

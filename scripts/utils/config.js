@@ -381,6 +381,15 @@ const hookRollEvent = (rollConfig, dialogConfig, messageConfig) => {
     }
 }
 
+const moveElementsToDetails = (details, elements) => {
+    // details.attr('name', 'bg3-setting-details')
+    const container = details.children('div').eq(0)
+    for(const el of elements) {
+        const childContainer = $(`[name="bg3-inspired-hotbar.${el}"]`) ?? $(`[data-key="bg3-inspired-hotbar.${el}"]`);
+        container.append(childContainer.parents('div.form-group:first'));
+    }
+}
+
 export function updateSettingsDisplay() {
     // Add Categories to module settings
     /* Hooks.on("renderSettingsConfig", (app, html, data) => {
@@ -389,18 +398,50 @@ export function updateSettingsDisplay() {
         $('button[data-key="bg3-inspired-hotbar.chooseCPRActions"]').parents('div.form-group:first').remove();
     }); */
     Hooks.on("renderSettingsConfig", (app, html, data) => {
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.enableLightTooltip"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.HotbarContainer")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.MidiQoL")).insertBefore($('[name="bg3-inspired-hotbar.synchroBRMidiQoL"]').parents('div.form-group:first'));
+        const generalDetails = $('<details>');
+        generalDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Global.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
+        moveElementsToDetails(generalDetails, ['collapseFoundryMacrobar', 'playerListVisibility', 'underPause', 'autoScale', 'uiScale', 'uiPosition', 'posPadding', 'posPaddingBottom', 'normalOpacity', 'fadedOpacity', 'fadeOutDelay', 'autoHideCombat']);
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Foundry")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Scale")).insertBefore($('[name="bg3-inspired-hotbar.autoScale"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Opacity")).insertBefore($('[name="bg3-inspired-hotbar.normalOpacity"]').parents('div.form-group:first'));
 
-        $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
+        const themeDetails = $('<details>');
+        themeDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Theme.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.scopeTheme"]').parents('div.form-group:first'));
+        moveElementsToDetails(themeDetails, ['scopeTheme']);
+        
+        const portraitDetails = $('<details>');
+        portraitDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.hidePortraitImage"]').parents('div.form-group:first'));
+        moveElementsToDetails(portraitDetails, ['hidePortraitImage', 'showHealthOverlay', 'showHPText', 'showDeathSavingThrow', 'showExtraInfo', 'defaultPortraitPreferences', 'shapePortraitPreferences', 'borderPortraitPreferences', 'backgroundPortraitPreferences', 'overlayModePortrait', 'showSheetSimpleClick']);
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Show")).insertBefore($('[name="bg3-inspired-hotbar.hidePortraitImage"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Portrait")).insertBefore($('[name="bg3-inspired-hotbar.defaultPortraitPreferences"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Other")).insertBefore($('[name="bg3-inspired-hotbar.showSheetSimpleClick"]').parents('div.form-group:first'));
+        
+        const hotbarDetails = $('<details>');
+        hotbarDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
+        moveElementsToDetails(hotbarDetails, ['showItemNames', 'showItemUses', 'highlightStyle', 'showCombatContainer', 'autoPopulateCombatContainer', 'lockCombatContainer', 'fadeControlsMenu', 'showRestTurnButton']);
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.General")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.Common")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.Other")).insertBefore($('[name="bg3-inspired-hotbar.fadeControlsMenu"]').parents('div.form-group:first'));
+
+        const populateDetails = $('<details>');
+        populateDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Populate.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
+        moveElementsToDetails(populateDetails, ['enforceSpellPreparationPC', 'enforceSpellPreparationNPC', 'autoPopulateLinkedTokens', 'autoPopulateUnlinkedTokens']);
+
+        const tooltipDetails = $('<details>');
+        tooltipDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Tooltip.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.enableLightTooltip"]').parents('div.form-group:first'));
+        moveElementsToDetails(tooltipDetails, ['enableLightTooltip', 'tooltipDelay', 'showMaterialDescription', 'showDamageRanges']);
+
+        const midiDetails = $('<details>');
+        midiDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Midi.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.synchroBRMidiQoL"]').parents('div.form-group:first'));
+        moveElementsToDetails(midiDetails, ['synchroBRMidiQoL', 'addAdvBtnsMidiQoL']);
+
+        $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.showExtraInfo"]').parents('div.form-group:first'));
         $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
         $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
+        $('button[data-key="bg3-inspired-hotbar.chooseCPRActions"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoPopulateCombatContainer"]').parents('div.form-group:first'));
+        $('button[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first').insertBefore($('[name="bg3-inspired-hotbar.scopeTheme"]').parents('div.form-group:first'));
         
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first'));
+        // $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first'));
     });
 }
 
@@ -413,42 +454,12 @@ export function registerSettings() {
         type: GlobalSettingDialog,
     }); */
 
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'scopeTheme', {
-        name: 'BG3.Settings.scopeTheme.Name',
-        hint: 'BG3.Settings.scopeTheme.Hint',
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        requiresReload: true,
-        default: true
-    });
-
-    const scopeTheme = game.settings.get(BG3CONFIG.MODULE_NAME, "scopeTheme");
-
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuTheme", {
-        name: 'BG3.Settings.Menu.Theme.Name',
-        label: 'BG3.Settings.Menu.Theme.Label',
-        hint: 'BG3.Settings.Menu.Theme.Hint',
-        icon: "fas fa-paintbrush-fine fa-rotate-90",
-        type: ThemeSettingDialog,
-        restricted: !scopeTheme,
-    });
-
     /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuPortrait", {
         name: 'BG3.Settings.Menu.Portrait.Name',
         label: 'BG3.Settings.Menu.Portrait.Label',
         hint: 'BG3.Settings.Menu.Portrait.Hint',
         icon: "fas fa-image-portrait",
         type: PortraitSettingDialog,
-    });
-
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuExtraInfo", {
-        name: 'Portrait extra datas settings',
-        label: 'Configure Portait Extra Datas',
-        hint: 'Extra datas to show on character portrait.',
-        icon: "fas fa-cogs",
-        type: ExtraInfosDialog,
-        scope: 'client'
     });
     
     game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuHotbar", {
@@ -484,7 +495,6 @@ export function registerSettings() {
     }); */
 
 
-    // Theme settings
 
     // Core UI Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
@@ -525,37 +535,6 @@ export function registerSettings() {
     });
     
     // Visual Settings - Appearance
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'themeOption', {
-        name: 'Theme options',
-        hint: 'Choose between available themes',
-        scope: scopeTheme ? 'client' : 'world',
-        config: false,
-        type: String,
-        /* choices: {
-            'default': 'Default',
-            'gold': 'Gold',
-            'old': '(Old)',
-            'custom': 'Custom (Coming soon !)'
-        }, */
-        default: 'default',
-        // onChange: value => {
-            // if(value == 'custom') game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
-            // this._applyTheme();
-        // }
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'themeCustom', {
-        name: 'Theme custom',
-        hint: '',
-        scope: scopeTheme ? 'client' : 'world',
-        config: false,
-        type: Object,
-        default: {},
-        onChange: value => {
-            // if(value == 'custom') game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
-            // this._applyTheme();
-        }
-    });
     
     game.settings.register(BG3CONFIG.MODULE_NAME, 'underPause', {
         name: 'BG3.Settings.GamePause.Name',
@@ -717,7 +696,148 @@ export function registerSettings() {
       }
     });
 
+    // Theme settings
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'scopeTheme', {
+        name: 'BG3.Settings.scopeTheme.Name',
+        hint: 'BG3.Settings.scopeTheme.Hint',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        requiresReload: true,
+        default: true
+    });
+
+    const scopeTheme = game.settings.get(BG3CONFIG.MODULE_NAME, "scopeTheme");
+
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuTheme", {
+        name: 'BG3.Settings.Menu.Theme.Name',
+        label: 'BG3.Settings.Menu.Theme.Label',
+        hint: 'BG3.Settings.Menu.Theme.Hint',
+        icon: "fas fa-paintbrush-fine fa-rotate-90",
+        type: ThemeSettingDialog,
+        restricted: !scopeTheme,
+    });
+    
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'themeOption', {
+        name: 'Theme options',
+        hint: 'Choose between available themes',
+        scope: scopeTheme ? 'client' : 'world',
+        config: false,
+        type: String,
+        default: 'default'
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'themeCustom', {
+        name: 'Theme custom',
+        hint: '',
+        scope: scopeTheme ? 'client' : 'world',
+        config: false,
+        type: Object,
+        default: {},
+        onChange: value => {
+            // if(value == 'custom') game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
+            // this._applyTheme();
+        }
+    });
+
     // Portrait Settings
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'hidePortraitImage', {
+        name: 'Hide Portrait Image',
+        hint: 'Also hide health overlay and text.',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: value => {
+          if(ui.BG3HOTBAR.components.portrait?.element) {
+            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', !value);
+          }
+        }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showHealthOverlay', {
+      name: 'Show health overlay on character portrait.',
+      // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: () => {
+        if(ui.BG3HOTBAR.components.portrait) {
+            ui.BG3HOTBAR.components.portrait.togglePortraitOverlay.bind(ui.BG3HOTBAR.components.portrait)();
+        }
+      }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showHPText', {
+      name: 'Show HP text on character portrait.',
+      // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: () => {
+        if(ui.BG3HOTBAR.components.portrait) {
+            ui.BG3HOTBAR.components.portrait.toggleHPText.bind(ui.BG3HOTBAR.components.portrait)();
+        }
+      }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow', {
+        name: 'BG3.Settings.ShowDeathSavingThrow.Name',
+        hint: 'BG3.Settings.ShowDeathSavingThrow.Hint',
+        scope: 'world',
+        config: true,
+        type: String,
+        choices: {
+            'show': 'BG3.Settings.ShowDeathSavingThrow.Choices.show',
+            'hide': 'BG3.Settings.ShowDeathSavingThrow.Choices.hide',
+            'only': 'BG3.Settings.ShowDeathSavingThrow.Choices.only'
+        },
+        default: 'show',
+        onChange: async value => {
+            if(ui.BG3HOTBAR.components.portrait?.components?.deathSavesContainer) {
+                await ui.BG3HOTBAR.components.portrait.components.deathSavesContainer.render();
+                ui.BG3HOTBAR.components.portrait.components.deathSavesContainer.element.classList.toggle('death-only-skull', value === 'only');
+            }
+        }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showExtraInfo', {
+      name: 'Show extra datas on character portrait.',
+      // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: false,
+      onChange: () => {
+        if(ui.BG3HOTBAR.components.portrait) {
+            ui.BG3HOTBAR.components.portrait.toggleExtraInfos.bind(ui.BG3HOTBAR.components.portrait)();
+        }
+      }
+    });
+    
+    game.settings.register(BG3CONFIG.MODULE_NAME, "dataExtraInfo", {
+        scope: "client",
+        config: false,
+        type: Array,
+        default: BG3CONFIG.EXTRAINFOS ?? [],
+        onChange: () => {
+            if (ui.BG3HOTBAR.components.portrait) {
+                ui.BG3HOTBAR.components.portrait._renderInner();
+            }
+        },
+    });
+
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuExtraInfo", {
+        name: 'Portrait extra datas settings',
+        label: 'Configure Portait Extra Datas',
+        hint: 'Extra datas to show on character portrait.',
+        icon: "fas fa-cogs",
+        type: ExtraInfosDialog,
+        scope: 'client'
+    });
+    
     game.settings.register(BG3CONFIG.MODULE_NAME, 'defaultPortraitPreferences', {
         name: 'BG3.Settings.DefaultPortraitPreferences.Name',
         hint: 'BG3.Settings.DefaultPortraitPreferences.Hint',
@@ -792,20 +912,6 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'hidePortraitImage', {
-        name: 'Hide Portrait Image',
-        hint: 'Also hide health overlay and text.',
-        scope: 'client',
-        config: true,
-        type: Boolean,
-        default: true,
-        onChange: value => {
-          if(ui.BG3HOTBAR.components.portrait?.element) {
-            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', !value);
-          }
-        }
-    });
-
     game.settings.register(BG3CONFIG.MODULE_NAME, 'overlayModePortrait', {
         name: 'BG3.Settings.OverlayModePortrait.Name',
         hint: 'BG3.Settings.OverlayModePortrait.Hint',
@@ -829,80 +935,6 @@ export function registerSettings() {
         type: Boolean,
         default: false
     });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'showHealthOverlay', {
-      name: 'Show health overlay on character portrait.',
-      // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: true,
-      onChange: () => {
-        if(ui.BG3HOTBAR.components.portrait) {
-            ui.BG3HOTBAR.components.portrait.togglePortraitOverlay.bind(ui.BG3HOTBAR.components.portrait)();
-        }
-      }
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'showHPText', {
-      name: 'Show HP text on character portrait.',
-      // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: true,
-      onChange: () => {
-        if(ui.BG3HOTBAR.components.portrait) {
-            ui.BG3HOTBAR.components.portrait.toggleHPText.bind(ui.BG3HOTBAR.components.portrait)();
-        }
-      }
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'showExtraInfo', {
-      name: 'Show extra datas on character portrait.',
-      // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: false,
-      onChange: () => {
-        if(ui.BG3HOTBAR.components.portrait) {
-            ui.BG3HOTBAR.components.portrait.toggleExtraInfos.bind(ui.BG3HOTBAR.components.portrait)();
-        }
-      }
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow', {
-        name: 'BG3.Settings.ShowDeathSavingThrow.Name',
-        hint: 'BG3.Settings.ShowDeathSavingThrow.Hint',
-        scope: 'world',
-        config: true,
-        type: String,
-        choices: {
-            'show': 'BG3.Settings.ShowDeathSavingThrow.Choices.show',
-            'hide': 'BG3.Settings.ShowDeathSavingThrow.Choices.hide',
-            'only': 'BG3.Settings.ShowDeathSavingThrow.Choices.only'
-        },
-        default: 'show',
-        onChange: async value => {
-            if(ui.BG3HOTBAR.components.portrait?.components?.deathSavesContainer) {
-                await ui.BG3HOTBAR.components.portrait.components.deathSavesContainer.render();
-                ui.BG3HOTBAR.components.portrait.components.deathSavesContainer.element.classList.toggle('death-only-skull', value === 'only');
-            }
-        }
-    });
-    
-    game.settings.register(BG3CONFIG.MODULE_NAME, "dataExtraInfo", {
-        scope: "client",
-        config: false,
-        type: Array,
-        default: BG3CONFIG.EXTRAINFOS ?? [],
-        onChange: () => {
-            if (ui.BG3HOTBAR.components.portrait) {
-                ui.BG3HOTBAR.components.portrait._renderInner();
-            }
-        },
-    });    
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showItemNames', {
         name: 'Show Item Names',
@@ -950,6 +982,58 @@ export function registerSettings() {
         }
     });
 
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showCombatContainer', {
+        name: 'Add a basic actions container',
+        hint: 'Display a extra container for basic actions like dodge, dash, etc (Compatible with CPR)',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: value => {
+            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) ui.BG3HOTBAR.components.weapon.components.combat[0].element.classList.toggle('hidden', !value);
+        }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer', {
+        name: 'Autopopulate the basic actions container',
+        hint: 'Auto-populate the basic actions with dodge, dash, etc (Compatible with CPR). Disable this will unlock the container.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "chooseCPRActions", {
+        name: 'BG3.Settings.Menu.CPR.Name',
+        label: 'BG3.Settings.Menu.CPR.Label',
+        hint: 'BG3.Settings.Menu.CPR.Hint',
+        icon: "fas fa-cog",
+        type: CPRActionsDialog,
+        scope: 'world',
+        visible: () => {
+            return game.modules.get("chris-premades")?.active;
+        }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'choosenCPRActions', {
+        scope: 'client',
+        config: false,
+        type: Array,
+        default: ["9wbU6kYxfAaRFrbI", "ga6foNaesV3UJFKm", "eqOOv3smPuxTq7Xm", "pmn1iLabeps5aPtW", "nmkcJWUba7hyi5m5", "34jFXjMOseErle3M"]
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'lockCombatContainer', {
+        name: 'Lock the basic actions container',
+        hint: 'Prevent users for removing the basic actions for the container.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: value => {
+            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) ui.BG3HOTBAR.components.weapon.components.combat[0].locked = value;
+        }
+    });
+
     game.settings.register(BG3CONFIG.MODULE_NAME, 'fadeControlsMenu', {
         name: 'Hide/Show hotbar controls menu on hover',
         // hint: 'Display remaining uses in the top-right corner of items',
@@ -977,56 +1061,77 @@ export function registerSettings() {
         }
     });
 
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'showCombatContainer', {
-        name: 'Add a basic actions container',
-        hint: 'Display a extra container for basic actions like dodge, dash, etc (Compatible with CPR)',
+    // Auto-Population Settings
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {
+        name: 'BG3.Settings.EnforceSpellPreparationPC.Name',
+        hint: 'BG3.Settings.EnforceSpellPreparationPC.Hint',
         scope: 'client',
         config: true,
         type: Boolean,
-        default: true,
-        onChange: value => {
-            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) ui.BG3HOTBAR.components.weapon.components.combat[0].element.classList.toggle('hidden', !value);
-        }
+        default: true
     });
 
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer', {
-        name: 'Autopopulate the basic actions container',
-        hint: 'Auto-populate the basic actions with dodge, dash, etc (Compatible with CPR). Disable this will unlock the container.',
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC', {
+        name: 'BG3.Settings.EnforceSpellPreparationNPC.Name',
+        hint: 'BG3.Settings.EnforceSpellPreparationNPC.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens', {
+        name: 'Auto-Populate Linked Tokens',
+        hint: 'Automatically populate the hotbar for newly created linked tokens based on the settings below',
         scope: 'world',
         config: true,
         type: Boolean,
         default: true
     });
 
-    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "chooseCPRActions", {
-        name: 'BG3.Settings.Menu.CPR.Name',
-        label: 'BG3.Settings.Menu.CPR.Label',
-        hint: 'BG3.Settings.Menu.CPR.Hint',
-        icon: "fas fa-cog",
-        type: CPRActionsDialog,
-        scope: 'world',
-        visible: () => {
-            return game.modules.get("chris-premades")?.active;
-        }
-    }); */
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'choosenCPRActions', {
-        scope: 'client',
-        config: false,
-        type: Array,
-        default: ["9wbU6kYxfAaRFrbI", "ga6foNaesV3UJFKm", "eqOOv3smPuxTq7Xm", "pmn1iLabeps5aPtW", "nmkcJWUba7hyi5m5", "34jFXjMOseErle3M"]
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'lockCombatContainer', {
-        name: 'Lock the basic actions container',
-        hint: 'Prevent users for removing the basic actions for the container.',
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
+        name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
+        hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
         scope: 'world',
         config: true,
         type: Boolean,
-        default: true,
-        onChange: value => {
-            if(ui.BG3HOTBAR.components.weapon?.components.combat[0]?.element) ui.BG3HOTBAR.components.weapon.components.combat[0].locked = value;
-        }
+        default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate', {
+        name: 'BG3.Settings.Container1AutoPopulate.Name',
+        hint: 'BG3.Settings.Container1AutoPopulate.Hint',
+        scope: 'world',
+        config: false,
+        type: Array,
+        default: ["weapon", "feat"],
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate', {
+        name: 'BG3.Settings.Container2AutoPopulate.Name',
+        hint: 'BG3.Settings.Container2AutoPopulate.Hint',
+        scope: 'world',
+        config: false,
+        type: Array,
+        default: ["spell"],
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate', {
+        name: 'BG3.Settings.Container3AutoPopulate.Name',
+        hint: 'BG3.Settings.Container3AutoPopulate.Hint',
+        scope: 'world',
+        config: false,
+        type: Array,
+        default: ["consumable"],
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
+        name: 'Allow passives for auto-populate',
+        hint: 'If activated, passives will be also added to hotbars.',
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        default: false,
     });
 
     // Tooltip Settings
@@ -1120,88 +1225,13 @@ export function registerSettings() {
         }
     });
 
-    // Spell Preparation Settings
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {
-        name: 'BG3.Settings.EnforceSpellPreparationPC.Name',
-        hint: 'BG3.Settings.EnforceSpellPreparationPC.Hint',
-        scope: 'client',
-        config: true,
-        type: Boolean,
-        default: true
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationNPC', {
-        name: 'BG3.Settings.EnforceSpellPreparationNPC.Name',
-        hint: 'BG3.Settings.EnforceSpellPreparationNPC.Hint',
-        scope: 'client',
-        config: true,
-        type: Boolean,
-        default: false
-    });
-
-    // Auto-Population Settings
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens', {
-        name: 'Auto-Populate Linked Tokens',
-        hint: 'Automatically populate the hotbar for newly created linked tokens based on the settings below',
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        default: true
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens', {
-        name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
-        hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        default: true
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate', {
-        name: 'BG3.Settings.Container1AutoPopulate.Name',
-        hint: 'BG3.Settings.Container1AutoPopulate.Hint',
-        scope: 'world',
-        config: false,
-        type: Array,
-        default: ["weapon", "feat"],
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate', {
-        name: 'BG3.Settings.Container2AutoPopulate.Name',
-        hint: 'BG3.Settings.Container2AutoPopulate.Hint',
-        scope: 'world',
-        config: false,
-        type: Array,
-        default: ["spell"],
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate', {
-        name: 'BG3.Settings.Container3AutoPopulate.Name',
-        hint: 'BG3.Settings.Container3AutoPopulate.Hint',
-        scope: 'world',
-        config: false,
-        type: Array,
-        default: ["consumable"],
-    });
-
-    game.settings.register(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
-        name: 'Allow passives for auto-populate',
-        hint: 'If activated, passives will be also added to hotbars.',
-        scope: 'world',
-        config: false,
-        type: Boolean,
-        default: false,
-    });
-
-    // Register the chip selector menu item
-    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
+    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
         name: 'BG3.Settings.ContainerAutoPopulate.Name',
         label: 'BG3.Settings.ContainerAutoPopulate.Configure',
         icon: 'fas fa-tags',
         type: AutoPopulateDefaults,
         restricted: true
-    }); */
+    });
 
     // Lock System Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'lockSettings', {
