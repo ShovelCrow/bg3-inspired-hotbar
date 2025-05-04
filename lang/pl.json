@@ -42,7 +42,7 @@
             "Disabled": "Wyłączony"
         },
         "Ability": {
-            "Tooltip": "Kliknij lewym przyciskiem myszy, aby wyświetlić testy umiejętności i rzuty obronne.<br>Kliknij prawym przyciskiem myszy, aby rzucić inicjatywę."
+            "Tooltip": "Kliknij lewym przyciskiem myszy, aby wyświetlić testy atrybutów i rzuty obronne.<br>Kliknij prawym przyciskiem myszy, aby rzucić inicjatywę."
         }
     },
     "BG3.Settings": {
@@ -198,7 +198,7 @@
         "SettingsCategories": {
             "HotbarContainer": "Przyciski paska skrótów",
             "CombatContainer": "Wspólne działania kontenera",
-            "Global": "Globalne",
+            "Global": "Ogólne",
             "Portrait": "Portret postaci",
             "Tooltip": "Podpowiedź",
             "AutoPopulating": "Automatyczne wypełnianie",
@@ -253,7 +253,7 @@
         "Menu": {
             "Global": {
                 "Name": "Ustawienia ogólne",
-                "Hint": "Elementy natywne Foundry lub globalne ustawienia interfejsu użytkownika BG3.",
+                "Hint": "Elementy natywne Foundry lub ogólne ustawienia interfejsu użytkownika BG3.",
                 "Label": "Konfiguracja ogólna"
             },
             "Theme": {
