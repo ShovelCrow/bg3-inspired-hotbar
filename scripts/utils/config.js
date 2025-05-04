@@ -392,96 +392,57 @@ const moveElementsToDetails = (details, elements) => {
 
 export function updateSettingsDisplay() {
     Hooks.on("renderSettingsConfig", (app, html, data) => {
+        const bg3Tab = $('section[data-tab="bg3-inspired-hotbar"]').eq(0);
+        if(!bg3Tab) return;
         const generalDetails = $('<details>');
-        generalDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Global.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
+        generalDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Global.Name"))).append($('<div>'));
+        bg3Tab.append(generalDetails);
         moveElementsToDetails(generalDetails, ['collapseFoundryMacrobar', 'playerListVisibility', 'underPause', 'autoScale', 'uiScale', 'uiPosition', 'posPadding', 'posPaddingBottom', 'normalOpacity', 'fadedOpacity', 'fadeOutDelay', 'autoHideCombat']);
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Foundry")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Scale")).insertBefore($('[name="bg3-inspired-hotbar.autoScale"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Opacity")).insertBefore($('[name="bg3-inspired-hotbar.normalOpacity"]').parents('div.form-group:first'));
 
-        const themeDetails = $('<details>');
-        themeDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Theme.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.scopeTheme"]').parents('div.form-group:first'));
-        moveElementsToDetails(themeDetails, ['menuTheme', 'scopeTheme']);
+        if($('button[data-key="bg3-inspired-hotbar.menuTheme"]').length) {
+            const themeDetails = $('<details>');
+            themeDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Theme.Name"))).append($('<div>'));
+            bg3Tab.append(themeDetails);
+            moveElementsToDetails(themeDetails, ['menuTheme', 'scopeTheme']);
+        }
         
         const portraitDetails = $('<details>');
-        portraitDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.hidePortraitImage"]').parents('div.form-group:first'));
+        portraitDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Name"))).append($('<div>'));
+        bg3Tab.append(portraitDetails);
         moveElementsToDetails(portraitDetails, ['hidePortraitImage', 'showHealthOverlay', 'showHPText', 'showDeathSavingThrow', 'menuExtraInfo', 'showExtraInfo', 'defaultPortraitPreferences', 'shapePortraitPreferences', 'borderPortraitPreferences', 'backgroundPortraitPreferences', 'overlayModePortrait', 'showSheetSimpleClick']);
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Show")).insertBefore($('[name="bg3-inspired-hotbar.hidePortraitImage"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Portrait")).insertBefore($('[name="bg3-inspired-hotbar.defaultPortraitPreferences"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Other")).insertBefore($('[name="bg3-inspired-hotbar.showSheetSimpleClick"]').parents('div.form-group:first'));
         
         const hotbarDetails = $('<details>');
-        hotbarDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
+        hotbarDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Name"))).append($('<div>'));
+        bg3Tab.append(hotbarDetails);
         moveElementsToDetails(hotbarDetails, ['showItemNames', 'showItemUses', 'highlightStyle', 'showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer', 'fadeControlsMenu', 'showRestTurnButton']);
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.General")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.Common")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
         $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.Other")).insertBefore($('[name="bg3-inspired-hotbar.fadeControlsMenu"]').parents('div.form-group:first'));
 
         const populateDetails = $('<details>');
-        populateDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Populate.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
+        populateDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Populate.Name"))).append($('<div>'));
+        bg3Tab.append(populateDetails);
         moveElementsToDetails(populateDetails, ['enforceSpellPreparationPC', 'enforceSpellPreparationNPC', 'autoPopulateLinkedTokens', 'autoPopulateUnlinkedTokens', 'containerAutoPopulateSettings']);
 
         const tooltipDetails = $('<details>');
-        tooltipDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Tooltip.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.enableLightTooltip"]').parents('div.form-group:first'));
+        tooltipDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Tooltip.Name"))).append($('<div>'));
+        bg3Tab.append(tooltipDetails);
         moveElementsToDetails(tooltipDetails, ['enableLightTooltip', 'tooltipDelay', 'showMaterialDescription', 'showDamageRanges']);
 
         const midiDetails = $('<details>');
-        midiDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Midi.Name"))).append($('<div>')).insertBefore($('[name="bg3-inspired-hotbar.synchroBRMidiQoL"]').parents('div.form-group:first'));
+        midiDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Midi.Name"))).append($('<div>'));
+        bg3Tab.append(midiDetails);
         moveElementsToDetails(midiDetails, ['synchroBRMidiQoL', 'addAdvBtnsMidiQoL']);
     });
 }
 
 export function registerSettings() {
-    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuGlobal", {
-        name: 'BG3.Settings.Menu.Global.Name',
-        label: 'BG3.Settings.Menu.Global.Label',
-        hint: 'BG3.Settings.Menu.Global.Hint',
-        icon: "fas fa-cogs",
-        type: GlobalSettingDialog,
-    }); */
-
-    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuPortrait", {
-        name: 'BG3.Settings.Menu.Portrait.Name',
-        label: 'BG3.Settings.Menu.Portrait.Label',
-        hint: 'BG3.Settings.Menu.Portrait.Hint',
-        icon: "fas fa-image-portrait",
-        type: PortraitSettingDialog,
-    });
-    
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuHotbar", {
-        name: 'BG3.Settings.Menu.Hotbar.Name',
-        label: 'BG3.Settings.Menu.Hotbar.Label',
-        hint: 'BG3.Settings.Menu.Hotbar.Hint',
-        icon: "fas fa-table-cells",
-        type: HotbarSettingDialog,
-    });
-    
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuAutoPopulate", {
-        name: 'BG3.Settings.Menu.Populate.Name',
-        label: 'BG3.Settings.Menu.Populate.Label',
-        hint: 'BG3.Settings.Menu.Populate.Hint',
-        icon: "fas fa-fill",
-        type: AutoPopulateSettingDialog,
-    });
-    
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuTooltip", {
-        name: 'BG3.Settings.Menu.Tooltip.Name',
-        label: 'BG3.Settings.Menu.Tooltip.Label',
-        hint: 'BG3.Settings.Menu.Tooltip.Hint',
-        icon: "fas fa-magnifying-glass",
-        type: TooltipSettingDialog,
-    });
-    
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuMidiQoL", {
-        name: 'BG3.Settings.Menu.Midi.Name',
-        label: 'BG3.Settings.Menu.Midi.Label',
-        hint: 'BG3.Settings.Menu.Midi.Hint',
-        icon: "fas fa-dice-d20",
-        type: MidiQoLSettingDialog,
-    }); */
-
-
-
     // Core UI Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar', {
         name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
@@ -701,7 +662,7 @@ export function registerSettings() {
         hint: 'BG3.Settings.Menu.Theme.Hint',
         icon: "fas fa-paintbrush-fine fa-rotate-90",
         type: ThemeSettingDialog,
-        restricted: !scopeTheme,
+        restricted: !scopeTheme
     });
     
     game.settings.register(BG3CONFIG.MODULE_NAME, 'themeOption', {
@@ -719,11 +680,7 @@ export function registerSettings() {
         scope: scopeTheme ? 'client' : 'world',
         config: false,
         type: Object,
-        default: {},
-        onChange: value => {
-            // if(value == 'custom') game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
-            // this._applyTheme();
-        }
+        default: {}
     });
 
     // Portrait Settings
