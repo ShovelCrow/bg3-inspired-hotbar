@@ -212,7 +212,7 @@
         },
         "scopeTheme": {
             "Name": "Theme Scope",
-            "Hint": "If checked every player will be able to choose it's own theme. Otherwise the theme selected by the GM will be the same for everyone."
+            "Hint": "If checked every player will be able to choose his own theme. Otherwise the theme selected by the GM will be the same for everyone."
         },
         "PlayerListVisibility": {
             "Name": "Player List Visibility",
