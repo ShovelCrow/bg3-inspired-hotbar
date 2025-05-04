@@ -1,3 +1,7 @@
+## [3.0.7] - 2025-05-02
+### Fixed
+- Fix "error" related to tidy5e-sheet flag. (Related Issue: [#151])
+
 ## [3.0.6] - 2025-05-02
 ### Fixed
 - Fix CSS details conflicts. (Related Issue: [#141])
