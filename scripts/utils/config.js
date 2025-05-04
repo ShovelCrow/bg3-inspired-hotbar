@@ -383,27 +383,41 @@ const hookRollEvent = (rollConfig, dialogConfig, messageConfig) => {
 
 export function updateSettingsDisplay() {
     // Add Categories to module settings
-    Hooks.on("renderSettingsConfig", (app, html, data) => {
+    /* Hooks.on("renderSettingsConfig", (app, html, data) => {
         $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').remove();
         $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').remove();
         $('button[data-key="bg3-inspired-hotbar.chooseCPRActions"]').parents('div.form-group:first').remove();
+    }); */
+    Hooks.on("renderSettingsConfig", (app, html, data) => {
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Global")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuTheme"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.CombatContainer")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Tooltip")).insertBefore($('[name="bg3-inspired-hotbar.enableLightTooltip"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.AutoPopulating")).insertBefore($('[name="bg3-inspired-hotbar.enforceSpellPreparationPC"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.HotbarContainer")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.MidiQoL")).insertBefore($('[name="bg3-inspired-hotbar.synchroBRMidiQoL"]').parents('div.form-group:first'));
+
+        $('button[data-key="bg3-inspired-hotbar.menuExtraInfo"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
+        $('button[data-key="bg3-inspired-hotbar.containerAutoPopulateSettings"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoPopulateUnlinkedTokens"]').parents('div.form-group:first'));
+        $('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first').insertAfter($('[name="bg3-inspired-hotbar.autoHideCombat"]').parents('div.form-group:first'));
+        
+        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.SettingsCategories.Portrait")).insertBefore($('button[data-key="bg3-inspired-hotbar.menuPortrait"]').parents('div.form-group:first'));
     });
 }
 
 export function registerSettings() {
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuGlobal", {
+    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuGlobal", {
         name: 'BG3.Settings.Menu.Global.Name',
         label: 'BG3.Settings.Menu.Global.Label',
         hint: 'BG3.Settings.Menu.Global.Hint',
         icon: "fas fa-cogs",
         type: GlobalSettingDialog,
-    });
+    }); */
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'scopeTheme', {
         name: 'BG3.Settings.scopeTheme.Name',
         hint: 'BG3.Settings.scopeTheme.Hint',
         scope: 'world',
-        config: false,
+        config: true,
         type: Boolean,
         requiresReload: true,
         default: true
@@ -420,7 +434,7 @@ export function registerSettings() {
         restricted: !scopeTheme,
     });
 
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuPortrait", {
+    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuPortrait", {
         name: 'BG3.Settings.Menu.Portrait.Name',
         label: 'BG3.Settings.Menu.Portrait.Label',
         hint: 'BG3.Settings.Menu.Portrait.Hint',
@@ -445,14 +459,6 @@ export function registerSettings() {
         type: HotbarSettingDialog,
     });
     
-    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuCombat", {
-        name: 'BG3.Settings.Menu.Combat.Name',
-        label: 'BG3.Settings.Menu.Combat.Label',
-        hint: 'BG3.Settings.Menu.Combat.Hint',
-        icon: "fas fa-hand-fist",
-        type: CombatSettingDialog,
-    }); */
-    
     game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "menuAutoPopulate", {
         name: 'BG3.Settings.Menu.Populate.Name',
         label: 'BG3.Settings.Menu.Populate.Label',
@@ -475,7 +481,7 @@ export function registerSettings() {
         hint: 'BG3.Settings.Menu.Midi.Hint',
         icon: "fas fa-dice-d20",
         type: MidiQoLSettingDialog,
-    });
+    }); */
 
 
     // Theme settings
@@ -485,7 +491,7 @@ export function registerSettings() {
         name: 'BG3.Settings.CollapseFoundryMacrobar.Name',
         hint: 'BG3.Settings.CollapseFoundryMacrobar.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'always': 'Always',
@@ -505,7 +511,7 @@ export function registerSettings() {
         name: 'BG3.Settings.PlayerListVisibility.Name',
         hint: 'BG3.Settings.PlayerListVisibility.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             "always": "BG3.Settings.PlayerListVisibility.Choices.always",
@@ -555,7 +561,7 @@ export function registerSettings() {
         name: 'BG3.Settings.GamePause.Name',
         hint: 'BG3.Settings.GamePause.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: value => {
@@ -567,7 +573,7 @@ export function registerSettings() {
         name: 'BG3.Settings.AutoScale.Name',
         hint: 'BG3.Settings.AutoScale.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: true,
         onChange: () => {
@@ -579,7 +585,7 @@ export function registerSettings() {
         name: 'UI Scale',
         hint: 'Change the UI scale (50% to 300%) according to your preferences and settings.',
         scope: 'client',
-        config: false,
+        config: true,
         type: Number,
         range: {
             min: 50,
@@ -596,7 +602,7 @@ export function registerSettings() {
         name: 'UI Position',
         hint: 'Choose where the hotbar should be placed.',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'center': 'Center',
@@ -613,7 +619,7 @@ export function registerSettings() {
         name: "UI Position - Padding",
         hint: "Space from the screen border. From the left if UI Position -> Left, From the right if UI Position -> Right",
         scope: "client",
-        config: false,
+        config: true,
         type: Number,
         default: 0,
         onChange: value => {
@@ -625,7 +631,7 @@ export function registerSettings() {
         name: "UI Position - Bottom",
         hint: "Space from the bottom of the screen.",
         scope: "client",
-        config: false,
+        config: true,
         type: Number,
         default: 10,
         onChange: value => {
@@ -637,7 +643,7 @@ export function registerSettings() {
         name: 'BG3.Settings.NormalOpacity.Name',
         hint: 'BG3.Settings.NormalOpacity.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Number,
         range: {
             min: 0.1,
@@ -654,7 +660,7 @@ export function registerSettings() {
         name: 'BG3.Settings.FadedOpacity.Name',
         hint: 'BG3.Settings.FadedOpacity.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Number,
         range: {
             min: 0.0,
@@ -680,7 +686,7 @@ export function registerSettings() {
         name: 'BG3.Settings.FadeOutDelay.Name',
         hint: 'BG3.Settings.FadeOutDelay.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Number,
         range: {
             min: 1,
@@ -698,7 +704,7 @@ export function registerSettings() {
       name: 'Auto Hide UI',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
-      config: false,
+      config: true,
       type: String,
       default: false,
       choices: {
@@ -716,7 +722,7 @@ export function registerSettings() {
         name: 'BG3.Settings.DefaultPortraitPreferences.Name',
         hint: 'BG3.Settings.DefaultPortraitPreferences.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'token': 'BG3.Settings.DefaultPortraitPreferences.Token',
@@ -735,7 +741,7 @@ export function registerSettings() {
         name: 'BG3.Settings.ShapePortraitPreferences.Name',
         hint: 'BG3.Settings.ShapePortraitPreferences.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'round': 'BG3.Settings.ShapePortraitPreferences.Round',
@@ -754,7 +760,7 @@ export function registerSettings() {
         name: 'BG3.Settings.BorderPortraitPreferences.Name',
         hint: 'BG3.Settings.BorderPortraitPreferences.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'none': 'BG3.Settings.BorderPortraitPreferences.None',
@@ -774,7 +780,7 @@ export function registerSettings() {
         name: 'BG3.Settings.BackgroundPortraitPreferences.Name',
         hint: 'BG3.Settings.BackgroundPortraitPreferences.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         subtype: 'color',
         default: '',
@@ -790,7 +796,7 @@ export function registerSettings() {
         name: 'Hide Portrait Image',
         hint: 'Also hide health overlay and text.',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: true,
         onChange: value => {
@@ -804,7 +810,7 @@ export function registerSettings() {
         name: 'BG3.Settings.OverlayModePortrait.Name',
         hint: 'BG3.Settings.OverlayModePortrait.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: () => {
@@ -819,7 +825,7 @@ export function registerSettings() {
         name: 'Open character sheet on click',
         hint: 'Open the character sheet with a single click on portrait instead of double click.',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false
     });
@@ -828,7 +834,7 @@ export function registerSettings() {
       name: 'Show health overlay on character portrait.',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
-      config: false,
+      config: true,
       type: Boolean,
       default: true,
       onChange: () => {
@@ -842,7 +848,7 @@ export function registerSettings() {
       name: 'Show HP text on character portrait.',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
-      config: false,
+      config: true,
       type: Boolean,
       default: true,
       onChange: () => {
@@ -856,7 +862,7 @@ export function registerSettings() {
       name: 'Show extra datas on character portrait.',
       // hint: 'Display a extra container to for basic actions like dodge, dash, etc (Compatible with CPR)',
       scope: 'client',
-      config: false,
+      config: true,
       type: Boolean,
       default: false,
       onChange: () => {
@@ -870,7 +876,7 @@ export function registerSettings() {
         name: 'BG3.Settings.ShowDeathSavingThrow.Name',
         hint: 'BG3.Settings.ShowDeathSavingThrow.Hint',
         scope: 'world',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'show': 'BG3.Settings.ShowDeathSavingThrow.Choices.show',
@@ -902,7 +908,7 @@ export function registerSettings() {
         name: 'Show Item Names',
         hint: 'Display item names below each hotbar item',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: value => {
@@ -916,7 +922,7 @@ export function registerSettings() {
         name: 'Show Item Uses',
         hint: 'Display remaining uses in the top-right corner of items',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: true,
         onChange: value => {
@@ -930,7 +936,7 @@ export function registerSettings() {
         name: 'BG3.Settings.HighlightStyle.Name',
         hint: 'BG3.Settings.HighlightStyle.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'bottom': 'BG3.Settings.HighlightStyle.Bottom',
@@ -948,7 +954,7 @@ export function registerSettings() {
         name: 'Hide/Show hotbar controls menu on hover',
         // hint: 'Display remaining uses in the top-right corner of items',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: value => {
@@ -961,7 +967,7 @@ export function registerSettings() {
         name: 'BG3.Settings.ShowRestTurnButton.Name',
         hint: 'BG3.Settings.ShowRestTurnButton.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: true,
         onChange: () => {
@@ -975,7 +981,7 @@ export function registerSettings() {
         name: 'Add a basic actions container',
         hint: 'Display a extra container for basic actions like dodge, dash, etc (Compatible with CPR)',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: true,
         onChange: value => {
@@ -987,12 +993,12 @@ export function registerSettings() {
         name: 'Autopopulate the basic actions container',
         hint: 'Auto-populate the basic actions with dodge, dash, etc (Compatible with CPR). Disable this will unlock the container.',
         scope: 'world',
-        config: false,
+        config: true,
         type: Boolean,
         default: true
     });
 
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "chooseCPRActions", {
+    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, "chooseCPRActions", {
         name: 'BG3.Settings.Menu.CPR.Name',
         label: 'BG3.Settings.Menu.CPR.Label',
         hint: 'BG3.Settings.Menu.CPR.Hint',
@@ -1002,7 +1008,7 @@ export function registerSettings() {
         visible: () => {
             return game.modules.get("chris-premades")?.active;
         }
-    });
+    }); */
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'choosenCPRActions', {
         scope: 'client',
@@ -1015,7 +1021,7 @@ export function registerSettings() {
         name: 'Lock the basic actions container',
         hint: 'Prevent users for removing the basic actions for the container.',
         scope: 'world',
-        config: false,
+        config: true,
         type: Boolean,
         default: true,
         onChange: value => {
@@ -1028,7 +1034,7 @@ export function registerSettings() {
         name: 'BG3.Settings.EnableLightTooltip.Name',
         hint: 'BG3.Settings.EnableLightTooltip.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: String,
         choices: {
             'full': 'BG3.Settings.EnableLightTooltip.Choices.Full',
@@ -1045,7 +1051,7 @@ export function registerSettings() {
         name: 'BG3.Settings.TooltipDelay.Name',
         hint: 'BG3.Settings.TooltipDelay.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Number,
         range: {
             min: 0,
@@ -1065,7 +1071,7 @@ export function registerSettings() {
         name: 'BG3.Settings.ShowMaterialDescription.Name',
         hint: 'BG3.Settings.ShowMaterialDescription.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: value => {
@@ -1077,7 +1083,7 @@ export function registerSettings() {
         name: 'BG3.Settings.ShowDamageRanges.Name',
         hint: 'BG3.Settings.ShowDamageRanges.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: value => {
@@ -1091,7 +1097,7 @@ export function registerSettings() {
         name: 'BG3.Settings.synchroMidiQoL.BR.Name',
         hint: 'BG3.Settings.synchroMidiQoL.BR.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: () => {
@@ -1103,7 +1109,7 @@ export function registerSettings() {
         name: 'BG3.Settings.synchroMidiQoL.ADV.Name',
         hint: 'BG3.Settings.synchroMidiQoL.ADV.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false,
         onChange: value => {
@@ -1119,7 +1125,7 @@ export function registerSettings() {
         name: 'BG3.Settings.EnforceSpellPreparationPC.Name',
         hint: 'BG3.Settings.EnforceSpellPreparationPC.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: true
     });
@@ -1128,7 +1134,7 @@ export function registerSettings() {
         name: 'BG3.Settings.EnforceSpellPreparationNPC.Name',
         hint: 'BG3.Settings.EnforceSpellPreparationNPC.Hint',
         scope: 'client',
-        config: false,
+        config: true,
         type: Boolean,
         default: false
     });
@@ -1138,7 +1144,7 @@ export function registerSettings() {
         name: 'Auto-Populate Linked Tokens',
         hint: 'Automatically populate the hotbar for newly created linked tokens based on the settings below',
         scope: 'world',
-        config: false,
+        config: true,
         type: Boolean,
         default: true
     });
@@ -1147,7 +1153,7 @@ export function registerSettings() {
         name: 'BG3.Settings.AutoPopulateUnlinkedTokens.Name',
         hint: 'BG3.Settings.AutoPopulateUnlinkedTokens.Hint',
         scope: 'world',
-        config: false,
+        config: true,
         type: Boolean,
         default: true
     });
@@ -1189,13 +1195,13 @@ export function registerSettings() {
     });
 
     // Register the chip selector menu item
-    game.settings.registerMenu(BG3CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
+    /* game.settings.registerMenu(BG3CONFIG.MODULE_NAME, 'containerAutoPopulateSettings', {
         name: 'BG3.Settings.ContainerAutoPopulate.Name',
         label: 'BG3.Settings.ContainerAutoPopulate.Configure',
         icon: 'fas fa-tags',
         type: AutoPopulateDefaults,
         restricted: true
-    });
+    }); */
 
     // Lock System Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'lockSettings', {
