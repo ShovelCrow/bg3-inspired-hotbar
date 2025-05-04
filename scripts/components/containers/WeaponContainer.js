@@ -107,12 +107,19 @@ export class WeaponContainer extends BG3Component {
         await super.render();
         this.components.weapon.forEach(c => {
             c.element.addEventListener('click', async (e) => this.switchSet(c));
-            c.element.addEventListener('wheel', async (e) => {
-                const i = c.index + Math.sign(e.deltaY) * -1;
-                const len = this.components.weapon.length;
-                const next = ((i % len) + len) % len;
-                this.switchSet(this.components.weapon[next]);
-            });
+            // c.element.addEventListener('wheel', async (e) => {
+            //     const i = c.index + Math.sign(e.deltaY) * -1;
+            //     const len = this.components.weapon.length;
+            //     const next = ((i % len) + len) % len;
+            //     this.switchSet(this.components.weapon[next]);
+            // });
+        });
+        this.element.addEventListener('wheel', async (e) => {
+            e.preventDefault();
+            const i = this.activeSet + Math.sign(e.deltaY) * -1;
+            const len = this.components.weapon.length;
+            const next = ((i % len) + len) % len;
+            this.switchSet(this.components.weapon[next]);
         });
         this.switchSet(this.components.weapon[this.activeSet]);
         return this.element;
