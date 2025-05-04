@@ -261,7 +261,7 @@ section[data-tab="bg3-inspired-hotbar"] details summary {
   font-size: var(--font-size-14);
   font-family: var(--font-primary);
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
   border: 2px groove var(--color-border-light-highlight);
 }
 
@@ -270,7 +270,7 @@ section[data-tab="bg3-inspired-hotbar"] details summary {
 } */
 
 #bg3-inspired-hotbar-theme-settings details summary:hover, section[data-tab="bg3-inspired-hotbar"] details summary:hover, #bg3-inspired-hotbar-theme-settings details[open] summary, section[data-tab="bg3-inspired-hotbar"] details[open] summary {
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, .1);
 }
 
 #bg3-inspired-hotbar-theme-settings details[open] summary, section[data-tab="bg3-inspired-hotbar"] details[open] summary {
