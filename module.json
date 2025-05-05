@@ -91,7 +91,7 @@
       "path": "packs/bg3-inspired-hud",
       "type": "Macro",
       "ownership": {
-        "PLAYER": "OBSERVER",
+        "PLAYER": "NONE",
         "ASSISTANT": "OWNER"
       },
       "system": "dnd5e"
