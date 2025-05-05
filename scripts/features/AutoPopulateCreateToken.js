@@ -254,7 +254,11 @@ export class AutoPopulateCreateToken {
                 if(item) ids.push(item.uuid);
             }
             // ids = game.settings.get(BG3CONFIG.MODULE_NAME, 'choosenCPRActions').map(id => actor.items.getName(game.packs.get("chris-premades.CPRActions").index.get(id).name).uuid)
-        } else ids = await game.packs.get("bg3-inspired-hotbar.bg3-inspired-hud").folders.find(f => f.name === 'Common Actions').contents.map(m => m.uuid);
+        } else {
+            const compendium = await game.packs.get("bg3-inspired-hotbar.bg3-inspired-hud");
+            if(!compendium) return ids;
+            ids = compendium.folders.find(f => f.name === 'Common Actions').contents.map(m => m.uuid);
+        }
         return ids;
     }
 

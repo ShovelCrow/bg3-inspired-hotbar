@@ -29,7 +29,9 @@ export class HotbarManager {
             }
         });
         if(this.canGMHotbar() && !game.settings.get(BG3CONFIG.MODULE_NAME, 'gmHotbarInit')) {
-            const ids = await game.packs.get("bg3-inspired-hotbar.bg3-inspired-hud").folders.find(f => f.name === 'GM Hotbar').contents.map(m => m.uuid);
+            const compendium = await game.packs.get("bg3-inspired-hotbar.bg3-inspired-hud");
+            if(!compendium) return;
+            const ids = compendium.folders.find(f => f.name === 'GM Hotbar').contents.map(m => m.uuid);
             let containerId = 0,
                 containerRow = 0,
                 containerCol = 0;
