@@ -248,12 +248,27 @@ export class AutoPopulateCreateToken {
     static async _getCombatActionsList(actor) {
         let ids = [];
         if(game.modules.get("chris-premades")?.active && game.packs.get("chris-premades.CPRActions")?.index?.size) {
+            const pack = game.packs.get("chris-premades.CPRActions"),
+                promises = [];
             for(const id of game.settings.get(BG3CONFIG.MODULE_NAME, 'choosenCPRActions')) {
-                // const item = actor.items.getName(game.packs.get("chris-premades.CPRActions").index.get(id).name);
-                const item = actor.items.find(i => i.system.identifier === game.packs.get("chris-premades.CPRActions").index.get(id)?.system?.identifier);
+                const item = actor.items.find(i => i.system.identifier === pack.index.get(id)?.system?.identifier);
                 if(item) ids.push(item.uuid);
+                else {
+                    const cprItem = pack.index.get(id);
+                    if(cprItem) {
+                        promises.push(new Promise(async (resolve, reject) => {
+                            let item = await pack.getDocument(cprItem._id);
+                            resolve(item);
+                        }))
+                    }
+                }
             }
-            // ids = game.settings.get(BG3CONFIG.MODULE_NAME, 'choosenCPRActions').map(id => actor.items.getName(game.packs.get("chris-premades.CPRActions").index.get(id).name).uuid)
+            if(promises.length) {
+                await Promise.all(promises).then(async (values) => {
+                    let tmpDoc = await actor.createEmbeddedDocuments('Item', values);
+                    ids = tmpDoc.map(i => i.uuid);
+                })
+            }
         } else {
             const compendium = await game.packs.get("bg3-inspired-hotbar.bg3-inspired-hud");
             if(!compendium) return ids;

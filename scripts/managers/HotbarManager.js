@@ -84,7 +84,7 @@ export class HotbarManager {
             // Update Chris Premade Common Actions Section if needed
             if(this.containers.combat?.[0]?.items && game.modules.get("chris-premades")?.active && game.modules.get("tidy5e-sheet")?.active) {
                 for(const key in this.containers.combat[0].items) {
-                    const item = this.actor.items.find(i => i.name === this.containers.combat[0].items[key].name);
+                    const item = this.actor.items.find(i => i.uuid === this.containers.combat[0].items[key].uuid);
                     if(item && item.getFlag('chris-premades', 'info')?.source === 'chris-premades' && item.getFlag('tidy5e-sheet', 'section') !== 'CHRISPREMADES.Generic.Actions') item.setFlag('tidy5e-sheet', 'section', 'CHRISPREMADES.Generic.Actions')
                 }
             }

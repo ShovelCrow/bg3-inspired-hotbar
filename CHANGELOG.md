@@ -2,6 +2,7 @@
 ### Fixed
 - Fix "error" related to tidy5e-sheet flag. (Related Issue: [#151])
 - First step on making the module compatible with Foundry V13.
+- Fix Common Action Container not populated with CPR Actions if not automated with CPR. (Related Issue: [#153])
 
 ### Features
 - Add a setting to show a special hotbar for GM when multiple or no token selected.

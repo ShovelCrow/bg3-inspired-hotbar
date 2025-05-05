@@ -1,12 +1,1 @@
-2025/05/05-23:03:54.656 22a4 Delete type=3 #1
-2025/05/05-23:04:32.476 3200 Level-0 table #175: started
-2025/05/05-23:04:32.476 3200 Level-0 table #175: 0 bytes OK
-2025/05/05-23:04:32.478 3200 Delete type=0 #173
-2025/05/05-23:04:32.479 3200 Manual compaction at level-0 from '!folders!iiQBWOOxNdeoVRmI' @ 72057594037927935 : 1 .. '!macros!qlKPuaLsELZFx0Sn' @ 0 : 0; will stop at '!macros!d4J17y4PqYKoThq6' @ 28 : 1
-2025/05/05-23:04:32.479 3200 Compacting 2@0 + 0@1 files
-2025/05/05-23:04:32.481 3200 Generated table #176@0: 13 keys, 9202 bytes
-2025/05/05-23:04:32.481 3200 Compacted 2@0 + 0@1 files => 9202 bytes
-2025/05/05-23:04:32.482 3200 compacted to: files[ 0 1 0 0 0 0 0 ]
-2025/05/05-23:04:32.482 3200 Delete type=2 #168
-2025/05/05-23:04:32.482 3200 Delete type=2 #171
-2025/05/05-23:04:32.483 3200 Manual compaction at level-0 from '!macros!d4J17y4PqYKoThq6' @ 28 : 1 .. '!macros!qlKPuaLsELZFx0Sn' @ 0 : 0; will stop at (end)
+2025/05/05-23:50:00.963 5f18 Delete type=3 #1
