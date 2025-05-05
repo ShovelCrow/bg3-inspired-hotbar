@@ -462,7 +462,7 @@ export function updateSettingsDisplay() {
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Other',
-                        fields: ['fadeControlsMenu', 'showRestTurnButton']
+                        fields: ['fadeControlsMenu', 'showRestTurnButton', 'enableGMHotbar']
                     }
                 ]
             },
@@ -1058,6 +1058,37 @@ export function registerSettings() {
                 ui.BG3HOTBAR.components.restTurn.render();
             }
         }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableGMHotbar', {
+        name: 'BG3.Settings.EnableGMHotbar.Name',
+        hint: 'BG3.Settings.EnableGMHotbar.Hint',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: () => {
+            if (!!ui.BG3HOTBAR && !ui.BG3HOTBAR.manager.currentTokenId) {
+                ui.BG3HOTBAR.generate(null);
+            }
+        }
+    });
+    
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'gmHotbarData', {
+        name: 'BG3.Settings.EnableGMHotbar.Name',
+        hint: 'BG3.Settings.EnableGMHotbar.Hint',
+        restricted: true,
+        scope: 'world',
+        config: false,
+        type: Object,
+        default: null
+    });
+    
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'gmHotbarInit', {
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        default: false
     });
 
     // Auto-Population Settings

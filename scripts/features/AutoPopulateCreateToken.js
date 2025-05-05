@@ -82,7 +82,7 @@ export class AutoPopulateDefaults extends FormApplication {
 }
 
 export class AutoPopulateCreateToken {
-    static async populateUnlinkedToken(token) {
+    static async populateUnlinkedToken(token, force = false) {
         if (!token?.actor) return;
 
         try {
@@ -99,19 +99,32 @@ export class AutoPopulateCreateToken {
             
             // Auto-populate combat container if setting on true
             if(!(!tempManager.containers.combat[0]?.items || Object.values(tempManager.containers.combat[0].items).length > 0)) {
-                if(game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer') && token.actor.type !== 'vehicle') await this._populateCommonActions(token.actor, tempManager);
+                if((game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateCombatContainer') || force) && token.actor.type !== 'vehicle') {
+                    if(force) tempManager.containers.combat[0].items = {};
+                    await this._populateCommonActions(token.actor, tempManager);
+                }
             }
 
-            if(token.actor.type !== 'character' && ((!token.actorLink && game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens')) || (token.actorLink && game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens')))) {
+            if(token.actor.type !== 'character' && ((!token.actorLink && (game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens') || force)) || (token.actorLink && (game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens') || force)))) {
                 // Get settings for each container
                 const container1Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate');
                 const container2Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate');
                 const container3Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate');
       
                 // Process each weapon & combat containers
+                if(force) {
+                    tempManager.containers.weapon[0].items = {};
+                    tempManager.containers.weapon[1].items = {};
+                    tempManager.containers.weapon[2].items = {};
+                }
                 await this._populateWeaponsToken(token.actor, tempManager);
     
                 // Process each container
+                if(force) {
+                    tempManager.containers.hotbar[0].items = {};
+                    tempManager.containers.hotbar[1].items = {};
+                    tempManager.containers.hotbar[2].items = {};
+                }
                 await this._populateContainerWithSettings(token.actor, tempManager, 0, container1Setting);
                 await this._populateContainerWithSettings(token.actor, tempManager, 1, container2Setting);
                 await this._populateContainerWithSettings(token.actor, tempManager, 2, container3Setting);
