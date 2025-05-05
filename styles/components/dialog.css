@@ -251,6 +251,10 @@ section[data-tab="bg3-inspired-hotbar"] details div.form-group.group-header {
   margin-top: 0;
 }
 
+.package-configuration section[data-tab="bg3-inspired-hotbar"] details > div > .form-group:not(.group-header):first-child {
+  margin-top: 0.5rem;
+}
+
 section[data-tab="bg3-inspired-hotbar"] p.notes:empty {
   display: none;
 }

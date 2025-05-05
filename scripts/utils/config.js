@@ -381,64 +381,120 @@ const hookRollEvent = (rollConfig, dialogConfig, messageConfig) => {
     }
 }
 
-const moveElementsToDetails = (details, elements) => {
-    // details.attr('name', 'bg3-setting-details')
-    const container = details.children('div').eq(0)
-    for(const el of elements) {
-        const childContainer = $(`[name="bg3-inspired-hotbar.${el}"]`).length ? $(`[name="bg3-inspired-hotbar.${el}"]`) : $(`button[data-key="bg3-inspired-hotbar.${el}"]`);
-        container.append(childContainer.parents('div.form-group:first'));
+const formatSettingsDetails = (data) => {
+    const bg3Tab = $('section[data-tab="bg3-inspired-hotbar"]').eq(0);
+    if(!bg3Tab) return;
+    for(const detail of data) {
+        let toShow = false;
+        const generalDetails = $('<details>'),
+            contentDetails = $('<div>');
+        generalDetails.append($('<summary>').html(game.i18n.localize(detail.label))).append(contentDetails);
+        for(const category of detail.categories) {
+            if(category.label) contentDetails.append($('<div>').addClass('form-group group-header').html(game.i18n.localize(category.label)));
+            for(const field of category.fields) {
+                const fieldName = `${BG3CONFIG.MODULE_NAME}.${field}`,
+                    childContainer = $(`[name="${fieldName}"]`).length ? $(`[name="${fieldName}"]`) : $(`button[data-key="${fieldName}"]`);
+                if(childContainer.length) toShow = true;
+                else continue;
+                contentDetails.append(childContainer.parents('div.form-group:first'));
+            }
+        }
+        if(toShow) bg3Tab.append(generalDetails);
     }
 }
 
 export function updateSettingsDisplay() {
     Hooks.on("renderSettingsConfig", (app, html, data) => {
-        const bg3Tab = $('section[data-tab="bg3-inspired-hotbar"]').eq(0);
-        if(!bg3Tab) return;
-        const generalDetails = $('<details>');
-        generalDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Global.Name"))).append($('<div>'));
-        bg3Tab.append(generalDetails);
-        moveElementsToDetails(generalDetails, ['collapseFoundryMacrobar', 'playerListVisibility', 'underPause', 'autoScale', 'uiScale', 'uiPosition', 'posPadding', 'posPaddingBottom', 'normalOpacity', 'fadedOpacity', 'fadeOutDelay', 'autoHideCombat']);
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Foundry")).insertBefore($('[name="bg3-inspired-hotbar.collapseFoundryMacrobar"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Scale")).insertBefore($('[name="bg3-inspired-hotbar.autoScale"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Global.Sub.Opacity")).insertBefore($('[name="bg3-inspired-hotbar.normalOpacity"]').parents('div.form-group:first'));
-
-        if($('button[data-key="bg3-inspired-hotbar.menuTheme"]').length) {
-            const themeDetails = $('<details>');
-            themeDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Theme.Name"))).append($('<div>'));
-            bg3Tab.append(themeDetails);
-            moveElementsToDetails(themeDetails, ['menuTheme', 'scopeTheme']);
-        }
-        
-        const portraitDetails = $('<details>');
-        portraitDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Name"))).append($('<div>'));
-        bg3Tab.append(portraitDetails);
-        moveElementsToDetails(portraitDetails, ['hidePortraitImage', 'showHealthOverlay', 'showHPText', 'showDeathSavingThrow', 'menuExtraInfo', 'showExtraInfo', 'defaultPortraitPreferences', 'shapePortraitPreferences', 'borderPortraitPreferences', 'backgroundPortraitPreferences', 'overlayModePortrait', 'showSheetSimpleClick']);
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Show")).insertBefore($('[name="bg3-inspired-hotbar.hidePortraitImage"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Portrait")).insertBefore($('[name="bg3-inspired-hotbar.defaultPortraitPreferences"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Portrait.Sub.Other")).insertBefore($('[name="bg3-inspired-hotbar.showSheetSimpleClick"]').parents('div.form-group:first'));
-        
-        const hotbarDetails = $('<details>');
-        hotbarDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Name"))).append($('<div>'));
-        bg3Tab.append(hotbarDetails);
-        moveElementsToDetails(hotbarDetails, ['showItemNames', 'showItemUses', 'highlightStyle', 'showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer', 'fadeControlsMenu', 'showRestTurnButton']);
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.General")).insertBefore($('[name="bg3-inspired-hotbar.showItemNames"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.Common")).insertBefore($('[name="bg3-inspired-hotbar.showCombatContainer"]').parents('div.form-group:first'));
-        $('<div>').addClass('form-group group-header').html(game.i18n.localize("BG3.Settings.Menu.Hotbar.Sub.Other")).insertBefore($('[name="bg3-inspired-hotbar.fadeControlsMenu"]').parents('div.form-group:first'));
-
-        const populateDetails = $('<details>');
-        populateDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Populate.Name"))).append($('<div>'));
-        bg3Tab.append(populateDetails);
-        moveElementsToDetails(populateDetails, ['enforceSpellPreparationPC', 'enforceSpellPreparationNPC', 'autoPopulateLinkedTokens', 'autoPopulateUnlinkedTokens', 'containerAutoPopulateSettings']);
-
-        const tooltipDetails = $('<details>');
-        tooltipDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Tooltip.Name"))).append($('<div>'));
-        bg3Tab.append(tooltipDetails);
-        moveElementsToDetails(tooltipDetails, ['enableLightTooltip', 'tooltipDelay', 'showMaterialDescription', 'showDamageRanges']);
-
-        const midiDetails = $('<details>');
-        midiDetails.append($('<summary>').html(game.i18n.localize("BG3.Settings.Menu.Midi.Name"))).append($('<div>'));
-        bg3Tab.append(midiDetails);
-        moveElementsToDetails(midiDetails, ['synchroBRMidiQoL', 'addAdvBtnsMidiQoL']);
+        const detailsSettings = [
+            {
+                label: 'BG3.Settings.Menu.Global.Name',
+                categories: [
+                    {
+                        label: 'BG3.Settings.Menu.Global.Sub.Foundry',
+                        fields: ['collapseFoundryMacrobar', 'playerListVisibility', 'underPause']
+                    },
+                    {
+                        label: 'BG3.Settings.Menu.Global.Sub.Scale',
+                        fields: ['autoScale', 'uiScale', 'uiPosition', 'posPadding', 'posPaddingBottom']
+                    },
+                    {
+                        label: 'BG3.Settings.Menu.Global.Sub.Opacity',
+                        fields: ['normalOpacity', 'fadedOpacity', 'fadeOutDelay', 'autoHideCombat']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.Theme.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['menuTheme', 'scopeTheme']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.Portrait.Name',
+                categories: [
+                    {
+                        label: 'BG3.Settings.Menu.Portrait.Sub.Show',
+                        fields: ['hidePortraitImage', 'showHealthOverlay', 'showHPText', 'showDeathSavingThrow', 'menuExtraInfo', 'showExtraInfo']
+                    },
+                    {
+                        label: 'BG3.Settings.Menu.Portrait.Sub.Portrait',
+                        fields: ['defaultPortraitPreferences', 'shapePortraitPreferences', 'borderPortraitPreferences', 'backgroundPortraitPreferences', 'overlayModePortrait']
+                    },
+                    {
+                        label: 'BG3.Settings.Menu.Portrait.Sub.Other',
+                        fields: ['showSheetSimpleClick']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.Hotbar.Name',
+                categories: [
+                    {
+                        label: 'BG3.Settings.Menu.Hotbar.Sub.General',
+                        fields: ['showItemNames', 'showItemUses', 'highlightStyle']
+                    },
+                    {
+                        label: 'BG3.Settings.Menu.Hotbar.Sub.Common',
+                        fields: ['showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer']
+                    },
+                    {
+                        label: 'BG3.Settings.Menu.Hotbar.Sub.Other',
+                        fields: ['fadeControlsMenu', 'showRestTurnButton']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.Populate.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['enforceSpellPreparationPC', 'enforceSpellPreparationNPC', 'autoPopulateLinkedTokens', 'autoPopulateUnlinkedTokens', 'containerAutoPopulateSettings']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.Tooltip.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['enableLightTooltip', 'tooltipDelay', 'showMaterialDescription', 'showDamageRanges']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.Midi.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['synchroBRMidiQoL', 'addAdvBtnsMidiQoL']
+                    }
+                ]
+            }
+        ];
+        formatSettingsDetails(detailsSettings);
     });
 }
 
