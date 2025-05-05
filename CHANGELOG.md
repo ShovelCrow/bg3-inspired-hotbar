@@ -1,7 +1,7 @@
 ## [3.0.7] - 2025-05-02
 ### Fixed
 - Fix "error" related to tidy5e-sheet flag. (Related Issue: [#151])
-- Fix step on making the module compatible with Foundry V13.
+- First step on making the module compatible with Foundry V13.
 
 ### Features
 - Add a setting to show a special hotbar for GM for multiple or no token selected.
