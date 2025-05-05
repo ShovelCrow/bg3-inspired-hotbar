@@ -2,6 +2,10 @@
 ### Fixed
 - Fix "error" related to tidy5e-sheet flag. (Related Issue: [#151])
 
+### Features
+- Add a setting to show a special hotbar for GM for multiple or no token selected.
+- Add 5 presets macros for the GM Hotbar.
+
 ## [3.0.6] - 2025-05-02
 ### Fixed
 - Fix CSS details conflicts. (Related Issue: [#141])
