@@ -1,4 +1,4 @@
-## [3.0.7] - 2025-05-02
+## [3.0.7] - 2025-05-06
 ### Fixed
 - Fix "error" related to tidy5e-sheet flag. (Related Issue: [#151])
 - First step on making the module compatible with Foundry V13.
