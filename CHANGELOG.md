@@ -4,7 +4,7 @@
 - First step on making the module compatible with Foundry V13.
 
 ### Features
-- Add a setting to show a special hotbar for GM for multiple or no token selected.
+- Add a setting to show a special hotbar for GM when multiple or no token selected.
 - Add 5 presets macros for the GM Hotbar. (Related Issue: [#148])
 
 ## [3.0.6] - 2025-05-02
