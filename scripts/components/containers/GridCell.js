@@ -44,7 +44,7 @@ export class GridCell extends BG3Component {
                 ...await this.getItemUses(),
                 ...await this.getConsumeData()
             };
-            if(itemData.type === "spell") data = {...data, ...{preparationMode: itemData.system?.preparation?.mode, level: itemData.system?.level}};
+            if(itemData.type === "spell") data = {...data, ...{preparationMode: itemData.system?.preparation?.mode, level: itemData.system?.level, unprepared: !itemData.system?.preparation?.prepared}};
             if(itemData.type === 'feat') data = {...data, ...{featType: itemData.system?.type?.value || 'default'}};
         }
         return data;
