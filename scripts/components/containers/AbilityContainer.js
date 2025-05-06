@@ -13,9 +13,7 @@ export class AbilityContainer extends BG3Component {
     async _registerEvents() {    
         this.element.addEventListener('click', (event) => MenuContainer.toggle(this.getMenuData(), this, event));
         this.element.querySelector('.fa-dice-d20').addEventListener('contextmenu', async (event) => {
-            await this.actor.setFlag(game.system?.id, "initiativeAdv", event.altKey);
-            await this.actor.setFlag(game.system?.id, "initiativeDisadv", event.ctrlKey);
-            this.actor.rollInitiative({ rerollInitiative: true, createCombatants: true })
+            this.actor.rollInitiativeDialog({ rerollInitiative: true, createCombatants: true, event });
         });
     }
 
