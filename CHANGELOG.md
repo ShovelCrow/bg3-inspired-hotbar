@@ -1,4 +1,7 @@
 ## [3.0.8] - 2025-05-06
+### Fixed
+- Fix potential bug with Weapon Container. (Related Issues: [#160], [#161])
+
 ### Features
 - Add CTRL/ALT modifier on Initiative button. (Related Issue: [#158])
 
