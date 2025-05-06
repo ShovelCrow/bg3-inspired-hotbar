@@ -19,68 +19,61 @@ export class ActiveButton extends BG3Component {
     }
 
     async _registerEvents() {
-        this.element.addEventListener("click", async (e) => {
+        const _toggleEffect = async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
-            // Clear any pending tooltip timer
-            // BaseTooltip.cleanup(effect.type || "effect");
-    
-            // Store the current tooltip before updating
-            // const currentTooltip = wrapper._hotbarTooltip;
-            
-            // Set updating flag
-            // wrapper._isUpdatingTooltip = true;
-            
-            // Update the effect's disabled status
             await this.data.item.update({ disabled: !this.data.item.disabled });
-            
-            /* // If there was a tooltip and it's not being dragged, update its content
-            if (currentTooltip && !currentTooltip._isDragging) {
-            // Clear the current content
-            if (currentTooltip.element) {
-                currentTooltip.element.innerHTML = '';
-                // Rebuild the content with the updated effect state
-                currentTooltip.item = effect;  // Update the item reference
-                currentTooltip.buildContent();
-            }
-            }
-            
-            // Clear updating flag after a short delay
-            const tooltipDelay = BaseTooltip.getTooltipDelay();
-            setTimeout(() => {
-            wrapper._isUpdatingTooltip = false;
-            }, tooltipDelay + 50); // Add 50ms buffer to the delay */
             this.update();
-        });
-        
-        this.element.addEventListener("contextmenu", async (e) => {
-            e.preventDefault();
-            if (!this.data.item.transfer) {
-                const dialog = new Dialog({
-                title: "Delete Effect",
-                content: `<p>Are you sure you want to delete the effect "${this.data.item.label}"?</p>`,
-                buttons: {
-                    delete: {
-                        icon: '<i class="fas fa-trash"></i>',
-                        label: "Delete",
-                        callback: async () => {
-                            await this.data.item.delete();
-                            this._parent.render();
-                        }
-                    },
-                    cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel"
+        };
+        const _deletionDialog = async (
+            title = "Delete Effect",
+            content = `Are you sure you want to delete the effect "${this.data.item.label}"?`,
+            icon = "fas fa-trash",
+            label = "Delete"
+            ) => {
+            const dialog = new Dialog({
+            title: title,
+            content: `<p>${content}</p>`,
+            buttons: {
+                delete: {
+                    icon: `<i class="${icon}"></i>`,
+                    label: label,
+                    callback: async () => {
+                        await this.data.item.delete();
+                        this._parent.render();
                     }
                 },
-                default: "cancel"
-                });
-                dialog.render(true);
+                cancel: {
+                icon: '<i class="fas fa-times"></i>',
+                label: "Cancel"
+                }
+            },
+            default: "cancel"
+            });
+            dialog.render(true);
+        };
+
+        this.element.addEventListener('click', async (e) => {
+            _toggleEffect(e)
+        });
+        
+        this.element.addEventListener('contextmenu', async (e) => {
+            e.preventDefault();
+            if (!this.data.item.transfer) {
+                if (this.data.item.statuses.has('concentrating')) {
+                    _deletionDialog('Break Concentration',
+                         `Are you sure you want to break "${this.data.item.label}"?`,
+                         'fa-solid fa-head-side-gear',
+                         'Break Concentration'
+                        );
+                } else if (CONFIG.statusEffects.filter((c) => c._id === this.data.item.id).length >= 1) {
+                    console.log(CONFIG.statusEffects.filter((c) => c._id === this.data.item.id));
+                    await this.data.item.delete();
+                } else {
+                    _deletionDialog();
+                }
             } else { // SHOVEL
-                e.stopPropagation();
-                await this.data.item.update({ disabled: !this.data.item.disabled });
-                this.update();
+                _toggleEffect(e)
             }
         });
     }
