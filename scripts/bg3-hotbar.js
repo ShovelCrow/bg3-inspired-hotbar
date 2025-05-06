@@ -89,6 +89,7 @@ export class BG3Hotbar extends Application {
     _onCanvasReady() {
         const token = canvas.tokens.controlled?.[0];
         if(token) this._onControlToken(token, canvas.tokens.controlled);
+        else if(this.manager.canGMHotbar()) this.generate(null);
     }
 
     async _onCreateToken(token) {
@@ -252,26 +253,8 @@ export class BG3Hotbar extends Application {
             } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
     }
 
-    static _applyPlayerListVisibility() {
-        const setting = game.settings.get(CONFIG.MODULE_NAME, 'playerListVisibility');
-        const body = document.body;
-        
-        // Remove existing classes first
-        body.classList.remove('bg3-player-list-hidden', 'bg3-player-list-hover');
-
-        // Check if player list exists
-        if (!ui?.players?.element) {
-             // If not rendered yet, wait for renderPlayerList hook
-             return; 
-        }
-        
-        // Apply new class based on setting
-        if (setting === 'hidden') {
-            body.classList.add('bg3-player-list-hidden');
-        } else if (setting === 'hover') {
-            body.classList.add('bg3-player-list-hover');
-        }
-        // 'always' visible is the default, no class needed
+    _autoPopulateToken(token) {
+        return AutoPopulateCreateToken.populateUnlinkedToken(token, true);
     }
 
     async _applyTheme() {
@@ -319,9 +302,8 @@ export class BG3Hotbar extends Application {
         if (!this.manager) return;
         if(!token) {
             this.manager.currentTokenId = null;
-            return this.close();
-        }
-        this.manager.currentTokenId = token.id;
+            if(!this.manager.canGMHotbar()) return this.close();
+        } else this.manager.currentTokenId = token.id;
         this.manager._loadTokenData();
         this.render(true);
     }
@@ -354,12 +336,19 @@ export class BG3Hotbar extends Application {
         document.body.dataset.lightTooltip = game.settings.get(BG3CONFIG.MODULE_NAME, 'enableLightTooltip');
         ControlsManager.updateUIDataset(html);
 
-        this.components = {
-            portrait: new PortraitContainer(),
-            weapon: new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat}),
-            advantage: new AdvContainer(),
-            container: new HotbarContainer(this.manager.containers.hotbar),
-            restTurn: new RestTurnContainer()
+        if(this.manager.currentTokenId) {
+            this.components = {
+                portrait: new PortraitContainer(),
+                weapon: new WeaponContainer({weapon: this.manager.containers.weapon, combat: this.manager.containers.combat}),
+                advantage: new AdvContainer(),
+                container: new HotbarContainer(this.manager.containers.hotbar),
+                restTurn: new RestTurnContainer()
+            }
+        } else if(this.manager.canGMHotbar()) {
+            this.components = {
+                container: new HotbarContainer(this.manager.containers.hotbar),
+                restTurn: new RestTurnContainer()
+            }
         }
 
         Object.values(this.components).forEach((component) => {

@@ -40,6 +40,9 @@
             "Status": "Status",
             "Active": "Aktywny",
             "Disabled": "Wyłączony"
+        },
+        "Ability": {
+            "Tooltip": "Kliknij lewym przyciskiem myszy, aby wyświetlić testy atrybutów i rzuty obronne.<br>Kliknij prawym przyciskiem myszy, aby rzucić inicjatywę."
         }
     },
     "BG3.Settings": {
@@ -185,7 +188,7 @@
             "Hint": ""
         },
         "ShowRestTurnButton": {
-            "Name": "Pokaż przycisk Wstrzymaj/Zatrzymaj",
+            "Name": "Pokaż przyciski odpoczynku/tury",
             "Hint": ""
         },
         "OverlayModePortrait": {
@@ -195,7 +198,7 @@
         "SettingsCategories": {
             "HotbarContainer": "Przyciski paska skrótów",
             "CombatContainer": "Wspólne działania kontenera",
-            "Global": "Globalne",
+            "Global": "Ogólne",
             "Portrait": "Portret postaci",
             "Tooltip": "Podpowiedź",
             "AutoPopulating": "Automatyczne wypełnianie",
@@ -233,11 +236,67 @@
             "BR": {
                 "Name": "Efekty aktywne bonusów i reakcji",
                 "Hint": "Ustaw akcję i reakcję bonusu zgodnie z aktywnymi efektami MidiQoL."
+            },
+            "ADV": {
+                "Name": "Dodaj przyciski ułatwienia/utrudnienia",
+                "Hint": "Dodaj źródło ułatwienia lub utrudnienia. Wymaga włączenia funkcji szybkiego przewijania MidiQoL."
             }
         },
         "GamePause": {
             "Name": "„Gra wstrzymana” ponad interfejsem",
             "Hint": "Jeśli opcja zostanie zaznaczona, interfejs użytkownika zostanie wyświetlony pod etykietą „Gra wstrzymana”."
+        },
+        "AutoScale": {
+            "Name": "Automatyczna skala interfejsu użytkownika",
+            "Hint": "Automatycznie skaluj interfejs użytkownika w zależności od przeglądarki. Wyłącz poniższy parametr skalowania interfejsu użytkownika."
+        },
+        "Menu": {
+            "Global": {
+                "Name": "Ustawienia ogólne",
+                "Hint": "Elementy natywne Foundry lub ogólne ustawienia interfejsu użytkownika BG3.",
+                "Label": "Konfiguracja ogólna"
+            },
+            "Theme": {
+                "Name": "Ustawienia motywu",
+                "Hint": "Wybierz jeden z dostępnych motywów lub stwórz własny.",
+                "Label": "Konfiguracja motywu"
+            },
+            "Portrait": {
+                "Name": "Ustawienia portretu",
+                "Hint": "Zaawansowane ustawienia portretu postaci.",
+                "Label": "Konfiguracja portretu"
+            },
+            "Hotbar": {
+                "Name": "Ustawienia paska skrótów",
+                "Hint": "Zaawansowane ustawienia paska skrótów.",
+                "Label": "Konfiguracja paska skrótów"
+            },
+            "Combat": {
+                "Name": "Ustawienia typowych działań",
+                "Hint": "Zaawansowane ustawienia typowych czynności.",
+                "Label": "Konfiguracja typowych działań"
+            },
+            "Populate": {
+                "Name": "Ustawienia automatycznego wypełniania",
+                "Hint": "Zaawansowane ustawienia funkcji automatycznego wypełniania.",
+                "Label": "Konfiguracja automatycznego wypełniania"
+            },
+            "Tooltip": {
+                "Name": "Ustawienia podpowiedzi",
+                "Hint": "Zaawansowane ustawienia podpowiedzi.",
+                "Label": "Konfiguracja podpowiedzi"
+            },
+            "Midi": {
+                "Name": "Synchronizacja ustawień MidiQoL",
+                "Hint": "Synchronizacja z funkcjami MidiQoL. Wymagany moduł MidiQoL.",
+                "Label": "Konfiguracja synchronizacji MidiQoL"
+            },
+            "CPR": {
+                "Name": "Wybierz czynności RKO",
+                "Hint": "Wybierz czynności RKO, które mają być automatycznie wypełniane w kontenerze czynności typowych.",
+                "Label": "Wybierz czynności RKO",
+                "UpTo6": "Wybierz czynności RKO, które mają być automatycznie wypełniane w kontenerze czynności typowych. Maksymalnie 6."
+            }
         }
     }
 } 
