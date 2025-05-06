@@ -1,3 +1,7 @@
+## [3.0.8] - 2025-05-06
+### Features
+- Add CTRL/ALT modifier on Initiative button (only with MidiQoL). (Related Issue: [#158])
+
 ## [3.0.7] - 2025-05-06
 ### Fixed
 - Fix "error" related to tidy5e-sheet flag. (Related Issue: [#151])
