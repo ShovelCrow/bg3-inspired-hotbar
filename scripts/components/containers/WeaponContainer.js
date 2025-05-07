@@ -40,19 +40,21 @@ export class WeaponContainer extends BG3Component {
                 compareOld = c.index === this.activeSet ? c.oldWeapons : this.components.weapon[this.activeSet].data.items;
             let toUpdate = [];
             weaponsList.forEach(w => {
-                if(w.system.equipped && !Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
+                if(w.system.equipped && !Object.values(c.data.items).find(wc => wc?.uuid && w.id === wc.uuid.split('.').pop())) {
                     toUpdate.push({_id: w.id, "system.equipped": 0});
-                } else if(!w.system.equipped && Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
+                } else if(!w.system.equipped && Object.values(c.data.items).find(wc => wc?.uuid && w.id === wc.uuid.split('.').pop())) {
                     toUpdate.push({_id: w.id, "system.equipped": 1});
                 }
             });
             Object.values(c.data.items).forEach(nw => {
+                if(!nw?.uuid) return;
                 const itemId = nw.uuid.split('.').pop(),
                     item = this.actor.items.get(itemId);
                 if(item && item.type !== 'weapon' && !item.system.equipped) toUpdate.push({_id: itemId, "system.equipped": 1});
             });
             if(compareOld) {
                 Object.values(compareOld).forEach(ow => {
+                    if(!ow?.uuid) return;
                     const itemId = ow.uuid.split('.').pop(),
                         item = this.actor.items.get(itemId);
                     if(item && item.type !== 'weapon' && item.system.equipped && !Object.values(c.data.items).find(w => w.uuid === ow.uuid)) toUpdate.push({_id: itemId, "system.equipped": 0});
