@@ -1,4 +1,5 @@
 import { BG3CONFIG } from "../../utils/config.js";
+import { fromUuid } from "../../utils/foundryUtils.js";
 import { BG3Component } from "../component.js";
 import { GridContainer } from "./GridContainer.js";
 
@@ -61,47 +62,13 @@ export class WeaponContainer extends BG3Component {
         // Update active set & equipped items
         this.activeSet = c.index;
         c.oldWeapons = foundry.utils.deepClone(c.data.items);
-        if(toUpdate.length) await this.actor.updateEmbeddedDocuments("Item", toUpdate);
-    }
-
-    /* async switchSet2(c) {
-        if(c.index === this.activeSet && c.oldWeapons === c.data.items) return;
-
-        const weaponsList = this.actor.items.filter(w => w.type == 'weapon'),
-            toUpdate = [];
-        if(this.activeSet !== c.index) {
-            // Add previous set to unequip
-            Object.values(this.components.weapon[this.activeSet].data.items).forEach(w => {
-              toUpdate.push({_id: w.uuid.split('.').pop(), "system.equipped": 0});
-            });
-      
-            // Save new active set
-            this.activeSet = c.index;
-            await ui.BG3HOTBAR.manager.persist();
-        } else if(c.oldWeapons && c.oldWeapons !== c.data.items) {
-            Object.values(c.oldWeapons).forEach(w => {
-              toUpdate.push({_id: w.uuid.split('.').pop(), "system.equipped": 0});
-            });
-        }
-        c.oldWeapons = foundry.utils.deepClone(c.data.items);
-        if(Object.values(c.data.items).length) {
-          Object.values(c.data.items).forEach(w => {
-            const itemId =  w.uuid.split('.').pop(),
-              commonItem = toUpdate.findIndex(wu => wu._id == itemId);
-            if(commonItem > -1) toUpdate[commonItem]["system.equipped"] = 1;
-            else toUpdate.push({_id: itemId, "system.equipped": 1})
-          })
-        }
-        weaponsList.forEach(w => {
-            if(w.system.equipped) {
-                const itemIndex = toUpdate.findIndex(wu => wu._id == w.id);
-                if(itemIndex === -1) toUpdate.push({_id: w.id, "system.equipped": 0});
-                else toUpdate.splice(itemIndex, 1);
+        if(toUpdate.length) {
+            for(const update of toUpdate) {
+                const item = this.actor.items.get(update._id);
+                if(item) item.updateSource({"system.equipped": update["system.equipped"]})
             }
-            // if(w.system.equipped && !toUpdate.find(wu => wu._id == w.id)) toUpdate.push({_id: w.id, "system.equipped": 0})
-        })
-        if(toUpdate.length) await this.actor.updateEmbeddedDocuments("Item", toUpdate);
-    } */
+        }
+    }
 
     async render() {
         await super.render();
