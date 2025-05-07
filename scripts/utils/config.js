@@ -478,7 +478,7 @@ export function updateSettingsDisplay() {
                 categories: [
                     {
                         label: null,
-                        fields: ['hoverFilterShow']
+                        fields: ['hoverFilterShow', 'showExtendedFilter']
                     }
                 ]
             },
@@ -1127,6 +1127,20 @@ export function registerSettings() {
         onChange: value => {
             if (ui.BG3HOTBAR.element?.[0]) {
                 ui.BG3HOTBAR.element[0].dataset.filterHover = value;
+            }
+        }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showExtendedFilter', {
+        name: 'BG3.Settings.ShowExtendedFilter.Name',
+        hint: 'BG3.Settings.ShowExtendedFilter.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: () => {
+            if (ui.BG3HOTBAR.components?.container?.components?.filterContainer) {
+                ui.BG3HOTBAR.components.container.components.filterContainer.updateExtendedFilter();
             }
         }
     });

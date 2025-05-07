@@ -221,6 +221,7 @@
     font-weight: bold;
     z-index: 11;
     pointer-events: none;
+    text-shadow: var(--shadow-text-stroke);
 }
 
 #bg3-hotbar-container .hotbar-item-uses.depleted {
