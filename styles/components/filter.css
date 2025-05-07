@@ -15,7 +15,14 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     margin-bottom: 1px;
     transition: all 0.2s ease;
+}
+
+#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container .bg3-filter-subcontainer {
     opacity: 0;
+}
+
+#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container:hover .bg3-filter-subcontainer {
+    opacity: 1;
 }
 
 #bg3-hotbar-container .filter-content {
@@ -106,8 +113,8 @@
     border-width: var(--bg3-filter-border-size);
     border-style: solid;
     box-sizing: border-box;
-    width: 11px;
-    height: 11px;
+    width: 10px;
+    height: 10px;
     background-color: currentColor;
 }
 

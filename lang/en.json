@@ -258,6 +258,10 @@
             "Name": "Enable Weapon Sets Auto-Equip",
             "Hint": "If checked, selecting a token or switching between weapon sets will automatically equip or unequip items."
         },
+        "HoverFilterShow": {
+            "Name": "Hotbar Filter on hover",
+            "Hint": "If checked, show Hotbar Filter only when hovering it."
+        },
         "Menu": {
             "Global": {
                 "Name": "General settings",
@@ -294,6 +298,9 @@
                     "Common": "Common Actions",
                     "Other": "Other"
                 }
+            },
+            "Filter": {
+                "Name": "Filter settings"
             },
             "Combat": {
                 "Name": "Common Actions settings",

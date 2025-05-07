@@ -474,6 +474,15 @@ export function updateSettingsDisplay() {
                 ]
             },
             {
+                label: 'BG3.Settings.Menu.Filter.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['hoverFilterShow']
+                    }
+                ]
+            },
+            {
                 label: 'BG3.Settings.Menu.Populate.Name',
                 categories: [
                     {
@@ -1107,6 +1116,22 @@ export function registerSettings() {
         type: Boolean,
         default: false
     });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'hoverFilterShow', {
+        name: 'BG3.Settings.HoverFilterShow.Name',
+        hint: 'BG3.Settings.HoverFilterShow.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: value => {
+            if (ui.BG3HOTBAR.element?.[0]) {
+                ui.BG3HOTBAR.element[0].dataset.filterHover = value;
+            }
+        }
+    });
+
+    // Filter Settings
 
     // Auto-Population Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {
