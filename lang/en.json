@@ -254,6 +254,10 @@
             "Name": "Enable GM Hotbar",
             "Hint": "Show GM special hotbar when no or multiple tokens are selected."
         },
+        "EnableWeaponAutoEquip": {
+            "Name": "Enable Weapon Sets Auto-Equip",
+            "Hint": "If checked, selecting a token or switching between weapon sets will automatically equip or unequip items."
+        },
         "Menu": {
             "Global": {
                 "Name": "General settings",
@@ -286,6 +290,7 @@
                 "Label": "Configure Hotbars",
                 "Sub": {
                     "General": "General",
+                    "Weapon": "Weapon Sets",
                     "Common": "Common Actions",
                     "Other": "Other"
                 }

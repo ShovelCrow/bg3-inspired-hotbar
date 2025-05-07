@@ -36,38 +36,40 @@ export class WeaponContainer extends BG3Component {
     async switchSet(c) {
         if(c.index === this.activeSet && c.oldWeapons === c.data.items) return;
 
-        const weaponsList = this.actor.items.filter(w => w.type == 'weapon'),
-            compareOld = c.index === this.activeSet ? c.oldWeapons : this.components.weapon[this.activeSet].data.items;
-        let toUpdate = [];
-        weaponsList.forEach(w => {
-            if(w.system.equipped && !Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
-                toUpdate.push({_id: w.id, "system.equipped": 0});
-            } else if(!w.system.equipped && Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
-                toUpdate.push({_id: w.id, "system.equipped": 1});
-            }
-        });
-        Object.values(c.data.items).forEach(nw => {
-            const itemId = nw.uuid.split('.').pop(),
-                item = this.actor.items.get(itemId);
-            if(item && item.type !== 'weapon' && !item.system.equipped) toUpdate.push({_id: itemId, "system.equipped": 1});
-        });
-        if(compareOld) {
-            Object.values(compareOld).forEach(ow => {
-                const itemId = ow.uuid.split('.').pop(),
-                    item = this.actor.items.get(itemId);
-                if(item && item.type !== 'weapon' && item.system.equipped && !Object.values(c.data.items).find(w => w.uuid === ow.uuid)) toUpdate.push({_id: itemId, "system.equipped": 0});
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'enableWeaponAutoEquip')) {
+            const weaponsList = this.actor.items.filter(w => w.type == 'weapon'),
+                compareOld = c.index === this.activeSet ? c.oldWeapons : this.components.weapon[this.activeSet].data.items;
+            let toUpdate = [];
+            weaponsList.forEach(w => {
+                if(w.system.equipped && !Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
+                    toUpdate.push({_id: w.id, "system.equipped": 0});
+                } else if(!w.system.equipped && Object.values(c.data.items).find(wc => w.id === wc.uuid.split('.').pop())) {
+                    toUpdate.push({_id: w.id, "system.equipped": 1});
+                }
             });
-        }
-        
-        // Update active set & equipped items
-        this.activeSet = c.index;
-        c.oldWeapons = foundry.utils.deepClone(c.data.items);
-        if(toUpdate.length) {
-            for(const update of toUpdate) {
-                const item = this.actor.items.get(update._id);
-                if(item) item.updateSource({"system.equipped": update["system.equipped"]})
+            Object.values(c.data.items).forEach(nw => {
+                const itemId = nw.uuid.split('.').pop(),
+                    item = this.actor.items.get(itemId);
+                if(item && item.type !== 'weapon' && !item.system.equipped) toUpdate.push({_id: itemId, "system.equipped": 1});
+            });
+            if(compareOld) {
+                Object.values(compareOld).forEach(ow => {
+                    const itemId = ow.uuid.split('.').pop(),
+                        item = this.actor.items.get(itemId);
+                    if(item && item.type !== 'weapon' && item.system.equipped && !Object.values(c.data.items).find(w => w.uuid === ow.uuid)) toUpdate.push({_id: itemId, "system.equipped": 0});
+                });
+            }
+            
+            // Update active set & equipped items
+            c.oldWeapons = foundry.utils.deepClone(c.data.items);
+            if(toUpdate.length) {
+                for(const update of toUpdate) {
+                    const item = this.actor.items.get(update._id);
+                    if(item) item.updateSource({"system.equipped": update["system.equipped"]})
+                }
             }
         }
+        this.activeSet = c.index;
     }
 
     async render() {

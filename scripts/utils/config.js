@@ -460,6 +460,10 @@ export function updateSettingsDisplay() {
                         fields: ['showItemNames', 'showItemUses', 'highlightStyle']
                     },
                     {
+                        label: 'BG3.Settings.Menu.Hotbar.Sub.Weapon',
+                        fields: ['enableWeaponAutoEquip']
+                    },
+                    {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Common',
                         fields: ['showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer']
                     },
@@ -938,6 +942,7 @@ export function registerSettings() {
         default: false
     });
 
+    // Hotbar Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showItemNames', {
         name: 'Show Item Names',
         hint: 'Display item names below each hotbar item',
@@ -982,6 +987,15 @@ export function registerSettings() {
                 ui.BG3HOTBAR.element[0].dataset.cellHighlight = value;
             }
         }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableWeaponAutoEquip', {
+        name: 'BG3.Settings.EnableWeaponAutoEquip.Name',
+        hint: 'BG3.Settings.EnableWeaponAutoEquip.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showCombatContainer', {

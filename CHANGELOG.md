@@ -2,6 +2,9 @@
 ### Fixed
 - [Foundry V13] Fix duplicated weapons set on switch. (Related Issues: [#161])
 
+### Features
+- Add a setting to disable Weapon Sets auto-equip. (Related Issue: [#158])
+
 ## [3.0.8] - 2025-05-06
 ### Fixed
 - Fix potential bug with Weapon Container. (Related Issues: [#160])
