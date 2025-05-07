@@ -4,7 +4,7 @@
 - Fix bug with weapon container after drag & drop. (Related Issues: [#166])
 
 ### Features
-- Add a setting to disable Weapon Sets auto-equip. (Related Issue: [#158])
+- Add a setting to disable Weapon Sets auto-equip. (Related Issue: [#164])
 - Add a setting to show extra "filters" based on items with limited uses. Those extra filters can't hightlight or grey out hotbars items. (Related Issue: [#168])
 
 ## [3.0.8] - 2025-05-06
