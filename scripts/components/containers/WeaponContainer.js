@@ -1,5 +1,4 @@
 import { BG3CONFIG } from "../../utils/config.js";
-import { fromUuid } from "../../utils/foundryUtils.js";
 import { BG3Component } from "../component.js";
 import { GridContainer } from "./GridContainer.js";
 

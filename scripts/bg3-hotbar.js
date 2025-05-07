@@ -253,7 +253,7 @@ export class BG3Hotbar extends Application {
     }
 
     _autoPopulateToken(token) {
-        return AutoPopulateCreateToken.populateUnlinkedToken(token, true);
+        return AutoPopulateCreateToken.populateUnlinkedToken(token.document ?? token, true);
     }
 
     async _applyTheme() {
