@@ -1,3 +1,7 @@
+## [3.1.0] - 2025-05-07
+### Fixed
+- Fix a bug on Item updates.
+
 ## [3.0.9] - 2025-05-07
 ### Fixed
 - [Foundry V13] Fix duplicated weapons set on switch. (Related Issues: [#161])
