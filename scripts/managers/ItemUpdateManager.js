@@ -108,7 +108,7 @@ export class ItemUpdateManager {
                 // Check if it's already in any container
                 let exists = false;
                 for (const container of ui.BG3HOTBAR.components.container.components.hotbar) {
-                    if (Object.values(container.data.items).some(i => i.uuid === item.uuid)) {
+                    if (Object.values(container.data.items).some(i => i && i.uuid === item.uuid)) {
                         exists = true;
                         break;
                     }

@@ -72,7 +72,8 @@ export class PortraitContainer extends BG3Component {
             img: await this.img,
             health: this.health,
             opacity: 1,
-            extraInfos: await this.extraInfos
+            extraInfos: await this.extraInfos,
+            // scale: this.token.ring?.scaleCorrection ?? 1
         };
     }
 
@@ -104,9 +105,12 @@ export class PortraitContainer extends BG3Component {
         this.element.style.setProperty('--img-background-color', (value && value != '' ? value : 'transparent'));
     }
 
-    setPortraitBendMode() {
+    async setPortraitBendMode() {
         const imageContainer = this.element.getElementsByClassName('portrait-image-subcontainer');
-        if(imageContainer[0]) imageContainer[0].setAttribute('data-bend-mode', game.settings.get(BG3CONFIG.MODULE_NAME, 'overlayModePortrait'));
+        if(imageContainer[0]) {
+            imageContainer[0].setAttribute('data-bend-mode', game.settings.get(BG3CONFIG.MODULE_NAME, 'overlayModePortrait'));
+            imageContainer[0].style.setProperty('--bend-img', `url(${this.element.querySelector('.portrait-image').src})`);
+        }
     }
 
     togglePortraitOverlay() {
