@@ -87,7 +87,7 @@
         },
         "CollapseFoundryMacrobar": {
             "Name": "Collapse Foundry Macrobar",
-            "Hint": "Automatically collapse the default Foundry macrobar"
+            "Hint": "Automatically collapse the default Foundry macrobar. On Foundry V13 or higher, \"Always\" and \"Fully Hidden\" do the same thing."
         },
         "ShowPassiveFeaturesContainer": {
             "Name": "Show Passive Features Container",

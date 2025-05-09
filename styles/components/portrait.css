@@ -144,6 +144,7 @@
 #bg3-hotbar-container .hp-controls input {
   background: url(../../../../ui/parchment.jpg) repeat;
   flex: 2;
+  text-align: center;
 }
 
 /* ==========================================================================
