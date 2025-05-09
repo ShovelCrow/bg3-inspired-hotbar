@@ -1,6 +1,7 @@
 ## [3.1.0] - 2025-05-07
 ### Fixed
 - [Foundry V13] Fix saving throw new method name. (Related Issues: [#173])
+- [Foundry V13] Fix "Collapse Macro" setting, it can't be collapsed anymore since V13.
 - Fix a bug on Item updates.
 - Fix "undefined" filters.
 - Few minor fixes.
