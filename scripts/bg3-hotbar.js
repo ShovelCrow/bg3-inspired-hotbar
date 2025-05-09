@@ -169,7 +169,7 @@ export class BG3Hotbar extends Application {
             // Update portrait card for any actor changes
             if (this.components.portrait) {
                 // changes.system?.attributes?.hp?.value !== undefined
-                await this.components.portrait.render();
+                await this.components.portrait._renderInner();
             }
             
             // Update filter container for spell slot changes

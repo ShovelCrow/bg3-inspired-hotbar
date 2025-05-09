@@ -3,6 +3,7 @@ import { AbilityContainer } from "./AbilityContainer.js";
 import { DeathSavesContainer } from "./DeathSavesContainer.js";
 import { MenuContainer } from "./MenuContainer.js";
 import { BG3CONFIG } from "../../utils/config.js";
+import { PortraitHealth } from "./PortraitHealth.js";
 
 export class PortraitContainer extends BG3Component {
     constructor(data) {
@@ -73,7 +74,7 @@ export class PortraitContainer extends BG3Component {
             health: this.health,
             opacity: 1,
             extraInfos: await this.extraInfos,
-            // scale: this.token.ring?.scaleCorrection ?? 1
+            hpControls: game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls')
         };
     }
 
@@ -91,7 +92,31 @@ export class PortraitContainer extends BG3Component {
             this.actor.sheet.render(true);
         });
 
-        this.element.querySelector('.portrait-image-container').addEventListener('contextmenu', (event) => MenuContainer.toggle(this.getPortraitMenu(), this.element, event));
+        $(this.element).on('contextmenu', '.portrait-image-container', (event) => MenuContainer.toggle(this.getPortraitMenu(), this.element, event));
+    }
+    
+    _parseAttributeInput(input) {
+        const isEqual = input.startsWith("=");
+        const isDelta = input.startsWith("+") || input.startsWith("-");
+        const current = this.actor.system.attributes.hp.value;
+        let v;
+
+        // Explicit equality
+        if ( isEqual ) input = input.slice(1);
+
+        // Percentage change
+        if ( input.endsWith("%") ) {
+            const p = Number(input.slice(0, -1)) / 100;
+            v = this.actor.system.attributes.hp.max * p;
+        }
+
+        // Additive delta
+        else v = Number(input);
+
+        // Return parsed input
+        const value = isDelta ? current + v : v;
+        const delta = isDelta ? v : undefined;
+        return {value, delta, isDelta};
     }
 
     async updateImagePreference() {
@@ -116,11 +141,6 @@ export class PortraitContainer extends BG3Component {
     togglePortraitOverlay() {
         const overlay = this.element.getElementsByClassName('health-overlay');
         if(overlay && overlay[0]) overlay[0].classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showHealthOverlay'));
-    }
-
-    toggleHPText() {
-        const text = this.element.getElementsByClassName('hp-text');
-        if(text && text[0]) text[0].classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showHPText'));
     }
 
     toggleExtraInfos() {
@@ -151,13 +171,17 @@ export class PortraitContainer extends BG3Component {
         this.element.classList.toggle('portrait-hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'hidePortraitImage'));
         this.setPortraitBendMode();
         this.togglePortraitOverlay();
-        this.toggleHPText();
         this.toggleExtraInfos();
     }
     
     async _renderInner() {
         await super._renderInner();
         this.applySettings();
+        this.components = {};
+        // Portrait Health
+        this.components.healthContainer = new PortraitHealth({}, this);
+        this.components.healthContainer.render();
+        this.element.appendChild(this.components.healthContainer.element);
         // Death Save
         this.components.deathSavesContainer = new DeathSavesContainer();
         this.components.deathSavesContainer.render();
