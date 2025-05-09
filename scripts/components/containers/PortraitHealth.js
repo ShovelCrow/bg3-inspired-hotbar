@@ -17,7 +17,7 @@ export class PortraitHealth extends BG3Component {
         return {
             enabled: game.settings.get(BG3CONFIG.MODULE_NAME, 'showHPText'),
             health: this._parent.health,
-            hpControls: game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls')
+            hpControls: game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls') && game.user.isGM
         };
     }
 
@@ -96,7 +96,7 @@ export class PortraitHealth extends BG3Component {
 
     async render() {
         await super.render();
-        if(!game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls')) this.element.style.setProperty('pointer-events', 'none');
+        if(!game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls') || !game.user.isGM) this.element.style.setProperty('pointer-events', 'none');
         else this.element.style.removeProperty('pointer-events');
         return this.element;
     }
