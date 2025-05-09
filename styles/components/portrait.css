@@ -145,6 +145,7 @@
   background: url(../../../../ui/parchment.jpg) repeat;
   flex: 2;
   text-align: center;
+  color: var(--color-text-dark-primary);
 }
 
 /* ==========================================================================
