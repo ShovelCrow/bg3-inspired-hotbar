@@ -1,6 +1,8 @@
 ## [3.1.0] - 2025-05-07
 ### Fixed
 - Fix a bug on Item updates.
+- Fix "undefined" filters.
+- Few minor fixes.
 
 ## [3.0.9] - 2025-05-07
 ### Fixed

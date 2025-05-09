@@ -122,7 +122,6 @@ export class BG3Hotbar extends Application {
 
     async _onUpdateToken(token, changes, options, userId) {
         if (!this.manager || game.user.id !== userId) return;
-            
         // If this is our current token and actor-related data changed
         if (token.id === this.manager.currentTokenId && (changes.actorId || changes.actorData || changes.actorLink)) {
             this.refresh();
@@ -170,7 +169,7 @@ export class BG3Hotbar extends Application {
             // Update portrait card for any actor changes
             if (this.components.portrait) {
                 // changes.system?.attributes?.hp?.value !== undefined
-                await this.components.portrait._renderInner();
+                await this.components.portrait.render();
             }
             
             // Update filter container for spell slot changes
