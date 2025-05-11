@@ -78,18 +78,22 @@ export class BG3Hotbar extends Application {
         this.dragDropManager = new DragDropManager();
         this.itemUpdateManager = new ItemUpdateManager();
         this.tooltipManager = new BG3TooltipManager();
+
+        await this._onCanvasReady.bind(this)();
         
         // Apply macrobar collapse setting immediately if it's enabled
         this._applyMacrobarCollapseSetting();
         document.body.dataset.playerList = game.settings.get(BG3CONFIG.MODULE_NAME, 'playerListVisibility');
-
-        this._onCanvasReady.bind(this)();
     }
 
-    _onCanvasReady() {
+    isV13orHigher() {
+        return Number(game.version) > 13;
+    }
+
+    async _onCanvasReady() {
         const token = canvas.tokens.controlled?.[0];
-        if(token) this._onControlToken(token, canvas.tokens.controlled);
-        else if(this.manager.canGMHotbar()) this.generate(null);
+        if(token) await this._onControlToken(token, canvas.tokens.controlled);
+        else if(this.manager.canGMHotbar()) await this.generate(null);
     }
 
     async _onCreateToken(token) {
@@ -99,7 +103,7 @@ export class BG3Hotbar extends Application {
         }, 100)
     }
 
-    _onControlToken(token, controlled) {
+    async _onControlToken(token, controlled) {
         if (!this.manager) return;
         
         if(this.generateTimeout) {
@@ -123,7 +127,6 @@ export class BG3Hotbar extends Application {
 
     async _onUpdateToken(token, changes, options, userId) {
         if (!this.manager || game.user.id !== userId) return;
-            
         // If this is our current token and actor-related data changed
         if (token.id === this.manager.currentTokenId && (changes.actorId || changes.actorData || changes.actorLink)) {
             this.refresh();
@@ -238,23 +241,23 @@ export class BG3Hotbar extends Application {
             if(collapseMacrobar !== 'full' && document.querySelector("#hotbar").style.display != 'flex') document.querySelector("#hotbar").style.display = 'flex';
             // Applying macrobar collapse setting
             if (collapseMacrobar === 'always' || collapseMacrobar === 'true') {
-                ui.hotbar.collapse();
+                this.isV13orHigher() ? ui.hotbar.element.classList.add('hidden') : ui.hotbar.collapse();
             } else if (collapseMacrobar === 'never' || collapseMacrobar === 'false') {
-                ui.hotbar.expand();
+                this.isV13orHigher() ? ui.hotbar.element.classList.remove('hidden') : ui.hotbar.expand();
             } else if(collapseMacrobar === 'select') {
                 if(this.macroBarTimeout) clearTimeout(this.macroBarTimeout);
-                if(!!this.manager?.actor) {
-                    ui.hotbar.collapse();
+                if(!!ui.BG3HOTBAR?.element) {
+                    this.isV13orHigher() ? ui.hotbar.element.classList.add('hidden') : ui.hotbar.collapse();
                 } else {
                     this.macroBarTimeout = setTimeout(() => {
-                        ui.hotbar.expand();
+                        this.isV13orHigher() ? ui.hotbar.element.classList.remove('hidden') : ui.hotbar.expand();
                     }, 100);
                 }
             } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
     }
 
     _autoPopulateToken(token) {
-        return AutoPopulateCreateToken.populateUnlinkedToken(token, true);
+        return AutoPopulateCreateToken.populateUnlinkedToken(token.document ?? token, true);
     }
 
     async _applyTheme() {
@@ -332,8 +335,9 @@ export class BG3Hotbar extends Application {
         html.dataset.itemName = game.settings.get(BG3CONFIG.MODULE_NAME, 'showItemNames');
         html.dataset.itemUse = game.settings.get(BG3CONFIG.MODULE_NAME, 'showItemUses');
         html.dataset.cellHighlight = game.settings.get(BG3CONFIG.MODULE_NAME, 'highlightStyle');
+        html.dataset.cellHighlight = game.settings.get(BG3CONFIG.MODULE_NAME, 'highlightStyle');
+        html.dataset.filterHover = game.settings.get(BG3CONFIG.MODULE_NAME, 'hoverFilterShow');
         document.body.dataset.showMaterials = game.settings.get(BG3CONFIG.MODULE_NAME, 'showMaterialDescription');
-        document.body.dataset.lightTooltip = game.settings.get(BG3CONFIG.MODULE_NAME, 'enableLightTooltip');
         ControlsManager.updateUIDataset(html);
 
         if(this.manager.currentTokenId) {

@@ -374,7 +374,6 @@ export function registerEarly() {
 }
 
 const hookRollEvent = (rollConfig, dialogConfig, messageConfig) => {
-    console.log(rollConfig)
     if(!game.modules.get("midi-qol")?.active || !game.settings.get(BG3CONFIG.MODULE_NAME, 'addAdvBtnsMidiQoL') || !ui.BG3HOTBAR.manager?.actor || ui.BG3HOTBAR.manager?.actor !== rollConfig.workflow?.actor) return;
     const state = ui.BG3HOTBAR.manager.actor.getFlag(BG3CONFIG.MODULE_NAME, "advState"),
         once = ui.BG3HOTBAR.manager.actor.getFlag(BG3CONFIG.MODULE_NAME, "advOnce");
@@ -441,7 +440,7 @@ export function updateSettingsDisplay() {
                 categories: [
                     {
                         label: 'BG3.Settings.Menu.Portrait.Sub.Show',
-                        fields: ['hidePortraitImage', 'showHealthOverlay', 'showHPText', 'showDeathSavingThrow', 'menuExtraInfo', 'showExtraInfo']
+                        fields: ['hidePortraitImage', 'showHealthOverlay', 'showHPText', 'enableHPControls', 'showDeathSavingThrow', 'menuExtraInfo', 'showExtraInfo']
                     },
                     {
                         label: 'BG3.Settings.Menu.Portrait.Sub.Portrait',
@@ -461,12 +460,25 @@ export function updateSettingsDisplay() {
                         fields: ['showItemNames', 'showItemUses', 'highlightStyle']
                     },
                     {
+                        label: 'BG3.Settings.Menu.Hotbar.Sub.Weapon',
+                        fields: ['enableWeaponAutoEquip']
+                    },
+                    {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Common',
                         fields: ['showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer']
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Other',
                         fields: ['fadeControlsMenu', 'showRestTurnButton', 'enableGMHotbar']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.Filter.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['hoverFilterShow', 'showExtendedFilter']
                     }
                 ]
             },
@@ -780,8 +792,22 @@ export function registerSettings() {
       type: Boolean,
       default: true,
       onChange: () => {
-        if(ui.BG3HOTBAR.components.portrait) {
-            ui.BG3HOTBAR.components.portrait.toggleHPText.bind(ui.BG3HOTBAR.components.portrait)();
+        if(ui.BG3HOTBAR.components.portrait?.components?.healthContainer) {
+            ui.BG3HOTBAR.components.portrait.components.healthContainer.render();
+        }
+      }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableHPControls', {
+      name: 'BG3.Settings.EnableHPControls.Name',
+      hint: 'BG3.Settings.EnableHPControls.Hint',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: false,
+      onChange: () => {
+        if(ui.BG3HOTBAR.components.portrait?.components?.healthContainer) {
+            ui.BG3HOTBAR.components.portrait.components.healthContainer.render();
         }
       }
     });
@@ -939,6 +965,7 @@ export function registerSettings() {
         default: false
     });
 
+    // Hotbar Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showItemNames', {
         name: 'Show Item Names',
         hint: 'Display item names below each hotbar item',
@@ -983,6 +1010,15 @@ export function registerSettings() {
                 ui.BG3HOTBAR.element[0].dataset.cellHighlight = value;
             }
         }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableWeaponAutoEquip', {
+        name: 'BG3.Settings.EnableWeaponAutoEquip.Name',
+        hint: 'BG3.Settings.EnableWeaponAutoEquip.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showCombatContainer', {
@@ -1094,6 +1130,36 @@ export function registerSettings() {
         type: Boolean,
         default: false
     });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'hoverFilterShow', {
+        name: 'BG3.Settings.HoverFilterShow.Name',
+        hint: 'BG3.Settings.HoverFilterShow.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: value => {
+            if (ui.BG3HOTBAR.element?.[0]) {
+                ui.BG3HOTBAR.element[0].dataset.filterHover = value;
+            }
+        }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showExtendedFilter', {
+        name: 'BG3.Settings.ShowExtendedFilter.Name',
+        hint: 'BG3.Settings.ShowExtendedFilter.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: () => {
+            if (ui.BG3HOTBAR.components?.container?.components?.filterContainer) {
+                ui.BG3HOTBAR.components.container.components.filterContainer.updateExtendedFilter();
+            }
+        }
+    });
+
+    // Filter Settings
 
     // Auto-Population Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enforceSpellPreparationPC', {

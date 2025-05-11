@@ -1,3 +1,38 @@
+## [3.1.1] - 2025-05-07
+### Fixed
+- Auto select HP in HP Control input to allow faster editing.
+- Fix a bug when deactivating "Show Damage as Ranges" setting.
+
+### Features
+- Add new parameter in Right-Click Portrait Menu to scale Token Image based of Token Scale (Ratio). (Related Issues: [#181])
+
+## [3.1.0] - 2025-05-07
+### Fixed
+- [Foundry V13] Fix saving throw new method name. (Related Issues: [#173])
+- [Foundry V13] Fix "Collapse Macro" setting, it can't be collapsed anymore since V13.
+- Fix a bug on Item updates.
+- Fix "undefined" filters.
+- Few minor fixes.
+
+### Features
+- Add a new setting to control Token Health on Portrait. (Related Issues: [#163])
+
+## [3.0.9] - 2025-05-07
+### Fixed
+- [Foundry V13] Fix duplicated weapons set on switch. (Related Issues: [#161])
+- Fix bug with weapon container after drag & drop. (Related Issues: [#166])
+
+### Features
+- Add a setting to disable Weapon Sets auto-equip. (Related Issue: [#164])
+- Add a setting to show extra "filters" based on items with limited uses. Those extra filters can't hightlight or grey out hotbars items. (Related Issue: [#168])
+
+## [3.0.8] - 2025-05-06
+### Fixed
+- Fix potential bug with Weapon Container. (Related Issues: [#160])
+
+### Features
+- Add CTRL/ALT modifier on Initiative button. (Related Issue: [#158])
+
 ## [3.0.7] - 2025-05-06
 ### Fixed
 - Fix "error" related to tidy5e-sheet flag. (Related Issue: [#151])

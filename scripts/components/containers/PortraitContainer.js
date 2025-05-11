@@ -3,12 +3,14 @@ import { AbilityContainer } from "./AbilityContainer.js";
 import { DeathSavesContainer } from "./DeathSavesContainer.js";
 import { MenuContainer } from "./MenuContainer.js";
 import { BG3CONFIG } from "../../utils/config.js";
+import { PortraitHealth } from "./PortraitHealth.js";
 
 export class PortraitContainer extends BG3Component {
     constructor(data) {
         super(data);
         this.components = {};
         this.useTokenImage = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "useTokenImage") ?? false;
+        this.scaleTokenImage = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "scaleTokenImage") ?? false;
     }
 
     get classes() {
@@ -72,7 +74,8 @@ export class PortraitContainer extends BG3Component {
             img: await this.img,
             health: this.health,
             opacity: 1,
-            extraInfos: await this.extraInfos
+            extraInfos: await this.extraInfos,
+            hpControls: game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls')
         };
     }
 
@@ -90,7 +93,37 @@ export class PortraitContainer extends BG3Component {
             this.actor.sheet.render(true);
         });
 
-        this.element.querySelector('.portrait-image-container').addEventListener('contextmenu', (event) => MenuContainer.toggle(this.getPortraitMenu(), this.element, event));
+        $(this.element).on('contextmenu', '.portrait-image-container', async (event) => {
+            await MenuContainer.toggle(this.getPortraitMenu(), this.element, event);
+            $('div[data-key="token"] .menu-item-content input[type="checkbox"]').change(async (event) => {
+                this.scaleTokenImage = !this.scaleTokenImage;
+                await this.actor.setFlag(BG3CONFIG.MODULE_NAME, "scaleTokenImage", this.scaleTokenImage);
+            });
+        });
+    }
+    
+    _parseAttributeInput(input) {
+        const isEqual = input.startsWith("=");
+        const isDelta = input.startsWith("+") || input.startsWith("-");
+        const current = this.actor.system.attributes.hp.value;
+        let v;
+
+        // Explicit equality
+        if ( isEqual ) input = input.slice(1);
+
+        // Percentage change
+        if ( input.endsWith("%") ) {
+            const p = Number(input.slice(0, -1)) / 100;
+            v = this.actor.system.attributes.hp.max * p;
+        }
+
+        // Additive delta
+        else v = Number(input);
+
+        // Return parsed input
+        const value = isDelta ? current + v : v;
+        const delta = isDelta ? v : undefined;
+        return {value, delta, isDelta};
     }
 
     async updateImagePreference() {
@@ -99,24 +132,28 @@ export class PortraitContainer extends BG3Component {
         this._renderInner();
     }
 
+    setTokenImageScale() {
+        const image = this.element.querySelector('.portrait-image');
+        if(!this.scaleTokenImage || !this.useTokenImage || this.token.document?._source?.texture?.scaleX === 1) image.style.removeProperty('scale');
+        else image.style.setProperty('scale', this.token.document._source.texture.scaleX);
+    }
+
     setImgBGColor() {
         const value = game.settings.get(BG3CONFIG.MODULE_NAME, 'backgroundPortraitPreferences');
         this.element.style.setProperty('--img-background-color', (value && value != '' ? value : 'transparent'));
     }
 
-    setPortraitBendMode() {
+    async setPortraitBendMode() {
         const imageContainer = this.element.getElementsByClassName('portrait-image-subcontainer');
-        if(imageContainer[0]) imageContainer[0].setAttribute('data-bend-mode', game.settings.get(BG3CONFIG.MODULE_NAME, 'overlayModePortrait'));
+        if(imageContainer[0]) {
+            imageContainer[0].setAttribute('data-bend-mode', game.settings.get(BG3CONFIG.MODULE_NAME, 'overlayModePortrait'));
+            imageContainer[0].style.setProperty('--bend-img', `url(${this.element.querySelector('.portrait-image').src})`);
+        }
     }
 
     togglePortraitOverlay() {
         const overlay = this.element.getElementsByClassName('health-overlay');
         if(overlay && overlay[0]) overlay[0].classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showHealthOverlay'));
-    }
-
-    toggleHPText() {
-        const text = this.element.getElementsByClassName('hp-text');
-        if(text && text[0]) text[0].classList.toggle('hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'showHPText'));
     }
 
     toggleExtraInfos() {
@@ -131,10 +168,12 @@ export class PortraitContainer extends BG3Component {
             name: 'baseMenu',
             buttons: {
                 token: {
-                    label: 'Use Token Image', icon: 'fas fa-chess-pawn', custom: this.useTokenImage ? '<i class="fas fa-check"></i>' : '', click: !this.useTokenImage ? this.updateImagePreference.bind(this) : null
+                    label: 'Use Token Image', icon: 'fas fa-chess-pawn', custom: this.useTokenImage ? `<i class="fas fa-check"></i>${this.token.document._source.texture.scaleX !== 1 ? `<label for="input-token-scale" data-tooltip="Apply Token Scale" data-tooltip-direction="UP"><i class="fa-solid fa-up-right-and-down-left-from-center"${this.scaleTokenImage ? 'style="color: rgb(46, 204, 113)"' : ''}></i></label><input name="input-token-scale" type="checkbox"${this.scaleTokenImage ? ' checked' : ''}>` : ''}` : '', click: !this.useTokenImage ? this.updateImagePreference.bind(this) : (event) => {
+                        if($(event.target).attr('for') === 'input-token-scale') $('div[data-key="token"] .menu-item-content input[type="checkbox"]').trigger('change');
+                    }
                 },
                 portrait: {
-                    label: 'Use Character Portrait', icon: 'fas fa-user', custom: !this.useTokenImage ? '<i class="fas fa-check"></i>' : '', click: this.useTokenImage ? this.updateImagePreference.bind(this) : null
+                    label: 'Use Character Portrait', icon: 'fas fa-user', custom: !this.useTokenImage ? '<i class="fas fa-check"></i>' : '', click: this.useTokenImage ? this.updateImagePreference.bind(this) : () => {}
                 }
             }
         }
@@ -147,13 +186,18 @@ export class PortraitContainer extends BG3Component {
         this.element.classList.toggle('portrait-hidden', !game.settings.get(BG3CONFIG.MODULE_NAME, 'hidePortraitImage'));
         this.setPortraitBendMode();
         this.togglePortraitOverlay();
-        this.toggleHPText();
         this.toggleExtraInfos();
+        this.setTokenImageScale();
     }
     
     async _renderInner() {
         await super._renderInner();
         this.applySettings();
+        this.components = {};
+        // Portrait Health
+        this.components.healthContainer = new PortraitHealth({}, this);
+        this.components.healthContainer.render();
+        this.element.appendChild(this.components.healthContainer.element);
         // Death Save
         this.components.deathSavesContainer = new DeathSavesContainer();
         this.components.deathSavesContainer.render();
