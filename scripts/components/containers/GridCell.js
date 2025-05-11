@@ -83,66 +83,45 @@ export class GridCell extends BG3Component {
         const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
         const consumeId = firstTarget?.target;
         const consumeType = firstTarget?.type;
-        const consumeAmount = firstTarget?.value ?? firstTarget?.amount;
     
+        // Return cast activity consumption
         const cachedForId = itemData?.flags?.dnd5e?.cachedFor;
         if (!consumeId && cachedForId) {
-            const cachedFor = fromUuidSync(cachedForId, {
-                relative: itemData.actor,
-                strict: false
-            });
-            const cacheItem = cachedFor.item;
-            if (cacheItem?.system?.uses) {
-                const uses = cacheItem.system.uses;
-                const value = uses.value ?? 0;
-                const max = uses.max ?? 0;
-                if (max > 0) return {uses: {value: value, max: max}};
-                else return null;
-            } else return null;
+            const cacheItem = fromUuidSync(cachedForId, { relative: itemData.actor, strict: false });
+            if (cacheItem?.item?.system?.uses) {
+                const uses = cacheItem.item.system.uses;
+                if (uses.max > 0) {
+                    return {consume: {value: uses.value ?? 0, max: uses.max ?? 0}};
+                }
+            }
+            return null;
         }
+
+        // Return quantity for consumables
         if (!consumeId || !consumeType || consumeId === itemData.id) {
             if (itemData?.type == "consumable" && itemData?.system?.quantity > 1) {
-                return { consume: { value: itemData.system.quantity ?? 0} };
+                return {consume: {value: itemData.system.quantity ?? 0}};
             }
-            else return null;
+            return null;
         }
     
         // Return resources
         if (consumeType === "attribute") {
-        const parentId = consumeId.substr(0, consumeId.lastIndexOf("."));
-        const target = foundry.utils.getProperty(itemData.actor.system, parentId);
-    
-        if (target) {
-            const text = `${target.value ?? "0"}${target.max ? `/${target.max}` : ""}`;
-            return {consume: {
-                text: text,
-                title: `${text} (${target.label ?? ''})`,
-                value: target.value ?? 0,
-                max: target.max ?? 0
-            }};
-        }
+            const parentId = consumeId.substr(0, consumeId.lastIndexOf("."));
+            const target = foundry.utils.getProperty(itemData.actor.system, parentId);
+            // Return attribute
+            if (target) {
+                return {consume: {value: target.value ?? 0, max: target.max ?? 0}};
+            }
         } else {
             const target = itemData.actor.items?.get(consumeId);
-        
             // Return charges
             if (target && (consumeType === "charges" || consumeType === "itemUses")) {
-                const text = `${target.system.uses.value ?? "0"}${target.system.uses.max ? `/${target.system.uses.max}` : ""}`;
-                return {consume: {
-                    text: text,
-                    title: `${text} (${target.name})`,
-                    value: target.system.uses.value ?? 0,
-                    max: target.system.uses.max ?? 0
-                }};
+                return {consume: {value: target.system.uses.value ?? 0, max: target.system.uses.max ?? 0}};
             }
-        
             // Return quantity
             if (target?.system?.quantity) {
-                const text = `${consumeAmount > 1 ? `${consumeAmount} ${game.i18n.localize("DND5E.of")} ` : ""}${target.system.quantity}`;
-                return {consume: {
-                    text: text,
-                    title: `${text} (${target.name})`,
-                    value: target.system.quantity ?? 0
-                }};
+                return {consume: {value: target.system.quantity ?? 0}};
             }
         }
     
