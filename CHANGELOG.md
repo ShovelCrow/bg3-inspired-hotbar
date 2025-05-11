@@ -1,9 +1,10 @@
 ## [3.1.2] - 2025-05-07
 ### Fixed
 - Fix UI sometimes displayed to the top of the screen (with camera activated for example). (Related Issues: [#179])
+- Limit "Extra Filters" to items with the "feat" type. (Related Issues: [#182])
 
 ### Features
-- Patch DnD 5e Tooltip method to display charges for items without the "identified" property. Also non-indeitifed items won't display their charges in hotbar anymore. (Related Issues: [#180])
+- Patch DnD 5e Tooltip method to display charges for items without the "identified" property. Also non-identified items won't display their charges in hotbar anymore. (Related Issues: [#180])
 
 ## [3.1.1] - 2025-05-07
 ### Fixed
