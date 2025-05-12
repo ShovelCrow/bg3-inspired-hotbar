@@ -270,7 +270,8 @@ export class FilterContainer extends BG3Component {
         for(const filter of this.components) this.element.appendChild(filter.element);
         await Promise.all(this.components.map((filter) => filter.render()));
 
-        this.components.push(...await this.getExtendedFilter());
+        const extended = await this.getExtendedFilter();
+        if (extended) this.components.push(...extended);
 
         return this.element;
     }
