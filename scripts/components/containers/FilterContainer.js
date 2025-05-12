@@ -226,7 +226,7 @@ export class FilterContainer extends BG3Component {
                         tooltip: {
                             label: item.name,
                             // pills: (item.system.requirements ? item.system.requirements.split(';') : []).concat(item.system.uses.label),
-                            pills: [item.system.uses.label] ?? []
+                            recharge: item.system.uses.label ? [CONFIG.DND5E.limitedUsePeriods[item.system.uses.recovery[0].period].label] : []
                         },
                         itemId: item.id
                     }

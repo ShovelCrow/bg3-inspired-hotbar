@@ -174,7 +174,7 @@ aside[role="tooltip"] .notes {
     margin: 3px 0;
 }
   
-aside[role="tooltip"] .custom-tooltip i {
+aside[role="tooltip"] .custom-tooltip h4 i {
     margin: 0 1em;
     color: var(--data-color);
 }
