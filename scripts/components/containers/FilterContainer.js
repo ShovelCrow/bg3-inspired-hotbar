@@ -150,6 +150,9 @@ export class FilterContainer extends BG3Component {
 
     getDataToCompare(filter, cell) {
         if(!filter) return false;
+        if (filter.data?.custom) {
+            return cell.dataset.consumeId === filter.data.custom.itemId || cell.dataset.useId === filter.data.custom.itemId;
+        }
         switch (filter.data.id) {
             case 'spell':
                 if(filter.data.isPact) return cell.dataset.preparationMode === 'pact';
@@ -201,8 +204,18 @@ export class FilterContainer extends BG3Component {
         if(!game.settings.get(BG3CONFIG.MODULE_NAME, 'showExtendedFilter')) return;
         const resources = [],
             color = '#d5a25b';
+
         for(const item of this.actor.items) {
-            if(item.hasLimitedUses && item.name) {
+            if(item.hasLimitedUses && item.name && item.type === "feat") {
+                let isResource = false;
+                for (const i of this.actor.items) {
+                    if (i.hasResource && i.system?.consume?.target === item.id) {
+                        isResource = true;
+                        break;
+                    }
+                }
+                if (!isResource) continue;
+
                 resources.push(new FilterButton({
                     color: color,
                     class: ['filter-spell-point', 'filter-custom'],
@@ -212,8 +225,10 @@ export class FilterContainer extends BG3Component {
                         max: item.system.uses.max,
                         tooltip: {
                             label: item.name,
-                            // pills: item.system.requirements ? item.system.requirements.split(';') : null
-                        }
+                            // pills: (item.system.requirements ? item.system.requirements.split(';') : []).concat(item.system.uses.label),
+                            pills: [item.system.uses.label] ?? []
+                        },
+                        itemId: item.id
                     }
                 }, this));
             }
@@ -239,6 +254,7 @@ export class FilterContainer extends BG3Component {
             this.element.appendChild(filter.element);
             await filter.render();
         }));
+        return resources;
     }
 
     async updateExtendedFilter() {
@@ -253,7 +269,7 @@ export class FilterContainer extends BG3Component {
         for(const filter of this.components) this.element.appendChild(filter.element);
         await Promise.all(this.components.map((filter) => filter.render()));
 
-        await this.getExtendedFilter();
+        this.components.push(...await this.getExtendedFilter());
 
         return this.element;
     }

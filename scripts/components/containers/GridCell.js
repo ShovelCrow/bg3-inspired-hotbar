@@ -403,6 +403,11 @@ export class GridCell extends BG3Component {
                         break;
                 }
             }
+            if (itemData?.system?.uses) this.element.dataset.useId = itemData.id;
+            const firstActivity = itemData?.system?.activities?.contents[0] ?? itemData;
+            const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
+            const consumeId = firstTarget?.target;
+            if (consumeId) this.element.dataset.consumeId = consumeId;
         } else if($(this.element).hasClass('has-2h')) {
             this.element.classList.remove('has-2h');
             this._parent.element.style.removeProperty('--bg-2h');

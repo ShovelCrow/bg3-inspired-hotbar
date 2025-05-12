@@ -63,7 +63,8 @@
 
 #bg3-hotbar-container .action-type-button.used,
 #bg3-hotbar-container .feature-button.used,
-#bg3-hotbar-container .spell-level-button.used {
+#bg3-hotbar-container .spell-level-button.used,
+#bg3-hotbar-container .filter-custom.used {
     filter: saturate(0.3) brightness(0.7);
     cursor: default;
     opacity: 0.7;
@@ -71,7 +72,7 @@
 
 #bg3-hotbar-container .action-type-button.used:hover,
 #bg3-hotbar-container .feature-button.used:hover,
-#bg3-hotbar-container .spell-level-button.used:hover {
+#bg3-hotbar-container .spell-level-button.used:hover{
     background: transparent;
 }
 
