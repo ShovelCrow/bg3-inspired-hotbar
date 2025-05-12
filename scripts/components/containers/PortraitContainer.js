@@ -83,12 +83,12 @@ export class PortraitContainer extends BG3Component {
         const image = this.element.querySelector('.portrait-image-subcontainer');
         if(!image) return;
 
-        this.element.addEventListener('dblclick', (event) => {
+        image.addEventListener('dblclick', (event) => {
             if(game.settings.get(BG3CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
             this.actor.sheet.render(true);
         });
 
-        this.element.addEventListener('click', (event) => {
+        image.addEventListener('click', (event) => {
             if(!game.settings.get(BG3CONFIG.MODULE_NAME, 'showSheetSimpleClick')) return;
             this.actor.sheet.render(true);
         });
