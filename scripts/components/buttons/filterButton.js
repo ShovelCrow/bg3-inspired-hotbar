@@ -47,7 +47,7 @@ export class FilterButton extends BG3Component {
                     <div class="custom-tooltip dnd5e2">
                         <h4 style="--data-color:${this.data.color}">${this.data.custom?.tooltip?.label}</h4>
                         ${this.data.custom?.tooltip?.recharge ? `<p class="notes"><i class="fa-solid fa-arrows-rotate" inert></i> <span>${this.data.custom.tooltip.recharge}</span></p>` : ''}
-                        <p class="notes"><i>Left Click to highlight items using this slot.</i></p>
+                        <p class="notes"><i>Left Click to highlight items using this resource.</i></p>
                         <p class="notes"><i>Right Click to grey out.</i></p>
                     </div>` : false;
                 // desc = this.data.custom?.tooltip ? `<div class="custom-tooltip dnd5e2">h4 style="--data-color:${this.data.color}">${this.data.custom?.tooltip?.label}</h4>${this.data.custom?.tooltip?.pills ? `<ul class="pills">${this.data.custom.tooltip.pills.map(p => `<li class="pill"><span class="label" style="color: #4e4e4e;">${p}</label></li>`).join('')}</ul>` : ''}</div>` : false;
