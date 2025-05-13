@@ -111,19 +111,14 @@ export class BG3Hotbar extends Application {
             this.generateTimeout = null;
         }
 
+        if(this.manager.canGMHotbar() && ControlsManager.isSettingLocked('deselect')) return;
         this.generateTimeout = setTimeout(async () => {
             if (((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) && !ControlsManager.isSettingLocked('deselect')) {
                 if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.generate(null);
             }
-            if (!controlled || !canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) {
-                // if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
-                return;
-            }
+            if (!controlled || !canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) return;
 
-            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) {
-                await this.generate(token);
-                // if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
-            }
+            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) await this.generate(token);
         })
     }
 

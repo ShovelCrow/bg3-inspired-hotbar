@@ -1,8 +1,11 @@
-## [3.1.3] - 2025-05-12
+## [3.1.3] - 2025-05-13
 ### Fixed
 - Fix Hide Macrobar logic.
 - Fix HP Controls removing temp HP. (Related Issues: [#184])
 - Allow players with permission to see HP Controls. (Related Issues: [#184])
+
+### Features
+- Add a option in Controls Container to "lock" the GM Hotbar to keep it even after selecting a token. (Related Issues: [#185])
 
 ## [3.1.2] - 2025-05-11
 ### Fixed
