@@ -1,6 +1,8 @@
 ## [3.1.3] - 2025-05-12
 ### Fixed
 - Fix Hide Macrobar logic.
+- Fix HP Controls removing temp HP. (Related Issues: [#184])
+- Allow players with permission to see HP Controls. (Related Issues: [#184])
 
 ## [3.1.2] - 2025-05-11
 ### Fixed
