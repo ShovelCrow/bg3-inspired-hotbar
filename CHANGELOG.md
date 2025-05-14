@@ -1,4 +1,4 @@
-## [3.1.3] - 2025-05-13
+## [3.1.3] - 2025-05-13 
 ### Fixed
 - Fix Hide Macrobar logic.
 - Fix HP Controls removing temp HP. (Related Issues: [#184])
