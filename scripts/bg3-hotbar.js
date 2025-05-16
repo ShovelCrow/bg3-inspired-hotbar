@@ -246,7 +246,7 @@ export class BG3Hotbar extends Application {
                 this.isV13orHigher() ? ui.hotbar.element.classList.remove('hidden') : ui.hotbar.expand();
             } else if(collapseMacrobar === 'select') {
                 if(this.macroBarTimeout) clearTimeout(this.macroBarTimeout);
-                if(!!ui.BG3HOTBAR?.element) {
+                if(ui.BG3HOTBAR?.manager?.currentTokenId || ui.BG3HOTBAR?.manager?.globalMenu) {
                     this.isV13orHigher() ? ui.hotbar.element.classList.add('hidden') : ui.hotbar.collapse();
                 } else {
                     this.macroBarTimeout = setTimeout(() => {
