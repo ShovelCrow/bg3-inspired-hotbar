@@ -77,23 +77,30 @@ export class BG3TooltipManager {
         }
 
         // Add Tooltip to Macro
-        Macro.MACRO_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/macro-tooltip.hbs`;
-        Macro.prototype.richTooltip = async function (enrichmentOptions={}) {
+        const customRichTooltip = async function (enrichmentOptions={}) {
             return {
                 content: await renderTemplate(
-                this.constructor.MACRO_TOOLTIP_TEMPLATE, await this.getCardData(enrichmentOptions)
+                this.MACRO_TOOLTIP_TEMPLATE, await this.getCardData(enrichmentOptions)
                 ),
                 classes: ["dnd5e2", "dnd5e-tooltip", "item-tooltip"]
             };
         }
-        Macro.prototype.getCardData = async function ({ activity, ...enrichmentOptions }={}) {
-            const { name, type, img } = this;
+        const customGetCardData = async function ({ activity, ...enrichmentOptions }={}) {
+            const { name, type, img = 'icons/svg/book.svg' } = this;
             const context = {
                 name, type, img,
                 config: CONFIG.DND5E,
                 controlHints: game.settings.get("dnd5e", "controlHints")
             }
             return context;
+        }
+
+        const oldActivate = dnd5e.tooltips._onHoverContentLink;
+        dnd5e.tooltips._onHoverContentLink = async function(doc) {
+            if(!doc.MACRO_TOOLTIP_TEMPLATE) doc.MACRO_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/macro-tooltip.hbs`;
+            if(!doc.richTooltip) doc.richTooltip = customRichTooltip;
+            if(!doc.getCardData) doc.getCardData = customGetCardData;
+            oldActivate.bind(this)(doc);
         }
 
         const oldDismiss = TooltipManager.prototype.dismissLockedTooltips;
