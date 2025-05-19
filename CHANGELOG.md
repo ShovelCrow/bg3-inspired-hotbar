@@ -1,8 +1,9 @@
-## [3.1.4] - 2025-05-18 
+## [3.1.4] - 2025-05-19 
 ### Fixed
 - Fix players not allowed to use common actions macros. (Related Issues: [#191])
 - Fix CPR setting button displayed even without CPR module installed. (Related Issues: [#191])
 - Handle Classes without a native tooltip when added to hotbar. (Related Issues: [#192])
+- Fix Passives & Actives not showing correctly. (Related Issues: [#194])
 
 ## [3.1.3] - 2025-05-13 
 ### Fixed
