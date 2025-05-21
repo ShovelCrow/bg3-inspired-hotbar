@@ -1,9 +1,8 @@
-2025/05/21-15:45:02.016 66dc Log #189: 0 ops saved to Table #493 OK
-2025/05/21-15:45:02.016 66dc Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/000189.log: OK
-2025/05/21-15:45:02.016 66dc Log #490: 0 ops saved to Table #494 OK
-2025/05/21-15:45:02.016 66dc Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/000490.log: OK
-2025/05/21-15:45:02.016 66dc Table #191: 13 entries OK
-2025/05/21-15:45:02.016 66dc Table #492: 13 entries OK
-2025/05/21-15:45:02.018 66dc Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/MANIFEST-000187: OK
-2025/05/21-15:45:02.018 66dc Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/MANIFEST-000488: OK
-2025/05/21-15:45:02.020 66dc **** Repaired leveldb D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud; recovered 2 files; 18404 bytes. Some data may have been lost. ****
+2025/05/21-16:42:42.661 5050 Log #497: 0 ops saved to Table #503 OK
+2025/05/21-16:42:42.661 5050 Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/000497.log: OK
+2025/05/21-16:42:42.661 5050 Log #502: 0 ops saved to Table #504 OK
+2025/05/21-16:42:42.661 5050 Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/000502.log: OK
+2025/05/21-16:42:42.662 5050 Table #499: 13 entries OK
+2025/05/21-16:42:42.663 5050 Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/MANIFEST-000495: OK
+2025/05/21-16:42:42.664 5050 Archiving D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud/MANIFEST-000500: OK
+2025/05/21-16:42:42.666 5050 **** Repaired leveldb D:\GAMES\FoundryData\Data\modules\bg3-inspired-hotbar\packs\bg3-inspired-hud; recovered 1 files; 6671 bytes. Some data may have been lost. ****

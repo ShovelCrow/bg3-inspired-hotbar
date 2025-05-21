@@ -39,7 +39,8 @@ export class GridCell extends BG3Component {
                     name: itemData.name,
                     icon: itemData.img ?? 'icons/svg/book.svg',
                     actionType: itemData.system?.activation?.type?.toLowerCase() ?? itemData.activation?.type?.toLowerCase() ?? null,
-                    itemType: itemData.type
+                    itemType: itemData.type,
+                    quantity: itemData.system?.quantity && itemData.system?.quantity > 1 ? itemData.system?.quantity : false
                 },
                 ...await this.getItemUses()
             };
