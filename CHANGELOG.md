@@ -5,6 +5,7 @@
 - Handle Classes without a native tooltip when added to hotbar. (Related Issues: [#192])
 - Fix Passives & Actives not showing correctly. (Related Issues: [#194])
 - Change the way minize/maximize UI is handled. (Related Issues: [#200])
+- Fix Common Actions macros (non-cpr) text to adapt to 2014/2024 rules. (Related Issues: [#199])
 
 ## [3.1.3] - 2025-05-13 
 ### Fixed
