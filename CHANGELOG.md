@@ -6,6 +6,7 @@
 - Fix Passives & Actives not showing correctly. (Related Issues: [#194])
 - Change the way minize/maximize UI is handled. (Related Issues: [#200])
 - Fix Common Actions macros (non-cpr) text to adapt to 2014/2024 rules. (Related Issues: [#199])
+- Fix Ability Check/Save & Skill roll for D&D previous to v4. (Related Issues: [#195])
 
 ### Features
 - Display quantity on items if there is more than 1. (Related Issues: [#196])

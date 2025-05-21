@@ -90,6 +90,10 @@ export class BG3Hotbar extends Application {
         return Number(game.version) > 13;
     }
 
+    isDnDPrev4 () {
+        return Number(game.system.version.split('.')[0]) < 4;
+    }
+
     async _onCanvasReady() {
         const token = canvas.tokens.controlled?.[0];
         if(token) await this._onControlToken(token, canvas.tokens.controlled);
