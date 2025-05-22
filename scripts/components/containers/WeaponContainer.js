@@ -40,13 +40,13 @@ export class WeaponContainer extends BG3Component {
             const compareOld = c.index === this.activeSet ? c.oldWeapons : this.components.weapon[this.activeSet].data.items,
                 otherSetsWeapons = this.components.weapon.filter(wc => wc.index !== c.index).flatMap(wc => Object.values(wc.data.items)),
                 activeWeapons = Object.values(this.components.weapon[c.index].data.items),
-                inactiveWeapons = otherSetsWeapons.filter(w => !Object.values(this.components.weapon[c.index].data.items).map(v => v.uuid).includes(w.uuid));
+                inactiveWeapons = otherSetsWeapons.filter(w => !Object.values(this.components.weapon[c.index].data.items).map(v => v?.uuid).includes(w?.uuid));
             inactiveWeapons.forEach((data) => {
-                const item = this.actor.items.find(i => i.uuid === data.uuid);
+                const item = this.actor.items.find(i => i.uuid === data?.uuid);
                 if(item && item.system?.equipped) toUpdate.push({_id: item.id, "system.equipped": 0});
             });
             activeWeapons.forEach((data) => {
-                const item = this.actor.items.find(i => i.uuid === data.uuid);
+                const item = this.actor.items.find(i => i.uuid === data?.uuid);
                 if(item && item.system && item.system.hasOwnProperty('equipped') && !item.system?.equipped) toUpdate.push({_id: item.id, "system.equipped": 1});
             });
 
