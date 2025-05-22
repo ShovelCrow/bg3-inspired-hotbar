@@ -982,8 +982,8 @@ export function registerSettings() {
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showItemUses', {
-        name: 'Show Item Uses',
-        hint: 'Display remaining uses in the top-right corner of items',
+        name: 'Show Item Uses & Quantity',
+        hint: 'Display remaining uses in the top-right corner of items and quanity  in the top-left corner.',
         scope: 'client',
         config: true,
         type: Boolean,

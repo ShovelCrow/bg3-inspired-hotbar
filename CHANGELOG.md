@@ -2,13 +2,15 @@
 ### Fixed
 - Fix players not allowed to use common actions macros. (Related Issues: [#191])
 - Fix CPR setting button displayed even without CPR module installed. (Related Issues: [#191])
-- Handle Classes without a native tooltip when added to hotbar. (Related Issues: [#192])
+- Open Journal pages added to the hotbar when you click on them. (Related Issues: [#192])
 - Fix Passives & Actives not showing correctly. (Related Issues: [#194])
-- Change the way minize/maximize UI is handled. (Related Issues: [#200])
-- Fix Common Actions macros (non-cpr) text to adapt to 2014/2024 rules. (Related Issues: [#199])
 - Fix Ability Check/Save & Skill roll for D&D previous to v4. (Related Issues: [#195])
+- Fix Common Actions macros (non-cpr) text to adapt to 2014/2024 rules. (Related Issues: [#199])
+- Change the way minize/maximize UI is handled. (Related Issues: [#200])
+- Fix a bug with auto-equip weapons. (Related Issues: [#201])
 
 ### Features
+- Handle Classes without a native tooltip when added to hotbar.
 - Display quantity on items if there is more than 1. (Related Issues: [#196])
 
 ## [3.1.3] - 2025-05-13 

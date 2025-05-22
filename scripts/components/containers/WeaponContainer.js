@@ -63,12 +63,7 @@ export class WeaponContainer extends BG3Component {
             
             // Update active set & equipped items
             c.oldWeapons = foundry.utils.deepClone(c.data.items);
-            if(toUpdate.length) {
-                for(const update of toUpdate) {
-                    const item = this.actor.items.get(update._id);
-                    if(item) item.updateSource({"system.equipped": update["system.equipped"]})
-                }
-            }
+            if(toUpdate.length) await this.actor.updateEmbeddedDocuments("Item", toUpdate);
         }
         this.activeSet = c.index;
     }
