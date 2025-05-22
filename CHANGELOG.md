@@ -1,4 +1,4 @@
-## [3.1.4] - 2025-05-21 
+## [3.1.4] - 2025-05-22 
 ### Disclaimer
 - To improve performances and avoid bugs, Auto-equip items feature will now only look for items found in weapons sets, any other items will be ignored. This way, it allows you to manually equip items and still switch between your sets without having those manually equipped to be unequipped (as long as they are not in a weapon set).
 
