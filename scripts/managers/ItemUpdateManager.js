@@ -70,7 +70,7 @@ export class ItemUpdateManager {
         const token = ui.BG3HOTBAR.manager.token;
         if (!token || token.actor?.items.get(item.id) !== item) return;
         let needSave = false;
-
+        
         if(changes.system && Object.keys(changes.system).length === 1 && changes.system.hasOwnProperty('equipped')) return;
         
         // Check if this is a spell and its preparation state changed
