@@ -9,12 +9,13 @@
 - Fix Passives & Actives not showing correctly. (Related Issues: [#194])
 - Fix Ability Check/Save & Skill roll for D&D previous to v4. (Related Issues: [#195])
 - Fix Common Actions macros (non-cpr) text to adapt to 2014/2024 rules. (Related Issues: [#199])
-- Change the way minize/maximize UI is handled. (Related Issues: [#200])
+- When minimized, the toggle button should be displayed on top of Taskbar (theripper93 module). (Related Issues: [#200])
 - Fix a bug with auto-equip weapons. (Related Issues: [#201])
 
 ### Features
 - Handle Classes without a native tooltip when added to hotbar.
 - Display quantity on items if there is more than 1. (Related Issues: [#196])
+- Change the way minize/maximize UI is handled.
 
 ## [3.1.3] - 2025-05-13 
 ### Fixed
