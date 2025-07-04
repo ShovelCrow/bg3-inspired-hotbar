@@ -16,6 +16,11 @@ export function needsTargeting(item) {
         return false;
     }
     
+    // Check for AOE template spells that target points - these should use Foundry's template system
+    if (isAOETemplateSpell(item)) {
+        return false;
+    }
+    
     // Check for target configuration in item system
     if (item.system?.target?.type && item.system.target.type !== "self") {
         return true;
@@ -51,6 +56,37 @@ export function needsTargeting(item) {
         const range = item.system?.range;
         if (range?.value && range.value > 0 && range.units !== "self" && range.units !== "touch") {
             return true;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Check if an item is an AOE template spell that targets a point (should use Foundry's template system)
+ * @param {Item} item - The item to check
+ * @returns {boolean} - True if the item is an AOE template spell
+ */
+function isAOETemplateSpell(item) {
+    // Check primary target configuration for AOE template
+    if (item.system?.target?.template) {
+        const templateType = item.system.target.template.type;
+        // These template types target points, not creatures
+        if (["cone", "cube", "cylinder", "line", "radius", "sphere"].includes(templateType)) {
+            return true;
+        }
+    }
+    
+    // Check activities for AOE template (Foundry v12+)
+    if (item.system?.activities) {
+        for (const activity of item.system.activities.values()) {
+            if (activity.target?.template) {
+                const templateType = activity.target.template.type;
+                // These template types target points, not creatures
+                if (["cone", "cube", "cylinder", "line", "radius", "sphere"].includes(templateType)) {
+                    return true;
+                }
+            }
         }
     }
     

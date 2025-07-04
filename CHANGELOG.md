@@ -1,3 +1,7 @@
+## [3.2.2] - 2025-07-04
+### Fixed
+- **Target Selector (Beta)** - Fixed issue where AOE spells and abilities with templates (like Fireball, Cone of Cold, etc.) were incorrectly using the target selector instead of Foundry's native template placement system. Now only creature-targeted spells use the target selector, while AOE spells that place templates (cone, cube, cylinder, line, radius, sphere) use the standard template placement.
+
 ## [3.2.1] - 2025-07-04
 ### Fixed
 - **Target Selector (Beta)** - Fixed issue where healing spells (like Healing Word, Mass Healing Word, Cure Wounds) were not applying healing when using the target selector. The target selector was clearing selected targets too quickly, preventing MidiQoL from properly detecting and applying the healing effects. Now targets are maintained during spell execution with a small delay before clearing.
