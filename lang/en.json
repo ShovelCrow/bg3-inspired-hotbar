@@ -194,8 +194,14 @@
             "Hint": ""
         },
         "ShowRestTurnButton": {
-            "Name": "Show Rest/Turns buttons",
-            "Hint": ""
+            "Name": "Show Rest/Turn buttons",
+            "Hint": "Control which rest and turn buttons are displayed in the hotbar",
+            "Choices": {
+                "Both": "Show Both (Rest & Turn)",
+                "Rest": "Show Rest Only",
+                "Turn": "Show Turn Only", 
+                "None": "Show Neither"
+            }
         },
         "OverlayModePortrait": {
             "Name": "Health Overlay as Mask",

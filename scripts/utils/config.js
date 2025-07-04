@@ -1094,8 +1094,14 @@ export function registerSettings() {
         hint: 'BG3.Settings.ShowRestTurnButton.Hint',
         scope: 'client',
         config: true,
-        type: Boolean,
-        default: true,
+        type: String,
+        choices: {
+            'both': 'BG3.Settings.ShowRestTurnButton.Choices.Both',
+            'rest': 'BG3.Settings.ShowRestTurnButton.Choices.Rest',
+            'turn': 'BG3.Settings.ShowRestTurnButton.Choices.Turn',
+            'none': 'BG3.Settings.ShowRestTurnButton.Choices.None'
+        },
+        default: 'both',
         onChange: () => {
             if (ui.BG3HOTBAR.components.restTurn) {
                 ui.BG3HOTBAR.components.restTurn.render();

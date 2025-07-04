@@ -1,3 +1,7 @@
+## [3.1.6] - 2025-07-04
+### Features
+- Split "Show Rest/Turn buttons" setting into granular dropdown control with options: "Show Both (Rest & Turn)", "Show Rest Only", "Show Turn Only", and "Show Neither". This allows GMs to show the End Turn button to players without showing rest buttons, giving more precise control over which buttons are visible. (Related Issue: [#213])
+
 ## [3.1.5] - 2025-07-04
 ### Features
 - Add toggle button to switch between GM Hotbar and Token Hotbar when GM Hotbar is enabled. It's above the row controls buttons on the far right. (Related Issues: [#212], PR [#215] - Thanks @gubacelar!)
