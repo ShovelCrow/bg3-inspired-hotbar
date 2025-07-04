@@ -358,11 +358,15 @@ export class GridCell extends BG3Component {
         const targetIds = targets.map(t => t.id);
         game.user.updateTokenTargets(targetIds);
         
-        // Use the item
-        await this.useItemDirectly(item, event);
-        
-        // Clear targets after use
-        game.user.updateTokenTargets([]);
+        try {
+            // Use the item - MidiQoL will handle the targets
+            await this.useItemDirectly(item, event);
+        } finally {
+            // Clear targets after a short delay to ensure MidiQoL has processed them
+            setTimeout(() => {
+                game.user.updateTokenTargets([]);
+            }, 100);
+        }
     }
 
     /**

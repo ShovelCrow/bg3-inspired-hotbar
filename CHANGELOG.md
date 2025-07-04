@@ -1,3 +1,7 @@
+## [3.2.1] - 2025-07-04
+### Fixed
+- **Target Selector (Beta)** - Fixed issue where healing spells (like Healing Word, Mass Healing Word, Cure Wounds) were not applying healing when using the target selector. The target selector was clearing selected targets too quickly, preventing MidiQoL from properly detecting and applying the healing effects. Now targets are maintained during spell execution with a small delay before clearing.
+
 ## [3.2.0] - 2025-07-04
 ### Features (Beta)
 - **Target Selector System** - Added interactive target selection for spells and abilities inspired by Argon Combat HUD. When enabled, clicking items that require targeting will show a crosshair cursor and allow you to select targets on the canvas with visual feedback.

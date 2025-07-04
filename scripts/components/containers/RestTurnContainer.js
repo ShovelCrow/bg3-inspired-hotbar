@@ -18,18 +18,18 @@ export class RestTurnContainer extends BG3Component {
         if(restTurnSetting !== 'none' && ui.BG3HOTBAR.manager.actor) {
             // Add Turn buttons (End Turn) if setting is 'both' or 'turn'
             if(restTurnSetting === 'both' || restTurnSetting === 'turn') {
-                btnData = [...btnData, ...[
-                    {
-                        type: 'div',
-                        class: ["rest-turn-button", "turn-button"], 
-                        label: 'End Turn',
-                        icon: 'fa-clock-rotate-left',
-                        visible: () => !!game.combat?.started && game.combat?.combatant?.actor === this.actor,
-                        events: {
-                            'click': function() {
-                                game.combat.nextTurn.bind(game.combat)()
-                            }
+            btnData = [...btnData, ...[
+                {
+                    type: 'div',
+                    class: ["rest-turn-button", "turn-button"], 
+                    label: 'End Turn',
+                    icon: 'fa-clock-rotate-left',
+                    visible: () => !!game.combat?.started && game.combat?.combatant?.actor === this.actor,
+                    events: {
+                        'click': function() {
+                            game.combat.nextTurn.bind(game.combat)()
                         }
+                    }
                     }
                 ]];
             }
@@ -37,26 +37,26 @@ export class RestTurnContainer extends BG3Component {
             // Add Rest buttons (Short Rest, Long Rest) if setting is 'both' or 'rest'
             if(restTurnSetting === 'both' || restTurnSetting === 'rest') {
                 btnData = [...btnData, ...[
-                    {
-                        type: 'div',
-                        class: ["rest-turn-button"],
-                        label: 'Short Rest',
-                        icon: "fa-campfire",
-                        visible: () => !game.combat?.started,
-                        events: {
-                            'click': this.actor.shortRest.bind(this.actor)
-                        }
-                    },
-                    {
-                        type: 'div',
-                        class: ["rest-turn-button"],
-                        label: 'Long Rest',
-                        icon: "fa-tent",
-                        visible: () => !game.combat?.started,
-                        events: {
-                            'click': this.actor.longRest.bind(this.actor)
-                        }
+                {
+                    type: 'div',
+                    class: ["rest-turn-button"],
+                    label: 'Short Rest',
+                    icon: "fa-campfire",
+                    visible: () => !game.combat?.started,
+                    events: {
+                        'click': this.actor.shortRest.bind(this.actor)
                     }
+                },
+                {
+                    type: 'div',
+                    class: ["rest-turn-button"],
+                    label: 'Long Rest',
+                    icon: "fa-tent",
+                    visible: () => !game.combat?.started,
+                    events: {
+                        'click': this.actor.longRest.bind(this.actor)
+                    }
+                }
                 ]];
             }
         } else if(ui.BG3HOTBAR.manager.canGMHotbar()) {
