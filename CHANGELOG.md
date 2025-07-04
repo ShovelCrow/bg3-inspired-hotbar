@@ -1,3 +1,8 @@
+## [3.1.5] - 2025-07-04
+### Features
+- Add toggle button to switch between GM Hotbar and Token Hotbar when GM Hotbar is enabled. It's above the row controls buttons on the far right. (Related Issues: [#212], PR [#215] - Thanks @gubacelar!)
+- Extend action type filters to search activities - items with activities now highlight when their activity action types match the selected filter. (PR [#208] - Thanks @kgsherman!)
+
 ## [3.1.4] - 2025-05-22 
 ### Disclaimer
 - To improve performances and avoid bugs, Auto-equip items feature will now only look for items found in weapons sets, any other items will be ignored. This way, it allows you to manually equip items and still switch between your sets without having those manually equipped to be unequipped (as long as they are not in a weapon set).
