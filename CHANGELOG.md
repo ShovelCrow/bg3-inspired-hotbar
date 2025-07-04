@@ -1,3 +1,13 @@
+## [3.2.0] - 2025-07-04
+### Features (Beta)
+- **Target Selector System** - Added interactive target selection for spells and abilities inspired by Argon Combat HUD. When enabled, clicking items that require targeting will show a crosshair cursor and allow you to select targets on the canvas with visual feedback.
+  - **Visual Feedback**: Crosshair cursor, range indicators, and target count display
+  - **Range Validation**: D&D 5e grid-based distance calculation with visual range circles
+  - **Multi-targeting**: Support for spells that can target multiple creatures (e.g., Aid, Magic Missile)
+  - **Dynamic Target Adjustment**: Use `[` and `]` keys during targeting to increase/decrease target count for spells that scale with level (e.g., Eldritch Blast at higher levels)
+  - **Settings**: Dedicated "Target Selector settings" section with options to enable/disable the system, range indicators, auto-targeting, and range checking
+  - **⚠️ Beta Warning**: This feature is in beta and requires more testing. If you encounter issues or prefer not to use it, you can disable it in the Target Selector settings.
+
 ## [3.1.6] - 2025-07-04
 ### Features
 - Split "Show Rest/Turn buttons" setting into granular dropdown control with options: "Show Both (Rest & Turn)", "Show Rest Only", "Show Turn Only", and "Show Neither". This allows GMs to show the End Turn button to players without showing rest buttons, giving more precise control over which buttons are visible. (Related Issue: [#213])

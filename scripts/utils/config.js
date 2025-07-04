@@ -468,9 +468,19 @@ export function updateSettingsDisplay() {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Common',
                         fields: ['showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer']
                     },
+
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Other',
                         fields: ['fadeControlsMenu', 'showRestTurnButton', 'enableGMHotbar']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.TargetSelector.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['enableTargetSelector', 'showRangeIndicators', 'autoTargetSelf', 'enableRangeChecking']
                     }
                 ]
             },
@@ -1107,6 +1117,42 @@ export function registerSettings() {
                 ui.BG3HOTBAR.components.restTurn.render();
             }
         }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableTargetSelector', {
+        name: 'BG3.Settings.EnableTargetSelector.Name',
+        hint: 'BG3.Settings.EnableTargetSelector.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showRangeIndicators', {
+        name: 'BG3.Settings.ShowRangeIndicators.Name',
+        hint: 'BG3.Settings.ShowRangeIndicators.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoTargetSelf', {
+        name: 'BG3.Settings.AutoTargetSelf.Name',
+        hint: 'BG3.Settings.AutoTargetSelf.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableRangeChecking', {
+        name: 'BG3.Settings.EnableRangeChecking.Name',
+        hint: 'BG3.Settings.EnableRangeChecking.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enableGMHotbar', {
