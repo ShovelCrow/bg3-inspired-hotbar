@@ -1,3 +1,7 @@
+## [3.2.3] - 2025-07-04
+### Fixed
+- **Show Secrets Module Compatibility** - Fixed compatibility issue with Show Secrets module by properly passing enrichment options through libWrapper and correcting module name registration. Thanks to @kaelad02 (Show Secrets module developer) for identifying the issue and providing the fix. (Related Issue: [#219])
+
 ## [3.2.2] - 2025-07-04
 ### Fixed
 - **Target Selector (Beta)** - Fixed issue where AOE spells and abilities with templates (like Fireball, Cone of Cold, etc.) were incorrectly using the target selector instead of Foundry's native template placement system. Now only creature-targeted spells use the target selector, while AOE spells that place templates (cone, cube, cylinder, line, radius, sphere) use the standard template placement.

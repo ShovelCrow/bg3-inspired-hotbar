@@ -226,7 +226,7 @@ export function registerKeybinding() {
 
 export function registerLibWrapper() {
     patchFunc("game.dnd5e.dataModels.ItemDataModel.prototype.getCardData", async function (wrapped, { activity, ...enrichmentOptions }={}) {
-        const context = await wrapped.call(this);
+        const context = await wrapped.call(this, {activity, ...enrichmentOptions});
         if(context.labels?.damages?.length) {
             let textDamage = '';
             const rollData = (activity ?? this.parent).getRollData();
@@ -1548,7 +1548,7 @@ export let patchFunc = (prop, func, type = "WRAPPER") => {
     }
     if (game.modules.get("lib-wrapper")?.active) {
         try {
-            libWrapper.register("po0lp-personal-module", prop, func, type);
+            libWrapper.register("bg3-inspired-hotbar", prop, func, type);
         } catch (e) {
             nonLibWrapper();
         }
