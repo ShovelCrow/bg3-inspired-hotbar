@@ -1,4 +1,8 @@
-## [3.2.3] - 2025-07-04
+## [3.2.4] - 2025-07-07
+### Fixed
+- Version 3.2.3 was not pointing to 3.2.3 manifest, so had to release a new version to keep installs clean.
+
+## [3.2.3] - 2025-07-07
 ### Fixed
 - **Show Secrets Module Compatibility** - Fixed compatibility issue with Show Secrets module by properly passing enrichment options through libWrapper and correcting module name registration. Thanks to @kaelad02 (Show Secrets module developer) for identifying the issue and providing the fix. (Related Issue: [#219])
 
