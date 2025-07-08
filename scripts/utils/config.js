@@ -769,14 +769,14 @@ export function registerSettings() {
     // Portrait Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'hidePortraitImage', {
         name: 'Hide Portrait Image',
-        hint: 'Also hide health overlay and text.',
+        hint: 'Also hides health overlay and text but not extra datas.',
         scope: 'client',
         config: true,
         type: Boolean,
-        default: true,
+        default: false,
         onChange: value => {
           if(ui.BG3HOTBAR.components.portrait?.element) {
-            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', !value);
+            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', value);
           }
         }
     });
@@ -1277,7 +1277,7 @@ export function registerSettings() {
         scope: 'world',
         config: false,
         type: Array,
-        default: ["consumable"],
+        default: ["consumable:potion", "consumable:scroll"], // Most commonly used consumable subtypes
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
@@ -1413,6 +1413,9 @@ export function registerSettings() {
     
     // Make sure settings are registered before hooks that might need them
     console.log(`${BG3CONFIG.MODULE_NAME} | Settings Registered`);
+    
+    // Migrate existing "consumable" settings to new subtype format (async)
+    _migrateConsumableSettings();
 }
 
 export function registerHandlebars() {
@@ -1554,5 +1557,34 @@ export let patchFunc = (prop, func, type = "WRAPPER") => {
         }
     } else {
         nonLibWrapper();
+    }
+}
+
+/**
+ * Migrate existing "consumable" settings to new subtype format
+ * This ensures backwards compatibility for users upgrading from older versions
+ */
+async function _migrateConsumableSettings() {
+    try {
+        const settingsToMigrate = [
+            'container1AutoPopulate',
+            'container2AutoPopulate', 
+            'container3AutoPopulate'
+        ];
+        
+        for (const settingKey of settingsToMigrate) {
+            const currentSetting = game.settings.get(BG3CONFIG.MODULE_NAME, settingKey);
+            
+            if (currentSetting.includes('consumable')) {
+                // Replace "consumable" with the most common subtypes
+                const newSetting = currentSetting.filter(type => type !== 'consumable');
+                newSetting.push('consumable:potion', 'consumable:scroll');
+                
+                await game.settings.set(BG3CONFIG.MODULE_NAME, settingKey, newSetting);
+                console.log(`${BG3CONFIG.MODULE_NAME} | Migrated ${settingKey} from "consumable" to consumable subtypes`);
+            }
+        }
+    } catch (error) {
+        console.warn(`${BG3CONFIG.MODULE_NAME} | Error during consumable settings migration:`, error);
     }
 }
