@@ -1,3 +1,18 @@
+## [3.2.6] - 2025-07-09
+### Fixed
+- **Target Selector (Beta)**
+  - **Target Selector Range Calculation** - Fixed range calculation to use proper edge-to-edge distance measurement instead of center-to-center.
+  - **Target Selector Right-Click** - Improved right-click behavior to only confirm target selection if mouse hasn't been dragged (allows camera panning without accidental target confirmation).
+
+### Features
+- **Target Selector (Beta)**
+    - **Target Selector Keybindings** - Added `[` and `]` keybinds for decreasing/increasing target count during targeting. Configurable in Foundry's keybind settings under "BG3 Inspired Hotbar" section.
+    - **Range Indicator Customization** - Added three new settings for range indicator appearance:
+      - **Range Indicator Shape**: Choose between circle or square indicators (default: square)
+      - **Range Indicator Animation**: Choose between pulsing or static indicators (default: pulse)
+      - **Range Indicator Line Width**: Choose line thickness from 1-4px (default: 2px)
+    - **Settings Organization** - Reorganized all Target Selector settings into logical order: Enable → Range Checking → Range Indicators → Shape → Animation → Line Width → Auto-Target Self.
+
 ## [3.2.5] - 2025-07-08
 ### Fixed
 - **Passive Features Classification** - Fixed issue where active abilities (actions, bonus actions, reactions) were incorrectly appearing in the passive features bar. Updated the classification logic to only include feats that are explicitly marked as passive or have no activation capabilities. (Related Issue: [#220])

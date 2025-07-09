@@ -212,12 +212,44 @@ export const BG3CONFIG = {
 export function registerKeybinding() {
     // Register keybinding for toggling UI
     game.keybindings.register(BG3CONFIG.MODULE_NAME, "toggleUI", {
-        name: "Toggle BG3 Hotbar",
+        name: "BG3.Settings.Keybindings.toggleUI",
         hint: "Toggles the BG3 Inspired Hotbar UI visibility",
         editable: [{ key: "KeyH" }],
         onDown: () => {
             ui.BG3HOTBAR.toggle(!game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled'))
             document.querySelector('[data-tool="toggleBG3UI"]').classList.toggle('active', game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled'))
+        },
+        restricted: false,
+        precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+    });
+
+    // Register keybinding for decreasing target count
+    game.keybindings.register(BG3CONFIG.MODULE_NAME, "decreaseTargets", {
+        name: "BG3.Settings.Keybindings.decreaseTargets",
+        hint: "Decreases the maximum target count when using the target selector",
+        editable: [{ key: "BracketLeft" }],
+        onDown: () => {
+            // Only trigger if target selector is active
+            const activeTargetSelector = window.activeTargetSelector;
+            if (activeTargetSelector && activeTargetSelector.isActive) {
+                activeTargetSelector.adjustMaxTargets(-1);
+            }
+        },
+        restricted: false,
+        precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+    });
+
+    // Register keybinding for increasing target count
+    game.keybindings.register(BG3CONFIG.MODULE_NAME, "increaseTargets", {
+        name: "BG3.Settings.Keybindings.increaseTargets",
+        hint: "Increases the maximum target count when using the target selector",
+        editable: [{ key: "BracketRight" }],
+        onDown: () => {
+            // Only trigger if target selector is active
+            const activeTargetSelector = window.activeTargetSelector;
+            if (activeTargetSelector && activeTargetSelector.isActive) {
+                activeTargetSelector.adjustMaxTargets(1);
+            }
         },
         restricted: false,
         precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
@@ -480,7 +512,7 @@ export function updateSettingsDisplay() {
                 categories: [
                     {
                         label: null,
-                        fields: ['enableTargetSelector', 'showRangeIndicators', 'autoTargetSelf', 'enableRangeChecking']
+                        fields: ['enableTargetSelector', 'enableRangeChecking', 'showRangeIndicators', 'rangeIndicatorShape', 'rangeIndicatorAnimation', 'rangeIndicatorLineWidth', 'autoTargetSelf']
                     }
                 ]
             },
@@ -1135,6 +1167,47 @@ export function registerSettings() {
         config: true,
         type: Boolean,
         default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'rangeIndicatorShape', {
+        name: 'BG3.Settings.RangeIndicatorShape.Name',
+        hint: 'BG3.Settings.RangeIndicatorShape.Hint',
+        scope: 'client',
+        config: true,
+        type: String,
+        choices: {
+            'circle': 'BG3.Settings.RangeIndicatorShape.Choices.Circle',
+            'square': 'BG3.Settings.RangeIndicatorShape.Choices.Square'
+        },
+        default: 'square'
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'rangeIndicatorAnimation', {
+        name: 'BG3.Settings.RangeIndicatorAnimation.Name',
+        hint: 'BG3.Settings.RangeIndicatorAnimation.Hint',
+        scope: 'client',
+        config: true,
+        type: String,
+        choices: {
+            'pulse': 'BG3.Settings.RangeIndicatorAnimation.Choices.Pulse',
+            'static': 'BG3.Settings.RangeIndicatorAnimation.Choices.Static'
+        },
+        default: 'pulse'
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'rangeIndicatorLineWidth', {
+        name: 'BG3.Settings.RangeIndicatorLineWidth.Name',
+        hint: 'BG3.Settings.RangeIndicatorLineWidth.Hint',
+        scope: 'client',
+        config: true,
+        type: Number,
+        choices: {
+            1: 'BG3.Settings.RangeIndicatorLineWidth.Choices.Thin',
+            2: 'BG3.Settings.RangeIndicatorLineWidth.Choices.Normal',
+            3: 'BG3.Settings.RangeIndicatorLineWidth.Choices.Thick',
+            4: 'BG3.Settings.RangeIndicatorLineWidth.Choices.ExtraThick'
+        },
+        default: 2
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'autoTargetSelf', {
