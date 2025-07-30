@@ -504,7 +504,9 @@ export class TargetSelector {
             selectedTargets: this.selectedTargets.map(t => t.name),
             targetIds: targetIds
         });
-        game.user.updateTokenTargets(targetIds);
+        
+        // Use the new v13 API
+        canvas.tokens.setTargets(targetIds, { mode: "replace" });
     }
 
     /**
@@ -515,7 +517,7 @@ export class TargetSelector {
             // No need to remove individually, we'll clear all at once
         });
         // Clear all targets in Foundry's system
-        game.user.updateTokenTargets([]);
+        canvas.tokens.setTargets([], { mode: "replace" });
     }
 
     /**
@@ -830,10 +832,10 @@ export class TargetSelector {
      */
     switchToTargetTool() {
         // Store the current tool
-        this.originalTokenTool = ui.controls.activeTool;
+        this.originalTokenTool = ui.controls.tool?.name;
         
-        // Switch to target tool using Foundry's built-in method
-        ui.controls.initialize({ tool: "target" });
+        // Switch to target tool using the new v13 API
+        ui.controls.render({tool: "target"});
     }
 
     /**
@@ -841,8 +843,8 @@ export class TargetSelector {
      */
     restoreTokenTool() {
         if (this.originalTokenTool) {
-            // Restore the original tool
-            ui.controls.initialize({ tool: this.originalTokenTool });
+            // Restore the original tool using the new v13 API
+            ui.controls.render({tool: this.originalTokenTool});
             this.originalTokenTool = null;
         }
     }

@@ -494,7 +494,7 @@ export function updateSettingsDisplay() {
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Weapon',
-                        fields: ['enableWeaponAutoEquip']
+                        fields: ['enableWeaponAutoEquip', 'npcUseContainerDefaults']
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Common',
@@ -1062,6 +1062,15 @@ export function registerSettings() {
         config: true,
         type: Boolean,
         default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'npcUseContainerDefaults', {
+        name: 'BG3.Settings.NpcUseContainerDefaults.Name',
+        hint: 'BG3.Settings.NpcUseContainerDefaults.Hint',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showCombatContainer', {

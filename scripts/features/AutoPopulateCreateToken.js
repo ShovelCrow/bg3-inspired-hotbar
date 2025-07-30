@@ -118,14 +118,20 @@ export class AutoPopulateCreateToken {
                 const container1Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate');
                 const container2Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate');
                 const container3Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate');
+                
+                // Check if NPCs should use container defaults instead of weapon sets
+                const npcUseContainerDefaults = game.settings.get(BG3CONFIG.MODULE_NAME, 'npcUseContainerDefaults');
       
-                // Process each weapon & combat containers
-                if(force) {
-                    tempManager.containers.weapon[0].items = {};
-                    tempManager.containers.weapon[1].items = {};
-                    tempManager.containers.weapon[2].items = {};
+                // Process weapon sets only if NPCs are not using container defaults
+                if (!npcUseContainerDefaults) {
+                    // Process each weapon & combat containers
+                    if(force) {
+                        tempManager.containers.weapon[0].items = {};
+                        tempManager.containers.weapon[1].items = {};
+                        tempManager.containers.weapon[2].items = {};
+                    }
+                    await this._populateWeaponsToken(token.actor, tempManager);
                 }
-                await this._populateWeaponsToken(token.actor, tempManager);
     
                 // Process each container
                 if(force) {
@@ -198,7 +204,8 @@ export class AutoPopulateCreateToken {
                 }
                 
                 // Check if the item has activities or is usable
-                const hasActivities = item.system?.activities?.length > 0 ||
+                const activities = item.system?.activities;
+                const hasActivities = (activities instanceof Map && activities.size > 0) ||
                                     (item.system?.activation?.type && item.system?.activation?.type !== "none");
                 
                 if (hasActivities || game.settings.get(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {

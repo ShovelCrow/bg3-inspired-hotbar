@@ -2,8 +2,6 @@ import { BG3Component } from "../component.js";
 import { fromUuid } from "../../utils/foundryUtils.js";
 import { ControlsManager } from "../../managers/ControlsManager.js";
 import { MenuContainer } from "./MenuContainer.js";
-import { TargetSelector } from "../../managers/TargetSelector.js";
-import { needsTargeting, getTargetRequirements, validateTargets } from "../../utils/targetingRules.js";
 
 export class GridCell extends BG3Component {
     constructor(data, parent) {
@@ -235,46 +233,8 @@ export class GridCell extends BG3Component {
                 try {
                     console.log(item)
                     
-                    // Check if target selector is enabled and item needs targeting
-                    const targetSelectorEnabled = game.settings.get('bg3-inspired-hotbar', 'enableTargetSelector') ?? true;
-                    
-                    if (targetSelectorEnabled && needsTargeting(item)) {
-                        const currentToken = ui.BG3HOTBAR.manager.token;
-                        if (!currentToken) {
-                            ui.notifications.warn("No token selected for targeting");
-                            return;
-                        }
-                        
-                        // Get targeting requirements
-                        const requirements = getTargetRequirements(item);
-                        
-                        // Create and show target selector
-                        const targetSelector = new TargetSelector({
-                            token: currentToken,
-                            requirements: requirements
-                        });
-                        
-                        // Wait for target selection
-                        const selectedTargets = await targetSelector.select();
-                        
-                        // If no targets selected (cancelled), don't proceed
-                        if (!selectedTargets || selectedTargets.length === 0) {
-                            return;
-                        }
-                        
-                        // Validate targets
-                        const validation = validateTargets(item, selectedTargets);
-                        if (!validation.success) {
-                            ui.notifications.error(validation.error);
-                            return;
-                        }
-                        
-                        // Use item with targets
-                        await this.useItemWithTargets(item, selectedTargets, e);
-                    } else {
-                        // Use item without targeting
-                        await this.useItemDirectly(item, e);
-                    }
+                    // Always use normal flow - target selector will be handled at activity level
+                    await this.useItemDirectly(item, e);
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error using item:", error);
                     ui.notifications.error(`Error using item: ${error.message}`);
@@ -347,41 +307,26 @@ export class GridCell extends BG3Component {
         });
     }
 
-    /**
-     * Use item with selected targets
-     * @param {Item} item - The item to use
-     * @param {Token[]} targets - Selected targets
-     * @param {Event} event - The triggering event
-     */
-    async useItemWithTargets(item, targets, event) {
-        // Set targets for the item use
-        const targetIds = targets.map(t => t.id);
-        game.user.updateTokenTargets(targetIds);
-        
-        try {
-            // Use the item - MidiQoL will handle the targets
-            await this.useItemDirectly(item, event);
-        } finally {
-            // Clear targets after a short delay to ensure MidiQoL has processed them
-            setTimeout(() => {
-                game.user.updateTokenTargets([]);
-            }, 100);
-        }
-    }
+
 
     /**
      * Use item directly without targeting
      * @param {Item} item - The item to use
      * @param {Event} event - The triggering event
+     * @param {Object} extraOptions - Additional options for item usage
      */
-    async useItemDirectly(item, event) {
+    async useItemDirectly(item, event, extraOptions = {}) {
         if(item.execute) {
             item.execute();
         } else if(item.use) {
+            // Check if target selector is enabled and configure dialog accordingly
+            const targetSelectorEnabled = game.settings.get('bg3-inspired-hotbar', 'enableTargetSelector') ?? true;
+            
             const options = {
-                configureDialog: false,
+                configureDialog: targetSelectorEnabled, // Enable activity selection when target selector is on
                 legacy: false,
-                event: event
+                event: event,
+                ...extraOptions
             };
             if (event.ctrlKey) options.disadvantage = true;
             if (event.altKey) options.advantage = true;

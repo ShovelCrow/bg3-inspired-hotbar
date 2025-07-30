@@ -1,3 +1,17 @@
+## [3.3.0] - 2025-07-30
+### Important
+- **Foundry VTT v13 & D&D 5e v5.x Support** - This release officially supports Foundry VTT v13 and D&D 5e v5.0.4+. Updates for Foundry VTT v12 will cease with this release. Users on v12 can continue using v3.2.6 as the final v12-compatible release.
+
+### Added
+- **NPC Container Defaults Setting** - Added new setting "NPCs Use Container Defaults" that allows NPCs (linked or unlinked) to ignore weapon sets and use container auto-populate defaults instead. This provides more flexibility for NPC hotbar organization.
+
+### Fixed
+- **Passive Features Detection** - Fixed issue where active abilities (actions, bonus actions, reactions) were incorrectly appearing in the passive features bar. Now only truly passive features are displayed.
+- **Passive Container Display** - Fixed issue where all available passive features were displayed when none were selected. Now the passive container shows no features when none are selected, while maintaining the invisible tab functionality for right-click configuration access.
+- **Target Selector** - Complete rewrite of target selector logic for D&D 5e v5.x compatibility. Target selector now properly integrates with Foundry's activity system, allowing normal activity selection followed by intelligent target selection only when needed. Updated to use v13's new targeting API (`canvas.tokens.setTargets`) and scene controls API (`ui.controls.render`).
+- **Auto-Population** - Fixed auto-population features to correctly detect items with activities using D&D5e v5.x Map-based activities structure instead of the old array-based structure.
+
+
 ## [3.2.6] - 2025-07-09
 ### Fixed
 - **Target Selector (Beta)**
