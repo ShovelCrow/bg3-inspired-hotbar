@@ -3,15 +3,14 @@
 - **Container Popovers** - Add bags, pouches, and other containers options to your hotbar to open them in a popover window showing their contents. Items in the container can be moved around the popover, but other features and items should not be placed here if they don't belong to the container itself
 
 ### Reworked
-- **Target Selector** - Refactored, changed UI/UX, added keybindings, added setting for skipping if target already selected
+- **Target Selector** - Refactored, changed UI/UX, added keybindings for accept and roll (default Enter), added setting for skipping if target already selected (Issue: [#226 & #234])
 
 ### Fixed
-- **Hotbar Auto-Update** - Items now automatically appear in hotbars when given to any character, even if their token isn't currently selected
-- **Consumable Items** - Potions, scrolls, and other consumables now properly auto-populate to hotbars
-- **GM Item Distribution** - When GMs give items to players, they now automatically appear in the player's hotbar
-- **NPC Hotbars** - Auto-update now works correctly for NPCs and unlinked tokens
-- **Actor Duplication** - Duplicated actors now correctly reference their own items instead of the original actor's items when the hotbar is not already rendered
+- **Hotbar Auto-Update** - Items now automatically appear in hotbars when given to any character, even if their token and therefor hotbar isn't currently selected. Giving items to un/linked NPCs for example
+- **Consumable Items** - Potions, scrolls, and other consumables now properly auto-populate to hotbars with autopopulate feature
+- **Actor Duplication** - Duplicated actors now correctly reference their own items instead of the original actor's items when the hotbar is not already rendered (Issue: [#228])
 - **Drag Bar Movement** - Fixed to move at the right speed with set scale
+- **Common Actions Bug** - Common Actions would sometimes duplicate when the container was empty but the features were on the sheet and then the token was placed on the canvas again
 
 ## [3.3.1] - 2025-07-31
 ### Fixed
