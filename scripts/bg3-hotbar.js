@@ -340,11 +340,7 @@ export class BG3Hotbar extends Application {
                     await app.close();
 
                     // Get targeting requirements for this activity
-<<<<<<< HEAD
-                    const requirements = getActivityTargetRequirements(activity);
-=======
                     const requirements = getActivityTargetRequirements(activity, item);
->>>>>>> 3.4.0-feature
 
                     // Create and show target selector
                     

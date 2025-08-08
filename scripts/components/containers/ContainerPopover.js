@@ -206,10 +206,7 @@ export class ContainerPopover extends BG3Component {
         
         // Always load contents to ensure we have items to display
         const contents = await this.getContainerContents();
-<<<<<<< HEAD
-=======
         const contentUuidSet = new Set(contents.map(i => i?.uuid).filter(Boolean));
->>>>>>> 3.4.0-feature
 
         const gridData = {
             id: this.getContainerKey(),
@@ -221,11 +218,6 @@ export class ContainerPopover extends BG3Component {
             items: {}
         };
 
-<<<<<<< HEAD
-        // If we have saved layout, use it
-        if (Object.keys(sanitizedSaved).length > 0) {
-            gridData.items = { ...sanitizedSaved };
-=======
         // If we have saved layout, reconcile with actual container contents
         if (Object.keys(sanitizedSaved).length > 0) {
             const reconciled = Object.entries(sanitizedSaved)
@@ -240,7 +232,6 @@ export class ContainerPopover extends BG3Component {
             if (Object.keys(reconciled).length !== Object.keys(sanitizedSaved).length) {
                 await this.saveContainerLayout(reconciled);
             }
->>>>>>> 3.4.0-feature
         } else if (contents.length > 0) {
             // Create default layout from contents
             contents.forEach((item, index) => {
