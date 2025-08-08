@@ -287,7 +287,7 @@ export class BG3Hotbar extends Application {
         
 
         // Import targeting utilities
-        const { needsActivityTargeting, getActivityTargetRequirements } = await import('./utils/targetingRules.js');
+                    const { needsActivityTargeting, getActivityTargetRequirements } = await import('./utils/targetingRules.js');
         const { TargetSelector } = await import('./managers/TargetSelector.js');
 
         // Hook into button clicks instead of submit method
@@ -340,7 +340,11 @@ export class BG3Hotbar extends Application {
                     await app.close();
 
                     // Get targeting requirements for this activity
+<<<<<<< HEAD
                     const requirements = getActivityTargetRequirements(activity);
+=======
+                    const requirements = getActivityTargetRequirements(activity, item);
+>>>>>>> 3.4.0-feature
 
                     // Create and show target selector
                     

@@ -332,7 +332,11 @@ export class GridCell extends BG3Component {
             if (targetSelectorEnabled && item.system?.activities?.size === 1) {
                 // Single activity item - check if it needs targeting
                 const activity = Array.from(item.system.activities.values())[0];
+<<<<<<< HEAD
                 const { needsActivityTargeting, getActivityTargetRequirements } = await import('../../utils/targetingRules.js');
+=======
+                    const { needsActivityTargeting, getActivityTargetRequirements } = await import('../../utils/targetingRules.js');
+>>>>>>> 3.4.0-feature
                 
                     if (needsActivityTargeting(activity)) {
                     
@@ -344,7 +348,11 @@ export class GridCell extends BG3Component {
                     }
                     
                     // Get targeting requirements
+<<<<<<< HEAD
                     const requirements = getActivityTargetRequirements(activity);
+=======
+                    const requirements = getActivityTargetRequirements(activity, item);
+>>>>>>> 3.4.0-feature
                     
                     // Create and show target selector
                     const { TargetSelector } = await import('../../managers/TargetSelector.js');
