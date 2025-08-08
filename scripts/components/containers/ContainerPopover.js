@@ -21,10 +21,6 @@ export class ContainerPopover extends BG3Component {
         return ['bg3-container-popover'];
     }
 
-    get template() {
-        return 'modules/bg3-inspired-hotbar/templates/components/ContainerPopover.hbs';
-    }
-
     static isContainer(item) {
         return item && (item.type === 'container' || item.type === 'backpack');
     }
@@ -33,7 +29,10 @@ export class ContainerPopover extends BG3Component {
      * Gets the container key for flag storage based on parent cell position
      */
     getContainerKey() {
-        const parentSlot = this.parentCell.data.slot || `${this.parentCell.data.row}-${this.parentCell.data.col}`;
+        const parentSlot = this.parentCell?.data?.slot || 
+                          (this.parentCell?.data?.col !== undefined && this.parentCell?.data?.row !== undefined 
+                           ? `${this.parentCell.data.col}-${this.parentCell.data.row}` 
+                           : '0-0');
         return `container_${parentSlot}`;
     }
 
@@ -41,12 +40,34 @@ export class ContainerPopover extends BG3Component {
      * Loads container layout from parent hotbar item flags
      */
     loadContainerLayout() {
-        if (!this.parentCell?.data?.slot) return {};
+        // Get parent slot key - either from data.slot or calculated from col/row
+        const parentSlotKey = this.parentCell?.data?.slot || 
+                             (this.parentCell?.data?.col !== undefined && this.parentCell?.data?.row !== undefined 
+                              ? `${this.parentCell.data.col}-${this.parentCell.data.row}` 
+                              : null);
         
-        // Find parent hotbar slot data
-        const parentSlotKey = this.parentCell.data.slot;
-        const hotbarData = ui.BG3HOTBAR?.manager?.data?.items || {};
-        const parentItemData = hotbarData[parentSlotKey];
+        if (!parentSlotKey) {
+            console.log("BG3 Container Popover | loadContainerLayout: No parent slot");
+            return {};
+        }
+        
+        // Find parent hotbar slot data in the containers structure
+        let parentItemData = null;
+        const hotbarContainers = ui.BG3HOTBAR?.manager?.containers?.hotbar || [];
+        
+        // Search through all hotbar containers to find the parent item
+        for (const container of hotbarContainers) {
+            if (container.items && container.items[parentSlotKey]) {
+                parentItemData = container.items[parentSlotKey];
+                break;
+            }
+        }
+        
+        console.log("BG3 Container Popover | loadContainerLayout:", {
+            parentSlotKey,
+            parentItemData,
+            containerLayout: parentItemData?.containerLayout
+        });
         
         return parentItemData?.containerLayout || {};
     }
@@ -55,25 +76,60 @@ export class ContainerPopover extends BG3Component {
      * Saves container layout to parent hotbar item flags
      */
     async saveContainerLayout(containerData) {
-        if (!this.parentCell?.data?.slot) return;
+        // Sanitize layout: keep only entries with a valid uuid
+        const sanitized = Object.entries(containerData || {})
+            .reduce((acc, [slot, entry]) => {
+                if (entry && typeof entry.uuid === 'string' && entry.uuid.length > 0) {
+                    acc[slot] = { uuid: entry.uuid };
+                }
+                return acc;
+            }, {});
+        // Get parent slot key - either from data.slot or calculated from col/row
+        const parentSlotKey = this.parentCell?.data?.slot || 
+                             (this.parentCell?.data?.col !== undefined && this.parentCell?.data?.row !== undefined 
+                              ? `${this.parentCell.data.col}-${this.parentCell.data.row}` 
+                              : null);
         
-        const parentSlotKey = this.parentCell.data.slot;
-        const hotbarData = ui.BG3HOTBAR?.manager?.data?.items || {};
-        const parentItemData = hotbarData[parentSlotKey];
+        if (!parentSlotKey) {
+            console.log("BG3 Container Popover | saveContainerLayout: No parent slot");
+            return;
+        }
+        // Find parent hotbar slot data in the containers structure
+        let parentItemData = null;
+        let parentContainer = null;
+        const hotbarContainers = ui.BG3HOTBAR?.manager?.containers?.hotbar || [];
         
-        if (parentItemData) {
+        // Search through all hotbar containers to find the parent item
+        for (const container of hotbarContainers) {
+            if (container.items && container.items[parentSlotKey]) {
+                parentItemData = container.items[parentSlotKey];
+                parentContainer = container;
+                break;
+            }
+        }
+        
+        console.log("BG3 Container Popover | saveContainerLayout:", {
+            parentSlotKey,
+            parentItemData,
+            containerData: sanitized,
+            parentContainerIndex: parentContainer?.index
+        });
+        
+        if (parentItemData && parentContainer) {
             // Update parent item data with container layout
             const updatedData = {
                 ...parentItemData,
-                containerLayout: containerData
+                containerLayout: sanitized
             };
             
-            // Save to flags
-            if (game.user.character) {
-                const flagData = { ...hotbarData };
-                flagData[parentSlotKey] = updatedData;
-                await game.user.character.setFlag('bg3-inspired-hotbar', 'hotbar-layout', { items: flagData });
-            }
+            // Update the manager container data immediately
+            parentContainer.items[parentSlotKey] = updatedData;
+            
+            // Save to flags via manager persist
+            await ui.BG3HOTBAR.manager.persist();
+            console.log("BG3 Container Popover | Container layout saved");
+        } else {
+            console.warn("BG3 Container Popover | No parent item data found for slot:", parentSlotKey);
         }
     }
 
@@ -84,7 +140,7 @@ export class ContainerPopover extends BG3Component {
         if (!ui.BG3HOTBAR?.manager?.tempContainers) {
             ui.BG3HOTBAR.manager.tempContainers = {};
         }
-        ui.BG3HOTBAR.manager.tempContainers['container-popover'] = this;
+        ui.BG3HOTBAR.manager.tempContainers[this.getContainerKey()] = this;
     }
 
     /**
@@ -150,22 +206,20 @@ export class ContainerPopover extends BG3Component {
      */
     async getGridContainerData() {
         const savedContainerData = this.loadContainerLayout();
+        // Sanitize saved data to avoid persisting/using null placeholders
+        const sanitizedSaved = Object.entries(savedContainerData || {})
+            .reduce((acc, [slot, entry]) => {
+                if (entry && typeof entry.uuid === 'string' && entry.uuid.length > 0) {
+                    acc[slot] = { uuid: entry.uuid };
+                }
+                return acc;
+            }, {});
         
-        // Load contents only if needed for validation or default layout
-        const needsContents = Object.keys(savedContainerData).length === 0;
-        let contents = [];
-        if (needsContents) {
-            contents = await this.getContainerContents();
-        }
-
-        // Validate saved UUIDs still exist
-        const savedUuids = Object.values(savedContainerData).map(item => item?.uuid).filter(Boolean);
-        if (savedUuids.length > 0) {
-            contents = await this.getContainerContents();
-        }
+        // Always load contents to ensure we have items to display
+        const contents = await this.getContainerContents();
 
         const gridData = {
-            id: 'container-popover',
+            id: this.getContainerKey(),
             index: 0,
             locked: false,
             allowDuplicate: true,
@@ -175,15 +229,15 @@ export class ContainerPopover extends BG3Component {
         };
 
         // If we have saved layout, use it
-        if (Object.keys(savedContainerData).length > 0) {
-            gridData.items = { ...savedContainerData };
+        if (Object.keys(sanitizedSaved).length > 0) {
+            gridData.items = { ...sanitizedSaved };
         } else if (contents.length > 0) {
             // Create default layout from contents
             contents.forEach((item, index) => {
                 const row = Math.floor(index / gridData.cols);
                 const col = index % gridData.cols;
                 if (row < gridData.rows) {
-                    const slotKey = `${row}-${col}`;
+                    const slotKey = `${col}-${row}`;
                     gridData.items[slotKey] = { uuid: item.uuid };
                 }
             });
@@ -199,16 +253,32 @@ export class ContainerPopover extends BG3Component {
      * Inherits theming and settings from main hotbar
      */
     inheritTheming() {
-        const mainHotbar = document.querySelector('#bg3-hotbar');
-        if (!mainHotbar || !this.element) return;
+        // Prefer the hotbar root, which hosts the theme CSS variables
+        const hotbarRoot = document.querySelector('#bg3-hotbar-container');
+        // Fallback to an existing hotbar grid if needed
+        const hotbarGrid = hotbarRoot?.querySelector?.('.bg3-hotbar-subcontainer') ?? null;
+        const themeSource = hotbarRoot || hotbarGrid;
+
+        if (!themeSource || !this.element) return;
+
+
 
         // Copy CSS custom properties
-        const computedStyle = getComputedStyle(mainHotbar);
+        const computedStyle = getComputedStyle(themeSource);
         const cssVars = [
             '--bg3-hotbar-background-color',
             '--bg3-hotbar-border-color', 
             '--bg3-cell-border-width',
-            '--bg3-hotbar-text-color'
+            '--bg3-hotbar-text-color',
+            '--bg3-hotbar-cell-size',
+            '--bg3-hotbar-sub-background-color',
+            '--bg3-hotbar-border-color-hover',
+            '--bg3-hotbar-background-color-hover',
+            '--bg3-border-size',
+            '--bg3-border-color',
+            '--bg3-border-radius',
+            '--bg3-hotbar-border-size',
+            '--bg3-scale-ui'
         ];
 
         cssVars.forEach(varName => {
@@ -218,14 +288,23 @@ export class ContainerPopover extends BG3Component {
             }
         });
 
-        // Copy data attributes for item display
+        // Copy data attributes for item display from the hotbar root
         const dataAttrs = ['data-item-name', 'data-item-use'];
         dataAttrs.forEach(attr => {
-            const value = mainHotbar.getAttribute(attr);
-            if (value !== null) {
+            const value = hotbarRoot?.getAttribute?.(attr);
+            if (value !== null && value !== undefined) {
                 this.element.setAttribute(attr, value);
             }
         });
+
+
+
+        // Ensure a valid cell size is present; if missing, fall back to the module default
+        const cellSize = (this.element.style.getPropertyValue('--bg3-hotbar-cell-size') || computedStyle.getPropertyValue('--bg3-hotbar-cell-size') || '').trim();
+        if (!cellSize) {
+            const fallback = (BG3CONFIG?.BASE_THEME?.['--bg3-hotbar-cell-size']) || `${BG3CONFIG.CELL_SIZE}px`;
+            this.element.style.setProperty('--bg3-hotbar-cell-size', fallback);
+        }
     }
 
     setupEvents() {
@@ -247,35 +326,69 @@ export class ContainerPopover extends BG3Component {
     positionPopover(triggerElement) {
         const rect = triggerElement.getBoundingClientRect();
         const popoverRect = this.element.getBoundingClientRect();
+        const root = document.querySelector('#bg3-hotbar-container');
 
-        let left = rect.left + rect.width + 10;
-        let top = rect.top;
+        // Center horizontally relative to trigger
+        const triggerCenterX = rect.left + (rect.width / 2);
 
-        if (left + popoverRect.width > window.innerWidth) {
-            left = rect.left - popoverRect.width - 10;
+        let leftPx;
+        let topPx;
+
+        if (root && this.element.closest('#bg3-hotbar-container')) {
+            // Compute relative to hotbar root and account for scale
+            const rootRect = root.getBoundingClientRect();
+            const rootComputed = getComputedStyle(root);
+            const scaleVar = (rootComputed.getPropertyValue('--bg3-scale-ui') || '1').trim();
+            const scale = Number(parseFloat(scaleVar)) || 1;
+
+            // Calculate centered position relative to root
+            const centeredLeftViewport = triggerCenterX - (popoverRect.width / 2) - rootRect.left;
+            const topViewport = rect.top - 10 - popoverRect.height - rootRect.top;
+
+            // Convert to root coordinate space
+            const centeredLeftPx = centeredLeftViewport / scale;
+            topPx = topViewport / scale;
+
+            // Only clamp if it would go significantly outside bounds
+            // Allow some overflow to maintain centering
+            const rootWidthPx = rootRect.width / scale;
+            const popoverWidthPx = popoverRect.width / scale;
+            const maxAllowedLeft = rootWidthPx - popoverWidthPx + 20; // Allow 20px overflow
+            const minAllowedLeft = -20; // Allow 20px overflow on left
+
+            if (centeredLeftPx > maxAllowedLeft) {
+                leftPx = maxAllowedLeft;
+            } else if (centeredLeftPx < minAllowedLeft) {
+                leftPx = minAllowedLeft;
+            } else {
+                leftPx = centeredLeftPx;
+            }
+        } else {
+            // Fallback to viewport positioning
+            leftPx = triggerCenterX - (popoverRect.width / 2);
+            topPx = rect.top - 10 - popoverRect.height;
+
+            // Minimal clamping for viewport
+            if (leftPx + popoverRect.width > window.innerWidth - 10) {
+                leftPx = window.innerWidth - popoverRect.width - 10;
+            }
+            if (leftPx < 10) leftPx = 10;
         }
 
-        if (top + popoverRect.height > window.innerHeight) {
-            top = window.innerHeight - popoverRect.height - 10;
-        }
-
-        if (left < 0) left = 10;
-        if (top < 0) top = 10;
-
-        this.element.style.left = `${left}px`;
-        this.element.style.top = `${top}px`;
+        // Always keep 10px above the trigger; do not fall back below
+        this.element.style.left = `${leftPx}px`;
+        this.element.style.top = `${topPx}px`;
     }
 
     cleanup() {
         if (ui.BG3HOTBAR?.manager?.tempContainers) {
-            delete ui.BG3HOTBAR.manager.tempContainers['container-popover'];
+            delete ui.BG3HOTBAR.manager.tempContainers[this.getContainerKey()];
         }
     }
 
     close() {
         if (this.element) {
             this.cleanup();
-            this.element.classList.add('closing');
 
             if (this.escapeHandler) {
                 document.removeEventListener('keydown', this.escapeHandler);
@@ -284,33 +397,52 @@ export class ContainerPopover extends BG3Component {
                 document.removeEventListener('click', this.outsideClickHandler);
             }
 
-            setTimeout(() => {
-                if (this.element.parentNode) {
-                    this.element.parentNode.removeChild(this.element);
-                }
-            }, 200);
+            // Remove immediately with no delay
+            if (this.element.parentNode) {
+                this.element.parentNode.removeChild(this.element);
+            }
         }
+        if (ContainerPopover.activePopover === this) ContainerPopover.activePopover = null;
     }
 
     async show(triggerElement) {
+        // Toggle behavior: if same container is open, close it and return
+        if (ContainerPopover.activePopover && ContainerPopover.activePopover.containerItem === this.containerItem) {
+            ContainerPopover.activePopover.close();
+            return ContainerPopover.activePopover;
+        }
+        // If a different popover is open, close it first
+        if (ContainerPopover.activePopover && ContainerPopover.activePopover !== this) {
+            ContainerPopover.activePopover.close();
+        }
         await this.render();
-        this.positionPopover(triggerElement);
-        document.body.appendChild(this.element);
-        this.setupEvents();
+        const root = document.querySelector('#bg3-hotbar-container');
+        if (root) {
+            this.element.classList.add('positioned');
+            root.appendChild(this.element);
+        } else {
+            document.body.appendChild(this.element);
+        }
         this.inheritTheming();
         
+        // Position after element is in DOM and has proper dimensions and scaling
         requestAnimationFrame(() => {
             this.element.classList.add('show');
+            // Wait one more frame so CSS transforms (scale) are applied before measuring
+            requestAnimationFrame(() => this.positionPopover(triggerElement));
         });
+        
+        this.setupEvents();
 
+        ContainerPopover.activePopover = this;
         return this;
     }
 
     async render() {
-        await super.render();
-        
         // Get grid data and create GridContainer
         const gridData = await this.getGridContainerData();
+
+        
         this.gridContainer = new GridContainer(gridData, this);
         
         // Set properties explicitly after creation
@@ -320,31 +452,42 @@ export class ContainerPopover extends BG3Component {
         // Setup drag-drop
         this.setupContainerDragDrop();
         
-        // Override clear action for container-specific behavior
+        // Override menu actions for container-specific behavior
         const originalMenuItemAction = this.gridContainer.menuItemAction;
         this.gridContainer.menuItemAction = async (action) => {
             if (action === 'clear') {
                 await this.saveContainerLayout({});
                 this.gridContainer.data.items = {};
                 this.gridContainer.render();
+            } else if (action === 'sort') {
+                // Call original sort action first
+                await originalMenuItemAction.call(this.gridContainer, action);
+                // Then save the sorted layout to container
+                await this.saveContainerLayout(this.gridContainer.data.items);
             } else {
                 return originalMenuItemAction.call(this.gridContainer, action);
             }
         };
 
-        // Render grid container into popover
+        // Render grid container and use it as our main element
+
         await this.gridContainer.render();
-        const gridElement = this.element.querySelector('.bg3-grid-container');
-        if (gridElement) {
-            gridElement.appendChild(this.gridContainer.element);
-        }
+        this.element = this.gridContainer.element;
+        
+
+        
+        // Add popover-specific classes
+        this.element.classList.add(...this.classes);
+
+
+
+
+
+
+
 
         return this.element;
     }
 
-    async getData() {
-        return {
-            containerName: this.containerItem?.name || 'Container'
-        };
-    }
+
 }

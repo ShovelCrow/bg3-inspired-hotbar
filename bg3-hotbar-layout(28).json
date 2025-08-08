@@ -1,0 +1,353 @@
+{
+  "hotbar": [
+    {
+      "cols": 4,
+      "rows": 3,
+      "items": {
+        "3-1": {
+          "uuid": "Macro.xgjoFABed9hEBcvU"
+        },
+        "0-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.JFIEg5mMEiIzfGdH",
+          "containerLayout": {
+            "0-0": {
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "1-0": {
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "2-0": {
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "3-0": {
+              "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.bEa44ZfHhNqbBxBN",
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "4-0": {
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "0-1": {
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "1-1": {
+              "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.lbTIUPMMWDBySVlM",
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "2-1": {
+              "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.8Dup9mKsMV4KgGVV",
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "3-1": {
+              "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.0DCdT2L11jda0gOn",
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "4-1": {
+              "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.Oua9gJjff29kywPi",
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            },
+            "0-2": {
+              "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.Dp3ElMXl3vU8vnam",
+              "sortData": {
+                "spellLevel": 99,
+                "featureType": ""
+              }
+            }
+          }
+        },
+        "2-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.1NbkrZcbOQnkCI8z"
+        },
+        "3-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.fOE3SpoHNIb3z4G0"
+        },
+        "1-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.rqli9wrJ3EzBH6rY"
+        },
+        "0-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.44ijppJyKDdef6lq"
+        },
+        "0-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.pD6f3AKuaMvsriV4"
+        },
+        "1-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.pD6f3AKuaMvsriV4.Activity.i2zvi1v7paf7Cp3m"
+        },
+        "2-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.UcdHjzj409EmYFdz"
+        },
+        "2-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.PRjw75qmw6aEegkY"
+        },
+        "1-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.M7x1OWd9zmqc2iDF"
+        },
+        "3-2": null
+      },
+      "id": "hotbar-container",
+      "index": 0
+    },
+    {
+      "cols": 10,
+      "rows": 3,
+      "items": {
+        "1-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.lWwX3e0GgjvecCJm",
+          "sortData": {
+            "spellLevel": 0,
+            "featureType": "",
+            "name": "Eldritch Blast",
+            "type": "spell"
+          }
+        },
+        "2-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.7SV44s3TQ3ASp4YE",
+          "sortData": {
+            "spellLevel": 0,
+            "featureType": "",
+            "name": "Eldritch Blast",
+            "type": "spell"
+          }
+        },
+        "4-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.ZlozCn4ACa6kMqo8",
+          "sortData": {
+            "spellLevel": 0,
+            "featureType": "",
+            "name": "Booming Blade",
+            "type": "spell"
+          }
+        },
+        "5-0": null,
+        "0-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.JAZQZ9m69XvkMZQJ",
+          "sortData": {
+            "spellLevel": 1,
+            "featureType": "",
+            "name": "Armor of Agathys",
+            "type": "spell"
+          }
+        },
+        "1-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.VUgjUZR4GE3tOiPa"
+        },
+        "2-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.qV6LR0t4ZQry4s0X"
+        },
+        "5-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.egARQpMqjXqoc1y7",
+          "sortData": {
+            "spellLevel": 1,
+            "featureType": "",
+            "name": "Speak with Animals",
+            "type": "spell"
+          }
+        },
+        "0-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.ZwQanDj2EBuBoCdk",
+          "sortData": {
+            "spellLevel": 1,
+            "featureType": "",
+            "name": "Thunderwave",
+            "type": "spell"
+          }
+        },
+        "1-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.PWsmwtksc7WcoedR"
+        },
+        "2-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.lFBqB75XhHDQbrLo",
+          "sortData": {
+            "spellLevel": 2,
+            "featureType": "",
+            "name": "Silence",
+            "type": "spell"
+          }
+        },
+        "3-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.OP6N6emq1YKuvfRn"
+        },
+        "4-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.2wHKwSG1HSCEGa7E",
+          "sortData": {
+            "spellLevel": 1,
+            "featureType": "",
+            "name": "Create or Destroy Water",
+            "type": "spell"
+          }
+        },
+        "0-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.ljX9dHVn1XE1DRzx"
+        },
+        "3-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.EpGh0drKRVICzl1A"
+        },
+        "3-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.oJlZUEavNPMJmtN5"
+        },
+        "4-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.9MrPDuxWad4k8QEr"
+        },
+        "5-2": null
+      },
+      "id": "hotbar-container",
+      "index": 1
+    },
+    {
+      "cols": 1,
+      "rows": 3,
+      "items": {
+        "1-0": null,
+        "0-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.7xNaFVlMPBOzMHkT",
+          "containerLayout": {
+            "cols": 5,
+            "rows": 4,
+            "items": {
+              "0-1": {
+                "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.Dp3ElMXl3vU8vnam"
+              },
+              "1-3": {
+                "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.Oua9gJjff29kywPi"
+              },
+              "2-2": {
+                "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.lbTIUPMMWDBySVlM"
+              },
+              "3-2": {
+                "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.8Dup9mKsMV4KgGVV"
+              },
+              "4-2": {
+                "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.0DCdT2L11jda0gOn"
+              },
+              "1-2": {
+                "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.bEa44ZfHhNqbBxBN"
+              },
+              "2-1": null
+            }
+          }
+        }
+      },
+      "id": "hotbar-container",
+      "index": 2
+    }
+  ],
+  "weapon": [
+    {
+      "cols": 2,
+      "rows": 1,
+      "items": {
+        "1-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.FWKysvAKEvz3Wprj"
+        },
+        "0-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.fC92CzpHyWFSKhTL"
+        }
+      },
+      "type": "label",
+      "for": "weapon-set",
+      "delOnly": true,
+      "allowDuplicate": true,
+      "class": [
+        "bg3-weapon-set"
+      ],
+      "id": "weapon-container",
+      "index": 0
+    },
+    {
+      "cols": 2,
+      "rows": 1,
+      "items": {
+        "0-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.fC92CzpHyWFSKhTL"
+        }
+      },
+      "type": "label",
+      "for": "weapon-set",
+      "delOnly": true,
+      "allowDuplicate": true,
+      "class": [
+        "bg3-weapon-set"
+      ],
+      "id": "weapon-container",
+      "index": 1
+    },
+    {
+      "cols": 2,
+      "rows": 1,
+      "items": {
+        "0-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.fC92CzpHyWFSKhTL"
+        }
+      },
+      "type": "label",
+      "for": "weapon-set",
+      "delOnly": true,
+      "allowDuplicate": true,
+      "class": [
+        "bg3-weapon-set"
+      ],
+      "id": "weapon-container",
+      "index": 2
+    }
+  ],
+  "combat": [
+    {
+      "cols": 2,
+      "rows": 3,
+      "items": {
+        "0-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.VbepXPUXZIKxCAGM"
+        },
+        "0-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.N1zfnNANehPsMbWX"
+        },
+        "0-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.gdYrWK3Jy2mP7NIo"
+        },
+        "1-0": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.E0iD36QflFaE2dYN"
+        },
+        "1-1": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.r9bsCJTE7WwbXwwY"
+        },
+        "1-2": {
+          "uuid": "Actor.u8WTv2DCv3oCQEr9.Item.IY9JMKXQS4DoJic5"
+        }
+      },
+      "class": [
+        "bg3-combat-container"
+      ],
+      "id": "combat-container",
+      "index": 0
+    }
+  ]
+}
