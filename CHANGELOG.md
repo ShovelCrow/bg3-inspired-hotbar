@@ -1,3 +1,7 @@
+## [3.4.1] - 2025-08-08
+### Fixed
+- **Active Effects** - Fixed active effects not re-enabling or able to be deleted if disabled
+
 ## [3.4.0] - 2025-08-07
 ### Added
 - **Container Popovers** - Add bags, pouches, and other containers options to your hotbar to open them in a popover window showing their contents. Items in the container can be moved around the popover, but other features and items should not be placed here if they don't belong to the container itself
