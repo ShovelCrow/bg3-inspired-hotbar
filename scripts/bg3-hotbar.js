@@ -39,6 +39,7 @@ export class BG3Hotbar extends Application {
         Hooks.on("deleteToken", this._onDeleteToken.bind(this));
         Hooks.on("updateToken", this._onUpdateToken.bind(this));
         Hooks.on("updateActor", this._onUpdateActor.bind(this));
+        Hooks.on("createActor", this._onCreateActor.bind(this));
         // Hooks.on("deleteScene", this._onDeleteScene.bind(this));
         Hooks.on("updateCombat", this._onUpdateCombat.bind(this));
         Hooks.on("deleteCombat", this._onDeleteCombat.bind(this));
@@ -167,6 +168,32 @@ export class BG3Hotbar extends Application {
         }
     }
 
+    async _onCreateActor(actor, options, userId) {
+        if (!this.manager || game.user.id !== userId) return;
+        
+        // Check if this actor has hotbar data (indicating it might be duplicated)
+        const containersData = actor.getFlag(BG3CONFIG.MODULE_NAME, BG3CONFIG.CONTAINERS_NAME);
+        if (!containersData) return;
+        
+        // Add a small delay to ensure the actor and its items are fully created
+        setTimeout(async () => {
+            try {
+                console.log(`BG3 Hotbar | Checking duplicated actor "${actor.name}" for UUID fixes`);
+                
+                // Fix UUIDs in the duplicated actor's hotbar data
+                const fixedContainers = await this._fixDuplicatedActorUUIDs(actor, containersData);
+                
+                if (fixedContainers) {
+                    // Update the actor's flag with the fixed UUIDs
+                    await actor.setFlag(BG3CONFIG.MODULE_NAME, BG3CONFIG.CONTAINERS_NAME, fixedContainers);
+                    console.log(`BG3 Hotbar | Fixed UUIDs for duplicated actor "${actor.name}"`);
+                }
+            } catch (error) {
+                console.error(`BG3 Hotbar | Error fixing UUIDs for duplicated actor "${actor.name}":`, error);
+            }
+        }, 100);
+    }
+
     async _onUpdateActor(actor, changes, options, userId) {
         if(!this.manager) return;
         
@@ -254,11 +281,6 @@ export class BG3Hotbar extends Application {
         // Check if this is an activity choice dialog
         const isDnd5e2 = app.options?.classes?.includes?.('dnd5e2');
         const hasActivityElements = html.querySelectorAll('[data-activity-id]').length > 0;
-        console.log('BG3 Target Selector | Dialog checks:', {
-            isDnd5e2,
-            hasActivityElements,
-            willIntercept: isDnd5e2 && hasActivityElements
-        });
 
         if (!isDnd5e2 || !hasActivityElements) return;
 
@@ -474,6 +496,69 @@ export class BG3Hotbar extends Application {
                 resolve();
             }, 300);
         });
+    }
+
+    /**
+     * Fix UUIDs in duplicated actor's hotbar data to point to the new actor's items
+     * @param {Actor} newActor - The newly created/duplicated actor
+     * @param {Object} containersData - The hotbar containers data
+     * @returns {Object|null} - Fixed containers data or null if no changes needed
+     */
+    async _fixDuplicatedActorUUIDs(newActor, containersData) {
+        let hasChanges = false;
+        const fixedContainers = foundry.utils.deepClone(containersData);
+        
+        // Helper function to fix UUIDs in a container
+        const fixContainerUUIDs = async (container) => {
+            if (!container?.items) return;
+            
+            for (const [slotKey, item] of Object.entries(container.items)) {
+                if (!item?.uuid) continue;
+                
+                // Check if this UUID points to an item from a different actor
+                const uuidParts = item.uuid.split('.');
+                const actorIndex = uuidParts.indexOf('Actor');
+                
+                if (actorIndex !== -1 && uuidParts[actorIndex + 1] !== newActor.id) {
+                    // This UUID points to a different actor - try to find the equivalent item in the new actor
+                    const originalItemId = uuidParts[uuidParts.length - 1];
+                    const newItem = newActor.items.get(originalItemId);
+                    
+                    if (newItem) {
+                        // Update the UUID to point to the new actor's item
+                        item.uuid = newItem.uuid;
+                        hasChanges = true;
+                        console.log(`BG3 Hotbar | Fixed UUID: ${originalItemId} -> ${newItem.uuid}`);
+                    } else {
+                        // Item doesn't exist in new actor, remove it from hotbar
+                        delete container.items[slotKey];
+                        hasChanges = true;
+                        console.log(`BG3 Hotbar | Removed missing item: ${originalItemId}`);
+                    }
+                }
+            }
+        };
+        
+        // Fix UUIDs in all container types
+        if (fixedContainers.hotbar) {
+            for (const container of fixedContainers.hotbar) {
+                await fixContainerUUIDs(container);
+            }
+        }
+        
+        if (fixedContainers.weapon) {
+            for (const container of fixedContainers.weapon) {
+                await fixContainerUUIDs(container);
+            }
+        }
+        
+        if (fixedContainers.combat) {
+            for (const container of fixedContainers.combat) {
+                await fixContainerUUIDs(container);
+            }
+        }
+        
+        return hasChanges ? fixedContainers : null;
     }
 
     async generate(token) {

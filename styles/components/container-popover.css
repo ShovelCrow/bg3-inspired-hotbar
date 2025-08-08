@@ -1,0 +1,65 @@
+/* File: styles/components/container-popover.css */
+
+.bg3-container-popover {
+    position: fixed;
+    z-index: 1000;
+    background: var(--bg3-hotbar-background-color, #1a1a1a);
+    border: var(--bg3-cell-border-width, 2px) solid var(--bg3-hotbar-border-color, #8b6f47);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    font-family: inherit;
+    color: var(--bg3-hotbar-text-color, #ffffff);
+    pointer-events: none;
+    padding: 12px;
+    min-width: 300px;
+}
+
+.bg3-container-popover.show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.bg3-container-popover.positioned {
+    position: absolute;
+}
+
+
+
+/* Grid container wrapper */
+.bg3-container-popover .bg3-grid-container {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Inherit all grid cell styling from the main hotbar */
+.bg3-container-popover .hotbar-cell {
+    min-height: 48px;
+    aspect-ratio: 1;
+}
+
+/* Ensure drag-drop styling is inherited */
+.bg3-container-popover .hotbar-cell.drag-over {
+    background: var(--bg3-drag-hover-color, rgba(255, 255, 255, 0.1));
+}
+
+.bg3-container-popover .hotbar-cell.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+/* Container footer */
+.bg3-container-popover .container-footer {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--bg3-hotbar-border-color, #8b6f47);
+    text-align: center;
+    font-size: 12px;
+    color: var(--bg3-hotbar-text-color, #ffffff);
+    opacity: 0.7;
+}
+  

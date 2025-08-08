@@ -413,6 +413,17 @@ function isValidTargetType(target, requiredType, sourceToken) {
 export function needsActivityTargeting(activity) {
     if (!activity) return false;
     
+    // Skip if target selector is disabled
+    if (!game.settings.get('bg3-inspired-hotbar', 'enableTargetSelector')) {
+        return false;
+    }
+    
+    // Skip if activity uses a template (AoE, emanation, etc.)
+    if (hasTemplate(activity)) {
+        console.log('BG3 Target Selector | Skipping activity with template:', activity.name);
+        return false;
+    }
+    
     // Check for range that needs targeting
     if (activity.range?.value && parseInt(activity.range.value) > 0 && activity.range.units !== "self") {
         return true;
@@ -429,6 +440,38 @@ export function needsActivityTargeting(activity) {
         if (targetType || activity.target.affects?.count !== undefined) {
             return true;
         }
+    }
+    
+    return false;
+}
+
+/**
+ * Check if an activity has a template (AoE, emanation, etc.)
+ * @param {Activity} activity - The activity to check
+ * @returns {boolean} - True if the activity uses a template
+ */
+function hasTemplate(activity) {
+    if (!activity?.target?.template) return false;
+    
+    const template = activity.target.template;
+    
+    // Check if template has a type (cone, sphere, cube, etc.)
+    if (template.type && template.type !== '') {
+        console.log('BG3 Target Selector | Template detected - type:', template.type, 'for activity:', activity.name);
+        return true;
+    }
+    
+    // Check if template has size/dimensions
+    if (template.size && (template.size !== '' && template.size !== null && template.size !== 0)) {
+        console.log('BG3 Target Selector | Template detected - size:', template.size, 'for activity:', activity.name);
+        return true;
+    }
+    
+    // Check for width/height (for rectangles/lines)
+    if ((template.width && template.width !== '' && template.width !== null && template.width !== 0) ||
+        (template.height && template.height !== '' && template.height !== null && template.height !== 0)) {
+        console.log('BG3 Target Selector | Template detected - dimensions:', {width: template.width, height: template.height}, 'for activity:', activity.name);
+        return true;
     }
     
     return false;
@@ -479,18 +522,55 @@ export function getActivityTargetRequirements(activity) {
         }
     }
     
-    // Range calculation from activity
-    if (activity.range?.value) {
-        const rangeValue = activity.range.value || 0;
-        if (rangeValue > 0 && activity.range.units !== "self") {
-            // Convert to scene units if needed
-            const gridUnits = canvas.scene.grid.units || "ft";
-            let rangeInSceneUnits = rangeValue;
-            if (activity.range.units !== gridUnits) {
-                rangeInSceneUnits = convertRangeUnits(rangeValue, activity.range.units, gridUnits);
-            }
-            requirements.range = rangeInSceneUnits;
+    // Range calculation - try activity range first, then fall back to item range
+    let rangeValue = null;
+    let rangeUnits = null;
+    
+    console.log('BG3 Target Selector | Range Detection Debug:', {
+        activityRange: activity.range,
+        itemRange: activity.item?.system?.range,
+        activityName: activity.name || 'Unknown Activity',
+        activityType: activity.type,
+        fullActivity: activity
+    });
+    
+    // Try activity range first - check both 'value' and 'reach' properties
+    if (activity.range?.value || activity.range?.reach) {
+        // Handle both string and number values, prefer 'value' over 'reach'
+        const activityRangeValue = activity.range.value || activity.range.reach;
+        const parsedValue = typeof activityRangeValue === 'string' ? 
+            parseInt(activityRangeValue) : activityRangeValue;
+        
+        if (parsedValue && parsedValue > 0) {
+            rangeValue = parsedValue;
+            rangeUnits = activity.range.units;
+            console.log('BG3 Target Selector | Using activity range:', rangeValue, rangeUnits);
         }
+    }
+    
+    // Fall back to item range if activity range is null/empty - check both 'value' and 'reach'
+    if (!rangeValue && activity.item?.system?.range && (activity.item.system.range.value || activity.item.system.range.reach)) {
+        // Handle both string and number values, prefer 'value' over 'reach'
+        const itemRangeValue = activity.item.system.range.value || activity.item.system.range.reach;
+        const parsedValue = typeof itemRangeValue === 'string' ? 
+            parseInt(itemRangeValue) : itemRangeValue;
+            
+        if (parsedValue && parsedValue > 0) {
+            rangeValue = parsedValue;
+            rangeUnits = activity.item.system.range.units;
+            console.log('BG3 Target Selector | Using item range:', rangeValue, rangeUnits);
+        }
+    }
+    
+    // Set range if we found a valid value
+    if (rangeValue && rangeValue > 0 && rangeUnits !== "self") {
+        // Convert to scene units if needed
+        const gridUnits = canvas.scene.grid.units || "ft";
+        let rangeInSceneUnits = rangeValue;
+        if (rangeUnits !== gridUnits) {
+            rangeInSceneUnits = convertRangeUnits(rangeValue, rangeUnits, gridUnits);
+        }
+        requirements.range = rangeInSceneUnits;
     }
     
     return requirements;

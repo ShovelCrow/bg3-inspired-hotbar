@@ -1,3 +1,18 @@
+## [3.4.0] - 2025-08-07
+### Added
+- **Container Popovers** - Add bags, pouches, and other containers options to your hotbar to open them in a popover window showing their contents. Items in the container can be moved around the popover, but other features and items should not be placed here if they don't belong to the container itself
+
+### Reworked
+- **Target Selector** - Refactored, changed UI/UX, added keybindings, added setting for skipping if target already selected
+
+### Fixed
+- **Hotbar Auto-Update** - Items now automatically appear in hotbars when given to any character, even if their token isn't currently selected
+- **Consumable Items** - Potions, scrolls, and other consumables now properly auto-populate to hotbars
+- **GM Item Distribution** - When GMs give items to players, they now automatically appear in the player's hotbar
+- **NPC Hotbars** - Auto-update now works correctly for NPCs and unlinked tokens
+- **Actor Duplication** - Duplicated actors now correctly reference their own items instead of the original actor's items when the hotbar is not already rendered
+
+
 ## [3.3.1] - 2025-07-31
 ### Fixed
  - **Passive Features Auto-Populate** - NPCs should autopopulate their passive features when toekn is created. This function was lost in last update(s).
