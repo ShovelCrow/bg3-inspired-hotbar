@@ -539,26 +539,16 @@ export function getActivityTargetRequirements(activity, baseItem = null) {
     }
     
     // Fall back to item range if activity range is null/empty - check both 'value' and 'reach'
-<<<<<<< HEAD
-    if (!rangeValue && activity.item?.system?.range && (activity.item.system.range.value || activity.item.system.range.reach)) {
-        // Handle both string and number values, prefer 'value' over 'reach'
-        const itemRangeValue = activity.item.system.range.value || activity.item.system.range.reach;
-=======
     const fallbackRange = baseItem?.system?.range || activity.item?.system?.range;
     if (!rangeValue && fallbackRange && (fallbackRange.value || fallbackRange.reach)) {
         // Handle both string and number values, prefer 'value' over 'reach'
         const itemRangeValue = fallbackRange.value || fallbackRange.reach;
->>>>>>> 3.4.0-feature
         const parsedValue = typeof itemRangeValue === 'string' ? 
             parseInt(itemRangeValue) : itemRangeValue;
             
         if (parsedValue && parsedValue > 0) {
             rangeValue = parsedValue;
-<<<<<<< HEAD
-            rangeUnits = activity.item.system.range.units;
-=======
             rangeUnits = fallbackRange.units;
->>>>>>> 3.4.0-feature
             
         }
     }
