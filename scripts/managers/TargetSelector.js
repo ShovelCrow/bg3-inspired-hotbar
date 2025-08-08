@@ -38,7 +38,6 @@ export class TargetSelector {
         // Check if we should skip the selector for single-target activities with valid existing targets
         if (this.shouldSkipSelector()) {
             const existingTargets = Array.from(game.user.targets);
-            console.log('BG3 Target Selector | Skipping selector - using existing valid target:', existingTargets.map(t => t.name));
             return existingTargets;
         }
 
@@ -56,32 +55,27 @@ export class TargetSelector {
     shouldSkipSelector() {
         // Check if the setting is enabled
         if (!game.settings.get('bg3-inspired-hotbar', 'skipSelectorWithValidTarget')) {
-            console.log('BG3 Target Selector | Skip selector disabled in settings');
             return false;
         }
 
         // Only skip for single-target activities
         const maxTargets = this.requirements.maxTargets || 1;
         if (maxTargets !== 1) {
-            console.log('BG3 Target Selector | Not skipping - multi-target activity (max:', maxTargets, ')');
             return false;
         }
 
         // Check if we have exactly one target selected
         const currentTargets = Array.from(game.user.targets);
         if (currentTargets.length !== 1) {
-            console.log('BG3 Target Selector | Not skipping - wrong number of targets selected:', currentTargets.length);
             return false;
         }
 
         // Check if the current target is valid for this activity
         const target = currentTargets[0];
         if (!this.isValidTarget(target)) {
-            console.log('BG3 Target Selector | Not skipping - current target is invalid:', target.name);
             return false;
         }
 
-        console.log('BG3 Target Selector | Skipping selector - valid single target already selected:', target.name);
         return true;
     }
 
@@ -95,10 +89,7 @@ export class TargetSelector {
         // Set global active target selector for debugging
         window.activeTargetSelector = this;
 
-        console.log('BG3 Target Selector | Activating target selector', {
-            requirements: this.requirements,
-            sourceToken: this.token?.name
-        });
+        
 
         // Setup UI
         this.ui.createTargetCountDisplay(this.requirements, 0);
@@ -152,7 +143,7 @@ export class TargetSelector {
         // Unregister event listeners
         this.events.unregisterEvents();
 
-        console.log('BG3 Target Selector | Deactivated target selector');
+        
     }
 
     /**
@@ -166,14 +157,14 @@ export class TargetSelector {
             // Remove target
             this.selectedTargets.splice(index, 1);
             token.setTarget(false, { user: game.user, releaseOthers: false, groupSelection: true });
-            console.log(`BG3 Target Selector | Removed target: ${token.name}`);
+            
         } else {
             // Add target (if under max limit)
             const maxTargets = this.requirements.maxTargets || 1;
             if (this.selectedTargets.length < maxTargets) {
                 this.selectedTargets.push(token);
                 token.setTarget(true, { user: game.user, releaseOthers: false, groupSelection: true });
-                console.log(`BG3 Target Selector | Added target: ${token.name}`);
+                
             } else {
                 ui.notifications.warn(`Maximum ${maxTargets} targets allowed.`);
                 return;
@@ -193,7 +184,7 @@ export class TargetSelector {
         const newMax = Math.max(1, (this.requirements.maxTargets || 1) + delta);
         this.requirements.maxTargets = newMax;
 
-        console.log(`BG3 Target Selector | Adjusted max targets to: ${newMax}`);
+        
 
         // Store current mouse position before recreating displays
         let currentMouseX = 0, currentMouseY = 0;
@@ -232,7 +223,7 @@ export class TargetSelector {
             return;
         }
 
-        console.log(`BG3 Target Selector | Confirmed selection:`, this.selectedTargets.map(t => t.name));
+        
 
         // Keep the Foundry targets set for the activity execution
         // They will be cleared by the calling code after the activity is used

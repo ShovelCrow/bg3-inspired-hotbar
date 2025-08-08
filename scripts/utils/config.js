@@ -1191,7 +1191,7 @@ export function registerSettings() {
         scope: 'world',
         config: true,
         type: Boolean,
-        default: true
+        default: false
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'rangeIndicatorShape', {
@@ -1268,7 +1268,7 @@ export function registerSettings() {
         scope: 'world',
         config: true,
         type: Boolean,
-        default: true
+        default: false
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enableGMHotbar', {
@@ -1528,7 +1528,7 @@ export function registerSettings() {
     });
 
     // Make sure settings are registered before hooks that might need them
-    console.log(`${BG3CONFIG.MODULE_NAME} | Settings Registered`);
+    
 
     // Migrate existing "consumable" settings to new subtype format (async)
     _migrateConsumableSettings();
@@ -1697,7 +1697,7 @@ async function _migrateConsumableSettings() {
                 newSetting.push('consumable:potion', 'consumable:scroll');
 
                 await game.settings.set(BG3CONFIG.MODULE_NAME, settingKey, newSetting);
-                console.log(`${BG3CONFIG.MODULE_NAME} | Migrated ${settingKey} from "consumable" to consumable subtypes`);
+    
             }
         }
     } catch (error) {

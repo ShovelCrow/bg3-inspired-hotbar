@@ -47,7 +47,6 @@ export class ContainerPopover extends BG3Component {
                               : null);
         
         if (!parentSlotKey) {
-            console.log("BG3 Container Popover | loadContainerLayout: No parent slot");
             return {};
         }
         
@@ -63,11 +62,7 @@ export class ContainerPopover extends BG3Component {
             }
         }
         
-        console.log("BG3 Container Popover | loadContainerLayout:", {
-            parentSlotKey,
-            parentItemData,
-            containerLayout: parentItemData?.containerLayout
-        });
+        
         
         return parentItemData?.containerLayout || {};
     }
@@ -91,7 +86,6 @@ export class ContainerPopover extends BG3Component {
                               : null);
         
         if (!parentSlotKey) {
-            console.log("BG3 Container Popover | saveContainerLayout: No parent slot");
             return;
         }
         // Find parent hotbar slot data in the containers structure
@@ -108,12 +102,7 @@ export class ContainerPopover extends BG3Component {
             }
         }
         
-        console.log("BG3 Container Popover | saveContainerLayout:", {
-            parentSlotKey,
-            parentItemData,
-            containerData: sanitized,
-            parentContainerIndex: parentContainer?.index
-        });
+        
         
         if (parentItemData && parentContainer) {
             // Update parent item data with container layout
@@ -127,7 +116,7 @@ export class ContainerPopover extends BG3Component {
             
             // Save to flags via manager persist
             await ui.BG3HOTBAR.manager.persist();
-            console.log("BG3 Container Popover | Container layout saved");
+            
         } else {
             console.warn("BG3 Container Popover | No parent item data found for slot:", parentSlotKey);
         }

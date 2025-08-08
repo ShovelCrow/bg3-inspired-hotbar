@@ -334,8 +334,7 @@ export class GridCell extends BG3Component {
                 const activity = Array.from(item.system.activities.values())[0];
                 const { needsActivityTargeting, getActivityTargetRequirements } = await import('../../utils/targetingRules.js');
                 
-                if (needsActivityTargeting(activity)) {
-                    console.log('BG3 Target Selector | Single activity item needs targeting:', item.name);
+                    if (needsActivityTargeting(activity)) {
                     
                     // Get current token
                     const currentToken = ui.BG3HOTBAR.manager.token;

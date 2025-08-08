@@ -11,7 +11,7 @@
 - **GM Item Distribution** - When GMs give items to players, they now automatically appear in the player's hotbar
 - **NPC Hotbars** - Auto-update now works correctly for NPCs and unlinked tokens
 - **Actor Duplication** - Duplicated actors now correctly reference their own items instead of the original actor's items when the hotbar is not already rendered
-
+- **Drag Bar Movement** - Fixed to move at the right speed with set scale
 
 ## [3.3.1] - 2025-07-31
 ### Fixed

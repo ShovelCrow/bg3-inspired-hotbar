@@ -44,8 +44,7 @@ export class TargetSelectorMath {
         // Convert grid squares to scene units
         const distanceInSceneUnits = minDistance * gridDistance;
         
-        console.log(`BG3 Target Selector | Distance from ${sourceToken.name} to ${targetToken.name}: ${distanceInSceneUnits} ${canvas.scene.grid.units || 'units'} (${minDistance} squares)`);
-        console.log(`BG3 Target Selector | Closest squares: ${closestSourceSquare} -> ${closestTargetSquare}`);
+        
         
         return distanceInSceneUnits;
     }

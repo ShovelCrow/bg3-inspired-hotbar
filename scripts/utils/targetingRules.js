@@ -420,7 +420,6 @@ export function needsActivityTargeting(activity) {
     
     // Skip if activity uses a template (AoE, emanation, etc.)
     if (hasTemplate(activity)) {
-        console.log('BG3 Target Selector | Skipping activity with template:', activity.name);
         return false;
     }
     
@@ -457,20 +456,17 @@ function hasTemplate(activity) {
     
     // Check if template has a type (cone, sphere, cube, etc.)
     if (template.type && template.type !== '') {
-        console.log('BG3 Target Selector | Template detected - type:', template.type, 'for activity:', activity.name);
         return true;
     }
     
     // Check if template has size/dimensions
     if (template.size && (template.size !== '' && template.size !== null && template.size !== 0)) {
-        console.log('BG3 Target Selector | Template detected - size:', template.size, 'for activity:', activity.name);
         return true;
     }
     
     // Check for width/height (for rectangles/lines)
     if ((template.width && template.width !== '' && template.width !== null && template.width !== 0) ||
         (template.height && template.height !== '' && template.height !== null && template.height !== 0)) {
-        console.log('BG3 Target Selector | Template detected - dimensions:', {width: template.width, height: template.height}, 'for activity:', activity.name);
         return true;
     }
     
@@ -526,13 +522,7 @@ export function getActivityTargetRequirements(activity) {
     let rangeValue = null;
     let rangeUnits = null;
     
-    console.log('BG3 Target Selector | Range Detection Debug:', {
-        activityRange: activity.range,
-        itemRange: activity.item?.system?.range,
-        activityName: activity.name || 'Unknown Activity',
-        activityType: activity.type,
-        fullActivity: activity
-    });
+    
     
     // Try activity range first - check both 'value' and 'reach' properties
     if (activity.range?.value || activity.range?.reach) {
@@ -544,7 +534,7 @@ export function getActivityTargetRequirements(activity) {
         if (parsedValue && parsedValue > 0) {
             rangeValue = parsedValue;
             rangeUnits = activity.range.units;
-            console.log('BG3 Target Selector | Using activity range:', rangeValue, rangeUnits);
+            
         }
     }
     
@@ -558,7 +548,7 @@ export function getActivityTargetRequirements(activity) {
         if (parsedValue && parsedValue > 0) {
             rangeValue = parsedValue;
             rangeUnits = activity.item.system.range.units;
-            console.log('BG3 Target Selector | Using item range:', rangeValue, rangeUnits);
+            
         }
     }
     

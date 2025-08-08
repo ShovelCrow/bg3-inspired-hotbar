@@ -255,7 +255,7 @@
         },
         "SkipSelectorWithValidTarget": {
             "Name": "Skip Selector with Valid Target",
-            "Hint": "For single-target spells/abilities, skip the target selector if a valid target is already selected. Streamlines gameplay by avoiding unnecessary target selection when you already have the right target."
+            "Hint": "For single-target spells/abilities, skip the target selector if a valid target is already selected."
         },
         "EnableRangeChecking": {
             "Name": "Enable Range Checking",
