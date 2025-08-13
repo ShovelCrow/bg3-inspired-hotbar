@@ -449,7 +449,7 @@
   }
   
   #bg3-hotbar-container .bg3-portrait-container[data-border="simple"] .portrait-image-container::after {
-    border: calc(var(--primary-border-width)*2) solid var(--primary-border-color);
+    border: calc(var(--bg3-border-size)*2) solid var(--bg3-border-color);
   }
   
   #bg3-hotbar-container .bg3-portrait-container[data-shape="round"]:not([data-border="none"]) .portrait-image-container, #bg3-hotbar-container .bg3-portrait-container[data-shape="round"] .health-overlay, #bg3-hotbar-container .bg3-portrait-container[data-shape="round"] .portrait-image-container::before, #bg3-hotbar-container .bg3-portrait-container[data-shape="round"] .portrait-image-container::after {

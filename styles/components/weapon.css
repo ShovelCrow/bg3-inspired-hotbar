@@ -46,7 +46,7 @@
     align-items: center;
     justify-content: center;
     text-shadow: var(--shadow-text-stroke);
-    color: var(--bg3-text-color);
+    color: var(--bg3-weapon-text-color);
     font-size: var(--font-size-18);
     font-family: 'Roboto Slab';
     z-index: 50;
@@ -72,6 +72,10 @@
     border: var(--bg3-weapon-border-size) solid var(--bg3-weapon-border-color);
     width: var(--bg3-weapon-cell-size);
     height: var(--bg3-weapon-cell-size);
+}
+#bg3-hotbar-container .bg3-weapon-set .hotbar-cell:hover {
+    border-color: var(--bg3-hotbar-border-color-hover);
+    background: var(--bg3-hotbar-background-color-hover);
 }
 
 @keyframes disable-pointer-events {

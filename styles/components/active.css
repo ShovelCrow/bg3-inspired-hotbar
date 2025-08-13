@@ -35,6 +35,14 @@
     background-color: var(--bg3-active-background-color);
 }
 
+#bg3-hotbar-container .active-effect-icon:hover img {
+    filter: brightness(1.2);
+}
+
+#bg3-hotbar-container .active-effect-icon:hover {
+    background: var(--bg3-active-background-color-hover);
+}
+
 #bg3-hotbar-container .active-effect-icon.disabled img {
     filter: grayscale(100%) brightness(50%);
     opacity: 0.7;
