@@ -67,8 +67,10 @@ export class GridCell extends BG3Component {
             const value = uses.value ?? 0;
             const max = uses.max ?? 0;
 
+            const singleUse = uses?.autoDestroy && uses.max == 1;
+
             // Only show uses if max > 0.
-            if (max > 0) return {uses: {value: value, max: max}};
+            if (max > 0 && !singleUse) return {uses: {value: value, max: max}};
             else return null;
         } else return null;
     }
