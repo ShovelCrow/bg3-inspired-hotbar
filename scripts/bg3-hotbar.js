@@ -585,7 +585,7 @@ export class BG3Hotbar extends Application {
                 return;
             }
         } else this.manager.currentTokenId = token.id;
-        this.manager._loadTokenData();
+        await this.manager._loadTokenData();
         this.render(true);
     }
 
