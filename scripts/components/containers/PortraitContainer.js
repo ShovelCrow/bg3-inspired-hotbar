@@ -4,6 +4,7 @@ import { DeathSavesContainer } from "./DeathSavesContainer.js";
 import { MenuContainer } from "./MenuContainer.js";
 import { BG3CONFIG } from "../../utils/config.js";
 import { PortraitHealth } from "./PortraitHealth.js";
+import { fromUuid } from "../../utils/foundryUtils.js";
 
 export class PortraitContainer extends BG3Component {
     constructor(data) {
@@ -54,29 +55,31 @@ export class PortraitContainer extends BG3Component {
                 if (key && key !== '') {
                     let value = null;
                     try {
+                        // Template mode: resolve {{...}} tokens inside a single entry
+                        if (key.includes('{{')) {
+                            const tokenRegex = /\{\{([^}]+)\}\}/g;
+                            let result = key;
+                            let match;
+                            const resolvedValues = [];
+                            while ((match = tokenRegex.exec(key)) !== null) {
+                                const token = match[1].trim();
+                                const resolved = await this._resolvePortraitAttrToken(token);
+                                resolvedValues.push(resolved);
+                                result = result.replace(match[0], (resolved ?? '').toString());
+                            }
+                            // Trim stray leading/trailing separators if one side is missing
+                            result = result.replace(/^[\s*/:|\-]+/, '').replace(/[\s*/:|\-]+$/, '');
+                            // If all resolved values are empty/undefined, suppress output
+                            const anyValue = resolvedValues.some(v => v !== undefined && v !== null && v !== '');
+                            value = anyValue ? result : '';
+                        }
                         // Literal value support: prefix with '=' to render as-is
-                        if (key.startsWith('=')) {
+                        else if (key.startsWith('=')) {
                             value = key.slice(1);
-                        } else {
-                            // 1) Try absolute actor path (supports flags.* and other actor props)
-                            value = foundry.utils.getProperty(this.actor, key);
-                            // 2) Fallback to system path and common ".value" nesting
-                            if (value === undefined || value === null) {
-                                value = foundry.utils.getProperty(this.actor.system, key) ?? foundry.utils.getProperty(this.actor.system, `${key}.value`);
-                            }
-                            // 3) If flags.<namespace>.<key> format, try getFlag explicitly
-                            if ((value === undefined || value === null) && key.startsWith('flags.')) {
-                                const parts = key.split('.');
-                                if (parts.length >= 3) {
-                                    const namespace = parts[1];
-                                    const flagKey = parts.slice(2).join('.');
-                                    value = this.actor.getFlag(namespace, flagKey);
-                                }
-                            }
-                            // 4) Fallback to module setting string: module.setting
-                            if (value === undefined || value === null) {
-                                value = this._getInfoFromSettings(key);
-                            }
+                        }
+                        // Single token/path resolution
+                        else {
+                            value = await this._resolvePortraitAttrToken(key);
                         }
                     } catch (error) {
                         // Ignore resolution errors and leave value as null
@@ -108,6 +111,62 @@ export class PortraitContainer extends BG3Component {
             extraInfos: await this.extraInfos,
             hpControls: game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls')
         };
+    }
+
+    /**
+     * Resolve a portrait attribute token into a string or primitive value.
+     * Supports:
+     *  - itemName:NAME[:path]
+     *  - itemUuid:UUID[:path]
+     *  - flags.namespace.key
+     *  - direct actor/system paths (with optional .value fallback)
+     * @param {string} token
+     * @returns {Promise<*>}
+     */
+    async _resolvePortraitAttrToken(token) {
+        let value = null;
+        // Item-based lookups
+        if (token.startsWith('itemName:') || token.startsWith('itemUuid:')) {
+            const parts = token.split(':');
+            const mode = parts.shift();
+            const identifier = parts.shift();
+            const path = parts.join(':');
+            let itemDoc = null;
+            if (mode === 'itemName') {
+                itemDoc = this.actor.items.find((it) => (it.name || '').trim() === identifier.trim());
+            } else if (mode === 'itemUuid') {
+                try {
+                    itemDoc = await fromUuid(identifier);
+                } catch (e) {}
+                if (!itemDoc && identifier?.includes('.')) {
+                    itemDoc = this.actor.items.get(identifier.split('.').pop());
+                }
+            }
+            if (itemDoc) {
+                const targetPath = path && path.length ? path : 'system.uses.value';
+                value = foundry.utils.getProperty(itemDoc, targetPath);
+            }
+        }
+        // Absolute actor path (supports flags.* and other actor props)
+        if (value === undefined || value === null) value = foundry.utils.getProperty(this.actor, token);
+        // Fallback to system path and common ".value" nesting
+        if (value === undefined || value === null) {
+            value = foundry.utils.getProperty(this.actor.system, token) ?? foundry.utils.getProperty(this.actor.system, `${token}.value`);
+        }
+        // If flags.<namespace>.<key> format, try getFlag explicitly
+        if ((value === undefined || value === null) && token.startsWith('flags.')) {
+            const parts2 = token.split('.');
+            if (parts2.length >= 3) {
+                const namespace = parts2[1];
+                const flagKey = parts2.slice(2).join('.');
+                value = this.actor.getFlag(namespace, flagKey);
+            }
+        }
+        // Fallback to module setting string: module.setting
+        if (value === undefined || value === null) {
+            value = this._getInfoFromSettings(token);
+        }
+        return value;
     }
 
     async _registerEvents() {
@@ -164,9 +223,17 @@ export class PortraitContainer extends BG3Component {
     }
 
     setTokenImageScale() {
-        const image = this.element.querySelector('.portrait-image');
-        if(!this.scaleTokenImage || !this.useTokenImage || this.token.document?._source?.texture?.scaleX === 1) image.style.removeProperty('scale');
-        else image.style.setProperty('scale', this.token.document._source.texture.scaleX);
+        const subContainer = this.element.querySelector('.portrait-image-subcontainer');
+        const img = this.element.querySelector('.portrait-image');
+        // Reset legacy img scale if any
+        if(img) img.style.removeProperty('scale');
+        if(!subContainer) return;
+        const scaleX = this.token.document?._source?.texture?.scaleX ?? 1;
+        if(!this.scaleTokenImage || !this.useTokenImage || scaleX === 1) {
+            subContainer.style.removeProperty('transform');
+        } else {
+            subContainer.style.setProperty('transform', `scale(${scaleX})`);
+        }
     }
 
     setImgBGColor() {
@@ -176,10 +243,12 @@ export class PortraitContainer extends BG3Component {
 
     async setPortraitBendMode() {
         const imageContainer = this.element.getElementsByClassName('portrait-image-subcontainer');
+        const enabled = game.settings.get(BG3CONFIG.MODULE_NAME, 'overlayModePortrait');
         if(imageContainer[0]) {
-            imageContainer[0].setAttribute('data-bend-mode', game.settings.get(BG3CONFIG.MODULE_NAME, 'overlayModePortrait'));
+            imageContainer[0].setAttribute('data-bend-mode', enabled);
             imageContainer[0].style.setProperty('--bend-img', `url(${this.element.querySelector('.portrait-image').src})`);
         }
+        this.element.classList.toggle('use-bend-mask', !!enabled);
     }
 
     togglePortraitOverlay() {

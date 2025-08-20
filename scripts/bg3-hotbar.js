@@ -107,6 +107,8 @@ export class BG3Hotbar extends Application {
 
     async _onCreateToken(token) {
         if (!token?.actor) return;
+        // Strictly avoid autopopulate for player characters on token creation
+        if (token.actor.type === 'character') return;
         setTimeout(async () => {
             await AutoPopulateCreateToken.populateUnlinkedToken(token);
         }, 100)
@@ -254,6 +256,11 @@ export class BG3Hotbar extends Application {
             if (changes.items && this.components.container.components.passiveContainer) {
                 await this.components.container.components.passiveContainer.render();
             }
+
+            // Update portrait extra infos if flags/system changed (e.g., custom flags or uses)
+            if ((changes.flags || changes.system) && this.components.portrait) {
+                await this.components.portrait._renderInner();
+            }
             
             // Update active container if items changed
             // if (this.components.container.components.activeContainer) {
@@ -268,9 +275,14 @@ export class BG3Hotbar extends Application {
     }
 
     async _onUpdateActive(effect) {
-        if (effect?.parent?.id === this.manager?.actor?.id && this.components.container.components.activeContainer) {
-            await this.components.container.components.activeContainer.render();
-            if(['dnd5ebonusaction', 'dnd5ereaction000'].includes(effect.id) && this.components.container.components.filterContainer) this.components.container.components.filterContainer._checkBonusReactionUsed();
+        if (effect?.parent?.id !== this.manager?.actor?.id) return;
+        try {
+            const container = this.components?.container?.components?.activeContainer;
+            if (container) await container.render();
+            const fc = this.components?.container?.components?.filterContainer;
+            if (fc && ['dnd5ebonusaction', 'dnd5ereaction000'].includes(effect.id)) fc._checkBonusReactionUsed();
+        } catch (e) {
+            // no-op
         }
     }
 
@@ -615,6 +627,7 @@ export class BG3Hotbar extends Application {
         html.dataset.cellHighlight = game.settings.get(BG3CONFIG.MODULE_NAME, 'highlightStyle');
         html.dataset.cellHighlight = game.settings.get(BG3CONFIG.MODULE_NAME, 'highlightStyle');
         html.dataset.filterHover = game.settings.get(BG3CONFIG.MODULE_NAME, 'hoverFilterShow');
+        html.dataset.abilityHover = game.settings.get(BG3CONFIG.MODULE_NAME, 'abilityButtonHover');
         document.body.dataset.showMaterials = game.settings.get(BG3CONFIG.MODULE_NAME, 'showMaterialDescription');
         ControlsManager.updateUIDataset(html);
 

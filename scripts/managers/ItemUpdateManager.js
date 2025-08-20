@@ -483,6 +483,18 @@ export class ItemUpdateManager {
             await ui.BG3HOTBAR.manager.persist();
             await ui.BG3HOTBAR.components.container.components.filterContainer.updateExtendedFilter();
         }
+
+        // Always refresh portrait extra infos on item updates for the current actor
+        try {
+            const currentToken2 = ui.BG3HOTBAR.manager.token;
+            if (currentToken2 && currentToken2.actor?.id === item.parent?.id && ui.BG3HOTBAR.rendered) {
+                if (ui.BG3HOTBAR.components?.portrait) {
+                    await ui.BG3HOTBAR.components.portrait._renderInner();
+                }
+            }
+        } catch (e) {
+            // No-op; portrait refresh is best-effort
+        }
     }
 
     async _handleItemCreate(item, options, userId) {

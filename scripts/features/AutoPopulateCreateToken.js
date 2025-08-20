@@ -94,6 +94,8 @@ export class AutoPopulateCreateToken {
         if (!token?.actor) return;
 
         try {
+            // Do not auto-populate for player characters
+            if (token.actor.type === 'character') return;
             // Check if user has permission to modify this token
             if (!token.actor.canUserModify(game.user, "update")) {
                 console.debug("BG3 Inspired Hotbar | User lacks permission to modify token actor");
