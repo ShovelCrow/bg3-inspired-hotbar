@@ -5,7 +5,7 @@
         draggable="false">
     {{#if name}}<div class="hotbar-item-name">{{name}}</div>{{/if}}
     {{#if consume}}
-        <div class="hotbar-item-uses{{#if (eq consume.value 0)}} depleted{{/if}}">{{consume.value}}{{consume.max}}</div>
+        <div class="hotbar-item-uses{{#if (eq consume.value 0)}} depleted{{/if}}">{{consume.value}}/{{consume.max}}</div>
     {{else}}
         {{#if uses}}
             <div class="hotbar-item-uses{{#if (eq uses.value 0)}} depleted{{/if}}">{{uses.value}}/{{uses.max}}</div>
