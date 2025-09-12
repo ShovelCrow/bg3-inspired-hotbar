@@ -118,14 +118,20 @@ export class AutoPopulateCreateToken {
                 const container1Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate');
                 const container2Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate');
                 const container3Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container3AutoPopulate');
+                
+                // Check if NPCs should use container defaults instead of weapon sets
+                const npcUseContainerDefaults = game.settings.get(BG3CONFIG.MODULE_NAME, 'npcUseContainerDefaults');
       
-                // Process each weapon & combat containers
-                if(force) {
-                    tempManager.containers.weapon[0].items = {};
-                    tempManager.containers.weapon[1].items = {};
-                    tempManager.containers.weapon[2].items = {};
+                // Process weapon sets only if NPCs are not using container defaults
+                if (!npcUseContainerDefaults) {
+                    // Process each weapon & combat containers
+                    if(force) {
+                        tempManager.containers.weapon[0].items = {};
+                        tempManager.containers.weapon[1].items = {};
+                        tempManager.containers.weapon[2].items = {};
+                    }
+                    await this._populateWeaponsToken(token.actor, tempManager);
                 }
-                await this._populateWeaponsToken(token.actor, tempManager);
     
                 // Process each container
                 if(force) {
@@ -136,6 +142,11 @@ export class AutoPopulateCreateToken {
                 await this._populateContainerWithSettings(token.actor, tempManager, 0, container1Setting);
                 await this._populateContainerWithSettings(token.actor, tempManager, 1, container2Setting);
                 await this._populateContainerWithSettings(token.actor, tempManager, 2, container3Setting);
+            }
+
+            // Auto-enable all passive features for NPCs
+            if (token.actor.type !== 'character') {
+                await this._autoEnablePassiveFeatures(token.actor);
             }
 
             // Save the changes only if we still have permission
@@ -198,7 +209,8 @@ export class AutoPopulateCreateToken {
                 }
                 
                 // Check if the item has activities or is usable
-                const hasActivities = item.system?.activities?.length > 0 ||
+                const activities = item.system?.activities;
+                const hasActivities = (activities instanceof Map && activities.size > 0) ||
                                     (item.system?.activation?.type && item.system?.activation?.type !== "none");
                 
                 if (hasActivities || game.settings.get(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {
@@ -318,6 +330,35 @@ export class AutoPopulateCreateToken {
             }
         } catch (error) {
             console.error("BG3 Inspired Hotbar | Error auto-populating common actions token hotbar:", error);
+        }
+    }
+
+    /**
+     * Auto-enable all passive features for NPCs
+     * @param {Actor} actor - The actor to configure passive features for
+     */
+    static async _autoEnablePassiveFeatures(actor) {
+        if (!actor?.items) return;
+
+        try {
+            // Get all passive features (feats with no activities)
+            const passiveFeatures = actor.items
+                .filter(item => {
+                    return item.type === "feat" && 
+                           item.system.activities instanceof Map && 
+                           item.system.activities.size === 0;
+                })
+                .map(item => item.uuid);
+
+            // Only set the flag if there are passive features and none are currently selected
+            if (passiveFeatures.length > 0) {
+                const currentSelection = actor.getFlag(BG3CONFIG.MODULE_NAME, "selectedPassives");
+                if (!currentSelection || currentSelection.length === 0) {
+                    await actor.setFlag(BG3CONFIG.MODULE_NAME, "selectedPassives", passiveFeatures);
+                }
+            }
+        } catch (error) {
+            console.error("BG3 Inspired Hotbar | Error auto-enabling passive features:", error);
         }
     }
 }

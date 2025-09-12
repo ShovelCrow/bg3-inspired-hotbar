@@ -28,7 +28,12 @@ export function needsTargeting(item) {
     
     // Check activities for targeting requirements (Foundry v12+)
     if (item.system?.activities) {
-        for (const activity of item.system.activities.values()) {
+        const activities = Array.from(item.system.activities.values());
+        
+        // If there's only one activity, check if it needs targeting
+        if (activities.length === 1) {
+            const activity = activities[0];
+            
             // Check for range that needs targeting
             if (activity.range?.value && parseInt(activity.range.value) > 0 && activity.range.units !== "self") {
                 return true;
@@ -39,7 +44,7 @@ export function needsTargeting(item) {
                 const targetType = activity.target.type || activity.target.affects?.type;
                 // Skip self and none targeting
                 if (targetType === "self" || targetType === "none") {
-                    continue;
+                    return false;
                 }
                 // If there's target information (type or count), activate targeting
                 if (targetType || activity.target.affects?.count !== undefined) {
@@ -47,6 +52,10 @@ export function needsTargeting(item) {
                 }
             }
         }
+        
+        // For multiple activities, don't activate target selector at item level
+        // Let the activity selection dialog appear first
+        return false;
     }
     
     // Check for attack rolls (weapons, attack spells)
@@ -227,12 +236,7 @@ function calculateRange(item) {
         rangeInSceneUnits = convertRangeUnits(rangeValue, range.units, gridUnits);
     }
     
-    // Debug logging
-    console.log(`BG3 Target Selector | Range calculation for ${item.name}:`, {
-        originalRange: `${rangeValue} ${range.units}`,
-        sceneUnits: gridUnits,
-        rangeInSceneUnits: rangeInSceneUnits
-    });
+
     
     return rangeInSceneUnits;
 }
@@ -399,6 +403,97 @@ function isValidTargetType(target, requiredType, sourceToken) {
         default:
             return true; // Unknown type, allow all
     }
+}
+
+/**
+ * Check if a specific activity requires targeting
+ * @param {Activity} activity - The activity to check
+ * @returns {boolean} - True if the activity needs targeting
+ */
+export function needsActivityTargeting(activity) {
+    if (!activity) return false;
+    
+    // Check for range that needs targeting
+    if (activity.range?.value && parseInt(activity.range.value) > 0 && activity.range.units !== "self") {
+        return true;
+    }
+    
+    // Check for target information
+    if (activity.target) {
+        const targetType = activity.target.type || activity.target.affects?.type;
+        // Skip self and none targeting
+        if (targetType === "self" || targetType === "none") {
+            return false;
+        }
+        // If there's target information (type or count), activate targeting
+        if (targetType || activity.target.affects?.count !== undefined) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Extract targeting requirements from a specific activity
+ * @param {Activity} activity - The activity to analyze
+ * @returns {Object} - Targeting requirements object
+ */
+export function getActivityTargetRequirements(activity) {
+    if (!activity) return {};
+    
+    const requirements = {
+        minTargets: 1,
+        maxTargets: 1,
+        range: null,
+        type: null,
+        template: null
+    };
+    
+    // Get target configuration from activity
+    const targetConfig = activity.target;
+    
+    if (targetConfig) {
+        // Target type
+        requirements.type = targetConfig.type || targetConfig.affects?.type;
+        
+        // Target count
+        let targetCount = null;
+        if (targetConfig.affects?.count) {
+            targetCount = parseInt(targetConfig.affects.count) || null;
+        }
+        
+        // Set target count if specified
+        if (targetCount && targetCount > 0) {
+            requirements.maxTargets = targetCount;
+            requirements.minTargets = Math.min(targetCount, 1);
+        }
+        
+        // Template information
+        if (targetConfig.template) {
+            requirements.template = {
+                type: targetConfig.template.type,
+                size: targetConfig.template.size,
+                units: targetConfig.template.units
+            };
+        }
+    }
+    
+    // Range calculation from activity
+    if (activity.range?.value) {
+        const rangeValue = activity.range.value || 0;
+        if (rangeValue > 0 && activity.range.units !== "self") {
+            // Convert to scene units if needed
+            const gridUnits = canvas.scene.grid.units || "ft";
+            let rangeInSceneUnits = rangeValue;
+            if (activity.range.units !== gridUnits) {
+                rangeInSceneUnits = convertRangeUnits(rangeValue, activity.range.units, gridUnits);
+            }
+            requirements.range = rangeInSceneUnits;
+        }
+    }
+    
+    return requirements;
 }
 
 /**

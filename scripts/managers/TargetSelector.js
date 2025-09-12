@@ -197,10 +197,7 @@ export class TargetSelector {
         const newMax = Math.max(1, (this.requirements.maxTargets || 1) + delta);
         this.requirements.maxTargets = newMax;
         
-        console.log('BG3 Target Selector | Adjusted max targets:', {
-            newMax: newMax,
-            currentSelected: this.selectedTargets.length
-        });
+
         
         // Store current mouse position before recreating displays
         let currentMouseX = 0, currentMouseY = 0;
@@ -405,23 +402,7 @@ export class TargetSelector {
         const gridSquareDistance = minDistance === Infinity ? 0 : minDistance;
         const distance = gridSquareDistance * gridDistance;
         
-        console.log(`BG3 Target Selector | Grid-based distance calculation:`, {
-            source: sourceToken.name,
-            target: targetToken.name,
-            sourcePos: `${sourceX},${sourceY}`,
-            targetPos: `${targetX},${targetY}`,
-            sourceSize: `${sourceWidth}x${sourceHeight}`,
-            targetSize: `${targetWidth}x${targetHeight}`,
-            sourceBounds: sourceBounds,
-            targetBounds: targetBounds,
-            closestSourceSquare: closestSourceSquare,
-            closestTargetSquare: closestTargetSquare,
-            gridSquareDistance: gridSquareDistance,
-            gridDistance: gridDistance,
-            distance: distance,
-            range: this.requirements.range,
-            inRange: distance <= this.requirements.range
-        });
+
         
         return distance;
     }
@@ -457,12 +438,7 @@ export class TargetSelector {
     toggleTarget(token) {
         const index = this.selectedTargets.indexOf(token);
         
-        console.log('BG3 Target Selector | Toggle target:', {
-            tokenName: token.name,
-            currentlySelected: index >= 0,
-            selectedCount: this.selectedTargets.length,
-            maxTargets: this.requirements.maxTargets || 1
-        });
+
         
         if (index >= 0) {
             // Remove target
@@ -500,11 +476,9 @@ export class TargetSelector {
      */
     updateFoundryTargets() {
         const targetIds = this.selectedTargets.map(token => token.id);
-        console.log('BG3 Target Selector | Updating Foundry targets:', {
-            selectedTargets: this.selectedTargets.map(t => t.name),
-            targetIds: targetIds
-        });
-        game.user.updateTokenTargets(targetIds);
+        
+        // Use the new v13 API
+        canvas.tokens.setTargets(targetIds, { mode: "replace" });
     }
 
     /**
@@ -515,7 +489,7 @@ export class TargetSelector {
             // No need to remove individually, we'll clear all at once
         });
         // Clear all targets in Foundry's system
-        game.user.updateTokenTargets([]);
+        canvas.tokens.setTargets([], { mode: "replace" });
     }
 
     /**
@@ -695,25 +669,12 @@ export class TargetSelector {
             // Draw square centered on token
             rangeIndicator.drawRect(-halfSize, -halfSize, squareSize, squareSize);
             
-            console.log(`BG3 Target Selector | Range square:`, {
-                tokenName: this.token.name,
-                tokenSize: `${tokenWidth}x${tokenHeight}`,
-                rangeInGrids: rangeInGrids,
-                squareSize: squareSize,
-                actualRange: this.requirements.range
-            });
+
         } else {
             // Default circle shape
             rangeIndicator.drawCircle(0, 0, effectiveRadius);
             
-            console.log(`BG3 Target Selector | Range circle:`, {
-                tokenName: this.token.name,
-                tokenSize: `${tokenWidth}x${tokenHeight}`,
-                tokenRadius: tokenRadius,
-                rangeInPixels: rangeInPixels,
-                effectiveRadius: effectiveRadius,
-                actualRange: this.requirements.range
-            });
+
         }
         
         rangeIndicator.x = this.token.center.x;
@@ -830,10 +791,10 @@ export class TargetSelector {
      */
     switchToTargetTool() {
         // Store the current tool
-        this.originalTokenTool = ui.controls.activeTool;
+        this.originalTokenTool = ui.controls.tool?.name;
         
-        // Switch to target tool using Foundry's built-in method
-        ui.controls.initialize({ tool: "target" });
+        // Switch to target tool using the new v13 API
+        ui.controls.render({tool: "target"});
     }
 
     /**
@@ -841,8 +802,8 @@ export class TargetSelector {
      */
     restoreTokenTool() {
         if (this.originalTokenTool) {
-            // Restore the original tool
-            ui.controls.initialize({ tool: this.originalTokenTool });
+            // Restore the original tool using the new v13 API
+            ui.controls.render({tool: this.originalTokenTool});
             this.originalTokenTool = null;
         }
     }
