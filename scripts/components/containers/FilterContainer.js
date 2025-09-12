@@ -161,7 +161,7 @@ export class FilterContainer extends BG3Component {
             case 'feature':
                 return cell.dataset.itemType === 'feat';
             default:
-                return filter.data.id === cell.dataset.actionType;
+                return filter.data.id === cell.dataset.actionType || cell.dataset.activityActionTypes?.split(',').includes(filter.data.id);
         }
     }
         
@@ -276,3 +276,4 @@ export class FilterContainer extends BG3Component {
         return this.element;
     }
 }
+

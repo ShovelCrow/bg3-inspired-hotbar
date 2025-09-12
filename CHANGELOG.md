@@ -1,12 +1,53 @@
-## [3.1.1] - 2025-05-07
+## [3.1.5] - 2025-07-04
+### Features
+- Add toggle button to switch between GM Hotbar and Token Hotbar when GM Hotbar is enabled. It's above the row controls buttons on the far right. (Related Issues: [#212], PR [#215] - Thanks @gubacelar!)
+- Extend action type filters to search activities - items with activities now highlight when their activity action types match the selected filter. (PR [#208] - Thanks @kgsherman!)
+
+## [3.1.4] - 2025-05-22 
+### Disclaimer
+- To improve performances and avoid bugs, Auto-equip items feature will now only look for items found in weapons sets, any other items will be ignored. This way, it allows you to manually equip items and still switch between your sets without having those manually equipped to be unequipped (as long as they are not in a weapon set).
+
+### Fixed
+- Fix players not allowed to use common actions macros. (Related Issues: [#191])
+- Fix CPR setting button displayed even without CPR module installed. (Related Issues: [#191])
+- Open Journal pages added to the hotbar when you click on them. (Related Issues: [#192])
+- Fix Passives & Actives not showing correctly. (Related Issues: [#194])
+- Fix Ability Check/Save & Skill roll for D&D previous to v4. (Related Issues: [#195])
+- Fix Common Actions macros (non-cpr) text to adapt to 2014/2024 rules. (Related Issues: [#199])
+- When minimized, the toggle button should be displayed on top of Taskbar (theripper93 module). (Related Issues: [#200])
+- Fix a bug with auto-equip weapons. (Related Issues: [#201])
+
+### Features
+- Handle Classes without a native tooltip when added to hotbar.
+- Display quantity on items if there is more than 1. (Related Issues: [#196])
+- Change the way minize/maximize UI is handled.
+
+## [3.1.3] - 2025-05-13 
+### Fixed
+- Fix Hide Macrobar logic.
+- Fix HP Controls removing temp HP. (Related Issues: [#184])
+- Allow players with permission to see HP Controls. (Related Issues: [#184])
+
+### Features
+- Add a option in Controls Container to "lock" the GM Hotbar to keep it even after selecting a token. (Related Issues: [#185])
+
+## [3.1.2] - 2025-05-11
+### Fixed
+- Fix UI sometimes displayed to the top of the screen (with camera activated for example). (Related Issues: [#179])
+- Limit "Extra Filters" to items with the "feat" type. (Related Issues: [#182])
+
+### Features
+- Patch DnD 5e Tooltip method to display charges for items without the "identified" property. Also non-identified items won't display their charges in hotbar anymore. (Related Issues: [#180])
+
+## [3.1.1] - 2025-05-10
 ### Fixed
 - Auto select HP in HP Control input to allow faster editing.
 - Fix a bug when deactivating "Show Damage as Ranges" setting.
 
 ### Features
-- Add new parameter in Right-Click Portrait Menu to scale Token Image based of Token Scale (Ratio). (Related Issues: [#181])
+- Add new parameter in Right-Click Portrait Menu to scale Token Image based of Token Scale (Ratio). (Related Issues: [#163])
 
-## [3.1.0] - 2025-05-07
+## [3.1.0] - 2025-05-09
 ### Fixed
 - [Foundry V13] Fix saving throw new method name. (Related Issues: [#173])
 - [Foundry V13] Fix "Collapse Macro" setting, it can't be collapsed anymore since V13.

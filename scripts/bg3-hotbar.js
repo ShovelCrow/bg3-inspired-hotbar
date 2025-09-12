@@ -30,6 +30,7 @@ export class BG3Hotbar extends Application {
         // this.enabled = game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled');
         this.generateTimeout = null;
         this.colorPicker = null;
+        this.overrideGMHotbar = false;
 
         /** Hooks Event **/
         // Hooks.once("canvasReady", this._onCanvasReady.bind(this));
@@ -90,6 +91,10 @@ export class BG3Hotbar extends Application {
         return Number(game.version) > 13;
     }
 
+    isDnDPrev4 () {
+        return Number(game.system.version.split('.')[0]) < 4;
+    }
+
     async _onCanvasReady() {
         const token = canvas.tokens.controlled?.[0];
         if(token) await this._onControlToken(token, canvas.tokens.controlled);
@@ -104,6 +109,9 @@ export class BG3Hotbar extends Application {
     }
 
     async _onControlToken(token, controlled) {
+        if (this.overrideGMHotbar && game.settings.get(BG3CONFIG.MODULE_NAME, 'enableGMHotbar')) {
+            return;
+        }
         if (!this.manager) return;
         
         if(this.generateTimeout) {
@@ -111,17 +119,15 @@ export class BG3Hotbar extends Application {
             this.generateTimeout = null;
         }
 
-        this.generateTimeout = setTimeout(() => {
+        if(this.manager.canGMHotbar() && ControlsManager.isSettingLocked('deselect')) return;
+        this.generateTimeout = setTimeout(async () => {
             if (((!controlled && !canvas.tokens.controlled.length) || canvas.tokens.controlled.length > 1) && !ControlsManager.isSettingLocked('deselect')) {
                 if (!canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) this.generate(null);
                 if (game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
             }
             if (!controlled || !canvas.tokens.controlled.length || canvas.tokens.controlled.length > 1) return;
 
-            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) {
-                this.generate(token);
-                if (game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
-            }
+            if(game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled')) await this.generate(token);
         })
     }
 
@@ -218,8 +224,9 @@ export class BG3Hotbar extends Application {
     }
 
     _onDeleteCombat(combat) {
-        if(ui.BG3HOTBAR.element?.[0]) return;
+        if(!ui.BG3HOTBAR.element) return;
         this.combat.forEach(e => e.setComponentsVisibility());
+        this.hide();
         if(!this.components.container?.components?.filterContainer) return;
         this.components.container.components.filterContainer.resetUsedActions();
     }
@@ -230,30 +237,30 @@ export class BG3Hotbar extends Application {
     }
 
     _applyMacrobarCollapseSetting() {
-            // We need to wait for the UI to be ready before collapsing the hotbar
-            if (!ui.hotbar) {
-                // UI not ready, deferring macrobar collapse
-                Hooks.once('renderHotbar', () => this._applyMacrobarCollapseSetting());
-                return;
-            }
-            
-            const collapseMacrobar = game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
-            if(collapseMacrobar !== 'full' && document.querySelector("#hotbar").style.display != 'flex') document.querySelector("#hotbar").style.display = 'flex';
-            // Applying macrobar collapse setting
-            if (collapseMacrobar === 'always' || collapseMacrobar === 'true') {
+        // We need to wait for the UI to be ready before collapsing the hotbar
+        if (!ui.hotbar) {
+            // UI not ready, deferring macrobar collapse
+            Hooks.once('renderHotbar', () => this._applyMacrobarCollapseSetting());
+            return;
+        }
+        
+        const collapseMacrobar = game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar');
+        if(collapseMacrobar !== 'full' && document.querySelector("#hotbar").style.display != 'flex') document.querySelector("#hotbar").style.display = 'flex';
+        // Applying macrobar collapse setting
+        if (collapseMacrobar === 'always' || collapseMacrobar === 'true') {
+            this.isV13orHigher() ? ui.hotbar.element.classList.add('hidden') : ui.hotbar.collapse();
+        } else if (collapseMacrobar === 'never' || collapseMacrobar === 'false') {
+            this.isV13orHigher() ? ui.hotbar.element.classList.remove('hidden') : ui.hotbar.expand();
+        } else if(collapseMacrobar === 'select') {
+            if(this.macroBarTimeout) clearTimeout(this.macroBarTimeout);
+            if(ui.BG3HOTBAR?._element) {
                 this.isV13orHigher() ? ui.hotbar.element.classList.add('hidden') : ui.hotbar.collapse();
-            } else if (collapseMacrobar === 'never' || collapseMacrobar === 'false') {
-                this.isV13orHigher() ? ui.hotbar.element.classList.remove('hidden') : ui.hotbar.expand();
-            } else if(collapseMacrobar === 'select') {
-                if(this.macroBarTimeout) clearTimeout(this.macroBarTimeout);
-                if(ui.BG3HOTBAR?.manager?.currentTokenId || ui.BG3HOTBAR?.manager?.globalMenu) {
-                    this.isV13orHigher() ? ui.hotbar.element.classList.add('hidden') : ui.hotbar.collapse();
-                } else {
-                    this.macroBarTimeout = setTimeout(() => {
-                        this.isV13orHigher() ? ui.hotbar.element.classList.remove('hidden') : ui.hotbar.expand();
-                    }, 100);
-                }
-            } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
+            } else {
+                this.macroBarTimeout = setTimeout(() => {
+                    this.isV13orHigher() ? ui.hotbar.element.classList.remove('hidden') : ui.hotbar.expand();
+                }, 100);
+            }
+        } else if(collapseMacrobar === 'full' && document.querySelector("#hotbar").style.display != 'none') document.querySelector("#hotbar").style.display = 'none';
     }
 
     _autoPopulateToken(token) {
@@ -297,15 +304,47 @@ export class BG3Hotbar extends Application {
             const actor = this.manager.actor;
             if(!actor) return;
             state = (autoHideSetting == 'true' && !game.combat?.started) || (autoHideSetting == 'init' && (!game.combat?.started || !(game.combat?.started && game.combat?.combatant?.actor === actor)));
-            this.element[0].classList.toggle('slidedown',state);
+            if ( !state ) this.maximize();
+            else this.minimize();
         }
+    }
+
+    async minimize() {
+        if ( !this.rendered || [true, null].includes(this._minimized) ) return;
+        this._minimized = null;
+
+        return new Promise(resolve => {
+            ui.BG3HOTBAR.element.addClass('minimized');
+            setTimeout(() => {
+                this._minimized = true;
+                resolve();
+            }, 300);
+        });
+    }
+
+    async maximize() {
+        if ( [false, null].includes(this._minimized) ) return;
+        this._minimized = null;
+
+        // Expand window
+        return new Promise(resolve => {
+            ui.BG3HOTBAR.element.removeClass('minimized');
+            setTimeout(() => {
+                this._minimized = false;
+                resolve();
+            }, 300);
+        });
     }
 
     async generate(token) {
         if (!this.manager) return;
         if(!token) {
             this.manager.currentTokenId = null;
-            if(!this.manager.canGMHotbar()) return this.close();
+            if(!this.manager.canGMHotbar()) {
+                await this.close();
+                if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+                return;
+            }
         } else this.manager.currentTokenId = token.id;
         this.manager._loadTokenData();
         this.render(true);
@@ -313,8 +352,8 @@ export class BG3Hotbar extends Application {
 
     async _render(force=false, options={}) {
         await super._render(force, options);
-        
         if(this.components?.container?.components?.filterContainer) this.components.container.components.filterContainer._checkBonusReactionUsed();
+        if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
     }
 
     async _renderInner(data) {        

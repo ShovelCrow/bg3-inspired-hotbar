@@ -37,9 +37,10 @@ export class GridCell extends BG3Component {
             data = {...data, ...{
                     uuid: itemData.uuid,
                     name: itemData.name,
-                    icon: itemData.img,
+                    icon: itemData.img ?? 'icons/svg/book.svg',
                     actionType: itemData.system?.activation?.type?.toLowerCase() ?? itemData.activation?.type?.toLowerCase() ?? null,
-                    itemType: itemData.type
+                    itemType: itemData.type,
+                    quantity: itemData.system?.quantity && itemData.system?.quantity > 1 ? itemData.system?.quantity : false
                 },
                 ...await this.getItemUses(),
                 ...await this.getConsumeData()
@@ -62,7 +63,7 @@ export class GridCell extends BG3Component {
 
     async getItemUses() {
         const itemData = await this.item;
-        if (itemData?.system?.uses) {
+        if (itemData.hasLimitedUses && (game.user.isGM || !itemData.system.hasOwnProperty('identified') || itemData.system.identified)) {
             const uses = itemData.system.uses;
             const value = uses.value ?? 0;
             const max = uses.max ?? 0;
@@ -288,22 +289,19 @@ export class GridCell extends BG3Component {
             }
             if(item) {
                 try {
+                    console.log(item)
                     if(item.execute) item.execute();
                     else if(item.use) {
-                        if(item.type === "container") {
-                            item.sheet.render(true);
-                        } else {
-                            const options = {
-                                configureDialog: false,
-                                legacy: false,
-                                event: e
-                            };
-                            if (e.ctrlKey) options.disadvantage = true;
-                            if (e.altKey) options.advantage = true;
-                            const used = await item.use(options, { event: e });
-                            if (used) this._renderInner();
-                        }
-                    }
+                        const options = {
+                            configureDialog: false,
+                            legacy: false,
+                            event: e
+                        };
+                        if (e.ctrlKey) options.disadvantage = true;
+                        if (e.altKey) options.advantage = true;
+                        const used = await item.use(options, { event: e });
+                        if (used) this._renderInner();
+                    } else if(item.sheet?.render) item.sheet.render(true)
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error using item:", error);
                     ui.notifications.error(`Error using item: ${error.message}`);
@@ -387,6 +385,17 @@ export class GridCell extends BG3Component {
             if(itemData) {
                 this.element.dataset.actionType = itemData.system?.activation?.type?.toLowerCase() ?? itemData.activation?.type?.toLowerCase() ?? null;
                 this.element.dataset.itemType = itemData.type;
+
+                if (itemData.system?.activities) {
+                    const activityActionTypes = itemData.system.activities
+                      .values()
+                      .toArray()
+                      .filter((a) => !!a.activation?.type)
+                      .map((a) => a.activation.type);
+
+                    this.element.dataset.activityActionTypes = [...new Set(activityActionTypes)].join(',');
+                }
+
                 switch (itemData.type) {
                     case 'spell':
                         this.element.dataset.preparationMode = itemData.system.preparation?.mode;
@@ -416,3 +425,4 @@ export class GridCell extends BG3Component {
         }
     }
 }
+

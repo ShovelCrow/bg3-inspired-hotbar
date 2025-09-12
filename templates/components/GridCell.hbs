@@ -11,6 +11,7 @@
     {{#if uses}}
         <div class="hotbar-item-uses{{#if (eq uses.value 0)}} depleted{{/if}}">{{uses.value}}/{{uses.max}}</div>
     {{/if}}
+    {{#if quantity}}<div class="hotbar-item-quantity">{{quantity}}</div>{{/if}}
     {{else}}
         <div>{{name}}</div>
     {{/if}}
