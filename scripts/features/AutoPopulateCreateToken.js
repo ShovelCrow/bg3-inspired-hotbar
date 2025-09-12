@@ -94,6 +94,8 @@ export class AutoPopulateCreateToken {
         if (!token?.actor) return;
 
         try {
+            // Do not auto-populate for player characters
+            if (token.actor.type === 'character') return;
             // Check if user has permission to modify this token
             if (!token.actor.canUserModify(game.user, "update")) {
                 console.debug("BG3 Inspired Hotbar | User lacks permission to modify token actor");
@@ -113,7 +115,7 @@ export class AutoPopulateCreateToken {
                 }
             }
 
-            if(token.actor.type !== 'character' && ((!token.actorLink && (game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens') || force)) || (token.actorLink && (game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens') || force)))) {
+            if((!token.actorLink && (game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateUnlinkedTokens') || force)) || (token.actorLink && (game.settings.get(BG3CONFIG.MODULE_NAME, 'autoPopulateLinkedTokens') || force))) {
                 // Get settings for each container
                 const container1Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container1AutoPopulate');
                 const container2Setting = game.settings.get(BG3CONFIG.MODULE_NAME, 'container2AutoPopulate');
@@ -200,11 +202,12 @@ export class AutoPopulateCreateToken {
                     const enforcePreparation = shouldEnforceSpellPreparation(actor, manager.currentTokenId);
                         
                     if (enforcePreparation) {
-                        const prep = item.system?.preparation;
+                        const method = item.system?.method ?? item.system?.preparation?.mode;
+                        const prepared = item.system?.prepared ?? item.system?.preparation?.prepared;
                         // Skip if it's an unprepared "prepared" spell
-                        if (!prep?.prepared && prep?.mode === "prepared") continue;
+                        if (!prepared && method === "prepared") continue;
                         // Include if it's prepared or has a valid casting mode
-                        if (!prep?.prepared && !["pact", "apothecary", "atwill", "innate", "ritual", "always"].includes(prep?.mode)) continue;
+                        if (!prepared && !["pact", "apothecary", "atwill", "innate", "ritual", "always"].includes(method)) continue;
                     }
                 }
                 
@@ -233,14 +236,14 @@ export class AutoPopulateCreateToken {
             
             if (itemsWithActivities.length === 0) return;
 
-            // Sort items
-            AutoSort._sortItems(itemsWithActivities);
+            // Sort items using unified sorter with fresh data
+            const sortedItems = await AutoSort.sortUuidEntries(itemsWithActivities);
 
             // Place items in grid format (rows first: left to right, then down)
             let x = 0;
             let y = 0;
 
-            for (const item of itemsWithActivities) {
+            for (const item of sortedItems) {
                 if (y >= container.rows) break; // Stop if we exceed container rows
 
                 const gridKey = `${x}-${y}`;
@@ -287,27 +290,37 @@ export class AutoPopulateCreateToken {
 
     static async _getCombatActionsList(actor) {
         let ids = [];
-        if(game.modules.get("chris-premades")?.active && game.packs.get("chris-premades.CPRActions")?.index?.size) {
-            const pack = game.packs.get("chris-premades.CPRActions"),
-                promises = [];
-            for(const id of game.settings.get(BG3CONFIG.MODULE_NAME, 'choosenCPRActions')) {
-                const item = actor.items.find(i => i.system.identifier === pack.index.get(id)?.system?.identifier);
-                if(item) ids.push(item.uuid);
-                else {
-                    const cprItem = pack.index.get(id);
-                    if(cprItem) {
-                        promises.push(new Promise(async (resolve, reject) => {
-                            let item = await pack.getDocument(cprItem._id);
-                            resolve(item);
-                        }))
-                    }
+        if (game.modules.get("chris-premades")?.active && game.packs.get("chris-premades.CPRActions")?.index?.size) {
+            const pack = game.packs.get("chris-premades.CPRActions");
+            const chosen = game.settings.get(BG3CONFIG.MODULE_NAME, 'choosenCPRActions') || [];
+            const toCreate = [];
+
+            for (const id of chosen) {
+                const idxEntry = pack.index.get(id);
+                if (!idxEntry) continue;
+
+                // Prefer robust match by system.identifier; fallback to case-insensitive name match
+                const targetIdentifier = idxEntry.system?.identifier;
+                const targetName = (idxEntry.name || '').toLowerCase();
+                const existing = actor.items.find((it) => {
+                    const sameIdentifier = targetIdentifier && it.system?.identifier === targetIdentifier;
+                    const sameName = targetName && (it.name || '').toLowerCase() === targetName;
+                    return sameIdentifier || sameName;
+                });
+
+                if (existing) {
+                    ids.push(existing.uuid);
+                    continue;
                 }
+
+                toCreate.push(idxEntry._id);
             }
-            if(promises.length) {
-                await Promise.all(promises).then(async (values) => {
-                    let tmpDoc = await actor.createEmbeddedDocuments('Item', values);
-                    ids = tmpDoc.map(i => i.uuid);
-                })
+
+            if (toCreate.length) {
+                const docs = await Promise.all(toCreate.map(async (_id) => pack.getDocument(_id)));
+                // Suppress hotbar auto-add during CPR common actions creation
+                const created = await actor.createEmbeddedDocuments('Item', docs, { noBG3AutoAdd: true });
+                ids = ids.concat(created.map((i) => i.uuid));
             }
         } else {
             const compendium = await game.packs.get("bg3-inspired-hotbar.bg3-inspired-hud");
@@ -318,7 +331,7 @@ export class AutoPopulateCreateToken {
     }
 
     static async _populateCommonActions(actor, manager) {
-        if(actor.type == 'vehicule') return;
+        if(actor.type == 'vehicle') return;
         try {
             const ids = await this._getCombatActionsList(actor);
             let count = 0;

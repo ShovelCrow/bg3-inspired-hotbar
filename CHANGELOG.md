@@ -1,3 +1,62 @@
+## [3.4.4] - 2025-08-19
+### Portrait Extra Data
+- Portrait info: You can now show two values in one line (like 3/5). Example:
+  - Focus {{itemName:Focus Points:system.uses.value}}/{{itemName:Focus Points:system.uses.max}}
+- Portrait info: Point to a feature by its name (itemName:...) or by its UUID (itemUuid:...).
+- Portrait info updates right away when you change the character sheet.
+- If a value is missing for the current selected actor, the portrait info will not show the value.
+
+### Portrait Mask & Context Menu
+- Health overlay now clips to the actual portrait image when Overlay Mode is enabled (no forced circular clipping).
+- Token image scaling applies to the masked subcontainer so both the mask and HP overlay follow the expanded portrait.
+- Right-click portrait menu no longer gets cut off when the portrait is masked; overflow is allowed and scaling is centered to prevent top-cropping.
+
+### General
+- Added setting: "Show Ability Button only on hover". When enabled, the ability button remains hidden until the BG3 Hotbar (or its children) are hovered.
+
+### Active Effects
+- Fixed an issue where removing an active effect could leave a duplicate-looking icon until reselecting the token. The active effects bar now refreshes cleanly on changes.
+
+
+### Auto-Populate
+- Auto-populate on token creation is now strictly disabled for player characters. Only NPC tokens will auto-populate, respecting the linked/unlinked token settings.
+
+
+## [3.4.3] - 2025-08-16
+### Added
+- **Portrait Extra Data**: Support custom flags in portrait extra data (e.g., `flags.custom-dnd5e.rdpg`) and literal values via `=15`. (Related Issue: [#229])
+
+### Fixed
+- **Auto Sort and Spell Sorting**: Spells sort by level (cantrip–9) then alphabetically; all other types sort alphabetically. (Related Issue: [#244])
+- **Lock Button Icon**: Icon now correctly switches between locked and unlocked states.
+- **Hotbar Auto-Update on Item Create**: Newly added items appear immediately on the hotbar for the current token without requiring a manual re-render.
+- **Item Context Menu Visibility**: Edit/Configure/Remove options only show when a cell has an item.
+- **NPC Common Actions**: Corrected typo preventing vehicle handling during autopopulate (`vehicule` -> `vehicle`).
+- **Extended Filter Sync**: After item deletion via sheet, the extended filter updates to stay in sync.
+- **Spell Prep Warning**: Removed deprecation warning by using `method`/`prepared` instead of `preparation`.
+
+## [3.4.2] - 2025-08-08
+### Fixed
+- **Unlinked Tokens Autopopulate** - Fixed breaking bug getting caught with populating common actions container
+
+## [3.4.1] - 2025-08-08
+### Fixed
+- **Active Effects** - Fixed active effects not re-enabling or able to be deleted if disabled
+
+## [3.4.0] - 2025-08-07
+### Added
+- **Container Popovers** - Add bags, pouches, and other containers options to your hotbar to open them in a popover window showing their contents. Items in the container can be moved around the popover, but other features and items should not be placed here if they don't belong to the container itself
+
+### Reworked
+- **Target Selector** - Refactored, changed UI/UX, added keybindings for accept and roll (default Enter), added setting for skipping if target already selected (Issue: [#226 & #234])
+
+### Fixed
+- **Hotbar Auto-Update** - Items now automatically appear in hotbars when given to any character, even if their token and therefor hotbar isn't currently selected. Giving items to un/linked NPCs for example
+- **Consumable Items** - Potions, scrolls, and other consumables now properly auto-populate to hotbars with autopopulate feature
+- **Actor Duplication** - Duplicated actors now correctly reference their own items instead of the original actor's items when the hotbar is not already rendered (Issue: [#228])
+- **Drag Bar Movement** - Fixed to move at the right speed with set scale
+- **Common Actions Bug** - Common Actions would sometimes duplicate when the container was empty but the features were on the sheet and then the token was placed on the canvas again
+
 ## [3.3.1] - 2025-07-31
 ### Fixed
  - **Passive Features Auto-Populate** - NPCs should autopopulate their passive features when toekn is created. This function was lost in last update(s).
