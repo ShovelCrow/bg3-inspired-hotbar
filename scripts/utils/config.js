@@ -212,7 +212,7 @@ export const BG3CONFIG = {
 export function registerKeybinding() {
     // Register keybinding for toggling UI
     game.keybindings.register(BG3CONFIG.MODULE_NAME, "toggleUI", {
-        name: "Toggle BG3 Hotbar",
+        name: "BG3.Settings.Keybindings.toggleUI",
         hint: "Toggles the BG3 Inspired Hotbar UI visibility",
         editable: [{ key: "KeyH" }],
         onDown: () => {
@@ -222,11 +222,43 @@ export function registerKeybinding() {
         restricted: false,
         precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
     });
+
+    // Register keybinding for decreasing target count
+    game.keybindings.register(BG3CONFIG.MODULE_NAME, "decreaseTargets", {
+        name: "BG3.Settings.Keybindings.decreaseTargets",
+        hint: "Decreases the maximum target count when using the target selector",
+        editable: [{ key: "BracketLeft" }],
+        onDown: () => {
+            // Only trigger if target selector is active
+            const activeTargetSelector = window.activeTargetSelector;
+            if (activeTargetSelector && activeTargetSelector.isActive) {
+                activeTargetSelector.adjustMaxTargets(-1);
+            }
+        },
+        restricted: false,
+        precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+    });
+
+    // Register keybinding for increasing target count
+    game.keybindings.register(BG3CONFIG.MODULE_NAME, "increaseTargets", {
+        name: "BG3.Settings.Keybindings.increaseTargets",
+        hint: "Increases the maximum target count when using the target selector",
+        editable: [{ key: "BracketRight" }],
+        onDown: () => {
+            // Only trigger if target selector is active
+            const activeTargetSelector = window.activeTargetSelector;
+            if (activeTargetSelector && activeTargetSelector.isActive) {
+                activeTargetSelector.adjustMaxTargets(1);
+            }
+        },
+        restricted: false,
+        precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+    });
 }
 
 export function registerLibWrapper() {
     patchFunc("game.dnd5e.dataModels.ItemDataModel.prototype.getCardData", async function (wrapped, { activity, ...enrichmentOptions }={}) {
-        const context = await wrapped.call(this);
+        const context = await wrapped.call(this, {activity, ...enrichmentOptions});
         if(context.labels?.damages?.length) {
             let textDamage = '';
             const rollData = (activity ?? this.parent).getRollData();
@@ -468,9 +500,19 @@ export function updateSettingsDisplay() {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Common',
                         fields: ['showCombatContainer', 'autoPopulateCombatContainer', 'chooseCPRActions', 'lockCombatContainer']
                     },
+
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Other',
                         fields: ['fadeControlsMenu', 'showRestTurnButton', 'enableGMHotbar']
+                    }
+                ]
+            },
+            {
+                label: 'BG3.Settings.Menu.TargetSelector.Name',
+                categories: [
+                    {
+                        label: null,
+                        fields: ['enableTargetSelector', 'enableRangeChecking', 'showRangeIndicators', 'rangeIndicatorShape', 'rangeIndicatorAnimation', 'rangeIndicatorLineWidth', 'autoTargetSelf']
                     }
                 ]
             },
@@ -759,14 +801,14 @@ export function registerSettings() {
     // Portrait Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'hidePortraitImage', {
         name: 'Hide Portrait Image',
-        hint: 'Also hide health overlay and text.',
+        hint: 'Also hides health overlay and text but not extra datas.',
         scope: 'client',
         config: true,
         type: Boolean,
-        default: true,
+        default: false,
         onChange: value => {
           if(ui.BG3HOTBAR.components.portrait?.element) {
-            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', !value);
+            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', value);
           }
         }
     });
@@ -1094,13 +1136,96 @@ export function registerSettings() {
         hint: 'BG3.Settings.ShowRestTurnButton.Hint',
         scope: 'client',
         config: true,
-        type: Boolean,
-        default: true,
+        type: String,
+        choices: {
+            'both': 'BG3.Settings.ShowRestTurnButton.Choices.Both',
+            'rest': 'BG3.Settings.ShowRestTurnButton.Choices.Rest',
+            'turn': 'BG3.Settings.ShowRestTurnButton.Choices.Turn',
+            'none': 'BG3.Settings.ShowRestTurnButton.Choices.None'
+        },
+        default: 'both',
         onChange: () => {
             if (ui.BG3HOTBAR.components.restTurn) {
                 ui.BG3HOTBAR.components.restTurn.render();
             }
         }
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableTargetSelector', {
+        name: 'BG3.Settings.EnableTargetSelector.Name',
+        hint: 'BG3.Settings.EnableTargetSelector.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'showRangeIndicators', {
+        name: 'BG3.Settings.ShowRangeIndicators.Name',
+        hint: 'BG3.Settings.ShowRangeIndicators.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'rangeIndicatorShape', {
+        name: 'BG3.Settings.RangeIndicatorShape.Name',
+        hint: 'BG3.Settings.RangeIndicatorShape.Hint',
+        scope: 'client',
+        config: true,
+        type: String,
+        choices: {
+            'circle': 'BG3.Settings.RangeIndicatorShape.Choices.Circle',
+            'square': 'BG3.Settings.RangeIndicatorShape.Choices.Square'
+        },
+        default: 'square'
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'rangeIndicatorAnimation', {
+        name: 'BG3.Settings.RangeIndicatorAnimation.Name',
+        hint: 'BG3.Settings.RangeIndicatorAnimation.Hint',
+        scope: 'client',
+        config: true,
+        type: String,
+        choices: {
+            'pulse': 'BG3.Settings.RangeIndicatorAnimation.Choices.Pulse',
+            'static': 'BG3.Settings.RangeIndicatorAnimation.Choices.Static'
+        },
+        default: 'pulse'
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'rangeIndicatorLineWidth', {
+        name: 'BG3.Settings.RangeIndicatorLineWidth.Name',
+        hint: 'BG3.Settings.RangeIndicatorLineWidth.Hint',
+        scope: 'client',
+        config: true,
+        type: Number,
+        choices: {
+            1: 'BG3.Settings.RangeIndicatorLineWidth.Choices.Thin',
+            2: 'BG3.Settings.RangeIndicatorLineWidth.Choices.Normal',
+            3: 'BG3.Settings.RangeIndicatorLineWidth.Choices.Thick',
+            4: 'BG3.Settings.RangeIndicatorLineWidth.Choices.ExtraThick'
+        },
+        default: 2
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'autoTargetSelf', {
+        name: 'BG3.Settings.AutoTargetSelf.Name',
+        hint: 'BG3.Settings.AutoTargetSelf.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+    });
+
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableRangeChecking', {
+        name: 'BG3.Settings.EnableRangeChecking.Name',
+        hint: 'BG3.Settings.EnableRangeChecking.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enableGMHotbar', {
@@ -1225,7 +1350,7 @@ export function registerSettings() {
         scope: 'world',
         config: false,
         type: Array,
-        default: ["consumable"],
+        default: ["consumable:potion", "consumable:scroll"], // Most commonly used consumable subtypes
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate', {
@@ -1361,6 +1486,9 @@ export function registerSettings() {
     
     // Make sure settings are registered before hooks that might need them
     console.log(`${BG3CONFIG.MODULE_NAME} | Settings Registered`);
+    
+    // Migrate existing "consumable" settings to new subtype format (async)
+    _migrateConsumableSettings();
 }
 
 export function registerHandlebars() {
@@ -1496,11 +1624,40 @@ export let patchFunc = (prop, func, type = "WRAPPER") => {
     }
     if (game.modules.get("lib-wrapper")?.active) {
         try {
-            libWrapper.register("po0lp-personal-module", prop, func, type);
+            libWrapper.register("bg3-inspired-hotbar", prop, func, type);
         } catch (e) {
             nonLibWrapper();
         }
     } else {
         nonLibWrapper();
+    }
+}
+
+/**
+ * Migrate existing "consumable" settings to new subtype format
+ * This ensures backwards compatibility for users upgrading from older versions
+ */
+async function _migrateConsumableSettings() {
+    try {
+        const settingsToMigrate = [
+            'container1AutoPopulate',
+            'container2AutoPopulate', 
+            'container3AutoPopulate'
+        ];
+        
+        for (const settingKey of settingsToMigrate) {
+            const currentSetting = game.settings.get(BG3CONFIG.MODULE_NAME, settingKey);
+            
+            if (currentSetting.includes('consumable')) {
+                // Replace "consumable" with the most common subtypes
+                const newSetting = currentSetting.filter(type => type !== 'consumable');
+                newSetting.push('consumable:potion', 'consumable:scroll');
+                
+                await game.settings.set(BG3CONFIG.MODULE_NAME, settingKey, newSetting);
+                console.log(`${BG3CONFIG.MODULE_NAME} | Migrated ${settingKey} from "consumable" to consumable subtypes`);
+            }
+        }
+    } catch (error) {
+        console.warn(`${BG3CONFIG.MODULE_NAME} | Error during consumable settings migration:`, error);
     }
 }

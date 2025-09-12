@@ -146,6 +146,14 @@
             "Features": "Features",
             "Spells": "Spells",
             "Consumables": "Consumables",
+            "Potions": "Potions",
+            "Scrolls": "Scrolls",
+            "Ammunition": "Ammunition",
+            "Food": "Food & Drink",
+            "Wands": "Wands",
+            "Rods": "Rods",
+            "Poisons": "Poisons",
+            "Trinkets": "Trinkets",
             "Equipment": "Equipment",
             "Tools": "Tools",
             "Loot": "Loot",
@@ -194,8 +202,56 @@
             "Hint": ""
         },
         "ShowRestTurnButton": {
-            "Name": "Show Rest/Turns buttons",
-            "Hint": ""
+            "Name": "Show Rest/Turn buttons",
+            "Hint": "Control which rest and turn buttons are displayed in the hotbar",
+            "Choices": {
+                "Both": "Show Both (Rest & Turn)",
+                "Rest": "Show Rest Only",
+                "Turn": "Show Turn Only", 
+                "None": "Show Neither"
+            }
+        },
+        "EnableTargetSelector": {
+            "Name": "Enable Target Selector",
+            "Hint": "Show an interactive target selector for spells and abilities that require targeting. When enabled, clicking items that need targets will show a crosshair cursor and allow you to select targets on the canvas."
+        },
+        "ShowRangeIndicators": {
+            "Name": "Show Range Indicators",
+            "Hint": "Display visual range indicators when using the target selector. Shows circles around your token indicating the maximum range of spells and abilities."
+        },
+        "RangeIndicatorShape": {
+            "Name": "Range Indicator Shape",
+            "Hint": "Choose the shape of range indicators. Circle shows traditional round range, while Square shows grid-based D&D 5e range that better matches token movement.",
+            "Choices": {
+                "Circle": "Circle",
+                "Square": "Square"
+            }
+        },
+        "RangeIndicatorAnimation": {
+            "Name": "Range Indicator Animation",
+            "Hint": "Choose whether range indicators should pulse to draw attention or remain static. Pulse makes them more noticeable, while static provides a cleaner appearance.",
+            "Choices": {
+                "Pulse": "Pulse",
+                "Static": "Static"
+            }
+        },
+        "RangeIndicatorLineWidth": {
+            "Name": "Range Indicator Line Width",
+            "Hint": "Choose the thickness of range indicator lines. Thicker lines are more visible but may be more intrusive.",
+            "Choices": {
+                "Thin": "Thin (1px)",
+                "Normal": "Normal (2px)",
+                "Thick": "Thick (3px)",
+                "ExtraThick": "Extra Thick (4px)"
+            }
+        },
+        "AutoTargetSelf": {
+            "Name": "Auto-Target Self",
+            "Hint": "Automatically target yourself for spells and abilities that can only target the caster (like self-buffs). When enabled, self-targeting spells will skip the target selector."
+        },
+        "EnableRangeChecking": {
+            "Name": "Enable Range Checking",
+            "Hint": "Check if targets are within range when using the target selector. When disabled, you can target any token regardless of spell/ability range."
         },
         "OverlayModePortrait": {
             "Name": "Health Overlay as Mask",
@@ -276,6 +332,11 @@
             "Name": "Show Extended Filters",
             "Hint": "If checked, show items with limited uses as Filter (no highlight/grey out)."
         },
+        "Keybindings": {
+            "toggleUI": "Toggle BG3 Hotbar",
+            "decreaseTargets": "Decrease Target Count",
+            "increaseTargets": "Increase Target Count"
+        },
         "Menu": {
             "Global": {
                 "Name": "General settings",
@@ -312,6 +373,11 @@
                     "Common": "Common Actions",
                     "Other": "Other"
                 }
+            },
+            "TargetSelector": {
+                "Name": "Target Selector settings",
+                "Hint": "Settings for the interactive target selector system.",
+                "Label": "Configure Target Selector"
             },
             "Filter": {
                 "Name": "Filter settings"
