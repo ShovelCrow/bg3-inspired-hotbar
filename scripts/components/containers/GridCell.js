@@ -86,7 +86,7 @@ export class GridCell extends BG3Component {
         if (!itemData) return null;
 
         // Get consume target and type
-        const firstActivity = itemData?.system?.activities?.contents[0] ?? itemData;
+        const firstActivity = itemData?.system?.activities?.contents?.[0] ?? itemData;
         const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
         const consumeId = firstTarget?.target;
         const consumeType = firstTarget?.type;
@@ -507,7 +507,7 @@ export class GridCell extends BG3Component {
                 }
             }
             if (itemData?.system?.uses) this.element.dataset.useId = itemData.id;
-            const firstActivity = itemData?.system?.activities?.contents[0] ?? itemData;
+            const firstActivity = itemData?.system?.activities?.contents?.[0] ?? itemData;
             const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
             const consumeId = firstTarget?.target;
             if (consumeId) this.element.dataset.consumeId = consumeId;
