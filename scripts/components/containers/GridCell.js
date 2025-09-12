@@ -100,13 +100,13 @@ export class GridCell extends BG3Component {
             return null;
         }
 
-        // Return quantity for consumables
-        if (!consumeId || !consumeType || consumeId === itemData.id) {
-            if (itemData?.type == "consumable" && itemData?.system?.quantity > 1) {
-                return {consume: {value: itemData.system.quantity ?? 0}};
-            }
-            return null;
-        }
+        // // Return quantity for consumables
+        // if (!consumeId || !consumeType || consumeId === itemData.id) {
+        //     if (itemData?.type == "consumable" && itemData?.system?.quantity > 1) {
+        //         return {consume: {value: itemData.system.quantity ?? 0}};
+        //     }
+        //     return null;
+        // }
     
         // Return resources
         if (consumeType === "attribute") {
@@ -122,10 +122,10 @@ export class GridCell extends BG3Component {
             if (target && (consumeType === "charges" || consumeType === "itemUses")) {
                 return {consume: {value: target.system.uses.value ?? 0, max: target.system.uses.max ?? 0}};
             }
-            // Return quantity
-            if (target?.system?.quantity) {
-                return {consume: {value: target.system.quantity ?? 0}};
-            }
+            // // Return quantity
+            // if (target?.system?.quantity) {
+            //     return {consume: {value: target.system.quantity ?? 0}};
+            // }
         }
     
         return null;
