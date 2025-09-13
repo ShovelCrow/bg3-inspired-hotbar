@@ -284,7 +284,7 @@ export function registerLibWrapper() {
                 if (i < context.labels.damages.length - 1) textDamage += ' | ';
             }
             context.enrichDamage = {
-                value: await TextEditor.enrichHTML(textDamage ?? "", {
+                value: await foundry.applications.ux.TextEditor.enrichHTML(textDamage ?? "", {
                     rollData, relativeTo: this.parent, ...enrichmentOptions
                 })
             }

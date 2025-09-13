@@ -71,7 +71,7 @@ export class PassiveContainer extends BG3Component {
         // Create and show dialog using the template
         const dialog = new Dialog({
             title: "Configure Passive Features",
-            content: await renderTemplate(`modules/${BG3CONFIG.MODULE_NAME}/templates/dialog/passives-dialog.hbs`, {
+            content: await foundry.applications.handlebars.renderTemplate(`modules/${BG3CONFIG.MODULE_NAME}/templates/dialog/passives-dialog.hbs`, {
                 features: availableFeatures
             }),
             buttons: {

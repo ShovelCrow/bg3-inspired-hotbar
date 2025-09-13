@@ -87,7 +87,7 @@ export class PortraitHealth extends BG3Component {
                         health: this.health,
                         hpControls: game.settings.get(BG3CONFIG.MODULE_NAME, 'enableHPControls')
                     },
-                    textTpl = await renderTemplate(`${BG3CONFIG.COMPONENTS_PATH}PortraitHealth.hbs`, data);
+                    textTpl = await foundry.applications.handlebars.renderTemplate(`${BG3CONFIG.COMPONENTS_PATH}PortraitHealth.hbs`, data);
                 portraitContainer.append($(textTpl).get(0));
             } catch (error) {
                 return 'Error while rendering Token HP Text.';

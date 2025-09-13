@@ -20,7 +20,7 @@ export class BG3TooltipManager {
             game.dnd5e.dataModels.activity.BaseActivityData.ACTIVITY_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/activity-tooltip.hbs`;
             game.dnd5e.dataModels.activity.BaseActivityData.prototype.richTooltip = async function (enrichmentOptions={}) {
                 return {
-                    content: await renderTemplate(
+                    content: await foundry.applications.handlebars.renderTemplate(
                     this.constructor.ACTIVITY_TOOLTIP_TEMPLATE, await this.getCardData(enrichmentOptions)
                     ),
                     classes: ["dnd5e2", "dnd5e-tooltip", "item-tooltip"]
@@ -83,7 +83,7 @@ export class BG3TooltipManager {
         Macro.MACRO_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/macro-tooltip.hbs`;
         Macro.prototype.richTooltip = async function (enrichmentOptions={}) {
             return {
-                content: await renderTemplate(
+                content: await foundry.applications.handlebars.renderTemplate(
                 this.constructor.MACRO_TOOLTIP_TEMPLATE, await this.getCardData(enrichmentOptions)
                 ),
                 classes: ["dnd5e2", "dnd5e-tooltip", "item-tooltip"]
