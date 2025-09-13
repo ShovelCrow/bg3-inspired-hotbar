@@ -27,7 +27,10 @@
                 <span class="value">{{ uses.value }}</span>
                 <span class="separator">&sol;</span>
                 <span class="max">{{ uses.max }}</span>
-                <span>{{ localize "DND5E.Charges" }}</span>
+                <span>
+                    {{#if labels.recovery}} {{ labels.recovery }}
+                    {{else}} {{ localize "DND5E.Charges" }} {{/if}}
+                </span>
                 {{/if}}
             </div>
             <div class="weight">
@@ -43,8 +46,10 @@
     {{/if}}
     {{#if (eq parentType "weapon")}}
         {{> "bg3hotbar.weapon-block" }}
+    {{else}} {{#if (eq parentType "feat")}}
+        {{> "bg3hotbar.weapon-block" }} {{/if}}
     {{/if}}
-    <section class="description">{{{ description.value }}}</section>
+    <section class="description"><p>{{{ description.value }}}</p></section>
     <ul class="pills">
         {{#each properties}}
         <li class="pill transparent">

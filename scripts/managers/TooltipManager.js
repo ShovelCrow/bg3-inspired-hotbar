@@ -38,7 +38,7 @@ export class BG3TooltipManager {
                     config: CONFIG.DND5E,
                     controlHints: game.settings.get("dnd5e", "controlHints"),
                     description: {
-                        value: await TextEditor.enrichHTML(this.description?.chatFlavor ?? "", {
+                        value: await foundry.applications.ux.TextEditor.implementation.enrichHTML(this.description?.chatFlavor ?? "", {
                             rollData: this.getRollData(), relativeTo: this, ...enrichmentOptions
                         })
                     },
@@ -60,7 +60,7 @@ export class BG3TooltipManager {
                         if(i < context.labels.damage.length - 1) textDamage += ' | ';
                     }
                     context.enrichDamage = {
-                        value: await TextEditor.enrichHTML(textDamage ?? "", {
+                        value: await foundry.applications.ux.TextEditor.implementation.enrichHTML(textDamage ?? "", {
                             rollData, relativeTo: this.parent, ...enrichmentOptions
                         })
                     }

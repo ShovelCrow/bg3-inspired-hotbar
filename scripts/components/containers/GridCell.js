@@ -309,6 +309,7 @@ export class GridCell extends BG3Component {
                     if (ContainerPopover.isContainer(item)) {
                         const popover = new ContainerPopover(item, this);
                         await popover.show(this.element);
+                        if (game.tooltip) game.tooltip.deactivate()
                         return;
                     }
                     

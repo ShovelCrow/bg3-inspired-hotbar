@@ -101,7 +101,10 @@ aside[role="tooltip"] .notes {
     color: var(--color-text-light-primary);
     margin: 3px 0;
 }
-  
+
+aside[role="tooltip"] .custom-tooltip {
+    text-align: center;
+}
 aside[role="tooltip"] .custom-tooltip h4 i {
     margin: 0 1em;
     color: var(--data-color);
