@@ -5,7 +5,7 @@ export class BG3TooltipManager {
         this.savedEnrichers = {};
         this._saveEnrichers();
         this._init();
-        game.dnd5e.dataModels.ItemDataModel.ITEM_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/item-tooltip.hbs`;
+        game.dnd5e.dataModels.abstract.ItemDataModel.ITEM_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/item-tooltip.hbs`;
     }
 
     get enrichers() {

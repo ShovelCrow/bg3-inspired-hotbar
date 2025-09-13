@@ -273,7 +273,7 @@ export function registerKeybinding() {
 }
 
 export function registerLibWrapper() {
-    patchFunc("game.dnd5e.dataModels.ItemDataModel.prototype.getCardData", async function (wrapped, { activity, ...enrichmentOptions } = {}) {
+    patchFunc("game.dnd5e.dataModels.abstract.ItemDataModel.prototype.getCardData", async function (wrapped, { activity, ...enrichmentOptions } = {}) {
         const context = await wrapped.call(this, { activity, ...enrichmentOptions });
         if (context.labels?.damages?.length) {
             let textDamage = '';
