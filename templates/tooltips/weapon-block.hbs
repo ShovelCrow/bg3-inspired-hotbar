@@ -38,6 +38,16 @@
             <span class="value">{{ labels.range }}</span>
         </li>
     {{/if}}
+    {{#if labels.properties.length}}
+        <li>
+            <strong>{{ localize "DND5E.Properties" }}:</strong>
+            <span class="label">
+            {{#each labels.properties}}
+                {{ this.label }}{{#unless @last}}, {{/unless}}
+            {{/each}}
+            </span>
+        </li>
+    {{/if}}
     {{!-- <li>
         <strong>{{ localize "DND5E.Price" }}:</strong>
         <span class="value">{{ price.value }}{{ price.denomination }}</span>
