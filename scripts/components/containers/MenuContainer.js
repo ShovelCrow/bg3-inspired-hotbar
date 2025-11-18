@@ -1,4 +1,5 @@
 import { BG3Component } from "../component.js";
+import { BG3CONFIG } from "../../utils/config.js";
 
 export class MenuContainer extends BG3Component {
     constructor(data, parent, event, standalone) {
@@ -27,9 +28,10 @@ export class MenuContainer extends BG3Component {
     // }
     
     async _registerEvents() {
+        const useHover = game.settings.get(BG3CONFIG.MODULE_NAME, 'hoverAbilities');
         if(this.data.buttons) {
             Object.entries(this.data.buttons).forEach(([k,b]) => {
-                if(b.click || b.subMenu?.length) {
+                if(b.click || (!useHover && b.subMenu?.length)) {
                     const btn = this.element.querySelector(`[data-key="${k}"]`);
                     if(btn) btn.addEventListener('click', (event) => {
                         event.preventDefault();
@@ -49,7 +51,7 @@ export class MenuContainer extends BG3Component {
                                 const subMenu = new MenuContainer(sb, btn, event, true);
                                 this.components.push(subMenu);
                                 subMenu.render();
-                            })
+                            });
                         }
                         else b.click(event);
                         if(!this.data.keepOpen) {
@@ -57,6 +59,41 @@ export class MenuContainer extends BG3Component {
                             else this.destroy();
                         }
                     });
+                }
+                if (useHover && b.subMenu?.length) {
+                    const btn = this.element.querySelector(`[data-key="${k}"]`);
+                    if(btn) {
+                        btn.addEventListener('mouseenter', (event) => {
+                            const oldComponents = this.components;
+                            this.components = [];
+                            b.subMenu.forEach(async sb => {
+                                let newMenu = true;
+                                if(oldComponents.length) {
+                                    oldComponents.forEach(c => {
+                                        if(c.data === sb) newMenu = false;
+                                        if(c.data !== sb && sb.name && c?.data?.name === sb.name) c.destroy();
+                                    });
+                                }
+                                if(!newMenu) {
+                                    this.components = oldComponents;
+                                    return;
+                                }
+                                const subMenu = new MenuContainer(sb, btn, event, true);
+                                this.components.push(subMenu);
+                                subMenu.render();
+                            });
+                        });
+                        this.element.addEventListener('mouseleave', (event) => {
+                            const oldComponents = this.components;
+                            this.components = [];
+                            b.subMenu.forEach(async sb => {
+                                if(!oldComponents.length) return;
+                                oldComponents.forEach(c => {
+                                    if(sb.name && c?.data?.name === sb.name) c.destroy();
+                                });
+                            });
+                        });
+                    }
                 }
             })
         } else this.element.style.display = 'none';

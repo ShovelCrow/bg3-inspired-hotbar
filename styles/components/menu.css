@@ -16,6 +16,7 @@
   z-index: 1000;
   /* overflow-y: auto;
   overflow-x: hidden; */
+  cursor: default;
 }
 
 #bg3-hotbar-container .bg3-menu-container[data-menu-position="top"] {
@@ -79,18 +80,25 @@
   border-color: #cc3333;
 }
 
-#bg3-hotbar-container .menu-item:has(> .bg3-menu-container.hidden), #bg3-hotbar-container .menu-item:not(:has(> .bg3-menu-container)) {
+#bg3-hotbar-container .menu-item:has(> .bg3-menu-container.hidden),
+#bg3-hotbar-container .menu-item:not(:has(> .bg3-menu-container)) {
   background: #2a2a2a;
   border-color: transparent;
 }
 
-/* #bg3-hotbar-container .menu-item.expanded {
+#bg3-hotbar-container .menu-item.expanded {
   background: #333;
   border-color: #cc3333;
-} */
+}
 
 #bg3-hotbar-container .menu-item:hover {
   background-color: #333;
+}
+
+#bg3-hotbar-container .menu-item.disabled {
+  background: #242424;
+  cursor: default;
+  /* pointer-events: none; */
 }
 
 #bg3-hotbar-container .menu-item-content {
@@ -99,12 +107,18 @@
   width: 100%;
   align-items: center;
   padding: 4px 8px;
-  transition: all 0.2s ease;display: flex;
+  transition: all 0.2s ease;
+  display: flex;
   justify-content: space-between;
   width: 100%;
   color: #dddddd;
   font-size: 14px;
 }
+
+#bg3-hotbar-container .menu-item.disabled .menu-item-content {
+  color: #aaa;
+}
+
 
 #bg3-hotbar-container .menu-item-content span {
   white-space: nowrap;
@@ -115,6 +129,7 @@
   width: 16px;
   text-align: center;
   color: #cc3333;
+  line-height: normal;
 }
 
 #bg3-hotbar-container .menu-divider {
