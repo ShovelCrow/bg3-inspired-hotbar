@@ -3,14 +3,15 @@
     bottom: calc(100% + var(--bg3-hotbar-border-size));
     right: 0;
     min-width: var(--bg3-active-cell-size);
-    max-width: calc(var(--bg3-active-cell-size) * 10);
+    min-height: var(--bg3-active-cell-size);
+    max-width: calc((var(--bg3-active-cell-size) + 4px) * 8);
     display: flex;
     align-items: center;
     padding: 0;
     box-sizing: border-box;
     z-index: var(--bg3-z-base);
     cursor: pointer;
-    flex-wrap: wrap;
+    flex-wrap: wrap-reverse;
     gap: 0;
     flex-direction: row-reverse;
     margin-bottom: 0; /* Add some space between the container and the hotbar */

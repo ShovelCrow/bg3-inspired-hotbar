@@ -12,13 +12,21 @@ export class PassiveContainer extends BG3Component {
     }
 
     get dataTooltip() {
-        return {type: 'simple', content: "Right-click to configure passive features"};
+        return this.passivesList.length ? null : {type: 'simple', content: "Right-click to configure passive features"};
     }
 
     get passivesList() {
         if(!this.token && !this.actor) return null;
 
-        const availablePassives = this.actor.items.filter(item => item.type === "feat" && (!item.system.activation?.type || item.system.activation.type === "passive"));
+        // Early return if no selected passives
+        if (!this.selectedPassives?.size) return [];
+        
+        // Filter actor's items to only show selected passives that are actually passive
+        const availablePassives = this.actor.items.filter(i => {
+            const isFeat = i.type === "feat";
+            const firstActivity = i?.system?.activities?.contents?.[0] ?? {};
+            return isFeat && (!firstActivity || !firstActivity.activation?.type || i.system.properties?.has("trait"));
+        });
         return this.selectedPassives?.size ? availablePassives.filter(item => this.selectedPassives.has(item.uuid)) : availablePassives;
     }
 
@@ -29,13 +37,16 @@ export class PassiveContainer extends BG3Component {
     }
 
     async _registerEvents() {
-        this.element.onmouseup = this._showPassivesDialog.bind(this);
+        this.element.addEventListener('contextmenu', async (e) => {
+            return this._showPassivesDialog();
+        });
+        // this.element.onmouseup = this._showPassivesDialog.bind(this);
     }
 
-    async _showPassivesDialog(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.button !== 2) return;
+    async _showPassivesDialog() {
+        // event.preventDefault();
+        // event.stopPropagation();
+        // if (event.button !== 2) return;
                 
         // Get all available passive features from the actor
         const availableFeatures = this.actor.items
@@ -104,9 +115,14 @@ export class PassiveContainer extends BG3Component {
         const passivesList = this.passivesList;
         // if(passivesList.length === 0) this.element.style.visibility = 'hidden';
 
-        const passives = passivesList.map((passive) => new PassiveButton({item: passive}, this));
-        for(const passive of passives) this.element.appendChild(passive.element);
-        await Promise.all(passives.map((passive) => passive.render()));
+        this.element.innerHTML = '';
+
+        // Only render passives if there are selected ones
+        if (passivesList && passivesList.length > 0) {
+            const passives = passivesList.map((passive) => new PassiveButton({item: passive}, this));
+            for(const passive of passives) this.element.appendChild(passive.element);
+            await Promise.all(passives.map((passive) => passive.render()));
+        }
 
         return this.element;
     }

@@ -13,8 +13,8 @@ export class ActiveContainer extends BG3Component {
     get activesList() {
         if(!this.token && !this.actor) return null;
 
-        // Get active effects from the actor's sheet.
-    //    return this.actor.effects?.contents || [];
+        // // Get active effects from the actor's sheet.
+        // return this.actor.effects?.contents || [];
         return Array.from(this.actor?.allApplicableEffects()) || []; // SHOVEL
     }
 
@@ -22,12 +22,15 @@ export class ActiveContainer extends BG3Component {
         await super.render();
 
         const activesList = this.activesList;
-        if(activesList?.length === 0) this.element.style.visibility = 'hidden';
-        else this.element.style.removeProperty('visibility');
-
-        const actives = activesList.map((active) => new ActiveButton({item: active}, this));
-        for(const active of actives) this.element.appendChild(active.element);
-        await Promise.all(actives.map((active) => active.render()));
+        if(activesList?.length > 0) {
+            this.element.style.removeProperty('visibility');
+            const actives = activesList.map((active) => new ActiveButton({item: active}, this));
+            for(const active of actives) this.element.appendChild(active.element);
+            await Promise.all(actives.map((active) => active.render()));
+        }
+        else {
+            this.element.style.visibility = 'hidden';
+        }
         
         return this.element;
     }

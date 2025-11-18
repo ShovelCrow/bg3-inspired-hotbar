@@ -4,14 +4,14 @@
     left: 0;
     min-width: var(--bg3-passive-cell-size);
     min-height: var(--bg3-passive-cell-size);
-    max-width: calc(var(--bg3-passive-cell-size) * 10);
+    max-width: calc((var(--bg3-passive-cell-size) + 4px) * 8);
     display: flex;
     align-items: center;
     padding: 0;
     box-sizing: border-box;
     z-index: var(--bg3-z-base);
     cursor: pointer;
-    flex-wrap: wrap;
+    flex-wrap: wrap-reverse;
     gap: 0;
     margin-bottom: 0; /* Add some space between the container and the hotbar */
 }
