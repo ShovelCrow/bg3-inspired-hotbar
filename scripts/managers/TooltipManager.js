@@ -53,17 +53,31 @@ export class BG3TooltipManager {
                 }
                 if(context.labels?.damage?.length) {
                     let textDamage = '';
+                    let isHealing = context.labels.damage.length > 0; // SHOVEL
                     const rollData = (activity ?? this.parent).getRollData();
                     for(let i = 0; i < context.labels.damage.length; i++) {
                         // [[/damage {{damage.formula}}{{#if damage.damageType}} type={{damage.damageType}}{{/if}}]]
                         textDamage += `[[/damage ${context.labels.damage[i].formula}${context.labels.damage[i].damageType ? ` type=${context.labels.damage[i].damageType}` : ''}]]`;
                         if(i < context.labels.damage.length - 1) textDamage += ' | ';
+                        if(!Object.keys(CONFIG.DND5E.healingTypes).includes(context.labels.damage[i].damageType)) isHealing = false;
                     }
                     context.enrichDamage = {
                         value: await foundry.applications.ux.TextEditor.implementation.enrichHTML(textDamage ?? "", {
                             rollData, relativeTo: this.parent, ...enrichmentOptions
-                        })
-                    }
+                        }),
+                        isHealing: isHealing
+                    };
+                }
+                // SHOVEL
+                if(this.type === "save") {
+                    const activitySave = this.save;
+                    const dc = activitySave.dc.value;
+                    const abilities = Array.from(activitySave.ability) ?? [];
+                    const abilityLabels = abilities.map(a => CONFIG.DND5E.abilities[a]?.label).join(" or ");
+                    const textSave = `${game.i18n.localize('DND5E.AbbreviationDC')} ${dc} ${abilityLabels}`;
+                    context.saveLabel = {
+                        value: textSave
+                    };
                 }
                 context.properties = [];
                 if ( game.user.isGM || isIdentified ) {
@@ -175,7 +189,9 @@ export class BG3TooltipManager {
                         if(dataFormulas) {
                             const minRoll = Roll.create(dataFormulas).evaluate({ minimize: true }),
                                 maxRoll = Roll.create(dataFormulas).evaluate({ maximize: true }),
-                                textContent = `${Math.floor((await minRoll).total)}-${Math.ceil((await maxRoll).total)}`;
+                                max = Math.floor((await minRoll).total),
+                                min = Math.ceil((await maxRoll).total),
+                                textContent = max !==  min ? `${max}−${min}` : `${max}`;
                             rollLink.innerHTML = rollLink.innerHTML.replace(dataFormulas, textContent)
                         }
                     }

@@ -49,7 +49,9 @@
     {{else}} {{#if (eq parentType "feat")}}
         {{> "bg3hotbar.weapon-block" }} {{/if}}
     {{/if}}
+    {{#if description.value}}
     <section class="description"><p>{{{ description.value }}}</p></section>
+    {{/if}}
     <ul class="pills">
         {{#each properties}}
         <li class="pill transparent">
