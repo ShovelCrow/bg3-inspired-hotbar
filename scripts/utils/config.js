@@ -494,7 +494,7 @@ export function updateSettingsDisplay() {
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Weapon',
-                        fields: ['enableWeaponAutoEquip']
+                        fields: ['enableWeaponAutoEquip', 'enableWeaponAttackMode']
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Common',
@@ -1052,6 +1052,16 @@ export function registerSettings() {
         config: true,
         type: Boolean,
         default: true
+    });
+
+    // SHOVEL
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'enableWeaponAttackMode', {
+        name: 'Enable Weapon Set Attack Modes',
+        hint: 'If checked, versatile weapons will be rolled as one- or two-handed and light weapons will be rolled as offhand based on the weapon set\'s offhand slot.',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'showCombatContainer', {

@@ -1,3 +1,4 @@
+import { BG3CONFIG } from "../../utils/config.js";
 import { BG3Component } from "../component.js";
 import { fromUuid } from "../../utils/foundryUtils.js";
 import { ControlsManager } from "../../managers/ControlsManager.js";
@@ -30,6 +31,13 @@ export class GridCell extends BG3Component {
         return this._parent.id === 'weapon' && this.data.col === 0 && this.data.row === 0 && !!item?.labels?.properties?.find(p => p.abbr === 'two');
     }
 
+    // SHOVEL
+    checkVersatile(item) {
+        return game.settings.get(BG3CONFIG.MODULE_NAME, 'enableWeaponAttackMode')
+            && this._parent.id === 'weapon' && this.data.col === 0 && this.data.row === 0
+            && !!item?.labels?.properties?.find(p => p.abbr === 'ver') && !this._parent.components?.[1]?.data?.item;
+    }
+
     async getData() {
         let itemData = await this.item,
             data = super.getData();
@@ -45,7 +53,11 @@ export class GridCell extends BG3Component {
                 ...await this.getItemUses(),
                 ...await this.getConsumeData()
             };
-            if(itemData.type === "spell") data = {...data, ...{preparationMode: itemData.system?.preparation?.mode, level: itemData.system?.level, unprepared: !itemData.system?.preparation?.prepared}};
+            if(itemData.type === "spell") data = {...data, ...{
+                preparationMode: itemData.system?.preparation?.mode,
+                level: itemData.system?.level,
+                unprepared: !itemData.system?.preparation?.prepared
+            }};
             if(itemData.type === 'feat') data = {...data, ...{featType: itemData.system?.type?.value || 'default'}};
         }
         return data;
@@ -82,7 +94,7 @@ export class GridCell extends BG3Component {
         if (!itemData) return null;
 
         // Get consume target and type
-        const firstActivity = itemData?.system?.activities?.contents[0] ?? itemData;
+        const firstActivity = itemData?.system?.activities?.contents?.[0] ?? itemData;
         const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
         const consumeId = firstTarget?.target;
         const consumeType = firstTarget?.type;
@@ -295,10 +307,27 @@ export class GridCell extends BG3Component {
                         const options = {
                             configureDialog: false,
                             legacy: false,
-                            event: e
+                            event: e,
+                            ...e.ctrlKey && { disadvantage: e.ctrlKey },
+                            ...e.altKey && { advantage: e.altKey },
+                            ...e.shiftKey && { fastForward: e.shiftKey }
                         };
-                        if (e.ctrlKey) options.disadvantage = true;
-                        if (e.altKey) options.advantage = true;
+                        // if (e.ctrlKey) options.disadvantage = true;
+                        // if (e.altKey) options.advantage = true;
+
+                        // SHOVEL
+                        const firstActivity = item.system?.activities?.contents?.[0];
+                        const multipleModes = item.system?.attackModes?.length > 1;
+                        if (firstActivity && multipleModes && game.settings.get(BG3CONFIG.MODULE_NAME, 'enableWeaponAttackMode')) {
+                            const mode1h = item.system.attackModes?.find(mode => mode.value === "oneHanded");
+                            const mode2h = item.system.attackModes?.find(mode => mode.value === "twoHanded");
+                            const modeOh = item.system.attackModes?.find(mode => mode.value === "offhand");
+                            const is2h = $(this.element).hasClass('has-2h'); // && !item.actor.shield
+                            const isOh = this._parent.id === 'weapon' && $(this.element).data('slot') === "1-0";
+                            const usedMode =  is2h ? mode2h : (isOh ? modeOh : mode1h);
+                            if (usedMode) await item.setFlag("dnd5e", `last.${firstActivity.id}.attackMode`, usedMode?.value);
+                        }
+
                         const used = await item.use(options, { event: e });
                         if (used) this._renderInner();
                     } else if(item.sheet?.render) item.sheet.render(true)
@@ -405,8 +434,11 @@ export class GridCell extends BG3Component {
                         this.element.dataset.featType = itemData.system?.type?.value || 'default';
                         break;
                     case 'weapon':
-                        const is2h = this.check2Handed(itemData);
+                    case 'equipment':
+                        const isVer = this.checkVersatile(itemData); // SHOVEL
+                        const is2h = isVer || this.check2Handed(itemData);
                         this.element.classList.toggle('has-2h', is2h);
+                        this.element.classList.toggle('has-ver', isVer);
                         if(is2h) this._parent.element.style.setProperty('--bg-2h', `url(${itemData.img.startsWith('http') ? '' : '/'}${itemData.img})`);
                         else this._parent.element.style.removeProperty('--bg-2h');
                         break;
@@ -422,6 +454,7 @@ export class GridCell extends BG3Component {
         } else if($(this.element).hasClass('has-2h')) {
             this.element.classList.remove('has-2h');
             this._parent.element.style.removeProperty('--bg-2h');
+            if($(this.element).hasClass('has-ver')) this.element.classList.remove('has-ver');
         }
     }
 }
