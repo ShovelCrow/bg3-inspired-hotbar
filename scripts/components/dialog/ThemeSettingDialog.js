@@ -207,7 +207,8 @@ export class ThemeSettingDialog extends FormApplication {
 
     async _render(force, options) {
         await super._render(force, options);
-        const themeFile = game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ? await ThemeSettingDialog.loadThemeFile(game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(BG3CONFIG.MODULE_NAME, 'themeCustom'),
+        const themeFile = game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') && game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption') !== 'custom' ?
+            await ThemeSettingDialog.loadThemeFile(game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption')) : game.settings.get(BG3CONFIG.MODULE_NAME, 'themeCustom'),
             themeData = {...BG3CONFIG.BASE_THEME, ...themeFile};
         $('[name="bg3-inspired-hotbar.themeOption"]').val(game.settings.get(BG3CONFIG.MODULE_NAME, 'themeOption'));
         this.loadThemeData(themeData);
@@ -262,11 +263,23 @@ export class ThemeSettingDialog extends FormApplication {
     }
 
     static async loadThemeFile(theme) {
+        let core, custom;
+        const coreFiles = (await FilePicker.browse("user", `modules/${BG3CONFIG.MODULE_NAME}/scripts/themes`, { extensions: [".json"] })).files;
+        if(coreFiles.length) core = new Map(coreFiles.map(t => [t.split("/")[t.split("/").length - 1].replace(/\.json/gi, ""), t]));
+        const customFiles = (await FilePicker.browse("user", `modules/${BG3CONFIG.MODULE_NAME}/storage/themes`, { extensions: [".json"] })).files;
+        if(customFiles.length) custom = new Map(customFiles.map(t => [t.split("/")[t.split("/").length - 1].replace(/\.json/gi, ""), t]));
+
         let file;
-        file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/scripts/themes/${theme}.json`);
-        if (!file.ok) file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/storage/themes/${theme}.json`);
-        if (!file.ok) {
-            ui.notifications.error("BG3 HUD Inspired: Theme not found");
+        try {
+            // file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/scripts/themes/${theme}.json`);
+            // if (!file.ok) file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/storage/themes/${theme}.json`);
+            if(core && core.has(theme)) file = await fetch(core.get(theme))
+            else if(custom && custom.has(theme)) file = await fetch(custom.get(theme))
+            if (!file || !file.ok) {
+                throw new Error("BG3 HUD Inspired: Theme not found");
+            }
+        } catch(error) {
+            ui.notifications.error(error.message);
             game.settings.set(BG3CONFIG.MODULE_NAME, 'themeOption', 'default');
             file = await fetch(`modules/${BG3CONFIG.MODULE_NAME}/scripts/themes/default.json`);
         }
