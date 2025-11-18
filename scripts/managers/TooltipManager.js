@@ -78,19 +78,28 @@ export class BG3TooltipManager {
             }
         }
 
-        // Add Tooltip to Macro
-        const customRichTooltip = async function (enrichmentOptions={}) {
+        // Add Tooltip to Macro (compatible with both D&D 5e v3.x and v4.x)
+        // Use the v3.1.3 approach for better compatibility
+        Macro.MACRO_TOOLTIP_TEMPLATE = `modules/${BG3CONFIG.MODULE_NAME}/templates/tooltips/macro-tooltip.hbs`;
+        Macro.prototype.richTooltip = async function (enrichmentOptions={}) {
             return {
                 content: await renderTemplate(
-                this.MACRO_TOOLTIP_TEMPLATE, await this.getCardData(enrichmentOptions)
+                this.constructor.MACRO_TOOLTIP_TEMPLATE, await this.getCardData(enrichmentOptions)
                 ),
                 classes: ["dnd5e2", "dnd5e-tooltip", "item-tooltip"]
             };
         }
-        const customGetCardData = async function ({ activity, ...enrichmentOptions }={}) {
-            const { name, type, img = 'icons/svg/book.svg' } = this;
+        Macro.prototype.getCardData = async function ({ activity, ...enrichmentOptions }={}) {
+            const { name, type, img } = this;
+            const flag = this.flags["bg3-inspired-hotbar"];
+            const rule = foundry.utils.getProperty(CONFIG.DND5E.rules, flag?.rule);
+            const desc = rule ? `@Embed[${rule} inline]` : flag?.rule;
             const context = {
                 name, type, img,
+                subtitle: "Macro",
+                description: {
+                    value: await TextEditor.enrichHTML(desc ?? "", enrichmentOptions)
+                },
                 config: CONFIG.DND5E,
                 controlHints: game.settings.get("dnd5e", "controlHints")
             }
