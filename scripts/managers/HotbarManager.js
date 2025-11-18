@@ -62,6 +62,10 @@ export class HotbarManager {
     canGMHotbar() {
         return !this.actor && game.user.isGM && game.settings.get(BG3CONFIG.MODULE_NAME, 'enableGMHotbar') && game.settings.get(BG3CONFIG.MODULE_NAME, 'uiEnabled');
     }
+
+    shouldHideHotbar(actor) {
+        return actor && (!actor.system.attributes?.hp?.max || actor.statuses.has("object"));
+    }
     
     // Clean up specific token data
     async cleanupTokenData(tokenId) {

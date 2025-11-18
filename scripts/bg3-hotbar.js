@@ -343,7 +343,7 @@ export class BG3Hotbar extends Application {
 
     async generate(token) {
         if (!this.manager) return;
-        if(!token) {
+        if(!token || this.manager.shouldHideHotbar(token.actor)) {
             this.manager.currentTokenId = null;
             if(!this.manager.canGMHotbar()) {
                 await this.close();
@@ -359,6 +359,7 @@ export class BG3Hotbar extends Application {
         await super._render(force, options);
         if(this.components?.container?.components?.filterContainer) this.components.container.components.filterContainer._checkBonusReactionUsed();
         if(game.settings.get(BG3CONFIG.MODULE_NAME, 'collapseFoundryMacrobar') === 'select') this._applyMacrobarCollapseSetting();
+        if (this._minimized && !ui.BG3HOTBAR.element.hasClass('minimized')) ui.BG3HOTBAR.element.addClass('minimized');
     }
 
     async _renderInner(data) {        
