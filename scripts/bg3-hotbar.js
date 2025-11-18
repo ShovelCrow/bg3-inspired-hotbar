@@ -134,7 +134,7 @@ export class BG3Hotbar extends Application {
     async _onUpdateToken(token, changes, options, userId) {
         if (!this.manager || game.user.id !== userId) return;
         // If this is our current token and actor-related data changed
-        if (token.id === this.manager.currentTokenId && (changes.actorId || changes.actorData || changes.actorLink)) {
+        if (token.id === this.manager.currentTokenId && (changes.actorId || changes.delta || changes.actorLink)) {
             this.refresh();
         }
     }
@@ -206,8 +206,12 @@ export class BG3Hotbar extends Application {
     }
 
     async _onUpdateActive(effect) {
-        if (effect?.parent?.id === this.manager?.actor?.id && this.components.container.components.activeContainer) {
+        if ((effect?.parent?.id === this.manager?.actor?.id || effect?.parent?.parent?.id === this.manager?.actor?.id)
+            && this.components?.container?.components?.activeContainer) {
             await this.components.container.components.activeContainer.render();
+            if (this.components.portrait) {
+                await this.components.portrait._renderInner();
+            }
             if(['dnd5ebonusaction', 'dnd5ereaction000'].includes(effect.id) && this.components.container.components.filterContainer) this.components.container.components.filterContainer._checkBonusReactionUsed();
         }
     }

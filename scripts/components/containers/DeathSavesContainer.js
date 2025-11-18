@@ -16,7 +16,7 @@ export class DeathSavesContainer extends BG3Component {
     }
 
     async getData() {
-        return {display: game.settings.get(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow'), success: this.actor.system.attributes.death.success || 0, failure: this.actor.system.attributes.death.failure || 0};
+        return {display: game.settings.get(BG3CONFIG.MODULE_NAME, 'showDeathSavingThrow'), success: this.actor.system.attributes?.death?.success || 0, failure: this.actor.system.attributes?.death?.failure || 0};
     }
 
     get visible() {

@@ -41,12 +41,13 @@ export class GridCell extends BG3Component {
     async getData() {
         let itemData = await this.item,
             data = super.getData();
+        const firstActivity = itemData?.system?.activities?.contents?.[0] ?? itemData;
         if(itemData) {
             data = {...data, ...{
                     uuid: itemData.uuid,
                     name: itemData.name,
                     icon: itemData.img ?? 'icons/svg/book.svg',
-                    actionType: itemData.system?.activation?.type?.toLowerCase() ?? itemData.activation?.type?.toLowerCase() ?? null,
+                    actionType: firstActivity.activation?.type?.toLowerCase() ?? null,
                     itemType: itemData.type,
                     quantity: itemData.system?.quantity && itemData.system?.quantity > 1 ? itemData.system?.quantity : false
                 },
@@ -160,6 +161,15 @@ export class GridCell extends BG3Component {
                         this.menuItemAction('macro');
                     }
                 },
+                view: {
+                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.ViewItem"),
+                    icon: 'fas fa-eye',
+                    visibility: !this.data.item,
+                    click: () => {
+                        if(!this.data.item) return;
+                        this.menuItemAction('view');
+                    }
+                },
                 edit: {
                     label: game.i18n.localize("BG3.Hotbar.ContextMenu.EditItem"),
                     icon: 'fas fa-edit',
@@ -169,15 +179,15 @@ export class GridCell extends BG3Component {
                         this.menuItemAction('edit');
                     }
                 },
-                activity: {
-                    label: game.i18n.localize("BG3.Hotbar.ContextMenu.ConfigureActivities"),
-                    icon: 'fas fa-cog',
-                    visibility: !this.data.item,
-                    click: () => {
-                        if(!this.data.item) return;
-                        this.menuItemAction('activity');
-                    }
-                },
+                // activity: {
+                //     label: game.i18n.localize("BG3.Hotbar.ContextMenu.ConfigureActivities"),
+                //     icon: 'fas fa-cog',
+                //     visibility: !this.data.item,
+                //     click: () => {
+                //         if(!this.data.item) return;
+                //         this.menuItemAction('activity');
+                //     }
+                // },
                 remove: {
                     label: game.i18n.localize("BG3.Hotbar.ContextMenu.Remove"),
                     icon: 'fas fa-trash',
@@ -217,10 +227,19 @@ export class GridCell extends BG3Component {
     async menuItemAction(action) {
         if(!this.data.item) return;
         switch (action) {
+            case 'view':
+                try {
+                    const itemData = await this.item;
+                    if (itemData?.sheet) itemData.sheet.render(true, { mode: 1 });
+                } catch (error) {
+                    console.error("BG3 Inspired Hotbar | Error viewing item:", error);
+                    ui.notifications.error(`Error viewing item: ${error.message}`);
+                }
+                break;
             case 'edit':
                 try {
                     const itemData = await this.item;
-                    if (itemData?.sheet) itemData.sheet.render(true);
+                    if (itemData?.sheet) itemData.sheet.render(true, { mode: 2 });
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error editing item:", error);
                     ui.notifications.error(`Error editing item: ${error.message}`);
@@ -301,9 +320,9 @@ export class GridCell extends BG3Component {
             }
             if(item) {
                 try {
-                    console.log(item)
+                    // console.log(item)
                     if(item.execute) item.execute();
-                    else if(item.use) {
+                    else if(item.use && !(item.type === 'container' || item.type === 'backpack')) { // SHOVEL
                         const options = {
                             configureDialog: false,
                             legacy: false,
@@ -342,13 +361,9 @@ export class GridCell extends BG3Component {
         
         this.element.addEventListener('contextmenu', (e) => MenuContainer.toggle(this.getItemMenu(), this, e));
         
-        this.element.addEventListener('mouseenter', (e) => {
-
-        });
+        this.element.addEventListener('mouseenter', (e) => { });
         
-        this.element.addEventListener('mouseleave', (e) => {
-
-        });
+        this.element.addEventListener('mouseleave', (e) => { });
         
         this.element.addEventListener('dragstart', (e) => {
             if (ControlsManager.isSettingLocked('dragDrop') || this._parent?.locked || !this.data.item) {
