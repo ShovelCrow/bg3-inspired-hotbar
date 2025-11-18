@@ -276,7 +276,8 @@ export class BG3Hotbar extends Application {
     }
 
     async _onUpdateActive(effect) {
-        if (effect?.parent?.id !== this.manager?.actor?.id) return;
+        if (effect?.parent?.id !== this.manager?.actor?.id && effect?.parent?.parent?.id !== this.manager?.actor?.id) return;
+        if (!this.components?.container?.components?.activeContainer) return;
         try {
             const container = this.components?.container?.components?.activeContainer;
             if (container) await container.render();
