@@ -8,6 +8,9 @@
             </div>
         </div>
     </section>
+    {{#if description.value}}
+    <section class="description">{{{ description.value }}}</section>
+    {{/if}}
     {{#if controlHints}}
     <div class="control-hint lock-hint">
         <img src="systems/dnd5e/icons/svg/mouse-middle.svg" alt="{{ localize "DND5E.Controls.MiddleClick" }}">

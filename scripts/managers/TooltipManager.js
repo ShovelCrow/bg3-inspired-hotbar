@@ -91,8 +91,15 @@ export class BG3TooltipManager {
         }
         Macro.prototype.getCardData = async function ({ activity, ...enrichmentOptions }={}) {
             const { name, type, img } = this;
+            const flag = this.flags["bg3-inspired-hotbar"];
+            const rule = foundry.utils.getProperty(CONFIG.DND5E.rules, flag?.rule);
+            const desc = rule ? `@Embed[${rule} inline]` : flag?.rule;
             const context = {
                 name, type, img,
+                subtitle: "Macro",
+                description: {
+                    value: await TextEditor.enrichHTML(desc ?? "", enrichmentOptions)
+                },
                 config: CONFIG.DND5E,
                 controlHints: game.settings.get("dnd5e", "controlHints")
             }
