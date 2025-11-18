@@ -12,7 +12,7 @@ export class PassiveContainer extends BG3Component {
     }
 
     get dataTooltip() {
-        return {type: 'simple', content: "Right-click to configure passive features"};
+        return this.passivesList.length ? null : {type: 'simple', content: "Right-click to configure passive features"};
     }
 
     get passivesList() {
@@ -45,13 +45,16 @@ export class PassiveContainer extends BG3Component {
     }
 
     async _registerEvents() {
-        this.element.onmouseup = this._showPassivesDialog.bind(this);
+        this.element.addEventListener('contextmenu', async (e) => {
+            return this._showPassivesDialog();
+        });
+        // this.element.onmouseup = this._showPassivesDialog.bind(this);
     }
 
-    async _showPassivesDialog(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.button !== 2) return;
+    async _showPassivesDialog() {
+        // event.preventDefault();
+        // event.stopPropagation();
+        // if (event.button !== 2) return;
                 
         // Get all available passive features from the actor
         const availableFeatures = this.actor.items

@@ -61,6 +61,12 @@ export class MenuContainer extends BG3Component {
             })
         } else this.element.style.display = 'none';
 
+        this.element.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.destroy();
+        });
+
         this.outside = this._setupClickOutside.bind(this);
         document.addEventListener('click', this.outside);
     }
