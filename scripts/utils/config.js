@@ -229,19 +229,51 @@ export function registerLibWrapper() {
         const context = await wrapped.call(this);
         if(context.labels?.damages?.length) {
             let textDamage = '';
+            let isHealing = context.labels.damages.length > 0; // SHOVEL
             const rollData = (activity ?? this.parent).getRollData();
             for(let i = 0; i < context.labels.damages.length; i++) {
                 // [[/damage {{damage.formula}}{{#if damage.damageType}} type={{damage.damageType}}{{/if}}]]
                 textDamage += `[[/damage ${context.labels.damages[i].formula}${context.labels.damages[i].damageType ? ` type=${context.labels.damages[i].damageType}` : ''}]]`;
                 if(i < context.labels.damages.length - 1) textDamage += ' | ';
+                if(!Object.keys(CONFIG.DND5E.healingTypes).includes(context.labels.damages[i].damageType)) isHealing = false;
             }
             context.enrichDamage = {
                 value: await TextEditor.enrichHTML(textDamage ?? "", {
                   rollData, relativeTo: this.parent, ...enrichmentOptions
-                })
+                }),
+                isHealing: isHealing
+            };
+
+            // SHOVEL
+            if (context.labels.properties && this.properties.has("ver") && this.damage?.versatile) {
+                const versatile = this.damage.versatile;
+                const verDice = versatile.formula || (versatile.denomination ? `${versatile.number ?? 1}d${versatile.denomination}` : "");
+                const verLabel = context.labels.properties.find(prop => prop.abbr === "ver");
+                if (verLabel && verDice) verLabel.formula = verDice;
             }
         }
         if(!this.hasOwnProperty('identified') && this.hasLimitedUses) context.uses = this.uses;
+
+        // SHOVEL
+        let saveActivities = this.activities?.getByType('save');
+        if(saveActivities?.length) {
+            let textSave = '';
+            for(let i = 0; i < saveActivities.length; i++) {
+                const activitySave = saveActivities[0]?.save;
+                if(!activitySave) continue;
+                const dc = activitySave.dc.value;
+                const abilities = Array.from(activitySave.ability) ?? [];
+                const abilityLabels = abilities.map(a => CONFIG.DND5E.abilities[a]?.label).join(" or ");
+                textSave += `${game.i18n.localize('DND5E.AbbreviationDC')} ${dc} ${abilityLabels}`;
+                if(i < saveActivities.length - 1) textSave += ' | ';
+            }
+            context.saveLabel = {
+                value: textSave
+            };
+        }
+
+
+
         return context;
     }, "MIXED");
 }

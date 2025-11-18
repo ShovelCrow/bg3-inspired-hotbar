@@ -1,8 +1,10 @@
-<ul class="weapon-block unlist {{#if fullWidth}}full-width{{/if}}">
+<ul class="weapon-block unlist{{#if fullWidth}} full-width{{/if}}">
+    {{#if labels.activation}}
     <li>
         <strong>{{ localize "DND5E.ItemActionType" }}:</strong>
         <span class="value">{{ labels.activation }}</span>
     </li>
+    {{/if}}
     {{#if labels.attacks.length}}
     <li>
         <strong>{{ localize "DND5E.Attack" }}:</strong>
@@ -13,6 +15,15 @@
             {{/each}}
         </span>
     </li>
+    {{else}}
+        {{#if saveLabel}}
+        <li>
+            <strong>{{ localize "DND5E.SavingThrow" }}:</strong>
+            <span class="value">
+                {{saveLabel.value}}
+            </span>
+        </li>
+        {{/if}}
     {{/if}}
     {{#if enrichDamage}}
     <li>
@@ -26,24 +37,34 @@
         </span>
     </li>
     {{/if}}
-    {{#if labels.reach}}
+    {{!-- {{#if labels.reach}}
         <li>
             <strong>{{ localize "DND5E.Item.Property.Reach" }}:</strong>
             <span class="value">{{ labels.reach }}</span>
         </li>
-    {{/if}}
-    {{#if labels.range}}
+    {{/if}} --}}
+    
+    {{#if (or labels.reach labels.range)}}
         <li>
             <strong>{{ localize "DND5E.Range" }}:</strong>
-            <span class="value">{{ labels.range }}</span>
+            <span class="value">
+            {{#if labels.reach}}
+                {{ labels.reach }}{{#if labels.range}}, {{ localize "DND5E.RANGE.Formatted.Range" range=labels.range }}{{/if}}
+            {{else}}
+                {{#if labels.range}}
+                    {{ labels.range }}
+                {{/if}}
+            {{/if}}
+            </span>
         </li>
     {{/if}}
+    
     {{#if labels.properties.length}}
         <li>
             <strong>{{ localize "DND5E.Properties" }}:</strong>
             <span class="label">
             {{#each labels.properties}}
-                {{ this.label }}{{#unless @last}}, {{/unless}}
+                {{ this.label }}{{#if this.formula}} &#40;{{this.formula}}&#41;{{/if}}{{#unless @last}}, {{/unless}}
             {{/each}}
             </span>
         </li>

@@ -43,8 +43,39 @@
     </section>
     {{#if isSpell}}
         {{> "dnd5e.spell-block" }}
+        {{!-- <ul class="spell-block unlist{{#if fullWidth}} full-width{{/if}}">
+            {{#if labels.attacks.length}}
+            <li>
+                <strong>{{ localize "DND5E.Attack" }}:</strong>
+                <span class="value">
+                    {{#each labels.attacks as | attack |}}
+                        {{ attack.toHit }}
+                        {{#unless @last}}|{{/unless}}
+                    {{/each}}
+                </span>
+            </li>
+            {{/if}}
+            {{#if saveLabel}}
+            <li>
+                <strong>{{ localize "DND5E.SavingThrow" }}:</strong>
+                <span class="value">{{saveLabel.value}}</span>
+            </li>
+            {{/if}}
+            {{#if enrichDamage}}
+            <li>
+                <strong>
+                    {{#if enrichDamage.isHealing}} {{ localize "DND5E.Healing" }}
+                    {{else}} {{ localize "DND5E.Damage" }} {{/if}}:
+                </strong>
+                <span class="value">{{{enrichDamage.value}}}</span>
+            </li>
+            {{/if}}
+        </ul> --}}
     {{/if}}
     {{#if (eq type "weapon")}}
+        {{> "bg3hotbar.weapon-block" }}
+    {{/if}}
+    {{#if (and (eq type "feat") labels.attacks.length)}}
         {{> "bg3hotbar.weapon-block" }}
     {{/if}}
     <section class="description">{{{ description.value }}}</section>
