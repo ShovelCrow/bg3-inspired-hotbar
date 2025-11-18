@@ -94,14 +94,18 @@
     border: unset;
 }
 
-aside[role="tooltip"] .notes {
+aside[role="tooltip"] .custom-tooltip .notes {
     flex: 0 0 100%;
     font-size: var(--font-size-12);
     line-height: var(--line-height-16);
     color: var(--color-text-light-primary);
-    margin: 3px 0;
+    margin: 3px 0 0;
 }
-  
+
+aside[role="tooltip"] .custom-tooltip h4 {
+    margin: 0;
+}
+
 aside[role="tooltip"] .custom-tooltip h4 i {
     margin: 0 1em;
     color: var(--data-color);

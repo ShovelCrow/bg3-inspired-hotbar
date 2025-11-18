@@ -150,7 +150,7 @@ export class FilterContainer extends BG3Component {
 
     getDataToCompare(filter, cell) {
         if(!filter) return false;
-        if (filter.data?.custom) {
+        if (filter.data?.custom?.itemId) {
             return cell.dataset.consumeId === filter.data.custom.itemId || cell.dataset.useId === filter.data.custom.itemId;
         }
         switch (filter.data.id) {
@@ -168,7 +168,7 @@ export class FilterContainer extends BG3Component {
     updateCellFilterState() {
         for(const filter of this.components) {
             const isUsed = this.used.includes(filter);
-            filter.element.style.borderColor = this._highlighted === filter && !isUsed ? filter.data.color : 'transparent';
+            filter.element.style.borderColor = this._highlighted?.data == filter?.data && !isUsed ? filter.data.color : 'transparent';
             filter.element.classList.toggle('used', isUsed);
         }
         $('.bg3-hotbar-container .bg3-hotbar-subcontainer .has-item').each(async (index, cell) => {
@@ -208,12 +208,13 @@ export class FilterContainer extends BG3Component {
         for(const item of this.actor.items) {
             if(item.hasLimitedUses && item.name && item.type === "feat") {
                 // Determine whether item is used as resource
-                let isResource = item.getFlag("tidy5e-sheet", "section") === "Resources" ?? false;
+                let isResource = game.modules.get("tidy5e-sheet")?.active && item.getFlag("tidy5e-sheet", "section") === "Resources";
                 for (const i of this.actor.items) {
                     if (isResource) break;
-                    if (i.hasResource && i.system?.consume?.target === item.id) {
-                        isResource = true;
-                    }
+                    const firstActivity = i?.system?.activities?.contents?.[0] ?? i;
+                    const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
+                    const consumeId = firstTarget?.target;
+                    if (consumeId === item.id) isResource = true;
                 }
                 if (!isResource) continue;
 
@@ -227,27 +228,46 @@ export class FilterContainer extends BG3Component {
                         tooltip: {
                             label: item.name,
                             // pills: (item.system.requirements ? item.system.requirements.split(';') : []).concat(item.system.uses.label),
-                            recharge: item.system.uses.label ? [CONFIG.DND5E.limitedUsePeriods[item.system.uses.recovery[0].period].label] : []
+                            recharge: item.system.uses.label ? CONFIG.DND5E.limitedUsePeriods[item.system.uses.recovery[0].period].label : null
                         },
                         itemId: item.id
-                    }
+                    },
+                    symbol: item.getFlag(BG3CONFIG.MODULE_NAME, "symbol") ?? null
                 }, this));
             }
         }
         for(const resourceId in this.actor.system.resources) {
             const oResource = this.actor.system.resources[resourceId];
-            if(oResource.value && oResource.label && oResource.label !== '') {
+            const legend = { label: oResource.label, id: resourceId, itemId: null, symbol: null };
+            switch (resourceId) {
+                case "legact": 
+                    legend.id = "legendary";
+                    legend.label = game.i18n.localize("DND5E.LegendaryAction.Label");
+                    legend.symbol = "fa-dragon";
+                    break;
+                case "legres": 
+                    legend.itemId = "resources.legres.value";
+                    legend.label = game.i18n.localize("DND5E.LegendaryResistance.Label");
+                    legend.symbol = "fa-shield";
+                    break;
+                case "default":
+                    break;
+            }
+            if(oResource.value && legend.label && legend.label !== '') {
                 resources.push(new FilterButton({
                     color: color,
-                    class: ['filter-spell-point', 'filter-custom'],
+                    class: ['filter-spell-point', 'filter-custom', 'action-type-button'],
                     background: null,
                     custom: {
                         value: oResource.value,
                         max: oResource.max,
                         tooltip: {
-                            label: oResource.label
-                        }
-                    }
+                            label: legend.label
+                        },
+                        itemId: legend.itemId
+                    },
+                    symbol: legend.symbol,
+                    id: legend.id
                 }, this));
             }
         }
