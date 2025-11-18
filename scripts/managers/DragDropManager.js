@@ -51,6 +51,7 @@ export class DragDropManager {
                 // Update manager stored data
                 const containerType = this.dragSourceCell._parent.id;
                 const containerIndex = this.dragSourceCell._parent.index;
+                ui.BG3HOTBAR.manager.containers[containerType][containerIndex].items[this.dragSourceCell.slotKey] = savedItem;
                 
                 // Safety check for null containerType
                 if (!containerType) {
@@ -72,8 +73,12 @@ export class DragDropManager {
                     console.warn("BG3 DragDrop | Unknown container type:", containerType, "- skipping update");
                 }
                 hasUpdate = true;
-    
-                await this.dragSourceCell._renderInner();    
+
+                if(containerType === "weapon") {
+                    await this.dragSourceCell._parent?.components.forEach(cell => cell._renderInner());  
+                } else {
+                    await this.dragSourceCell._renderInner();  
+                }
                 this.dragSourceCell = null;
             } else {
                 // Construct Item
@@ -87,13 +92,16 @@ export class DragDropManager {
                         if(splitUUID.indexOf('Actor') > -1) {
                             const actorUUID = splitUUID.slice(0,splitUUID.indexOf('Actor') + 2).join('.');
                             if(actorUUID && actorUUID !== ui.BG3HOTBAR.manager.actor.uuid) {
-                                ui.notifications.warn("You cannot add items from other characters.");
+                                ui.notifications.warn("BG3 Inspired HUD | You cannot add items from other characters.");
                                 return;
                             }
+                        } else if (splitUUID.indexOf('Macro') < 0) {
+                            ui.notifications.warn("BG3 Inspired HUD | You cannot add items you do not own.");
+                            return;
                         }
                         // Check for duplicates if not allowed for this container
                         if(target._parent.data.allowDuplicate !== true && await this._isDuplicate(dragData.uuid)) {
-                            ui.notifications.warn("This item is already on the hotbar.");
+                            ui.notifications.warn("BG3 Inspired HUD | This item is already on the hotbar.");
                             return;
                         }
                         newItem = {uuid: dragData.uuid};
@@ -146,7 +154,11 @@ export class DragDropManager {
                 }
                 hasUpdate = true;
 
-                await target._renderInner();
+                if(target._parent.id === 'weapon') {
+                    await target._parent?.components.forEach(cell => cell._renderInner());
+                } else {
+                    await target._renderInner();
+                }
             }
         } catch (error) {
             console.error("Error during drop process:", error);
