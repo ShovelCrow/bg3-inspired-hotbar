@@ -502,7 +502,7 @@ export function updateSettingsDisplay() {
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Other',
-                        fields: ['fadeControlsMenu', 'showRestTurnButton', 'enableGMHotbar']
+                        fields: ['fadeControlsMenu', 'showRestTurnButton', 'hoverAbilities', 'enableGMHotbar']
                     }
                 ]
             },
@@ -1143,6 +1143,16 @@ export function registerSettings() {
                 ui.BG3HOTBAR.components.restTurn.render();
             }
         }
+    });
+
+    // SHOVEL
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'hoverAbilities', {
+        name: 'BG3.Settings.HoverAbilities.Name',
+        hint: 'BG3.Settings.HoverAbilities.Hint',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
     });
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enableGMHotbar', {

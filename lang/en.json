@@ -11,7 +11,8 @@
             "NoUIReference": "UI reference not found. Please try refreshing the page."
         },
         "ContextMenu": {
-            "EditItem": "Edit Item",
+            "ViewItem": "View Item",
+            "EditItem": "Edit",
             "ConfigureActivities": "Configure Activities",
             "Remove": "Remove"
         },
@@ -42,7 +43,8 @@
             "Disabled": "Disabled"
         },
         "Ability": {
-            "Tooltip": "Left-click to show ability checks and saving throws.<br>Right-click to roll Initiative (ALT: Adv / CTRL: Disadv)."
+            "Tooltip": "Left-click: Ability Checks / Saving Throws<br>Right-click: Roll Initiative (<i class='fa-solid fa-dice-d20 fa-xs'></i> {mod})",
+            "TooltipOld": "Left-click to show ability checks and saving throws.<br>Right-click to roll initiative ({bindAdv}: Adv / {bindDis}: Disadv)."
         }
     },
     "BG3.Portrait": {
@@ -259,6 +261,10 @@
         "AutoScale": {
             "Name": "Auto UI scale",
             "Hint": "Auto scale the UI based on your browser. Disable the UI scale parameter below."
+        },
+        "HoverAbilities": {
+            "Name": "Ability Menu on hover",
+            "Hint": "If checked, control Ability Menu by hovering instead of clicking."
         },
         "EnableGMHotbar": {
             "Name": "Enable GM Hotbar",
