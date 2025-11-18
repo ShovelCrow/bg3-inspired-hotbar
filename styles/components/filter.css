@@ -17,11 +17,14 @@
     transition: all 0.2s ease;
 }
 
-#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container .bg3-filter-subcontainer {
+#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container .bg3-filter-subcontainer,
+#bg3-hotbar-container[data-filter-hover="true"]:hover .bg3-hotbar-container .bg3-filter-subcontainer {
     opacity: 0;
 }
 
-#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container:hover .bg3-filter-subcontainer {
+#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container .bg3-filter-subcontainer:hover,
+#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container .bg3-filter-subcontainer:has(~ .bg3-hotbar-subcontainer:hover),
+#bg3-hotbar-container[data-filter-hover="true"] .bg3-hotbar-container .bg3-filter-subcontainer:has(~ .bg3-drag-bar:hover) {
     opacity: 1;
 }
 
