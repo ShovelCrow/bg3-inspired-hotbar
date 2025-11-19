@@ -35,12 +35,14 @@ export class PortraitContainer extends BG3Component {
         const hpPercent = Math.max(0, Math.min(100, (hpValue / hpMax) * 100));
         const damagePercent = 100 - hpPercent;
         const tempHp = this.actor.system.attributes?.hp?.temp || 0;
+        const tempMax = this.actor.system.attributes?.hp?.tempmax || 0;
         return {
             current: hpValue,
             max: hpMax,
             percent: hpPercent,
             damage: damagePercent,
-            temp: tempHp
+            temp: tempHp,
+            tempMax: tempMax
         }
     }
 
@@ -50,9 +52,42 @@ export class PortraitContainer extends BG3Component {
                 extraInfos = [];
             for(let i = 0; i < savedData.length; i++) {
                 let extraData = {};
-                if(savedData[i].attr && savedData[i].attr !== '') {
-                    const attr = foundry.utils.getProperty(this.actor.system, savedData[i].attr) ?? foundry.utils.getProperty(this.actor.system, savedData[i].attr + ".value") ?? this._getInfoFromSettings(savedData[i].attr);
-                    if(attr) extraData = {icon: savedData[i].icon, value: attr, color: savedData[i].color};
+                const key = savedData[i].attr;
+                if (key && key !== '') {
+                    let value = null;
+                    try {
+                        // Template mode: resolve {{...}} tokens inside a single entry
+                        if (key.includes('{{')) {
+                            const tokenRegex = /\{\{([^}]+)\}\}/g;
+                            let result = key;
+                            let match;
+                            const resolvedValues = [];
+                            while ((match = tokenRegex.exec(key)) !== null) {
+                                const token = match[1].trim();
+                                const resolved = await this._resolvePortraitAttrToken(token);
+                                resolvedValues.push(resolved);
+                                result = result.replace(match[0], (resolved ?? '').toString());
+                            }
+                            // Trim stray leading/trailing separators if one side is missing
+                            result = result.replace(/^[\s*/:|\-]+/, '').replace(/[\s*/:|\-]+$/, '');
+                            // If all resolved values are empty/undefined, suppress output
+                            const anyValue = resolvedValues.some(v => v !== undefined && v !== null && v !== '');
+                            value = anyValue ? result : '';
+                        }
+                        // Literal value support: prefix with '=' to render as-is
+                        else if (key.startsWith('=')) {
+                            value = key.slice(1);
+                        }
+                        // Single token/path resolution
+                        else {
+                            value = await this._resolvePortraitAttrToken(key);
+                        }
+                    } catch (error) {
+                        // Ignore resolution errors and leave value as null
+                    }
+                    if (value !== undefined && value !== null && value !== '') {
+                        extraData = { icon: savedData[i].icon, value: value, color: savedData[i].color };
+                    }
                 }
                 extraInfos.push(extraData);
             }
@@ -68,6 +103,63 @@ export class PortraitContainer extends BG3Component {
             return null;
         }
     }
+
+    /**
+     * Resolve a portrait attribute token into a string or primitive value.
+     * Supports:
+     *  - itemName:NAME[:path]
+     *  - itemUuid:UUID[:path]
+     *  - flags.namespace.key
+     *  - direct actor/system paths (with optional .value fallback)
+     * @param {string} token
+     * @returns {Promise<*>}
+     */
+    async _resolvePortraitAttrToken(token) {
+        let value = null;
+        // Item-based lookups
+        if (token.startsWith('itemName:') || token.startsWith('itemUuid:')) {
+            const parts = token.split(':');
+            const mode = parts.shift();
+            const identifier = parts.shift();
+            const path = parts.join(':');
+            let itemDoc = null;
+            if (mode === 'itemName') {
+                itemDoc = this.actor.items.find((it) => (it.name || '').trim() === identifier.trim());
+            } else if (mode === 'itemUuid') {
+                try {
+                    itemDoc = await fromUuid(identifier);
+                } catch (e) {}
+                if (!itemDoc && identifier?.includes('.')) {
+                    itemDoc = this.actor.items.get(identifier.split('.').pop());
+                }
+            }
+            if (itemDoc) {
+                const targetPath = path && path.length ? path : 'system.uses.value';
+                value = foundry.utils.getProperty(itemDoc, targetPath);
+            }
+        }
+        // Absolute actor path (supports flags.* and other actor props)
+        if (value === undefined || value === null) value = foundry.utils.getProperty(this.actor, token);
+        // Fallback to system path and common ".value" nesting
+        if (value === undefined || value === null) {
+            value = foundry.utils.getProperty(this.actor.system, token) ?? foundry.utils.getProperty(this.actor.system, `${token}.value`);
+        }
+        // If flags.<namespace>.<key> format, try getFlag explicitly
+        if ((value === undefined || value === null) && token.startsWith('flags.')) {
+            const parts2 = token.split('.');
+            if (parts2.length >= 3) {
+                const namespace = parts2[1];
+                const flagKey = parts2.slice(2).join('.');
+                value = this.actor.getFlag(namespace, flagKey);
+            }
+        }
+        // Fallback to module setting string: module.setting
+        if (value === undefined || value === null) {
+            value = this._getInfoFromSettings(token);
+        }
+        return value;
+    }
+
 
     async getData() {
         return {
