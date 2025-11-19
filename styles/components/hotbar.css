@@ -87,7 +87,7 @@
     box-sizing: border-box;
     user-select: none;
     opacity: 1;
-    text-shadow: 1px 1px 2px black;
+    /* text-shadow: 1px 1px 2px black; */
 }
 
 #bg3-hotbar-container[data-cell-highlight="bottom"] .bg3-hotbar-container .hotbar-cell {
@@ -185,7 +185,7 @@
     /* pointer-events: none; */
 }
 
-#bg3-hotbar-container .hotbar-item.depleted {
+#bg3-hotbar-container .bg3-hotbar-container .hotbar-item.depleted {
     filter: grayscale(100%) brightness(60%);
 }
 
@@ -248,15 +248,18 @@
 } 
 
 #bg3-hotbar-container .hotbar-item-uses.depleted,
-#bg3-hotbar-container .hotbar-item-consume.depleted {
+#bg3-hotbar-container .hotbar-item-consume.depleted,
+#bg3-hotbar-container .hotbar-item-quantity.depleted {
     color: #ff4444;
 } 
 
-#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-uses, #bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-quantity {
+#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-uses,
+#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-quantity {
     display: block;
 }
 
-#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-uses::before, #bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-quantity::before {
+#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-uses::before,
+#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-quantity::before {
     border-top: 1.5rem solid rgba(0, 0, 0, 0);
     content: "";
     height: 0;
@@ -267,7 +270,8 @@
     z-index: -1;
 }
 
-#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-uses::before {
+#bg3-hotbar-container[data-item-use="true"] .bg3-hotbar-container .hotbar-item-uses::before,
+#bg3-hotbar-container[data-item-use="true"] .bg3-weapon-container .hotbar-item-uses::before {
     border-left: 1.5rem solid rgba(0, 0, 0, 0);
     right: 0;
 }

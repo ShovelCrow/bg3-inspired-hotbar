@@ -70,8 +70,15 @@ export class ItemUpdateManager {
         const token = ui.BG3HOTBAR.manager.token;
         if (!token || token.actor?.items.get(item.id) !== item) return;
         let needSave = false;
-        
-        if(changes.system && Object.keys(changes.system).length === 1 && changes.system.hasOwnProperty('equipped')) return;
+
+        if(changes.system && changes.system.hasOwnProperty('equipped')){
+            // SHOVEL
+            if (item?.effects?.size > 0 && item.effects.some(e => e.transfer)) {
+                const container = ui.BG3HOTBAR.components.container.components.activeContainer;
+                container.render();
+            }
+            if (Object.keys(changes.system).length === 1) return;
+        }
         
         // Check if this is a spell and its preparation state changed
         if (item.type === "spell" && changes.system?.preparation !== undefined) {
@@ -147,6 +154,12 @@ export class ItemUpdateManager {
             }
         }
         
+        // SHOVEL
+        // Check if updated item is in a custom filter
+        const filters = ui.BG3HOTBAR.components.container.components.filterContainer;
+        const inFilter = filters.components.filter(c => c.data?.custom && c.data.custom.itemId === item.id);
+        if (inFilter.length) filters.render();
+
         // Find and update the item in all containers
         for (const container of ui.BG3HOTBAR.components.container.components.hotbar) {
             let updated = false;
@@ -154,44 +167,8 @@ export class ItemUpdateManager {
                 // Extract the item ID from the UUID
                 const itemId = slotItem?.uuid?.split('.').pop();
                 
-                if (slotItem && itemId === item.id) {
-                    // Get the latest item data
-                    const updatedItemData = await fromUuid(slotItem.uuid);
-                    if (!updatedItemData) continue;
-
-                    // For spells, check if it's prepared or has valid casting mode
-                    if (updatedItemData.type === "spell") {
-                        const prep = updatedItemData.system?.preparation;
-                        if (!prep?.prepared && prep?.mode === "prepared") {
-                            delete container.data.items[slotKey];
-                            updated = true;
-                            needSave = true;
-                            continue;
-                        }
-                    }
-
-                    // Update all properties from the source item
-                    container.data.items[slotKey] = {
-                        uuid: slotItem.uuid,
-                        // name: updatedItemData.name,
-                        // icon: updatedItemData.img,
-                        // type: updatedItemData.type,
-                        // activation: updatedItemData.system?.activation?.type,
-                        // sortData: slotItem.sortData // Preserve sort data
-                    };
-                    updated = true;
-                    needSave = true;
-                }
-            }
-            if(updated) container.render();
-        }        
-            
-        // Find and update the item in all weapons containers
-        for (const container of ui.BG3HOTBAR.components.weapon.components.weapon) {
-            let updated = false;
-            for (const [slotKey, slotItem] of Object.entries(container.data.items)) {
-                // Extract the item ID from the UUID
-                const itemId = slotItem?.uuid?.split('.').pop();
+                // SHOVEL
+                const consumeId = slotItem?.consumeId?.split('.').pop();
                 
                 if (slotItem && itemId === item.id) {
                     // Get the latest item data
@@ -212,11 +189,67 @@ export class ItemUpdateManager {
                     // Update all properties from the source item
                     container.data.items[slotKey] = {
                         uuid: slotItem.uuid,
-                        // name: updatedItemData.name,
-                        // icon: updatedItemData.img,
-                        // type: updatedItemData.type,
-                        // activation: updatedItemData.system?.activation?.type,
-                        // sortData: slotItem.sortData // Preserve sort data
+                    };
+                    updated = true;
+                    needSave = true;
+                } else if (consumeId && consumeId === item.id) {
+                    // Update all properties from the source item
+                    container.data.items[slotKey] = {
+                        uuid: slotItem.uuid,
+                        ...consumeId && { consumeId: consumeId }
+                    };
+                    updated = true;
+                    needSave = true;
+                }
+            }
+            // SHOVEL
+            // Force update if item is in custom filter
+            if (inFilter.length) {
+                updated = true;
+                needSave = true;
+            }
+
+            if(updated) container.render();
+        }
+            
+        // Find and update the item in all weapons containers
+        for (const container of ui.BG3HOTBAR.components.weapon.components.weapon) {
+            let updated = false;
+            for (const [slotKey, slotItem] of Object.entries(container.data.items)) {
+                // Extract the item ID from the UUID
+                const itemId = slotItem?.uuid?.split('.').pop();
+
+                // SHOVEL
+                const consumeId = slotItem?.consumeId?.split('.').pop();
+                
+                if (slotItem && itemId === item.id) {
+                    // Get the latest item data
+                    const updatedItemData = await fromUuid(slotItem.uuid);
+                    if (!updatedItemData) continue;
+
+                    // For spells, check if it's prepared or has valid casting mode
+                    if (updatedItemData.type === "spell") {
+                        const prep = updatedItemData.system?.preparation;
+                        if (!prep?.prepared && prep?.mode === "prepared") {
+                            delete container.data.items[slotKey];
+                            updated = true;
+                            needSave = true;
+                            continue;
+                        }
+                    }
+
+                    // Update all properties from the source item
+                    container.data.items[slotKey] = {
+                        uuid: slotItem.uuid,
+                        ...consumeId && { consumeId: consumeId }
+                    };
+                    updated = true;
+                    needSave = true;
+                } else if (consumeId && consumeId === item.id) {
+                    // Update all properties from the source item
+                    container.data.items[slotKey] = {
+                        uuid: slotItem.uuid,
+                        ...consumeId && { consumeId: consumeId }
                     };
                     updated = true;
                     needSave = true;
@@ -303,19 +336,21 @@ export class ItemUpdateManager {
     }
     
     async cleanupInvalidItems(actor) {
-        
+        let needSave = false;
+
         // Check each container's items
         for (const container of ui.BG3HOTBAR.components.container.components.hotbar) {
             let hasChanges = false;
             for (const [slot, item] of Object.entries(container.data.items)) {
                 if(!item?.uuid) continue;
-                const itemData = await fromUuid(item.uuid);
+                const itemData = await fromUuid(item?.uuid);
                 if(itemData?.documentName == 'Macro' || itemData?.documentName == 'Activity') continue;
                 
                 if (!itemData || !actor.items.has(itemData.id)) {
                     // Removing invalid item
                     delete container.data.items[slot];
                     hasChanges = true;
+                    needSave = true;
                 }
             }
             if(hasChanges) container.render();
@@ -325,19 +360,22 @@ export class ItemUpdateManager {
         for (const container of ui.BG3HOTBAR.components.weapon.components.weapon) {
             let hasChanges = false;
             for (const [slot, item] of Object.entries(container.data.items)) {
-                const itemData = await fromUuid(item.uuid);
+                const itemData = await fromUuid(item?.uuid);
                 if(itemData?.documentName == 'Macro' || itemData?.documentName == 'Activity') continue;
                 
                 if (!itemData || !actor.items.has(itemData.id)) {
                     // Removing invalid item
                     delete container.data.items[slot];
                     hasChanges = true;
+                    needSave = true;
                 }
             }
-            if(hasChanges) {
-                container.render();
-                await ui.BG3HOTBAR.manager.persist();
-            }
+            if(hasChanges) container.render();
+        }
+
+        if (needSave) {
+            await ui.BG3HOTBAR.manager.persist();
+            await ui.BG3HOTBAR.components.container.components.filterContainer.updateExtendedFilter();
         }
     }
 }

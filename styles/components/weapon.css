@@ -158,4 +158,33 @@ input[name="weapon-choice"] {
 .dnd5e2 .weapon-block {
     text-align: left;
     font-size: var(--font-size-12);
+    margin-top: 0.5em
+}
+
+/* Item Uses/Quantity */
+#bg3-hotbar-container[data-item-use="true"] .bg3-weapon-set .hotbar-item-uses,
+#bg3-hotbar-container[data-item-use="true"] .bg3-weapon-set .hotbar-item-quantity {
+    display: block;
+}
+
+#bg3-hotbar-container[data-item-use="true"] .bg3-weapon-set .hotbar-item-uses::before,
+#bg3-hotbar-container[data-item-use="true"] .bg3-weapon-set .hotbar-item-quantity::before {
+    border-top: 1.5rem solid rgba(0, 0, 0, 0);
+    content: "";
+    height: 0;
+    position: absolute;
+    top: 0;
+    width: 0;
+    border-top-color: rgba(255,255,255,.5);
+    z-index: -1;
+}
+
+#bg3-hotbar-container[data-item-use="true"] .bg3-weapon-set .hotbar-item-uses::before {
+    border-left: 1.5rem solid rgba(0, 0, 0, 0);
+    right: 0;
+}
+
+#bg3-hotbar-container[data-item-use="true"] .bg3-weapon-set .hotbar-item-quantity::before {
+    border-right: 1.5rem solid rgba(0, 0, 0, 0);
+    left: 0;
 }

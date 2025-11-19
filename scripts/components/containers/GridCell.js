@@ -49,7 +49,7 @@ export class GridCell extends BG3Component {
                     icon: itemData.img ?? 'icons/svg/book.svg',
                     actionType: firstActivity.activation?.type?.toLowerCase() ?? null,
                     itemType: itemData.type,
-                    quantity: itemData.system?.quantity && itemData.system?.quantity > 1 ? itemData.system?.quantity : false
+                    quantity: itemData.system?.quantity > 1 || itemData.system?.quantity === 0  ? itemData.system?.quantity : false
                 },
                 ...await this.getItemUses(),
                 ...await this.getConsumeData()
@@ -60,6 +60,9 @@ export class GridCell extends BG3Component {
                 unprepared: !itemData.system?.preparation?.prepared
             }};
             if(itemData.type === 'feat') data = {...data, ...{featType: itemData.system?.type?.value || 'default'}};
+        }
+        if (data.consume?.id && ui.BG3HOTBAR.manager.containers[this._parent.id][this._parent.index].items[this.slotKey]) {
+            ui.BG3HOTBAR.manager.containers[this._parent.id][this._parent.index].items[this.slotKey].consumeId = data.consume.id
         }
         return data;
     }
@@ -107,17 +110,23 @@ export class GridCell extends BG3Component {
             if (cacheItem?.item?.system?.uses) {
                 const uses = cacheItem.item.system.uses;
                 if (uses.max > 0) {
-                    return {consume: {value: uses.value ?? 0, max: uses.max ?? 0}};
+                    return {consume: {value: uses.value ?? 0, max: uses.max ?? 0, id: cacheItem.item.id}};
                 }
             }
             return null;
         }
 
-        // Return quantity for consumables
+        // Return ammunition
+        if (itemData?.system?.ammunition?.type) {
+            const ammoId = itemData.getFlag("dnd5e", `last.${firstActivity.id}.ammunition`);
+            if (ammoId) {
+                const ammo = itemData.actor.items?.get(ammoId);
+                if (ammo) return {consume: {value: ammo.system.quantity ?? 0, id: ammoId}};
+            }
+        }   
+
+        // Return nothing if does not consume or consumes self
         if (!consumeId || !consumeType || consumeId === itemData.id) {
-            // if (itemData?.type == "consumable" && itemData?.system?.quantity > 1) {
-            //     return {consume: {value: itemData.system.quantity ?? 0}};
-            // }
             return null;
         }
     
@@ -133,12 +142,9 @@ export class GridCell extends BG3Component {
             const target = itemData.actor.items?.get(consumeId);
             // Return charges
             if (target && (consumeType === "charges" || consumeType === "itemUses")) {
-                return {consume: {value: target.system.uses.value ?? 0, max: target.system.uses.max ?? 0}};
+                const uses = target.system.uses;
+                return {consume: {value: uses.value ?? 0, max: uses.max ?? 0, id: consumeId}};
             }
-            // // Return quantity
-            // if (target?.system?.quantity) {
-            //     return {consume: {value: target.system.quantity ?? 0}};
-            // }
         }
     
         return null;
@@ -374,7 +380,12 @@ export class GridCell extends BG3Component {
             document.body.classList.add('dragging-active');
             document.body.classList.add('drag-cursor');
             this.element.classList.add("dragging");
-            if(game.tooltip) game.tooltip.deactivate()
+            if(game.tooltip) game.tooltip.deactivate();
+
+            e.dataTransfer.setData("text/plain", JSON.stringify({
+                type: this.element.dataset.documentName,
+                uuid: this.data.item.uuid
+            }));
 
             ui.BG3HOTBAR.dragDropManager.dragSourceCell = this;
         });
@@ -426,9 +437,11 @@ export class GridCell extends BG3Component {
         this.element.classList.toggle('has-item', !!this.data.item);
         if(this.data.item) {
             const itemData = await this.item;
+            const firstActivity = itemData?.system?.activities?.contents?.[0] ?? itemData;
             if(itemData) {
-                this.element.dataset.actionType = itemData.system?.activation?.type?.toLowerCase() ?? itemData.activation?.type?.toLowerCase() ?? null;
+                this.element.dataset.actionType = firstActivity?.activation?.type?.toLowerCase() ?? null;
                 this.element.dataset.itemType = itemData.type;
+                this.element.dataset.documentName = itemData.documentName;
 
                 if (itemData.system?.activities) {
                     const activityActionTypes = itemData.system.activities
@@ -462,10 +475,13 @@ export class GridCell extends BG3Component {
                 }
             }
             if (itemData?.system?.uses) this.element.dataset.useId = itemData.id;
-            const firstActivity = itemData?.system?.activities?.contents[0] ?? itemData;
-            const firstTarget = firstActivity?.consumption?.targets?.[0] ?? firstActivity?.consume;
-            const consumeId = firstTarget?.target;
-            if (consumeId) this.element.dataset.consumeId = consumeId;
+            // const firstTarget = !firstActivity?.consumption?.targets.length ? firstActivity?.consume : firstActivity?.consumption?.targets?.[0];
+            // const consumeId = firstTarget?.target;
+            // if (consumeId) this.element.dataset.consumeId = consumeId;
+            const consume = (await this.getConsumeData())?.consume;
+            if (consume?.id) {
+                this.element.dataset.consumeId = consume.id;
+            }
         } else if($(this.element).hasClass('has-2h')) {
             this.element.classList.remove('has-2h');
             this._parent.element.style.removeProperty('--bg-2h');

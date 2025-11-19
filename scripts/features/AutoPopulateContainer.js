@@ -185,8 +185,9 @@ export class AutoPopulateDialog extends Dialog {
             }
             
             // Check if the item has activities or is usable
-            const hasActivities = item.system?.activities?.length > 0 ||
-                                (item.system?.activation?.type && item.system?.activation?.type !== "none");
+            const hasActivities = item.system?.activities?.length > 0 || 
+              (item.system?.activation?.type && item.system?.activation?.type !== "none") ||
+              (item.type === "consumable" && item.system?.type.value === "ammo");
             
             if (hasActivities || game.settings.get(BG3CONFIG.MODULE_NAME, 'noActivityAutoPopulate')) {
               itemsWithActivities.push({
