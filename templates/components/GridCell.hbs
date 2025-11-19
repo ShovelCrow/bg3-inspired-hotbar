@@ -1,17 +1,19 @@
 <div>
     {{#if icon}}
     <img src="{{icon}}" {{#if name}} alt="{{name}}" {{/if}}
-        class="hotbar-item{{#if (eq uses.value 0)}} depleted{{/if}}{{#if (eq consume.value 0)}} depleted{{/if}}{{#if (eq itemType 'spell')}}{{#if unprepared}} depleted{{/if}}{{/if}}"
+        class="hotbar-item{{#if (eq uses.value 0)}} depleted{{/if}}{{#if (eq consume.value 0)}} depleted{{/if}}{{#if (eq itemType 'spell')}}{{#if (eq preparationMode 'prepared')}}{{#if unprepared}} depleted{{/if}}{{/if}}{{/if}}"
         draggable="false">
     {{#if name}}<div class="hotbar-item-name">{{name}}</div>{{/if}}
     {{#if consume}}
-        <div class="hotbar-item-uses{{#if (eq consume.value 0)}} depleted{{/if}}">{{consume.value}}/{{consume.max}}</div>
+        <div class="hotbar-item-uses{{#if (eq consume.value 0)}} depleted{{/if}}">{{consume.value}}{{#if consume.max}}/{{consume.max}}{{/if}}</div>
     {{else}}
         {{#if uses}}
-            <div class="hotbar-item-uses{{#if (eq uses.value 0)}} depleted{{/if}}">{{uses.value}}/{{uses.max}}</div>
+            <div class="hotbar-item-uses{{#if (eq uses.value 0)}} depleted{{/if}}">{{uses.value}}{{#if uses.max}}/{{uses.max}}{{/if}}</div>
         {{/if}}
     {{/if}}
-    {{#if quantity}}<div class="hotbar-item-quantity">{{quantity}}</div>{{/if}}
+    {{#if (ne quantity false)}}
+        <div class="hotbar-item-quantity{{#if (eq quantity 0)}} depleted{{/if}}">{{quantity}}</div>
+        {{/if}}
     {{else}}
         <div>{{name}}</div>
     {{/if}}
