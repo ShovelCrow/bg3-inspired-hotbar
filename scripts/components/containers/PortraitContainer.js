@@ -36,12 +36,14 @@ export class PortraitContainer extends BG3Component {
         const hpPercent = Math.max(0, Math.min(100, (hpValue / hpMax) * 100));
         const damagePercent = 100 - hpPercent;
         const tempHp = this.actor.system.attributes?.hp?.temp || 0;
+        const tempMax = this.actor.system.attributes?.hp?.tempmax || 0;
         return {
             current: hpValue,
             max: hpMax,
             percent: hpPercent,
             damage: damagePercent,
-            temp: tempHp
+            temp: tempHp,
+            tempMax: tempMax
         }
     }
 
@@ -102,6 +104,63 @@ export class PortraitContainer extends BG3Component {
             return null;
         }
     }
+
+    /**
+     * Resolve a portrait attribute token into a string or primitive value.
+     * Supports:
+     *  - itemName:NAME[:path]
+     *  - itemUuid:UUID[:path]
+     *  - flags.namespace.key
+     *  - direct actor/system paths (with optional .value fallback)
+     * @param {string} token
+     * @returns {Promise<*>}
+     */
+    async _resolvePortraitAttrToken(token) {
+        let value = null;
+        // Item-based lookups
+        if (token.startsWith('itemName:') || token.startsWith('itemUuid:')) {
+            const parts = token.split(':');
+            const mode = parts.shift();
+            const identifier = parts.shift();
+            const path = parts.join(':');
+            let itemDoc = null;
+            if (mode === 'itemName') {
+                itemDoc = this.actor.items.find((it) => (it.name || '').trim() === identifier.trim());
+            } else if (mode === 'itemUuid') {
+                try {
+                    itemDoc = await fromUuid(identifier);
+                } catch (e) {}
+                if (!itemDoc && identifier?.includes('.')) {
+                    itemDoc = this.actor.items.get(identifier.split('.').pop());
+                }
+            }
+            if (itemDoc) {
+                const targetPath = path && path.length ? path : 'system.uses.value';
+                value = foundry.utils.getProperty(itemDoc, targetPath);
+            }
+        }
+        // Absolute actor path (supports flags.* and other actor props)
+        if (value === undefined || value === null) value = foundry.utils.getProperty(this.actor, token);
+        // Fallback to system path and common ".value" nesting
+        if (value === undefined || value === null) {
+            value = foundry.utils.getProperty(this.actor.system, token) ?? foundry.utils.getProperty(this.actor.system, `${token}.value`);
+        }
+        // If flags.<namespace>.<key> format, try getFlag explicitly
+        if ((value === undefined || value === null) && token.startsWith('flags.')) {
+            const parts2 = token.split('.');
+            if (parts2.length >= 3) {
+                const namespace = parts2[1];
+                const flagKey = parts2.slice(2).join('.');
+                value = this.actor.getFlag(namespace, flagKey);
+            }
+        }
+        // Fallback to module setting string: module.setting
+        if (value === undefined || value === null) {
+            value = this._getInfoFromSettings(token);
+        }
+        return value;
+    }
+
 
     async getData() {
         return {
