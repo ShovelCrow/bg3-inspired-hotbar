@@ -790,8 +790,8 @@ export function registerSettings() {
 
     // Portrait Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'hidePortraitImage', {
-        name: 'Hide Portrait Image',
-        hint: 'Also hide health overlay and text.',
+        name: 'Show Portrait Image',
+        hint: 'Also hides health overlay and text when disabled.',
         scope: 'client',
         config: true,
         type: Boolean,

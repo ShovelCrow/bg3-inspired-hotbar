@@ -239,7 +239,7 @@ export class GridCell extends BG3Component {
                     if (itemData?.sheet) itemData.sheet.render(true, { mode: 1 });
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error viewing item:", error);
-                    ui.notifications.error(`Error viewing item: ${error.message}`);
+                    ui.notifications.error(`Error editing item: ${error.message}`);
                 }
                 break;
             case 'edit':
@@ -248,7 +248,7 @@ export class GridCell extends BG3Component {
                     if (itemData?.sheet) itemData.sheet.render(true, { mode: 2 });
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error editing item:", error);
-                    ui.notifications.error(`Error editing item: ${error.message}`);
+                    ui.notifications.error(`Error viewing item: ${error.message}`);
                 }
                 break;
             case 'activity':
