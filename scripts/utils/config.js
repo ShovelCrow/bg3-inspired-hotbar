@@ -790,15 +790,15 @@ export function registerSettings() {
 
     // Portrait Settings
     game.settings.register(BG3CONFIG.MODULE_NAME, 'hidePortraitImage', {
-        name: 'Show Portrait Image',
-        hint: 'Also hides health overlay and text when disabled.',
+        name: 'Hide Portrait Image',
+        hint: 'Also hides health overlay and text but not extra datas.',
         scope: 'client',
         config: true,
         type: Boolean,
         default: true,
         onChange: value => {
           if(ui.BG3HOTBAR.components.portrait?.element) {
-            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', !value);
+            ui.BG3HOTBAR.components.portrait.element.classList.toggle('portrait-hidden', value);
           }
         }
     });
