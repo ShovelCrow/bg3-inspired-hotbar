@@ -498,14 +498,14 @@ export class GridCell extends BG3Component {
                     default:
                         break;
                 }
-            }
-            if (itemData?.system?.uses) this.element.dataset.useId = itemData.id;
-            // const firstTarget = !firstActivity?.consumption?.targets.length ? firstActivity?.consume : firstActivity?.consumption?.targets?.[0];
-            // const consumeId = firstTarget?.target;
-            // if (consumeId) this.element.dataset.consumeId = consumeId;
-            const consume = (await this.getConsumeData())?.consume;
-            if (consume?.id) {
-                this.element.dataset.consumeId = consume.id;
+                
+                if (itemData.system?.type?.subtype) this.element.dataset.subtypeId = itemData.system.type.subtype;
+
+                if (itemData.system?.uses) this.element.dataset.useId = itemData.id;
+                const consume = (await this.getConsumeData())?.consume;
+                if (consume?.id) {
+                    this.element.dataset.consumeId = consume.id;
+                }
             }
         } else if($(this.element).hasClass('has-2h')) {
             this.element.classList.remove('has-2h');

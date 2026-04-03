@@ -155,7 +155,9 @@ export class FilterContainer extends BG3Component {
     getDataToCompare(filter, cell) {
         if(!filter) return false;
         if (filter.data?.custom?.itemId) {
-            return cell.dataset.consumeId === filter.data.custom.itemId || cell.dataset.useId === filter.data.custom.itemId;
+            const isConsumed = cell.dataset.consumeId === filter.data.custom.itemId || cell.dataset.useId === filter.data.custom.itemId;
+            const isSameType = filter.data?.custom?.subtypeId && cell.dataset.subtypeId === filter.data.custom.subtypeId;
+            return isConsumed || isSameType;
         }
         switch (filter.data.id) {
             case 'spell':
@@ -163,7 +165,7 @@ export class FilterContainer extends BG3Component {
                 const slotId = `spell${filter.data.level}`;
                 if(filter.data.isPact) return cell.dataset.preparationMode === 'pact';
                 else if(filter.data.isApothecary) return cell.dataset.preparationMode === 'apothecary';
-                else return (parseInt(cell.dataset.level) === filter.data.level && modes.includes(cell.dataset.preparationMode)) || 
+                else return (parseInt(cell.dataset.level) === filter.data.level && (filter.data.level === 0 || modes.includes(cell.dataset.preparationMode))) || 
                     cell.dataset.consumeId === slotId;
             case 'feature':
                 return cell.dataset.itemType === 'feat';
@@ -213,10 +215,10 @@ export class FilterContainer extends BG3Component {
             color = '#d5a25b';
 
         for(const item of this.actor.items) {
-            if(item.hasLimitedUses && item.name && item.type === "feat") {
+            let isResource = item.getFlag(BG3CONFIG.MODULE_NAME, "resource");
+            if(item.name && item.type === "feat" && (isResource || item.hasLimitedUses)) {
                 // Determine whether item is used as resource
                 // let isResource = game.modules.get("tidy5e-sheet")?.active && item.getFlag("tidy5e-sheet", "section") === "Resources";
-                let isResource = item.getFlag(BG3CONFIG.MODULE_NAME, "resource");
                 for (const i of this.actor.items) {
                     if (isResource) break;
                     const firstActivity = i?.system?.activities?.contents?.[0] ?? i;
@@ -238,7 +240,8 @@ export class FilterContainer extends BG3Component {
                             // pills: (item.system.requirements ? item.system.requirements.split(';') : []).concat(item.system.uses.label),
                             recharge: item.system.uses.label ? CONFIG.DND5E.limitedUsePeriods[item.system.uses.recovery[0].period].label : null
                         },
-                        itemId: item.id
+                        itemId: item.id,
+                        subtypeId: item.getFlag(BG3CONFIG.MODULE_NAME, "type")
                     },
                     symbol: item.getFlag(BG3CONFIG.MODULE_NAME, "symbol") ?? null
                 }, this));

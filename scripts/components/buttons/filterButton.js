@@ -56,6 +56,7 @@ export class FilterButton extends BG3Component {
                 if (this.data.custom?.tooltip) {
                     desc.title = this.data.custom.tooltip.label;
                     desc.subtitle = this.data.custom.tooltip.recharge;
+                    if (this.data.custom.subtypeId) desc.resource = '';
                 }
                 // desc = this.data.custom?.tooltip ? `<div class="custom-tooltip dnd5e2">h4 style="--data-color:${this.data.color}">${this.data.custom?.tooltip?.label}</h4>${this.data.custom?.tooltip?.pills ? `<ul class="pills">${this.data.custom.tooltip.pills.map(p => `<li class="pill"><span class="label" style="color: #4e4e4e;">${p}</label></li>`).join('')}</ul>` : ''}</div>` : false;
                 break;

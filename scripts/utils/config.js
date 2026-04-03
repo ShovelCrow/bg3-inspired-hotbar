@@ -408,16 +408,21 @@ export function registerEarly() {
     // SHOVEL
     const renderItemConfig = (item) => {
         const resource = item.getFlag(BG3CONFIG.MODULE_NAME, "resource");
+        const type = item.getFlag(BG3CONFIG.MODULE_NAME, "type");
         const symbol = item.getFlag(BG3CONFIG.MODULE_NAME, "symbol");
         const content = `
             <form class="flexcol">
                 <div class="form-group">
-                    <label for="isResource">Manually Set as Resource? </label>
+                    <label for="isResource">Enable Extended Filter</label>
                     <input type="checkbox" name="isResource" id="isResource" ${resource ? 'checked' : ''}>
                 </div>
                 <div class="form-group">
-                    <label for="iconInput">Custom Symbol: ${symbol ? `<i class="fas ${symbol}"></i>` : ''}</label>
-                    <input type="text" name="iconInput" id="iconInput" placeholder="fa-crown" ${symbol ? `value="${symbol}"` : ''}>
+                    <label for="typeInput">Use Feature Subtype</label>
+                    <input type="text" name="typeInput" id="typeInput" placeholder="subtypeId" ${symbol ? `value="${type}"` : ''}>
+                </div>
+                <div class="form-group">
+                    <label for="symbolInput">Custom Symbol: ${symbol ? `<i class="fas ${symbol}"></i>` : ''}</label>
+                    <input type="text" name="symbolInput" id="symbolInput" placeholder="fa-crown" ${symbol ? `value="${symbol}"` : ''}>
                 </div>
             </form>
         `;
@@ -429,14 +434,17 @@ export function registerEarly() {
                     icon: `<i class="fas fa-check"></i>`,
                     label: 'Update',
                     callback: async (html) => {
-                        let isResource = html.find("#isResource").val();
-                        let customSymbol = html.find("#iconInput").val();
+                        let isResource = html.find("#isResource:checked").length > 0;
+                        let newType = html.find("#typeInput").val();
+                        let newSymbol = html.find("#symbolInput").val();
 
                         item.setFlag(BG3CONFIG.MODULE_NAME, "resource", isResource);
-                        item.setFlag(BG3CONFIG.MODULE_NAME, "symbol", customSymbol);
+                        item.setFlag(BG3CONFIG.MODULE_NAME, "type", newType);
+                        item.setFlag(BG3CONFIG.MODULE_NAME, "symbol", newSymbol);
 
-                        if (!isResource && !customSymbol) {
+                        if (!isResource && !newTypenewType && !newSymbol) {
                             item.unsetFlag(BG3CONFIG.MODULE_NAME, "resource");
+                            item.unsetFlag(BG3CONFIG.MODULE_NAME, "type");
                             item.unsetFlag(BG3CONFIG.MODULE_NAME, "symbol");
                         }
                     }
@@ -461,18 +469,20 @@ export function registerEarly() {
             }
         });
     });
-    Hooks.once("tidy5e-sheet.ready", (api) => {
-        if (!game.user.isGM) return;
-        api.registerItemHeaderControls?.({
-            controls: [{
-                label: "BG3 HUD Config",
-                icon: 'fas fa-gamepad',
-                async onClickAction() {
-                    renderItemConfig(this.document);
-                }
-            }]
+    if (game.modules.get("tidy5e-sheet")?.active) {
+        Hooks.once("tidy5e-sheet.ready", (api) => {
+            if (!game.user.isGM) return;
+            api.registerItemHeaderControls?.({
+                controls: [{
+                    label: "BG3 HUD Config",
+                    icon: 'fas fa-gamepad',
+                    async onClickAction() {
+                        renderItemConfig(this.document);
+                    }
+                }]
+            });
         });
-    });
+    }
 }
 
 const hookRollEvent = (rollConfig, dialogConfig, messageConfig) => {
