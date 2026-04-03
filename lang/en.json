@@ -20,6 +20,13 @@
             "AddRow": "Add Row",
             "RemoveRow": "Remove Row"
         },
+        "Filter": {
+            "resource": "resource",
+            "slot": "slot",
+            "LeftClick": "Left-click to highlight items using this {resource}.",
+            "LeftClickType": "Left-click to highlight items of this type.",
+            "RightClick": "Right-click to grey out."
+        },
         "SettingsMenu": {
             "ResetLayout": "Reset Layout",
             "ClearAllItems": "Clear All Items",

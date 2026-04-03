@@ -50,13 +50,14 @@ export class FilterContainer extends BG3Component {
         let cantrips = this.actor.items.filter(i => i.type==="spell" && i.system.level===0)
         if(cantrips.length) {
           filterData.push({
-              id: 'spell',
-              label: 'Cantrip',
-              level: 0,
-              max: 1,
-              value: 1,
-              class: ['spell-level-button', 'spell-cantrip-box'],
-              color: BG3CONFIG.COLORS.SPELL_SLOT
+                id: 'spell',
+                label: 'Cantrip',
+                symbolCustom: '<i class="symbol-cantrip"></i>',
+                level: 0,
+                max: 1,
+                value: 1,
+                class: ['spell-level-button', 'spell-cantrip-box'],
+                color: BG3CONFIG.COLORS.SPELL_SLOT
           });
         }
 
@@ -69,6 +70,7 @@ export class FilterContainer extends BG3Component {
                 filterData.push({
                     id: 'spell',
                     label: 'Spell Level',
+                    symbolCustom: `<i class="symbol-spell">${this._getRomanNumeral(level)}</i>`,
                     level: level,
                     value: spellLevel.value,
                     max: spellLevel.max,
@@ -86,6 +88,7 @@ export class FilterContainer extends BG3Component {
                 id: 'spell',
                 isPact: true,
                 label: 'Pact Magic',
+                symbolCustom: `<i class="symbol-spell">${this._getRomanNumeral(pactMagic.level)}</i>`,
                 short: this._getRomanNumeral(pactMagic.level),
                 max: pactMagic.max,
                 value: pactMagic.value,
@@ -101,7 +104,8 @@ export class FilterContainer extends BG3Component {
                 id: 'spell',
                 isApothecary: true,
                 label: 'Apothecary Magic',
-                short: 'A',
+                symbolCustom: `<i class="symbol-spell">${this._getRomanNumeral(apothecaryMagic.level)}</i>`,
+                short: this._getRomanNumeral(apothecaryMagic.level),
                 max: apothecaryMagic.max,
                 value: apothecaryMagic.value,
                 class: ['spell-level-button', 'spell-apothecary-box'],
@@ -155,9 +159,12 @@ export class FilterContainer extends BG3Component {
         }
         switch (filter.data.id) {
             case 'spell':
+                const modes = ["spell", "prepared", "always"];
+                const slotId = `spell${filter.data.level}`;
                 if(filter.data.isPact) return cell.dataset.preparationMode === 'pact';
                 else if(filter.data.isApothecary) return cell.dataset.preparationMode === 'apothecary';
-                else return parseInt(cell.dataset.level) === filter.data.level;
+                else return (parseInt(cell.dataset.level) === filter.data.level && modes.includes(cell.dataset.preparationMode)) || 
+                    cell.dataset.consumeId === slotId;
             case 'feature':
                 return cell.dataset.itemType === 'feat';
             default:

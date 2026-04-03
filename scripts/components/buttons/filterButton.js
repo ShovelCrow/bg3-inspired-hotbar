@@ -28,38 +28,64 @@ export class FilterButton extends BG3Component {
     }
 
     get dataTooltip() {
-        let desc = '';
+        let tooltip = '';
+        let desc = {
+            title: '',
+            color: this.data.color,
+            symbol: this.data.symbol,
+            resource: game.i18n.localize("BG3.Hotbar.Filter.resource")
+        };
         switch (this.data.id) {
             case 'action':
             case 'bonus':
             case 'reaction':
-                desc = `<h4 style="--data-color:${this.data.color}"><i class="fas ${this.data.symbol}"></i>${this.data.label}<i class="fas ${this.data.symbol}"></i></h4>`; 
+                desc.title = this.data.label;
                 break;
             case 'feature':
-                desc = `<h4 style="--data-color:${this.data.color}"><i class="fas ${this.data.symbol}"></i>${game.i18n.localize("TYPES.Item.feat")}<i class="fas ${this.data.symbol}"></i></h4>`; 
+                desc.title = game.i18n.localize("TYPES.Item.feat");
+                desc.resource = '';
                 break;
             case 'spell':
-                const label = !this.data.isPact && !this.data.isApothecary && this.data.level > 0 ? `${this.data.label} ${this.data.level}` : this.data.label;
-                desc = `<h4 style="--data-color:${this.data.color}">${label}</h4>`; 
+                const plurals = new Intl.PluralRules(game.i18n.lang, { type: "ordinal" });
+                const slotLabel = game.i18n.format(`DND5E.SpellSlotsN.${plurals.select(this.data.level)}`, { n: this.data.level });
+                desc.title = (!this.data.isPact && !this.data.isApothecary && this.data.level > 0) ? slotLabel : this.data.label;
+                desc.symbolCustom = this.data.symbolCustom;
+                desc.resource = game.i18n.localize("BG3.Hotbar.Filter.slot").toLowerCase();
                 break;
             default:
-                desc = this.data.custom?.tooltip ? `
-                    <h4 style="--data-color:${this.data.color}">
-                        ${this.data.symbol ? `<i class="fas ${this.data.symbol}"></i>`: ''}
-                        ${this.data.custom.tooltip.label}${this.data.symbol ? `<i class="fas ${this.data.symbol}"></i>`: ''}
-                    </h4>
-                    ${this.data.custom.tooltip.recharge ? `<p class="notes"><i class="fa-solid fa-arrows-rotate" inert></i> <span>${this.data.custom.tooltip.recharge}</span></p>` : ''}
-                ` : false;
+                if (this.data.custom?.tooltip) {
+                    desc.title = this.data.custom.tooltip.label;
+                    desc.subtitle = this.data.custom.tooltip.recharge;
+                }
                 // desc = this.data.custom?.tooltip ? `<div class="custom-tooltip dnd5e2">h4 style="--data-color:${this.data.color}">${this.data.custom?.tooltip?.label}</h4>${this.data.custom?.tooltip?.pills ? `<ul class="pills">${this.data.custom.tooltip.pills.map(p => `<li class="pill"><span class="label" style="color: #4e4e4e;">${p}</label></li>`).join('')}</ul>` : ''}</div>` : false;
-                // desc = this.data.custom?.tooltip ? `<div class="custom-tooltip dnd5e2"><h4 style="--data-color:${this.data.color}">${this.data.custom?.tooltip?.label}</h4><p class="notes"><i>${this.data.custom?.tooltip?.recharge}</i></p></div>` : false;
                 break;
         }
-        if (desc) {
-            const controlHints = true //game.settings.get("dnd5e", "controlHints");
-            desc += controlHints ? '<p class="notes"><i>Left-click to highlight items using this slot.</i></p><p class="notes"><i>Right-click to grey out.</i></p>' : '';
-            desc = `<div class="custom-tooltip">${desc}</div>`;
+        if (desc.title) {
+            tooltip = this._customToolTip(desc);
         }
-        return {type: 'simple', content: desc};
+        return {type: 'simple', content: tooltip};
+    }
+
+    _customToolTip(data) {
+        let { title, subtitle, symbol, color, symbolCustom, resource } = data;
+
+        let symbolSpan = symbolCustom ?? (symbol ? `<i class="fas ${symbol}"></i>` : '');
+        let subtitleSpan = subtitle ? `<p class="subtitle notes"><i class="fa-solid fa-arrows-rotate"></i> <span>${subtitle}</span></p>` : '';
+        let resourceSpan = resource ? game.i18n.format("BG3.Hotbar.Filter.LeftClick", {resource}) : game.i18n.localize("BG3.Hotbar.Filter.LeftClickType");
+
+        let template = `
+        <section class="custom-tooltip dnd5e2">
+            <section class="header">
+                <span class="title" style="--data-color:${color}">${symbolSpan}${title}${symbolSpan}</span>
+                ${subtitleSpan}
+            </section>
+            <div>
+                <p class="notes"><em>${resourceSpan}</em></p>
+                <p class="notes"><em>${game.i18n.localize("BG3.Hotbar.Filter.RightClick")}</em></p>
+            </div>
+        </section>
+        `
+        return template;
     }
 
     async _registerEvents() {

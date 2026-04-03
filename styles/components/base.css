@@ -102,13 +102,32 @@ aside[role="tooltip"] .custom-tooltip .notes {
     margin: 3px 0 0;
 }
 
-aside[role="tooltip"] .custom-tooltip h4 {
+aside[role="tooltip"] .custom-tooltip .title {
     margin: 0;
+    font-weight: normal;
+    font-size: var(--font-size-16);
 }
 
-aside[role="tooltip"] .custom-tooltip h4 i {
+aside[role="tooltip"] .custom-tooltip .title i {
     margin: 0 1em;
     color: var(--data-color);
+}
+
+aside[role="tooltip"] .custom-tooltip .title .symbol-spell {
+    font-style: normal;
+    font-weight: bold;
+    font-size: var(--font-size-16);
+    letter-spacing: -1px;
+}
+
+aside[role="tooltip"] .custom-tooltip .title .symbol-cantrip {
+    display: inline-block;
+    border-radius: 2px;
+    border-width: 3px;
+    border-style: solid;
+    box-sizing: border-box;
+    width: 11px;
+    height: 11px;
 }
 
 /* ==========================================================================

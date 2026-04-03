@@ -146,6 +146,13 @@ export class GridCell extends BG3Component {
                 return {consume: {value: uses.value ?? 0, max: uses.max ?? 0, id: consumeId}};
             }
         }
+
+        if (consumeType === "spellSlots") {
+           if (parseInt(firstTarget.value) > 0) {
+                console.log(consumeId);
+                return {consume: { id: `spell${consumeId}` }};
+            }
+        }
     
         return null;
     }
