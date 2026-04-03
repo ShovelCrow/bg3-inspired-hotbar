@@ -404,6 +404,75 @@ export function registerEarly() {
     customElements.define('colorpicker-input2', colorPickerInput2, {
         extends: 'input'
     });
+
+    // SHOVEL
+    const renderItemConfig = (item) => {
+        const resource = item.getFlag(BG3CONFIG.MODULE_NAME, "resource");
+        const symbol = item.getFlag(BG3CONFIG.MODULE_NAME, "symbol");
+        const content = `
+            <form class="flexcol">
+                <div class="form-group">
+                    <label for="isResource">Manually Set as Resource? </label>
+                    <input type="checkbox" name="isResource" id="isResource" ${resource ? 'checked' : ''}>
+                </div>
+                <div class="form-group">
+                    <label for="iconInput">Custom Symbol: ${symbol ? `<i class="fas ${symbol}"></i>` : ''}</label>
+                    <input type="text" name="iconInput" id="iconInput" placeholder="fa-crown" ${symbol ? `value="${symbol}"` : ''}>
+                </div>
+            </form>
+        `;
+        const dialog = new Dialog({
+            title: "BG3 HUD: Configure Item",
+            content: content,
+            buttons: {
+                submit: {
+                    icon: `<i class="fas fa-check"></i>`,
+                    label: 'Update',
+                    callback: async (html) => {
+                        let isResource = html.find("#isResource").val();
+                        let customSymbol = html.find("#iconInput").val();
+
+                        item.setFlag(BG3CONFIG.MODULE_NAME, "resource", isResource);
+                        item.setFlag(BG3CONFIG.MODULE_NAME, "symbol", customSymbol);
+
+                        if (!isResource && !customSymbol) {
+                            item.unsetFlag(BG3CONFIG.MODULE_NAME, "resource");
+                            item.unsetFlag(BG3CONFIG.MODULE_NAME, "symbol");
+                        }
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: 'Cancel'
+                }
+            },
+            default: 'cancel'
+        });
+        dialog.render(true);
+    }
+
+    Hooks.on("getItemSheetHeaderButtons", (app, buttons) => {
+        if (!game.user.isGM) return;
+        buttons.unshift({
+            label: 'BG3 HUD Config',
+            icon: 'fas fa-gamepad',
+            onclick: (e) => {
+                renderItemConfig(app.document);
+            }
+        });
+    });
+    Hooks.once("tidy5e-sheet.ready", (api) => {
+        if (!game.user.isGM) return;
+        api.registerItemHeaderControls?.({
+            controls: [{
+                label: "BG3 HUD Config",
+                icon: 'fas fa-gamepad',
+                async onClickAction() {
+                    renderItemConfig(this.document);
+                }
+            }]
+        });
+    });
 }
 
 const hookRollEvent = (rollConfig, dialogConfig, messageConfig) => {

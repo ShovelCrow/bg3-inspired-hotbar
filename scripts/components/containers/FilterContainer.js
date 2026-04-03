@@ -215,7 +215,8 @@ export class FilterContainer extends BG3Component {
         for(const item of this.actor.items) {
             if(item.hasLimitedUses && item.name && item.type === "feat") {
                 // Determine whether item is used as resource
-                let isResource = game.modules.get("tidy5e-sheet")?.active && item.getFlag("tidy5e-sheet", "section") === "Resources";
+                // let isResource = game.modules.get("tidy5e-sheet")?.active && item.getFlag("tidy5e-sheet", "section") === "Resources";
+                let isResource = item.getFlag(BG3CONFIG.MODULE_NAME, "resource");
                 for (const i of this.actor.items) {
                     if (isResource) break;
                     const firstActivity = i?.system?.activities?.contents?.[0] ?? i;
