@@ -28,42 +28,39 @@ export class FilterButton extends BG3Component {
     }
 
     get dataTooltip() {
+        let title, subtitle;
         let desc = '';
         switch (this.data.id) {
             case 'action':
             case 'bonus':
             case 'reaction':
-                desc = `<div class="custom-tooltip content"><h4 class="title" style="--data-color:${this.data.color}"><i class="fas ${this.data.symbol}"></i>${this.data.label}<i class="fas ${this.data.symbol}"></i></h4><p class="notes"><i>Left Click to highlight items using this resource.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                title = this.data.label;
                 break;
             case 'feature':
-                desc = `<div class="custom-tooltip content"><h4 class="title" style="--data-color:${this.data.color}"><i class="fas ${this.data.symbol}"></i>${game.i18n.localize("TYPES.Item.feat")}<i class="fas ${this.data.symbol}"></i></h4><p class="notes"><i>Left Click to highlight items of type feature.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                title = game.i18n.localize("TYPES.Item.feat");
                 break;
             case 'spell':
-                const label = !this.data.isPact && !this.data.isApothecary && this.data.level > 0 ? `${this.data.label} ${this.data.level}` : this.data.label;
-                desc = `<div class="custom-tooltip content"><h4 class="title" style="--data-color:${this.data.color}">${label}</h4><p class="notes"><i>Left Click to highlight items using this slot.</i></p><p class="notes"><i>Right Click to grey out.</i></p></div>`; 
+                title = !this.data.isPact && !this.data.isApothecary && this.data.level > 0 ? `${this.data.label} ${this.data.level}` : this.data.label;
                 break;
             default:
-                desc = this.data.custom?.tooltip ? `
-                    <div class="custom-tooltip content">
-                        <div class="header">
-                            <h4 class="title" style="--data-color:${this.data.color}">
-                                ${this.data.symbol ? `<i class="fas ${this.data.symbol}"></i>`: ''}
-                                ${this.data.custom?.tooltip?.label}
-                                ${this.data.symbol ? `<i class="fas ${this.data.symbol}"></i>`: ''}
-                            </h4>
-                            ${this.data.custom?.tooltip?.recharge ? `<p class="notes"><i class="fa-solid fa-arrows-rotate" inert></i> <span>${this.data.custom.tooltip.recharge}</span></p>` : ''}
-                        </div>
-                        <div class="description">
-                            <p class="notes"><i>Left Click to highlight items using this resource.</i></p>
-                            <p class="notes"><i>Right Click to grey out.</i></p>
-                        </div>
-                    </div>` : false;
-                // desc = this.data.custom?.tooltip ? `<div class="custom-tooltip dnd5e2">h4 style="--data-color:${this.data.color}">${this.data.custom?.tooltip?.label}</h4>${this.data.custom?.tooltip?.pills ? `<ul class="pills">${this.data.custom.tooltip.pills.map(p => `<li class="pill"><span class="label" style="color: #4e4e4e;">${p}</label></li>`).join('')}</ul>` : ''}</div>` : false;
-                // desc = this.data.custom?.tooltip ? `<div class="custom-tooltip dnd5e2"><h4 style="--data-color:${this.data.color}">${this.data.custom?.tooltip?.label}</h4><p class="notes"><i>${this.data.custom?.tooltip?.recharge}</i></p></div>` : false;
+                title = this.data.custom?.tooltip?.label;
+                subtitle = `<i class="fa-solid fa-arrows-rotate" inert></i> <span>${this.data.custom?.tooltip?.recharge}</span>`;
                 break;
         }
-        if (desc) {
-            const controlHints = true //game.settings.get("dnd5e", "controlHints");
+        if (title) {
+            let color = this.data?.color;  
+            let symbol = this.data?.symbol;
+            desc = 
+            `<span class="title" style="--data-color:${color}">
+                ${symbol ? `<i class="fas ${symbol}"></i>` : ''}
+                ${title}
+                ${symbol ? `<i class="fas ${symbol}"></i>` : ''}
+            </span>`;
+
+            desc += subtitle ? `<p class="notes">${subtitle}</p>` : '';
+            desc = `<div class="header">${desc}</div>`;
+
+            const controlHints = true; //game.settings.get("dnd5e", "controlHints");
             desc += controlHints ? '<p class="notes"><i>Left-click to highlight items using this slot.</i></p><p class="notes"><i>Right-click to grey out.</i></p>' : '';
             desc = `<div class="custom-tooltip">${desc}</div>`;
         }

@@ -320,8 +320,6 @@ export function registerLibWrapper() {
             };
         }
 
-
-
         return context;
     }, "MIXED");
 }

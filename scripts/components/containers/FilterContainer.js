@@ -208,7 +208,7 @@ export class FilterContainer extends BG3Component {
         for(const item of this.actor.items) {
             if(item.hasLimitedUses && item.name && item.type === "feat") {
                 // Determine whether item is used as resource
-                let isResource = item.getFlag("tidy5e-sheet", "actionSection") === "Resources" ?? false;
+                let isResource = item.getFlag("tidy5e-sheet", "actionSection") === "Resources" || item.getFlag(BG3CONFIG.MODULE_NAME, "symbol");
                 for (const i of this.actor.items) {
                     if (isResource) break;
                     const firstActivity = i?.system?.activities?.contents?.[0] ?? i;
@@ -228,7 +228,9 @@ export class FilterContainer extends BG3Component {
                         tooltip: {
                             label: item.name,
                             // pills: (item.system.requirements ? item.system.requirements.split(';') : []).concat(item.system.uses.label),
-                            recharge: item.system.uses.label ? CONFIG.DND5E.limitedUsePeriods[item.system.uses.recovery[0].period].label : null
+                            recharge: item.system.uses.label ?
+                                CONFIG.DND5E.limitedUsePeriods[item.system.uses.recovery[0].period].label :
+                                item.labels.recovery
                         },
                         itemId: item.id
                     },

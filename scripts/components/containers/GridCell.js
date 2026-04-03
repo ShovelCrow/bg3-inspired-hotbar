@@ -57,7 +57,7 @@ export class GridCell extends BG3Component {
             };
             if(itemData.type === "spell") {
                 const method = itemData.system?.method ?? itemData.system?.preparation?.mode;
-                data = {...data, ...{preparationMode: method, level: itemData.system?.level}};
+                data = {...data, ...{preparationMode: method, level: itemData.system?.level, unprepared: method == "spell" && !itemData.system?.prepared}};
             }
             if(itemData.type === 'feat') data = {...data, ...{featType: itemData.system?.type?.value || 'default'}};
         }
@@ -490,10 +490,10 @@ export class GridCell extends BG3Component {
             const options = {
                 configureDialog: false,
                 legacy: false,
-                event: e,
-                ...e.ctrlKey && { disadvantage: e.ctrlKey },
-                ...e.altKey && { advantage: e.altKey },
-                ...e.shiftKey && { fastForward: e.shiftKey }
+                event: event,
+                ...event.ctrlKey && { disadvantage: event.ctrlKey },
+                ...event.altKey && { advantage: event.altKey },
+                ...event.shiftKey && { fastForward: event.shiftKey }
             };
 
             // SHOVEL
@@ -509,7 +509,7 @@ export class GridCell extends BG3Component {
                 if (usedMode) await item.setFlag("dnd5e", `last.${firstActivity.id}.attackMode`, usedMode?.value);
             }
 
-            const used = await item.use(options, { event: e });
+            const used = await item.use(options, { event: event });
             if (used) this._renderInner();
         } else if(item.sheet?.render) {
             item.sheet.render(true);
