@@ -154,6 +154,12 @@ input[name="weapon-choice"] {
     height: 100%;
 }
 
+#bg3-hotbar-container .bg3-combat-container .hotbar-item {
+    height: unset;
+    clip-path: inset(var(--clip) 0 round 2px);
+    --clip: calc((100% / 3) - var(--bg3-cell-border-width) * 2 + 1px)
+}
+
 /* Weapon Block */
 .dnd5e2 .weapon-block {
     text-align: left;

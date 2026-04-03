@@ -194,6 +194,15 @@ export class GridCell extends BG3Component {
                 //         this.menuItemAction('activity');
                 //     }
                 // },
+                display: {
+                    label: game.i18n.localize("DND5E.DisplayCard"),
+                    icon: 'fas fa-message-arrow-up-right',
+                    visibility: !this.data.item,
+                    click: () => {
+                        if(!this.data.item) return;
+                        this.menuItemAction('display');
+                    }
+                },
                 remove: {
                     label: game.i18n.localize("BG3.Hotbar.ContextMenu.Remove"),
                     icon: 'fas fa-trash',
@@ -206,14 +215,14 @@ export class GridCell extends BG3Component {
                 },
                 divider: {visibility: !this.data.item},
                 populate: {
-                    label: 'Auto-Populate This Container', icon: 'fas fa-magic',
+                    label: 'Populate Container', icon: 'fas fa-magic',
                     visibility: this.data.delOnly || (!ui.BG3HOTBAR.manager.actor && ui.BG3HOTBAR.manager.canGMHotbar()),
                     click: () => {
                         this._parent.menuItemAction('populate');
                     }
                 },
                 sort: {
-                    label: 'Sort Items In This Container', icon: 'fas fa-sort',
+                    label: 'Sort Items', icon: 'fas fa-sort',
                     visibility: this.data.delOnly || (!ui.BG3HOTBAR.manager.actor && ui.BG3HOTBAR.manager.canGMHotbar()),
                     click: () => {
                         this._parent.menuItemAction('sort');
@@ -269,6 +278,15 @@ export class GridCell extends BG3Component {
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error configuring activities:", error);
                     ui.notifications.error(`Error configuring activities: ${error.message}`);
+                }
+                break;
+            case 'display':
+                try {
+                    const itemData = await this.item;
+                    if (itemData.displayCard) itemData.displayCard();
+                } catch (error) {
+                    console.error("BG3 Inspired Hotbar | Error displaying item card:", error);
+                    ui.notifications.error(`Error displaying item card: ${error.message}`);
                 }
                 break;
             case 'remove':
