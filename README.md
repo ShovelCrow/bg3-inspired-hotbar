@@ -1,4 +1,41 @@
-# BG3 Inspired HUD
+# BG3 Inspired HUD (Shovel's Fork)
+
+A fork of BragginRite's BG3 Inspired HUD module for FoundryVTT's D&D5e system, introducing various QoL and automation features.
+
+The ultimate goal of this fork is too bring feature parity between BG3 HUD, Larkinabout's Token Action HUD, and the D&D5e system's actor sheet.
+
+Current Additional Features:
+
+- Resource Consumption  
+  - In addition to their own limited charges, hotbar items can display a consumed resource counter  
+    - Consumables and throwable weapons track item count  
+    - Items/activities that consume another item's charges (eg. magic staves, Channel Divinity) track that resource  
+  - When an item's charges/count are updated, associated items are also updated in the hotbar  
+  - Custom resource filters are fully implemented. They also display the item's recharge period  
+- Hotbar Items  
+  - Context menu now has a different "View Item" and "Edit" option (compatible with Tidy5e)  
+  - Tooltip tweaks: Weapon tooltips also display weapon properties; items with charges also display recharge period
+  - Clicking on a container item (eg. backpack) opens its sheet
+  - Dragging a hotbar item now also carries item dragdata (i.e. you can drag an item from hotbar to chat for an enchant prompt, or drag it to the scene to drop it with ItemPiles)
+- Active Effects  
+  - Both transferred (usually from feats/items) and temporary effects are visible on the HUD  
+  - Left-clicking an effect to disable it is now contextual (to prevent accidental deletion)  
+    - Transferred effects are toggled (and cannot be deleted from the HUD)  
+    - Temporary effects bring up a deletion confirmation dialogue  
+    - Conditions accessible via the token HUD are removed without prompt  
+  - Right-clicking an effect opens a context menu, where you can manually toggle it, remove it, or view its source item (if it's transferred)  
+  - Unavailable effects are greyed out  
+- Weapon Sets  
+  - Active weapons set can be switched using the scroll wheel  
+  - A versatile weapon in the first slot will be used as two- or one-handed depending on if the second slot is empty or not  
+  - Ranged weapons have a counter that tracks the last used ammunition  
+- Other
+  - Right-clicking a passive feature opens a context menu, where you can view/edit it or configure the passives' container
+  - Ability menu submenus now function on hover (toggleable setting)
+  - Hotbar Macros can read a `bg3-inspired-hotbar.rule` flag to display as a tooltip. This has ben implemented for the Common Actions macro compendium
+  - Collapsing the hotbar is persistent when switching between actors
+
+***
 
 A Foundry VTT module that reimagines the hotbar interface with a design inspired by Baldur's Gate 3. It provides a persistent, token-specific interface for managing abilities, spells, and effects with modern UI/UX principles.
 
