@@ -198,10 +198,16 @@
     display: none;
     background: rgba(0, 0, 0, 0.7);
     padding: 2px;
-    font-size: 0.7em;
+    max-height: min(calc(2lh + 4px), 100%);
+    /* font-size: 0.7em; */
+    font-size: var(--font-size-10);
+    line-height: 10px;
     text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
+    text-shadow: var(--shadow-text-stroke);
+    /* white-space: nowrap; */
+    overflow: clip;
+    overflow-clip-margin: content-box;
+    word-break: normal;
     text-overflow: ellipsis;
     z-index: 10;
     pointer-events: none;

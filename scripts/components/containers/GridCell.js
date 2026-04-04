@@ -45,7 +45,7 @@ export class GridCell extends BG3Component {
         if(itemData) {
             data = {...data, ...{
                     uuid: itemData.uuid,
-                    name: itemData.name,
+                    name: this.shortenName(itemData.name),
                     icon: itemData.img ?? 'icons/svg/book.svg',
                     actionType: firstActivity.activation?.type?.toLowerCase() ?? null,
                     itemType: itemData.type,
@@ -75,6 +75,11 @@ export class GridCell extends BG3Component {
             // if(!this.data.item?.uuid) return;
             // return await fromUuid(this.data.item.uuid);
         })();
+    }
+
+    shortenName(name) {
+        let parts = name.split(":").map(n => n.trim()).filter(n => n);
+        return parts.pop();
     }
 
     async getItemUses() {
