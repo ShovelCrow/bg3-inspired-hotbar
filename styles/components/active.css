@@ -53,3 +53,24 @@
     filter: none;
     opacity: 1;
 } 
+
+
+#bg3-hotbar-container .active-effect-icon .temp {
+    /* background-image: url(../../img/hourglass.svg); */
+    font-size: calc(var(--bg3-active-cell-size) * 0.5);
+    color: var(--bg3-hotbar-drag-color);
+    text-shadow: 0 0 4px var(--bg3-active-border-color);
+    opacity: 90%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* padding: calc(2px + var(--bg3-active-border-size)); */
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+} 
+#bg3-hotbar-container .active-effect-icon:hover .temp {
+    color: var(--bg3-hotbar-drag-color-hover);
+    text-shadow: 0 0 4px var(--bg3-active-border-color-hover);
+    opacity: 80%;
+}

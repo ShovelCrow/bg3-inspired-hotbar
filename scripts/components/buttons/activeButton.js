@@ -12,7 +12,8 @@ export class ActiveButton extends BG3Component {
     }
 
     async getData() {
-        return this.data.item;
+        let isTemp = this._isTemporary();
+        return {...this.data.item, isTemp};
     }
 
     get dataTooltip() {
@@ -137,6 +138,12 @@ export class ActiveButton extends BG3Component {
                     visibility: !this.data.item || !this.data.item.transfer,
                     click: () => this.menuActiveAction('item')
                 },
+                display: {
+                    label: game.i18n.localize("DND5E.DisplayCard"),
+                    icon: 'fas fa-message-arrow-up-right',
+                    visibility: !this.data.item || !this.data.item.transfer,
+                    click: () => this.menuActiveAction('display')
+                },
             }
         };
     }
@@ -167,6 +174,16 @@ export class ActiveButton extends BG3Component {
                 } catch (error) {
                     console.error("BG3 Inspired Hotbar | Error viewing effect source:", error);
                     ui.notifications.error(`Error viewing effect source: ${error.message}`);
+                }
+                break;
+            case 'display':
+                try {
+                    if (!this.data.item.transfer) return;
+                    const itemData = this.data.item?.parent;
+                    if (itemData?.displayCard) itemData.displayCard();
+                } catch (error) {
+                    console.error("BG3 Inspired Hotbar | Error displaying effect source:", error);
+                    ui.notifications.error(`Error displaying effect source: ${error.message}`);
                 }
                 break;
             default:
