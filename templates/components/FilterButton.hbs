@@ -1,10 +1,12 @@
 <div>
-    {{#if symbol}}<i class="fas {{symbol}}"></i>{{/if}}
+    {{#if symbol}}{{#if (not background)}}<i class="fas {{symbol}}"></i>{{/if}}{{/if}}
     {{#if max}}
         {{#times max}}
             <div class="spell-slot-box{{#if (gte @index value)}} is-used{{/if}}"></div>
         {{/times}}
     {{/if}}
     {{#if short}}<div class="spell-level-label">{{short}}</div>{{/if}}
-    {{#if custom}}{{#if (or custom.value custom.max)}}<div class="spell-level-label custom-filter-btn">{{custom.value}}{{#if (lt custom.max 10)}}/{{custom.max}}{{/if}}</div>{{/if}}{{/if}}
+    {{#if custom}}
+    {{#if (or custom.value custom.max)}}<div class="spell-level-label custom-filter-btn">{{custom.value}}{{#if (lt custom.max 10)}}/{{custom.max}}{{/if}}</div>{{/if}}
+    {{/if}}
 </div>

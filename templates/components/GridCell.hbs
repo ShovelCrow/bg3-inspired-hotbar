@@ -1,7 +1,17 @@
 <div>
     {{#if icon}}
     <img src="{{icon}}" {{#if name}} alt="{{name}}" {{/if}}
-        class="hotbar-item{{#if (eq uses.value 0)}} depleted{{/if}}{{#if (eq consume.value 0)}} depleted{{/if}}{{#if (eq itemType 'spell')}}{{#if (eq preparationMode 'prepared')}}{{#if unprepared}} depleted{{/if}}{{/if}}{{/if}}"
+        class="hotbar-item
+        {{#if (eq uses.value 0)}} depleted{{/if}}
+        {{#if (eq consume.value 0)}} depleted{{/if}}
+        {{#if (eq itemType 'spell')}}
+            {{#if (eq preparationMode 'prepared')}}
+                {{#if unprepared}} depleted{{/if}}
+            {{/if}}
+        {{/if}}
+        {{#if (ne quantity false)}}
+            {{#if (eq quantity 0)}}depleted{{/if}}
+        {{/if}}"
         draggable="false">
     {{#if name}}<div class="hotbar-item-name">{{name}}</div>{{/if}}
     {{#if consume}}

@@ -46,6 +46,19 @@ export class AbilityContainer extends BG3Component {
             style: abilityScore.proficient > 0 ?  prof.color : ''
         };
     }
+
+    // SHOVEL
+    getAbilityIcon(key) {
+        const abilityIcons = {
+            str: 'fas fa-dumbbell',
+            dex: 'fas fa-rabbit-running',
+            con: 'fas fa-shield-heart',
+            int: 'fas fa-book-open-reader',
+            wis: 'fas fa-scroll',
+            cha: 'fas fa-handshake'
+        }
+        return abilityIcons[key];
+    }
     
     skillRoll(event) {
         event.stopPropagation();
@@ -181,6 +194,7 @@ export class AbilityContainer extends BG3Component {
                     btns[abl] = {
                         ...{
                             label: this.abilities[abl].label,
+                            icon: this.getAbilityIcon(abl),
                             class: 'ability-container'
                         },
                         ...abilityMod,
@@ -213,4 +227,6 @@ export class AbilityContainer extends BG3Component {
         };
         return { binds: binds, initMod: initModString};
     }
+
+
 }
