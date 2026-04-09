@@ -120,6 +120,39 @@ export class BG3TooltipManager {
             return context;
         }
 
+        // SHOVEL
+        CONFIG.ActiveEffect.documentClass.prototype.richTooltip = async function (enrichmentOptions={}) {
+            const properties = [];
+            if ( this.isSuppressed ) properties.push("DND5E.EffectType.Unavailable");
+            else if ( this.disabled ) properties.push("DND5E.EffectType.Inactive");
+            else if ( this.isTemporary ) properties.push("DND5E.EffectType.Temporary");
+            else properties.push("DND5E.EffectType.Passive");
+            if ( this.type === "enchantment" ) properties.push("DND5E.ENCHANTMENT.Label");
+            
+            if (!this.isTemporary && this.parent?.name) properties.push(this.parent.name);
+            // if (!this.isTemporary && this.parent?.name) {
+            //     if (this.parent.type === "feat" && this.parent.system?.type?.value) {
+            //         const type = CONFIG.Item.typeLabels[this.parent.type];
+            //         const featType = CONFIG.DND5E.featureTypes[this.parent.system.type.value].label;
+            //         properties.push(featType ?? type);
+            //     } else if (this.parent.documentName === "Item") {
+            //         properties.push("DOCUMENT.Item");
+            //     }
+            // }
+
+            return {
+                content: await renderTemplate(
+                    "systems/dnd5e/templates/effects/parts/effect-tooltip.hbs", {
+                    effect: this,
+                    description: await TextEditor.enrichHTML(this.description ?? "", { relativeTo: this, ...enrichmentOptions }),
+                    durationParts: this.duration.remaining ? this.duration.label.split(", ") : [],
+                    properties: properties.map(p => game.i18n.localize(p))
+                    }
+                ),
+                classes: ["dnd5e2", "dnd5e-tooltip", "effect-tooltip"]
+            };
+        };
+
         const oldDismiss = TooltipManager.prototype.dismissLockedTooltips;
         TooltipManager.prototype.dismissLockedTooltips = function() {
             if(!this.tooltip.classList.contains('bg3-tooltip')) oldDismiss.bind(this)();

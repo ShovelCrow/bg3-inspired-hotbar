@@ -138,12 +138,23 @@ export class ControlContainer extends BG3Component {
     }
 
     getSettingsMenu() {
+        const hideActives = this.actor.getFlag(BG3CONFIG.MODULE_NAME, "hideActives");
         return {
             position: 'bottomright',
             event: 'click',
             name: 'baseMenu',
             closeParent: true,
             buttons: {
+                // hideSuppressed: {
+                //     label: hideActives ? "Show Unavailable Effects" : "Hide Unavailable Effects",
+                //     icon: hideActives ? 'fas fa-eye' : 'fas fa-eye-slash',
+                //     class: hideActives ? 'checked' : '',
+                //     click: async () => {
+                //         await this.actor.setFlag(BG3CONFIG.MODULE_NAME, "hideActives", !hideActives);
+                //         ui.BG3HOTBAR.components.container.components.activeContainer.render();
+                //         await ui.BG3HOTBAR.manager.persist();
+                //     }
+                // },
                 resetSettings: {
                     label: game.i18n.localize("BG3.Hotbar.SettingsMenu.ResetLayout"),
                     icon: 'fas fa-rotate',

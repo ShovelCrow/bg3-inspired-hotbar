@@ -581,7 +581,7 @@ export function updateSettingsDisplay() {
                     },
                     {
                         label: 'BG3.Settings.Menu.Hotbar.Sub.Other',
-                        fields: ['fadeControlsMenu', 'showRestTurnButton', 'hoverAbilities', 'enableGMHotbar']
+                        fields: ['fadeControlsMenu', 'showRestTurnButton', 'hoverAbilities', 'hideUnavailable', 'enableGMHotbar']
                     }
                 ]
             },
@@ -1233,6 +1233,20 @@ export function registerSettings() {
         type: Boolean,
         default: true
     });
+    game.settings.register(BG3CONFIG.MODULE_NAME, 'hideUnavailable', {
+        name: 'Hide unavailable effects',
+        hint: 'Active effects are hidden when their source item is unattuned or unequipped.',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: () => {
+            if (ui.BG3HOTBAR.components.container.components.activeContainer) {
+                ui.BG3HOTBAR.components.container.components.activeContainer.render();
+            }
+        }
+    });
+
 
     game.settings.register(BG3CONFIG.MODULE_NAME, 'enableGMHotbar', {
         name: 'BG3.Settings.EnableGMHotbar.Name',
