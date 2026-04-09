@@ -304,6 +304,9 @@ export class FilterContainer extends BG3Component {
         const extended = await this.getExtendedFilter();
         if (extended) this.components.push(...extended);
 
+        const length = Math.floor(this.components.length / 2);
+        this.element.parentElement.style.setProperty("--bg3-active-passive-length", 11 - length);
+
         return this.element;
     }
 }

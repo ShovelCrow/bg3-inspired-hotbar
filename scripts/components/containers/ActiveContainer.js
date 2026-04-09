@@ -15,7 +15,16 @@ export class ActiveContainer extends BG3Component {
 
         // // Get active effects from the actor's sheet.
         // return this.actor.effects?.contents || [];
-        return Array.from(this.actor?.allApplicableEffects()) || []; // SHOVEL
+
+        // SHOVEL
+        let effects = Array.from(this.actor?.allApplicableEffects()) || [];
+        const isTemp = (ae) => {
+            return ((ae?.isTemporary && (!ae?.transfer || !ae?.flags?.dae?.showIcon))
+                || (!ae?.isTemporary && !ae?.transfer)) ? 1 : 0;
+        }
+        effects.sort((a, b) => isTemp(a) - isTemp(b))
+        effects.sort((a, b) => { if(!isTemp(a) && !isTemp(b)) return a?.name.localeCompare(b?.name); });
+        return effects;
     }
 
     async render() {
